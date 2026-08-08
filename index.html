@@ -18,6 +18,7 @@
 <style>
   :root{
     --ink:#0E0F12; --reversed:#F1F5FA; --second:#8A90A0; --muted:#6B7280;
+    --good:#0ca30c; --critical:#d03b3b;
     --font:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
   }
   *{box-sizing:border-box}
@@ -46,7 +47,13 @@
     border:1px solid #2c3037;border-radius:100px;padding:8px 17px;
     color:var(--second);font-size:13.5px;letter-spacing:.01em;
   }
-  .dot{width:7px;height:7px;border-radius:50%;background:var(--second);flex:none}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--second);flex:none;animation:dotProcess 3.6s ease-in-out infinite}
+  @keyframes dotProcess{
+    0%,100%{background:var(--second);box-shadow:0 0 0 0 rgba(138,144,160,0)}
+    33%{background:var(--good);box-shadow:0 0 6px 1px rgba(12,163,12,.55)}
+    66%{background:var(--critical);box-shadow:0 0 6px 1px rgba(208,59,59,.55)}
+  }
+  @media (prefers-reduced-motion:reduce){ .dot{animation:none} }
   footer{
     margin-top:56px;color:var(--muted);font-size:13.5px;line-height:1.9;
     display:flex;justify-content:space-evenly;align-items:center;gap:24px;
