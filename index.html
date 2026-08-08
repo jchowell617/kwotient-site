@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kwotient — Intelligence, on the record.</title>
+<meta name="description" content="Kwotient forecasts what an athlete's next contract will be, publishes the forecast before anyone knows the answer, and then publishes how wrong it was.">
+<link rel="canonical" href="https://www.kwotient.io/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.kwotient.io/">
+<meta property="og:title" content="Kwotient — Intelligence, on the record.">
+<meta property="og:description" content="We forecast what an athlete's next contract will be, publish the forecast before anyone knows the answer, and then publish how wrong we were.">
+<meta name="twitter:card" content="summary">
+
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230E0F12'/%3E%3Ccircle cx='60' cy='32' r='9.5' fill='%23F1F5FA'/%3E%3Crect x='22' y='49' width='56' height='7' rx='3.5' fill='%23F1F5FA'/%3E%3Crect x='22' y='65' width='30' height='7' rx='3.5' fill='%23F1F5FA'/%3E%3C/svg%3E">
+
+<style>
+  :root{
+    --ink:#0E0F12; --reversed:#F1F5FA; --second:#8A90A0; --muted:#6B7280;
+    --font:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--ink);color:var(--reversed);font-family:var(--font);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:48px 26px;-webkit-font-smoothing:antialiased;
+  }
+  main{max-width:620px;width:100%;text-align:center}
+  .mark{width:104px;height:104px;margin:0 auto;display:block}
+  h1{
+    font-size:clamp(38px,9vw,60px);font-weight:640;letter-spacing:-.028em;
+    margin:30px 0 0;line-height:1.05;
+  }
+  .tagline{
+    color:var(--second);font-size:clamp(17px,4.2vw,21px);margin-top:15px;letter-spacing:-.003em;
+  }
+  .rule{width:88px;height:2px;background:#2c3037;margin:44px auto}
+  p.lead{
+    font-size:clamp(16px,3.9vw,18.5px);line-height:1.66;color:#C5CAD3;margin:0;
+    text-wrap:pretty;
+  }
+  .status{
+    margin-top:34px;display:inline-flex;align-items:center;gap:9px;
+    border:1px solid #2c3037;border-radius:100px;padding:8px 17px;
+    color:var(--second);font-size:13.5px;letter-spacing:.01em;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--second);flex:none}
+  footer{
+    margin-top:56px;color:var(--muted);font-size:13.5px;line-height:1.9;
+  }
+  footer a{color:var(--second);text-decoration:none;border-bottom:1px solid #2c3037}
+  footer a:hover{color:var(--reversed);border-bottom-color:var(--second)}
+  .fine{
+    margin-top:14px;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#4b5261;
+  }
+  @media (max-width:520px){ .mark{width:84px;height:84px} .rule{margin:34px auto} }
+</style>
+</head>
+<body>
+<main>
+
+  <svg class="mark" viewBox="0 0 100 100" role="img" aria-label="Kwotient">
+    <rect width="100" height="100" rx="22" fill="#F1F5FA"/>
+    <circle cx="60" cy="32" r="9.5" fill="#0E0F12"/>
+    <rect x="22" y="49" width="56" height="7" rx="3.5" fill="#0E0F12"/>
+    <rect x="22" y="65" width="30" height="7" rx="3.5" fill="#0E0F12"/>
+  </svg>
+
+  <h1>Kwotient</h1>
+  <div class="tagline">Intelligence, on the record.</div>
+
+  <div class="rule"></div>
+
+  <p class="lead">
+    We forecast what an athlete&rsquo;s next contract will be, publish the forecast
+    before anyone knows the answer, and then publish how wrong we were.
+  </p>
+
+  <div class="status"><span class="dot"></span>First scored cohort settles October 2026</div>
+
+  <footer>
+    <a href="mailto:jhowell@kwotient.io">jhowell@kwotient.io</a>
+    <div class="fine">Sports decision intelligence</div>
+  </footer>
+
+</main>
+</body>
+</html>
