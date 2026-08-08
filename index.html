@@ -29,7 +29,12 @@
     padding:48px 26px;-webkit-font-smoothing:antialiased;
   }
   main{max-width:620px;width:100%;text-align:center}
-  .mark{width:104px;height:104px;margin:0 auto;display:block}
+  .mark{width:104px;height:104px;margin:0 auto;display:block;animation:breathe 2.6s ease-in-out infinite}
+  @keyframes breathe{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.035)}
+  }
+  @media (prefers-reduced-motion:reduce){ .mark{animation:none} }
   h1{
     font-size:clamp(38px,9vw,60px);font-weight:640;letter-spacing:-.028em;
     margin:30px 0 0;line-height:1.05;
