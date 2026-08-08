@@ -32,14 +32,12 @@
   .mark{width:120px;height:120px;margin:0 auto;display:block}
   .trace{
     fill:none;stroke:var(--reversed);stroke-width:2.5;stroke-linecap:round;
-    stroke-dasharray:100 100;stroke-dashoffset:100;opacity:0;
-    animation:wrapBorder 12.5s linear infinite;
+    stroke-dasharray:65 35;stroke-dashoffset:100;
+    animation:wrapBorder 0.9s linear infinite;
   }
   @keyframes wrapBorder{
-    0%{stroke-dashoffset:100;opacity:1}
-    20%{stroke-dashoffset:0;opacity:1}
-    20.01%{stroke-dashoffset:0;opacity:0}
-    100%{stroke-dashoffset:0;opacity:0}
+    from{stroke-dashoffset:100}
+    to{stroke-dashoffset:0}
   }
   h1{
     font-size:clamp(38px,9vw,60px);font-weight:640;letter-spacing:-.028em;
