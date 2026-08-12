@@ -72,6 +72,16 @@
     margin-top:14px;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#4b5261;
   }
   @media (max-width:520px){ .mark{width:84px;height:84px} .rule{margin:34px auto} }
+  #results{margin-top:40px;width:100%;display:none;text-align:left}
+  #results h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--second);font-weight:600;margin:0 0 16px;text-align:center}
+  .cohort{border:1px solid #23262c;border-radius:14px;padding:16px 18px;margin:0 0 12px;background:#121419}
+  .cohort .ch{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .cohort .name{font-size:15.5px;font-weight:600;color:var(--reversed)}
+  .cohort .league{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .badge{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid #2c3037;color:var(--second);white-space:nowrap}
+  .badge.settled{color:var(--good);border-color:rgba(12,163,12,.5)}
+  .cohort .meta{margin-top:10px;font-size:13px;color:#C5CAD3;line-height:1.6}
+  .cohort .beat{color:var(--good)} .cohort .miss{color:var(--critical)} .cohort .base{color:var(--second)}
 </style>
 </head>
 <body>
@@ -94,6 +104,11 @@
   </p>
 
   <div class="status"><span class="dot"></span><span class="think"><span id="tt"></span> <span id="ee"></span> <span id="cs"></span></span><span class="dot"></span></div>
+
+  <section id="results" aria-label="Scored cohorts">
+    <h2>The record</h2>
+    <div id="cohorts"></div>
+  </section>
 
   <footer>
     <a href="mailto:info@kwotient.io">info@kwotient.io</a>
@@ -124,6 +139,37 @@
     setTimeout(buffer,380);
   }
   typeTT();
+})();
+</script>
+<script>
+/* Results feed — renders ONLY the curated fields in results.json.
+   No models, rosters or per-player projections are ever fetched or shown. */
+(function(){
+  function esc(s){var e=document.createElement('div');e.textContent=(s==null?'':String(s));return e.innerHTML;}
+  fetch('results.json',{cache:'no-store'})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      if(!d||!d.cohorts||!d.cohorts.length) return; /* nothing settled yet -> keep "coming soon" */
+      var wrap=document.getElementById('cohorts');
+      d.cohorts.forEach(function(c){
+        var settled=(c.status||'').toLowerCase()==='settled';
+        var beat=c.result&&c.result.beat_baseline;
+        var h='<div class="cohort"><div class="ch"><div>'
+          +'<div class="league">'+esc(c.league)+'</div>'
+          +'<div class="name">'+esc(c.cohort)+'</div></div>'
+          +'<span class="badge '+(settled?'settled':'')+'">'+esc(c.status||'')+'</span></div>'
+          +'<div class="meta">';
+        if(c.size!=null) h+='Cohort size: '+esc(c.size)+'. ';
+        if(c.baseline&&c.baseline.label){ h+='<span class="base">Baseline: '+esc(c.baseline.label)+(c.baseline.value!=null?' ('+esc(c.baseline.value)+')':'')+'.</span> '; }
+        if(settled&&c.result){ h+='<span class="'+(beat?'beat':'miss')+'">'+(beat?'Beat baseline':'Did not beat baseline')+(c.result.skill!=null?' — '+esc(c.result.skill):'')+'.</span> '; if(c.result.headline) h+=esc(c.result.headline); }
+        (c.metrics||[]).forEach(function(m){ h+='<br>'+esc(m.label)+': '+esc(m.value); });
+        h+='</div></div>';
+        wrap.insertAdjacentHTML('beforeend',h);
+      });
+      document.getElementById('results').style.display='block';
+      var st=document.querySelector('.status'); if(st) st.style.display='none';
+    })
+    .catch(function(){});
 })();
 </script>
 </body>
