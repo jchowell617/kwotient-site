@@ -28,7 +28,8 @@
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:48px 26px;-webkit-font-smoothing:antialiased;
   }
-  main{max-width:620px;width:100%;text-align:center}
+  main{max-width:620px;width:100%;text-align:center;animation:reveal .9s ease .05s both}
+  @keyframes reveal{ from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
   .mark{width:104px;height:104px;margin:0 auto;display:block;animation:breathe 2.6s ease-in-out infinite}
   @keyframes breathe{
     0%,100%{transform:scale(1)}
@@ -53,7 +54,7 @@
     color:var(--second);font-size:13.5px;letter-spacing:.01em;
     font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
   }
-  .think{white-space:nowrap}
+  .think{white-space:nowrap;font-style:italic}
   #ee{display:inline-block;min-width:3ch;text-align:left}
   .dot{width:7px;height:7px;border-radius:50%;background:var(--second);flex:none;animation:dotProcess 2.6s ease-in-out infinite}
   @keyframes dotProcess{
@@ -72,6 +73,7 @@
     margin-top:14px;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:#4b5261;
   }
   @media (max-width:520px){ .mark{width:84px;height:84px} .rule{margin:34px auto} }
+  @media (prefers-reduced-motion:reduce){ main{animation:none} }
   #results{margin-top:40px;width:100%;display:none;text-align:left}
   #results h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--second);font-weight:600;margin:0 0 16px;text-align:center}
   .cohort{border:1px solid #23262c;border-radius:14px;padding:16px 18px;margin:0 0 12px;background:#121419}
@@ -123,22 +125,25 @@
   if(!tt||!ee||!cs) return;
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
   if(reduce){ tt.textContent=m1; ee.textContent='...'; cs.textContent=m2; return; }
-  var i=0,j=0,d=0;
-  function typeTT(){
-    tt.textContent=m1.slice(0,i);
-    if(i<m1.length){ i++; setTimeout(typeTT,75); }
-    else { buffer(); typeCS(); }
+  var timers=[], ell=null;
+  function clearAll(){ timers.forEach(clearTimeout); timers=[]; if(ell){clearInterval(ell);ell=null;} }
+  function cycle(){
+    clearAll();
+    tt.textContent=''; ee.textContent=''; cs.textContent='';
+    var i=0,j=0,d=0;
+    function typeTT(){
+      tt.textContent=m1.slice(0,i);
+      if(i<m1.length){ i++; timers.push(setTimeout(typeTT,75)); }
+      else { ell=setInterval(function(){ ee.textContent='.'.repeat(d%4); d++; },380); typeCS(); }
+    }
+    function typeCS(){
+      cs.textContent=m2.slice(0,j);
+      if(j<m2.length){ j++; timers.push(setTimeout(typeCS,75)); }
+    }
+    typeTT();
   }
-  function typeCS(){
-    cs.textContent=m2.slice(0,j);
-    if(j<m2.length){ j++; setTimeout(typeCS,75); }
-  }
-  function buffer(){
-    ee.textContent='.'.repeat(d%4);
-    d++;
-    setTimeout(buffer,380);
-  }
-  typeTT();
+  cycle();
+  setInterval(cycle,5000);
 })();
 </script>
 <script>
