@@ -144,7 +144,7 @@
     }
     function startEll(){
       ell=setInterval(function(){
-        if(d>=8){ clearInterval(ell); ell=null; cycle(); return; } /* restart after 2 ellipsis cycles */
+        if(d>=12){ clearInterval(ell); ell=null; cycle(); return; } /* restart after 3 ellipsis cycles */
         ee.textContent='.'.repeat(d%4); d++;
       },380);
     }
