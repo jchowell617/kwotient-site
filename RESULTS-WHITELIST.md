@@ -70,5 +70,10 @@ Change this document first, then the policy flags in `site/licensing.json`.
 | `metrics[]` | Aggregate metrics only: `{label, value}` | `{"label":"MAE gtd-at-signing","value":"7.2 pts"}` |
 
 When a cohort settles, the settlement produces an aggregate scorecard in the **private**
-record. A person transcribes **only** the whitelisted fields above into `results.json`
-here. The private record and its proprietary inputs never change visibility.
+record. The transcription into `results.json` is automated (`site/publish-results.js` in
+the private record, run daily by its workflow): it maps **only** the whitelisted fields
+above, refuses any scorecard shape it does not recognise, refuses any field outside this
+list, and publishes no beat-baseline verdict for a cohort that filed without a declared
+baseline. It fails closed, the same standard as the board's publish gate. The private
+record and its proprietary inputs never change visibility. (Automated 31 August 2026;
+previously a person transcribed by hand.)
