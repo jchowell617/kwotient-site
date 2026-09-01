@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kwotient — Intelligence, on the record.</title>
+<meta name="description" content="We call it first. Graded by the outcome.">
+<link rel="canonical" href="https://www.kwotient.io/">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.kwotient.io/">
+<meta property="og:title" content="Kwotient — Intelligence, on the record.">
+<meta property="og:description" content="We call it first. Graded by the outcome.">
+<meta name="twitter:card" content="summary">
+
+<meta name="theme-color" content="#080a0e">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23e9edf3'/%3E%3Ccircle cx='60' cy='32' r='9.5' fill='%234d8bff'/%3E%3Crect x='22' y='49' width='56' height='7' rx='3.5' fill='%23080a0e'/%3E%3Crect x='22' y='65' width='30' height='7' rx='3.5' fill='%23080a0e'/%3E%3C/svg%3E">
+
+<style>
+  :root{
+    /* terminal palette — matches Kwotient Demo.html and the record site */
+    --ink:#080a0e; --reversed:#e9edf3; --second:#98a3b3; --muted:#616d7d;
+    --good:#2ecf85; --critical:#ff5b6a;
+    --surface:#12161e; --grid:#1f2733; --axis:#2c3644; --accent:#4d8bff;
+    /* --lead sits between the demo's --m700 and --m900; --faint is its --m300 */
+    --lead:#c9d1dc; --faint:#495566;
+    /* the holding page is set entirely in mono */
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:var(--ink);color:var(--reversed);font-family:var(--mono);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:48px 26px;-webkit-font-smoothing:antialiased;
+  }
+  main{max-width:620px;width:100%;text-align:center}
+  @keyframes reveal{ from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+  .mark{width:104px;height:104px;margin:0 auto;display:block;animation:reveal 1.1s ease .05s both, breathe 2.6s ease-in-out 1.35s infinite}
+  @keyframes breathe{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(0.93)}
+  }
+  @media (prefers-reduced-motion:reduce){ .mark,h1,.tagline,.rule,p.lead,.status,footer{animation:none} }
+  /* terminal treatment — the demo's brand lockup: uppercase tracked wordmark
+     over a bordered mono chip */
+  h1{
+    font-size:clamp(34px,8vw,54px);font-weight:750;letter-spacing:.02em;text-transform:uppercase;
+    margin:30px 0 0;line-height:1.05;animation:reveal 1.1s ease .20s both;
+  }
+  .tagline{
+    display:inline-block;margin-top:18px;
+    color:var(--second);font-family:var(--mono);font-weight:600;
+    font-size:clamp(10px,2.5vw,13px);letter-spacing:.16em;text-transform:uppercase;
+    border:1px solid var(--axis);border-radius:4px;padding:8px 14px;
+    animation:reveal 1.1s ease .34s both;
+  }
+  .rule{width:88px;height:2px;background:var(--axis);margin:44px auto;animation:reveal 1.1s ease .48s both}
+  p.lead{
+    font-size:clamp(16px,3.9vw,18.5px);line-height:1.66;color:var(--lead);margin:0;
+    text-wrap:pretty;animation:reveal 1.1s ease .62s both;
+  }
+  .status{
+    margin-top:34px;display:inline-flex;align-items:center;gap:9px;
+    padding:8px 17px;
+    color:var(--second);font-size:13.5px;letter-spacing:.01em;
+    font-family:var(--mono);
+    animation:reveal 1.1s ease .76s both;
+  }
+  .think{white-space:nowrap;font-style:italic}
+  #ee{display:inline-block;min-width:3ch;text-align:left}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--second);flex:none;animation:dotProcess 2.6s ease-in-out infinite}
+  @keyframes dotProcess{
+    0%,100%{background:var(--second);box-shadow:0 0 0 0 rgba(152,163,179,0)}
+    33%{background:var(--good);box-shadow:0 0 6px 1px rgba(46,207,133,.55)}
+    66%{background:var(--critical);box-shadow:0 0 6px 1px rgba(255,91,106,.55)}
+  }
+  @media (prefers-reduced-motion:reduce){ .dot{animation:none} }
+  footer{
+    margin-top:56px;color:var(--muted);font-size:13.5px;line-height:1.9;
+    display:flex;justify-content:space-evenly;align-items:center;gap:24px;
+    animation:reveal 1.1s ease .90s both;
+  }
+  footer a{color:var(--second);text-decoration:none;border-bottom:1px solid var(--axis)}
+  footer a:hover{color:var(--reversed);border-bottom-color:var(--second)}
+  .fine{
+    margin-top:14px;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+  }
+  @media (max-width:520px){ .mark{width:84px;height:84px} .rule{margin:34px auto} }
+  #results{margin-top:40px;width:100%;display:none;text-align:left}
+  #results h2{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--second);font-weight:600;margin:0 0 16px;text-align:center}
+  .cohort{border:1px solid var(--grid);border-radius:14px;padding:16px 18px;margin:0 0 12px;background:var(--surface)}
+  .cohort .ch{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+  .cohort .name{font-size:15.5px;font-weight:600;color:var(--reversed)}
+  .cohort .league{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  .badge{font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:100px;border:1px solid var(--axis);color:var(--second);white-space:nowrap}
+  .badge.settled{color:var(--good);border-color:rgba(46,207,133,.5)}
+  .cohort .meta{margin-top:10px;font-size:13px;color:var(--lead);line-height:1.6}
+  .cohort .beat{color:var(--good)} .cohort .miss{color:var(--critical)} .cohort .base{color:var(--second)}
+</style>
+</head>
+<body>
+<main>
+
+  <svg class="mark" viewBox="0 0 100 100" role="img" aria-label="Kwotient">
+    <rect width="100" height="100" rx="22" fill="#e9edf3"/>
+    <circle cx="60" cy="32" r="9.5" fill="var(--accent)"/>
+    <rect x="22" y="49" width="56" height="7" rx="3.5" fill="#080a0e"/>
+    <rect x="22" y="65" width="30" height="7" rx="3.5" fill="#080a0e"/>
+  </svg>
+
+  <h1>Kwotient</h1>
+  <div class="tagline">Intelligence, on the record</div>
+
+  <div class="rule"></div>
+
+  <p class="lead">
+    We call it first. Graded by the outcome.
+  </p>
+
+  <div class="status"><span class="dot"></span><span class="think"><span id="tt"></span> <span id="ee"></span> <span id="cs"></span></span><span class="dot"></span></div>
+
+  <section id="results" aria-label="Scored cohorts">
+    <h2>The record</h2>
+    <div id="cohorts"></div>
+  </section>
+
+  <footer>
+    <a href="mailto:info@kwotient.io">info@kwotient.io</a>
+    <a href="https://www.instagram.com/kwotient/" target="_blank" rel="noopener"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:5px" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13-.67-.66-1.34-1.07-2.13-1.38-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0z"/><path d="M12 5.84A6.16 6.16 0 1 0 18.16 12 6.16 6.16 0 0 0 12 5.84zM12 16a4 4 0 1 1 4-4 4 4 0 0 1-4 4z"/><circle cx="18.41" cy="5.59" r="1.44"/></svg>kwotient</a>
+  </footer>
+
+</main>
+<script>
+(function(){
+  var m1="now thinking", m2="coming soon";
+  var tt=document.getElementById('tt'), ee=document.getElementById('ee'), cs=document.getElementById('cs');
+  if(!tt||!ee||!cs) return;
+  var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  if(reduce){ tt.textContent=m1; ee.textContent='...'; cs.textContent=m2; return; }
+  var timers=[], ell=null;
+  function clearAll(){ timers.forEach(clearTimeout); timers=[]; if(ell){clearInterval(ell);ell=null;} }
+  function cycle(){
+    clearAll();
+    tt.textContent=''; ee.textContent=''; cs.textContent='';
+    var i=0,j=0,d=0;
+    function typeTT(){
+      tt.textContent=m1.slice(0,i);
+      if(i<m1.length){ i++; timers.push(setTimeout(typeTT,75)); }
+      else { startEll(); typeCS(); }
+    }
+    function typeCS(){
+      cs.textContent=m2.slice(0,j);
+      if(j<m2.length){ j++; timers.push(setTimeout(typeCS,75)); }
+    }
+    function startEll(){
+      ell=setInterval(function(){
+        if(d>=12){ clearInterval(ell); ell=null; cycle(); return; } /* restart after 3 ellipsis cycles */
+        ee.textContent='.'.repeat(d%4); d++;
+      },380);
+    }
+    typeTT();
+  }
+  setTimeout(cycle, 2000);
+})();
+</script>
+<script>
+/* Results feed — renders ONLY the curated fields in results.json.
+   No models, rosters or per-player projections are ever fetched or shown. */
+(function(){
+  function esc(s){var e=document.createElement('div');e.textContent=(s==null?'':String(s));return e.innerHTML;}
+  fetch('results.json',{cache:'no-store'})
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){
+      if(!d||!d.cohorts||!d.cohorts.length) return; /* nothing settled yet -> keep "coming soon" */
+      var wrap=document.getElementById('cohorts');
+      d.cohorts.forEach(function(c){
+        var settled=(c.status||'').toLowerCase()==='settled';
+        var beat=c.result&&c.result.beat_baseline;
+        var h='<div class="cohort"><div class="ch"><div>'
+          +'<div class="league">'+esc(c.league)+'</div>'
+          +'<div class="name">'+esc(c.cohort)+'</div></div>'
+          +'<span class="badge '+(settled?'settled':'')+'">'+esc(c.status||'')+'</span></div>'
+          +'<div class="meta">';
+        if(c.size!=null) h+='Cohort size: '+esc(c.size)+'. ';
+        if(c.baseline&&c.baseline.label){ h+='<span class="base">Baseline: '+esc(c.baseline.label)+(c.baseline.value!=null?' ('+esc(c.baseline.value)+')':'')+'.</span> '; }
+        if(settled&&c.result){ h+='<span class="'+(beat?'beat':'miss')+'">'+(beat?'Beat baseline':'Did not beat baseline')+(c.result.skill!=null?' — '+esc(c.result.skill):'')+'.</span> '; if(c.result.headline) h+=esc(c.result.headline); }
+        (c.metrics||[]).forEach(function(m){ h+='<br>'+esc(m.label)+': '+esc(m.value); });
+        h+='</div></div>';
+        wrap.insertAdjacentHTML('beforeend',h);
+      });
+      document.getElementById('results').style.display='block';
+      var st=document.querySelector('.status'); if(st) st.style.display='none';
+    })
+    .catch(function(){});
+})();
+</script>
+</body>
+</html>
