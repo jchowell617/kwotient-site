@@ -1,7 +1,0 @@
-# kwotient.io — all crawlers welcome, AI agents included.
-# This site publishes dated forecasts so they can be found, quoted and judged.
-# Blocking readers would defeat the point.
-User-agent: *
-Allow: /
-
-Sitemap: https://www.kwotient.io/sitemap.xml
