@@ -1,0 +1,40 @@
+{
+  "player": "Peter Skoronski",
+  "slug": "peter-skoronski",
+  "team": "TEN",
+  "pos": "OL",
+  "league": "NFL",
+  "cohort": "NFL Cohort 1 · veteran contract guarantees",
+  "model": "nfl-guarantees v1 (transparent; published rubric + real comparables)",
+  "filed": "2026-08-12",
+  "windowCloses": "2026-09-09",
+  "status": "forward",
+  "kwotientScore": {
+    "guaranteedAtSigningM": 51.7,
+    "gasPctOfTotal": 62,
+    "bandM": [
+      40.8,
+      62.6
+    ],
+    "confidence": "low",
+    "projectedTotalM": 84,
+    "projectedYears": 4,
+    "chanceToSign": 0.6,
+    "signSignalWhy": "active talks, positive signal"
+  },
+  "structureFlags": {
+    "cashThrough2yrM": 62.2,
+    "voidYears": "possible",
+    "releaseRisk": "low"
+  },
+  "currentStatus": null,
+  "outcome": {
+    "signed": false,
+    "note": "Forward claim — to be scored against the filed contract after the 9 Sep opener."
+  },
+  "provenance": {
+    "recordPath": "cohorts/nfl-2026/cohort-01-veteran-guarantees/",
+    "regeneratedFromFrozenInputs": true,
+    "timestamp": "git/GitHub tamper-evident; OpenTimestamps Bitcoin anchor pending next connected upgrade."
+  }
+}

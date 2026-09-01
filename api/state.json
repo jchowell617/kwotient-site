@@ -1,0 +1,86 @@
+{
+  "generated": "2026-09-01",
+  "note": "Cohort state, rebuilt with the site. Not official league data, and not endorsed by or affiliated with any league, team, players association or data provider.",
+  "scoringNote": "Nothing here is used for scoring. Scoring reads frozen, hashed captures — providers correct and restate their data, so a live read is the wrong instrument for a fixed record.",
+  "cohorts": [
+    {
+      "league": "NBA",
+      "cohort": "C1",
+      "title": "Rookie-scale extensions",
+      "rosterSize": 22,
+      "filed": "2026-08-17",
+      "freezeDate": "2026-08-06",
+      "settleDate": "2026-10-19",
+      "daysToSettle": 48,
+      "settleProvisional": false,
+      "sweep": {
+        "date": "2026-09-01",
+        "ageDays": 0,
+        "automated": true,
+        "finding": "NO NEW SIGNINGS since 2026-08-31",
+        "newSignings": 0,
+        "standingSignings": 0
+      }
+    },
+    {
+      "league": "NFL",
+      "cohort": "C1",
+      "title": "Veteran contract guarantees",
+      "rosterSize": 8,
+      "filed": "2026-08-12",
+      "freezeDate": "2026-08-12",
+      "settleDate": "2026-09-09",
+      "daysToSettle": 8,
+      "settleProvisional": false,
+      "sweep": {
+        "date": "2026-09-01",
+        "ageDays": 0,
+        "automated": true,
+        "finding": "NO NEW SIGNINGS since 2026-08-31",
+        "newSignings": 0,
+        "standingSignings": 2
+      }
+    },
+    {
+      "league": "NFL",
+      "cohort": "C6",
+      "title": "Rookie draft-slot value",
+      "rosterSize": 100,
+      "filed": null,
+      "freezeDate": "2026-09-08",
+      "settleDate": "2027-01-17",
+      "daysToSettle": 138,
+      "settleProvisional": false
+    }
+  ],
+  "feeds": [
+    {
+      "name": "NBA contracts",
+      "via": "balldontlie",
+      "captured": "2026-09-01",
+      "ageDays": 0,
+      "stale": false
+    },
+    {
+      "name": "NFL contracts",
+      "via": "nflverse",
+      "captured": "2026-09-01",
+      "ageDays": 0,
+      "stale": false
+    },
+    {
+      "name": "NFL games played",
+      "via": "nflverse",
+      "captured": "2026-08-28",
+      "ageDays": 4,
+      "stale": false
+    },
+    {
+      "name": "NBA games played",
+      "via": "balldontlie",
+      "captured": "2026-08-20",
+      "ageDays": 12,
+      "stale": true
+    }
+  ]
+}
