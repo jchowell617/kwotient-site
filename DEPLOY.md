@@ -35,9 +35,10 @@ gh repo create kwotient-site --public --source=. --remote=origin --push
 gh api -X POST repos/:owner/kwotient-site/pages -f source[branch]=main -f source[path]=/
 ```
 
-**This repo is public and that is correct** — it holds a holding page, nothing
-else. It is NOT the record repository, which stays private until the October
-filing. Do not put the demo in here.
+**This repo is public and that is correct** — it holds the published board and
+nothing else. It is NOT the record repository, which stays private indefinitely
+(decision of 22 August 2026: the models and pipeline are the asset, and verification
+ships as commit-and-reveal instead). Do not put the demo in here.
 
 ---
 

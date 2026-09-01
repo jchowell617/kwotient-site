@@ -22,7 +22,24 @@ the origin of a figure is how the record stays checkable.
 - `index.html` — the cohort board.
 - `players/` — per-player pages for cohorts that have filed projections.
 - `api/players/` — the same records as JSON.
+- `api/state.json` — the live cohort state the board shows: roster sizes, filing and
+  settlement dates, and the date and finding of the latest automated sweep. Kwotient's
+  own output and calendar facts; nothing here is used for scoring.
+- `api/schedule.json` — every cohort on the programme with its freeze and settlement
+  dates, and whether its roster is frozen and its projections filed. It carries no
+  path, filename or other detail of the private record's layout.
+- `rosters/` — the frozen populations too large to sit inline on the board, as bare
+  facts only: player, team, position, last season's games and the declared baseline.
+  These are pages rendered from the record, not the frozen record files themselves.
+- `assets/`, `robots.txt`, `sitemap.xml`, `404.html`, `manifest.webmanifest` — the
+  favicon, marks and web-app manifest the pages reference, and the discovery and error
+  paths any site needs. No data.
 - `results.json` — aggregate scorecards as each cohort settles (see the field list below).
+
+The list above is exactly the copy list in the private record's `site/deploy.sh` and the
+path list its `site/publish-gate.js` checks. The three are kept in step: a path added to
+the deploy must be added here first. (List brought up to date 1 September 2026; the
+state, schedule, roster and asset paths had been shipping since August without a line here.)
 
 Per-player pages are public by decision of 16 August 2026. They carry Kwotient's own
 projections against public facts, which is the product. They are subject to the same rule
@@ -31,7 +48,9 @@ as everything else: no licensed data, no reproduced prose.
 ## Never published here
 
 - **The model / engine** (`model/**`), the methodology internals, or the manifest.
-- **Comparables** and the frozen input record files.
+- **Comparables** and the frozen input record files. The record's internal layout —
+  directory names, file names, hashes — is likewise never published; a page or feed
+  may state a fact drawn from a frozen file, never where that file lives.
 - **Reproduced prose.** A quoted sentence from an article is that outlet's expression, not
   a fact, however freely the outlet is cited elsewhere. Paraphrase it and attribute it.
 - **Rival forecasters' projections.** Kwotient scores itself against Eric Pincus, Yossi
