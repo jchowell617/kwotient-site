@@ -2473,6 +2473,10 @@ class Component extends DCLogic {
     if (!S || !st.liveSlate || !st.liveSlate.length) return;
     const g = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
     if (g.state !== 'in_progress' && g.state !== 'final') return;
+    // the poll and the trend loader both ask; one read a beat is enough
+    const bk = st.sport + ':' + g.id;
+    if (this._boxKey === bk && this._boxAt && Date.now() - this._boxAt < 4000) return;
+    this._boxKey = bk; this._boxAt = Date.now();
     S.boxscore(st.sport, g.gameId).then(b => this.setState(x => ({ box: Object.assign({}, x.box, { [g.id]: this.floorOf(st.sport, (x.box || {})[g.id], b) }) })));
   }
   // seconds into the game, from the period and the clock: four twelves, then fives
@@ -3180,18 +3184,21 @@ class Component extends DCLogic {
         cols: [['name', 'PLAYER', 'left', 2], ['pts', 'PTS', 'right', .5], ['ast', 'AST', 'right', .5], ['reb', 'REB', 'right', .5], ['stl', 'STL', 'right', .5], ['fg', 'FG', 'right', .6], ['fgp', 'FG%', 'right', .6], ['fg3', '3PT', 'right', .6], ['tov', 'TO', 'right', .5], ['min', 'MIN', 'right', .5]],
         get: { name: nm, pts: x => n0(x.pts), ast: x => n0(x.ast), reb: x => n0(x.reb), stl: x => n0(x.stl), fg: x => n0(x.fgm) + '-' + n0(x.fga), fgp: x => n0(x.fga) ? (n0(x.fgm) / n0(x.fga) * 100).toFixed(1) : null, fg3: x => n0(x.fg3m) + '-' + n0(x.fg3a), tov: x => n0(x.tov), min: x => x.min != null ? Math.round(x.min) : null } }
     ] : [
-      { key: 'pass', label: 'PASSING', has: x => n0(x.pass_att) > 0, main: 'yds', minw: 520,
-        cols: [['name', 'PLAYER', 'left', 1.8], ['cmp', 'C/ATT', 'right', .8], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['int', 'INT', 'right', .5], ['sk', 'SACKED', 'right', .7], ['rtg', 'RTG', 'right', .6]],
-        get: { name: nm, cmp: x => n0(x.pass_cmp) + '/' + n0(x.pass_att), yds: x => n0(x.pass_yds), avg: x => x.pass_ypa != null ? f1(x.pass_ypa) : (n0(x.pass_att) ? f1(n0(x.pass_yds) / n0(x.pass_att)) : null), td: x => n0(x.pass_td), int: x => n0(x.pass_int), sk: x => x.sacked != null ? n0(x.sacked) : null, rtg: x => f1(x.qb_rating) } },
+      { key: 'pass', label: 'PASSING', has: x => n0(x.pass_att) > 0, main: 'yds', minw: 500,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['cmp', 'C/ATT', 'right', .8], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['int', 'INT', 'right', .5], ['qbr', 'QBR', 'right', .6], ['rtg', 'RTG', 'right', .6]],
+        get: { name: nm, cmp: x => n0(x.pass_cmp) + '/' + n0(x.pass_att), yds: x => n0(x.pass_yds), avg: x => x.pass_ypa != null ? f1(x.pass_ypa) : (n0(x.pass_att) ? f1(n0(x.pass_yds) / n0(x.pass_att)) : null), td: x => n0(x.pass_td), int: x => n0(x.pass_int), qbr: x => f1(x.qbr), rtg: x => f1(x.qb_rating) } },
       { key: 'rush', label: 'RUSHING', has: x => n0(x.rush_att) > 0, main: 'yds', minw: 460,
         cols: [['name', 'PLAYER', 'left', 1.8], ['car', 'CAR', 'right', .5], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['lng', 'LNG', 'right', .5]],
         get: { name: nm, car: x => n0(x.rush_att), yds: x => n0(x.rush_yds), avg: x => x.rush_ypc != null ? f1(x.rush_ypc) : (n0(x.rush_att) ? f1(n0(x.rush_yds) / n0(x.rush_att)) : null), td: x => n0(x.rush_td), lng: x => x.rush_long != null ? n0(x.rush_long) : null } },
       { key: 'rec', label: 'RECEIVING', has: x => n0(x.tgt) > 0 || n0(x.rec) > 0, main: 'yds', minw: 500,
         cols: [['name', 'PLAYER', 'left', 1.8], ['tgt', 'TGT', 'right', .5], ['rec', 'REC', 'right', .5], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['lng', 'LNG', 'right', .5]],
         get: { name: nm, tgt: x => n0(x.tgt), rec: x => n0(x.rec), yds: x => n0(x.rec_yds), avg: x => x.rec_ypr != null ? f1(x.rec_ypr) : (n0(x.rec) ? f1(n0(x.rec_yds) / n0(x.rec)) : null), td: x => n0(x.rec_td), lng: x => x.rec_long != null ? n0(x.rec_long) : null } },
-      { key: 'def', label: 'DEFENSE', has: x => n0(x.tkl) > 0 || n0(x.solo) > 0 || n0(x.sacks) > 0 || n0(x.int) > 0 || n0(x.pd) > 0 || n0(x.tfl) > 0 || n0(x.qbh) > 0 || n0(x.fum_rec) > 0, main: 'tkl', minw: 560,
-        cols: [['name', 'PLAYER', 'left', 1.8], ['tkl', 'TKL', 'right', .5], ['solo', 'SOLO', 'right', .55], ['tfl', 'TFL', 'right', .5], ['sack', 'SACK', 'right', .55], ['qbh', 'QBH', 'right', .5], ['int', 'INT', 'right', .5], ['pd', 'PD', 'right', .5], ['fr', 'FR', 'right', .5]],
-        get: { name: nm, tkl: x => n0(x.tkl), solo: x => n0(x.solo), tfl: x => n0(x.tfl), sack: x => n0(x.sacks), qbh: x => n0(x.qbh), int: x => n0(x.int), pd: x => n0(x.pd), fr: x => n0(x.fum_rec) } },
+      { key: 'fum', label: 'FUMBLES', has: x => n0(x.fum) > 0 || n0(x.fum_lost) > 0 || n0(x.fum_rec) > 0, main: 'fum', minw: 380,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['fum', 'FUM', 'right', .5], ['lost', 'LOST', 'right', .55], ['rec', 'REC', 'right', .5], ['td', 'TD', 'right', .5]],
+        get: { name: nm, fum: x => n0(x.fum), lost: x => n0(x.fum_lost), rec: x => n0(x.fum_rec), td: x => n0(x.fum_td) } },
+      { key: 'def', label: 'DEFENSE', has: x => n0(x.tkl) > 0 || n0(x.solo) > 0 || n0(x.sacks) > 0 || n0(x.int) > 0 || n0(x.pd) > 0 || n0(x.tfl) > 0 || n0(x.qbh) > 0, main: 'tkl', minw: 600,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['tkl', 'TOT', 'right', .5], ['solo', 'SOLO', 'right', .55], ['tfl', 'TFL', 'right', .5], ['sack', 'SACK', 'right', .55], ['qbh', 'QB HIT', 'right', .6], ['pd', 'PD', 'right', .5], ['int', 'INT', 'right', .5], ['intyds', 'INT YDS', 'right', .7], ['td', 'TD', 'right', .5]],
+        get: { name: nm, tkl: x => n0(x.tkl), solo: x => n0(x.solo), tfl: x => n0(x.tfl), sack: x => n0(x.sacks), qbh: x => n0(x.qbh), pd: x => n0(x.pd), int: x => n0(x.int), intyds: x => n0(x.int_yds), td: x => n0(x.int_td) + n0(x.fum_td) } },
       { key: 'kick', label: 'KICKING', has: x => n0(x.fga) > 0 || n0(x.xpm) > 0, main: 'pts', minw: 400,
         cols: [['name', 'PLAYER', 'left', 1.8], ['fg', 'FG', 'right', .6], ['lng', 'LNG', 'right', .5], ['xp', 'XP', 'right', .5], ['pts', 'PTS', 'right', .5]],
         get: { name: nm, fg: x => n0(x.fgm) + '/' + n0(x.fga), lng: x => x.fg_long != null ? n0(x.fg_long) : null, xp: x => n0(x.xpm), pts: x => n0(x.fgm) * 3 + n0(x.xpm) } },

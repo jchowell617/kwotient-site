@@ -66,7 +66,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     }
     var f = root.fetch;
     if (typeof f !== 'function') return bad('this page has no fetch', { url: url });
-    return f(url, { credentials: 'omit' }).then(function (r) {
+    return f(url, { credentials: 'omit', cache: 'no-store' }).then(function (r) {
       return r.json().catch(function () { return {}; }).then(function (body) {
         return {
           ok: r.ok, status: r.status, body: body, url: url,
