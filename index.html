@@ -1439,6 +1439,21 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                     <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">{{ profile.kind }} PROFILE</span>
                     <span style="font-size:22px;font-weight:600">{{ profile.name }}</span>
                     <span style="font-family:var(--kw);font-size:10px;color:var(--second)">{{ profile.sub }}</span>
+                    <div style="display:flex;align-items:center;gap:10px;margin-top:2px"><div style="{{ profSeasonCol.cellStyle }}">
+                    <button data-colmenu="1" onClick="{{ profSeasonCol.click }}" style="{{ profSeasonCol.labelStyle }}">{{ profSeasonCol.label }}<span style="font-size:7px">{{ profSeasonCol.arrow }}</span><span style="{{ profSeasonCol.dotStyle }}"></span></button>
+                    <sc-if value="{{ profSeasonCol.open }}" hint-placeholder-val="{{ false }}">
+                      <div data-colmenu="1" style="{{ profSeasonCol.menuStyle }}">
+                        <form onSubmit="{{ profSeasonCol.onKey }}" style="margin:0"><input value="{{ profSeasonCol.q }}" onChange="{{ profSeasonCol.onQ }}" onKeyDown="{{ profSeasonCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                          <button onClick="{{ profSeasonCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                        </div>
+                        <sc-for list="{{ profSeasonCol.values }}" as="v" hint-placeholder-count="6">
+                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </div>
                   </div>
                   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:0 14px 0 0">
                     <div style="display:flex;align-items:baseline;gap:7px">
@@ -1535,8 +1550,9 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                     </div>
                     <sc-for list="{{ profile.roster }}" as="rp" hint-placeholder-count="5">
                       <div onClick="{{ rp.open }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;cursor:pointer" style-hover="background:var(--nested)">
-                        <span style="flex:1.6;min-width:0;display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:var(--nested);border:1px solid var(--axis);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--brand)">{{ rp.mono }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed)">{{ rp.name }}</span></span>
-                        <span style="flex:.6;color:var(--second)">{{ rp.pos }}</span><span style="flex:.4;color:var(--second)">{{ rp.num }}</span><span style="flex:.5;text-align:right;color:var(--second)">{{ rp.age }}</span><span style="flex:.9;text-align:right;color:var(--lead)">{{ rp.paid }}</span><span style="{{ rp.gradeStyle }};flex:.6;text-align:right">{{ rp.grade }}</span><span style="{{ rp.gradeStyle }};flex:.6;text-align:right">{{ rp.score }}</span>
+                        <sc-for list="{{ rp.cells }}" as="x" hint-placeholder-count="7">
+                          <span style="{{ x.style }}">{{ x.v }}</span>
+                        </sc-for>
                       </div>
                     </sc-for>
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px 12px">
@@ -2329,7 +2345,8 @@ class Component extends DCLogic {
   }
   // the SEASON menu's pick: the logs on screen reload for that season
   setLogSeason(y) {
-    this.setState({ logSeason: y || null, logMenuOpen: null, logMenuQ: '' }, () => {
+    if (y && !(this.state.standings || {})[this.state.sport + ':' + y]) this.loadStandings(y);
+    this.setState({ logSeason: y || null, logMenuOpen: null, logMenuQ: '', tables: Object.assign({}, this.state.tables, { roster: null }) }, () => {
       this.ensureTrendLog();
       if (this.state.profileId && this.state.profileEnt) this.loadLog(this.state.profileId, this.state.profileEnt);
     });
@@ -2725,14 +2742,14 @@ class Component extends DCLogic {
       const on = st.logMenuOpen === key, cur = this.logSeasonDefault(sport), chosen = st.logSeason || null, eff = chosen || cur;
       const label = y => sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y);
       const qv = on ? String(st.logMenuQ || '').trim().toLowerCase() : '';
-      const opts = [{ label: label(cur) + ' · current', value: null }].concat([1, 2, 3, 4].map(n => ({ label: label(cur - n), value: cur - n })));
+      const opts = [{ label: label(cur) + ' · current', value: null }].concat(Array.from({ length: Math.max(0, cur - 2010) }, (_, n) => ({ label: label(cur - n - 1), value: cur - n - 1 })));
       const openMenu = () => this.setState(x => ({ logMenuOpen: x.logMenuOpen === key ? null : key, logMenuQ: '' }));
       return {
-        label: 'SEASON · ' + label(eff) + (chosen ? ' · history' : ''), arrow: '', open: on,
+        label: 'SEASON · ' + label(eff), arrow: '', open: on,
         cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
         menuStyle: 'position:absolute;top:22px;left:0;z-index:40;width:214px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
-        labelStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.08em;cursor:pointer;background:transparent;border:1px solid ' + (chosen ? BLUE : 'var(--axis)') + ';border-radius:100px;padding:3px 8px;display:flex;align-items:center;gap:6px;color:' + (chosen ? BLUE : 'var(--second)'),
-        dotStyle: 'display:none', click: openMenu, toggle: openMenu,
+        labelStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;cursor:pointer;background:transparent;border:none;padding:0;display:flex;align-items:center;gap:4px;white-space:nowrap;color:' + (chosen ? 'var(--reversed)' : 'var(--collabel)'),
+        dotStyle: 'width:5px;height:5px;border-radius:50%;background:' + BLUE + ';flex:none;display:' + (chosen ? 'block' : 'none'), click: openMenu, toggle: openMenu,
         q: on ? (st.logMenuQ || '') : '', onQ: e => this.setState({ logMenuQ: e.target.value }),
         onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); const hit = opts.find(o => (st.logMenuQ || '').trim() && o.label.toLowerCase().indexOf((st.logMenuQ || '').trim().toLowerCase()) >= 0); if (hit && e.key !== 'Escape') this.setLogSeason(hit.value); else this.setState({ logMenuOpen: null }); } },
         clear: () => this.setLogSeason(null),
@@ -2921,7 +2938,7 @@ class Component extends DCLogic {
     const bookHistHead = 'PAST MEETINGS · ' + (bookOpp ? g.homeAbbr + ' VS ' + bookOpp : g.homeAbbr + ' · EVERY GAME') + ' · ' + histSeasonLabel(Number(bookRec && bookRec.season) || histEff).toUpperCase() + (bookRec && bookRec.fellBack ? ' (NO GAMES YET IN ' + histSeasonLabel(histEff).toUpperCase() + ')' : '') + (bookHistGame ? ' · ' + gameLabelOf(bookHistGame).toUpperCase() : bookMeetingsAll.length > 10 ? ' · THE LAST 10 OF ' + bookMeetingsAll.length : '');
     const bookHistNote = bookHistGame ? 'the consensus at tip, then each book' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side at tip · cover reads the final score against it";
     const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons'
-      : !tlog ? 'no game log yet' : tlog.state === 'ready' ? logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+      : !tlog ? 'no game log yet' : tlog.state === 'ready' ? logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '')
       : tlog.state === 'loading' ? 'loading…' : 'no game log yet';
     // the same pool as a props-style table: what he did, not what a book priced
     const logOf = p => { const l = (st.logs || {})[this.logKey(p.id)]; return l && l.state === 'ready' ? l.rows.map(r => r.v) : null; };
@@ -3363,6 +3380,26 @@ class Component extends DCLogic {
     }));
 
     let profile = null, profHistAbbr = null, profHistRows = [], rosterShown = [], rosterCols = [], rosterSearchVals = null;
+    // the season the profile reads: the one in play, or a past one picked from the header
+    const profSeason = st.logSeason || histCur, profPast = !!st.logSeason && st.logSeason !== histCur;
+    const profSeasonLabel = histSeasonLabel(profSeason);
+    const profStand = (st.standings || {})[sport + ':' + profSeason] || null;
+    const profBy = profPast ? (profStand && profStand.ok ? (profStand.by || {}) : {}) : standBy;
+    const profRowOf = x => st.logSeason && S ? S.seasonRow(sport, x.full || x.name, st.logSeason) : null;
+    // a club's season rows on the scorecard: from that season's table, each ranked among the league
+    const recPct = txt => { const m = String(txt || '').match(/^(\d+)-(\d+)(?:-(\d+))?/); if (!m) return null; const w = +m[1], l = +m[2], t = +(m[3] || 0); return w + l + t ? (w + t / 2) / (w + l + t) : null; };
+    const seasonCardRows = abbr => {
+      const all = Object.values(profBy); const mine = profBy[abbr]; if (!mine || !mine.played) return [];
+      const rows = [];
+      [['Record', x => x.pct], ['Point differential', x => x.diff], ['Home', x => recPct(x.home)], ['Road', x => recPct(x.road)], ['Division', x => recPct(x.divRec)], ['Conference', x => recPct(x.confRec)]]
+        .forEach(([k, pick]) => { const v = pick(mine); if (v == null) return; const vals = all.map(x => pick(x)).filter(x => x != null); if (vals.length < 3) return; const rk = rankIn(vals, v, true); rows.push({ k, rank: rk.rank, n: rk.n, pct: rk.pct }); });
+      return rows;
+    };
+    // the players on a club in a past season, from the seasons the record holds
+    const seasonRosterOf = (abbr, season) => { const P = S ? S.seasons(sport).players : {}; const out = [];
+      Object.keys(P).forEach(name => { const row = P[name].find(x => x[0] === season && x[1] === abbr); if (!row) return; const now = rosterByName[NK(name)] || null;
+        out.push({ full: name, name: now ? now.name : name, pos: now ? now.pos : '—', num: now ? now.num : null, age: now ? now.age : null, paid: now ? now.paid : null, k: now && now.k != null ? now.k : null, gp: row[2], line: row[3] != null ? row[3] + ' ' + (row[4] || '') : '—', team: abbr, ent: now }); });
+      return out.sort((a, b) => (b.k == null ? -1 : b.k) - (a.k == null ? -1 : a.k)); };
     const ROSTER_PAGE = 12; let rosterLimit = ROSTER_PAGE;
     const ROSTER_SEARCH_COLS = [['name', 'PLAYER'], ['pos', 'POS'], ['num', '#'], ['age', 'AGE'], ['paid', 'PAID'], ['grade', 'GRADE'], ['k', 'SCORE']];
     if (st.profileId && S && (roster.length || clubs.length)) {
@@ -3374,7 +3411,7 @@ class Component extends DCLogic {
       const tipBox = (i, n) => 'position:absolute;bottom:126px;' + (i > n - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
         'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none';
       const logNote = (what) => !log ? 'no ' + what + ' yet'
-        : log.state === 'ready' ? logRows.length + ' games · ' + log.season + ' season' + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+        : log.state === 'ready' ? logRows.length + ' games · ' + log.season + ' season' + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '')
         : log.state === 'loading' ? 'loading…'
         : 'no ' + what + ' yet';
       if (isP) {
@@ -3390,7 +3427,7 @@ class Component extends DCLogic {
         const roll = vals.map((_, i) => av(vals.slice(Math.max(0, i - 2), i + 1)));
         profile = {
           kind: 'PLAYER', mono: mono(pl.full), name: pl.full,
-          sub: (dirSeason && seasonRowOf(pl) ? seasonRowOf(pl).team + ' in ' + (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : dirSeason) + ' · now ' + pl.team : pl.team) + ' · ' + pl.pos + (pl.num ? ' · #' + pl.num : '') + (pl.age ? ' · age ' + pl.age : '') + ' · ' + sport,
+          sub: (profRowOf(pl) ? profRowOf(pl).team + ' in ' + profSeasonLabel + ' · now ' + pl.team : pl.team) + ' · ' + pl.pos + (pl.num ? ' · #' + pl.num : '') + (pl.age ? ' · age ' + pl.age : '') + ' · ' + sport,
           headline: [
             { k: 'KWOTIENT', v: pl.k == null ? '—' : String(pl.k) },
             { k: 'AT ' + labelOf(pl.pos), v: pl.pr ? pl.pr + ' of ' + pl.pn : 'unrated' },
@@ -3398,14 +3435,14 @@ class Component extends DCLogic {
           ],
           // a past season's line from the record, when the directory has been asked for one
           stats: (() => {
-            const sr = dirSeason ? seasonRowOf(pl) : null;
+            const sr = profRowOf(pl);
             if (!sr || !sr.stats) return pb.stats;
             const L = sport === 'NBA'
               ? [['gp', 'GP'], ['min', 'MIN'], ['pts', 'PTS'], ['reb', 'REB'], ['ast', 'AST'], ['stl', 'STL'], ['blk', 'BLK'], ['tov', 'TOV'], ['fg3m', '3PM'], ['fg_pct', 'FG%', 100], ['fg3_pct', '3P%', 100], ['ft_pct', 'FT%', 100], ['ts_pct', 'TS%', 100], ['usg_pct', 'USG%', 100], ['net_rating', 'NET RTG'], ['pie', 'PIE'], ['plus_minus', '+/-']]
               : [['g', 'G'], ['cmp', 'CMP'], ['att', 'ATT'], ['pyd', 'PASS YDS'], ['ptd', 'PASS TD'], ['int', 'INT'], ['sk', 'SACKED'], ['car', 'CAR'], ['ryd', 'RUSH YDS'], ['rtd', 'RUSH TD'], ['fum', 'FUM'], ['tgt', 'TGT'], ['rec', 'REC'], ['cyd', 'REC YDS'], ['ctd', 'REC TD'], ['tkl', 'TKL'], ['tfl', 'TFL'], ['dsk', 'SACKS'], ['dint', 'DEF INT'], ['pd', 'PD'], ['ff', 'FF'], ['fgm', 'FGM'], ['fga', 'FGA'], ['xpm', 'XPM']];
             const fmt = (v, scale) => { const n = Number(v); if (!isFinite(n)) return String(v); const x = scale ? n * scale : n; return Number.isInteger(x) ? String(x) : x.toFixed(1); };
             const cells = L.filter(([k]) => sr.stats[k] != null).map(([k, label, scale]) => ({ k: label, v: fmt(sr.stats[k], scale) }));
-            return cells.length ? [{ k: 'SEASON', v: (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : String(dirSeason)) }, { k: 'CLUB', v: sr.team || '—' }].concat(cells) : pb.stats;
+            return cells.length ? [{ k: 'SEASON', v: profSeasonLabel }, { k: 'CLUB', v: sr.team || '—' }].concat(cells) : pb.stats;
           })(),
           barsNote: logNote('game log') + (filtOn('profile') ? ' · ' + pRows.length + ' match the search' : '') + (vals.length ? ' · ' + unit + ' against his ' + season.toFixed(1) + ' average' : ''),
           axisMax: mx.toFixed(0), axisLine: vals.length ? season.toFixed(1) : '—',
@@ -3452,12 +3489,22 @@ class Component extends DCLogic {
         const cl = clubs.find(x => x.abbr === key) || clubs[0];
         const cb = clubBundle(cl);
         // the roster is a table like the others: every column sorts and filters, the box searches them all
-        const rosterGet = { name: p => p.full, pos: p => p.pos || null, num: p => p.num != null ? Number(p.num) : null, age: p => p.age != null ? Number(p.age) : null, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => gradeOf(p.k), k: p => p.k };
-        TABLES.roster = { rows: cb.rosterOf, get: rosterGet };
+        const rosterAll = profPast ? seasonRosterOf(cl.abbr, profSeason) : cb.rosterOf;
+        const rosterGet = profPast
+          ? { name: p => p.full, pos: p => p.pos || null, gp: p => p.gp != null ? Number(p.gp) : null, line: p => p.line, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => p.k != null ? gradeOf(p.k) : null, k: p => p.k }
+          : { name: p => p.full, pos: p => p.pos || null, num: p => p.num != null ? Number(p.num) : null, age: p => p.age != null ? Number(p.age) : null, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => gradeOf(p.k), k: p => p.k };
+        const rosterColDefs = profPast
+          ? [['name', 'PLAYER', 'left', 1.6], ['pos', 'POS', 'left', .6], ['gp', 'GP', 'right', .5], ['line', profSeasonLabel + ' LINE', 'left', 1.2], ['paid', 'PAID NOW', 'right', .9], ['grade', 'GRADE', 'right', .6], ['k', 'SCORE', 'right', .6]]
+          : [['name', 'PLAYER', 'left', 1.6], ['pos', 'POS', 'left', .6], ['num', '#', 'left', .4], ['age', 'AGE', 'right', .5], ['paid', 'PAID', 'right', .9], ['grade', 'GRADE', 'right', .6], ['k', 'SCORE', 'right', .6]];
+        TABLES.roster = { rows: rosterAll, get: rosterGet };
         rosterLimit = tstate('roster').limit || ROSTER_PAGE;
-        rosterShown = tapply('roster', cb.rosterOf, rosterGet, p => p.full + ' ' + (p.pos || '') + ' ' + (p.num != null ? '#' + p.num : '') + ' ' + (p.age != null ? p.age : '') + ' ' + S.M(p.paid) + ' ' + gradeOf(p.k) + ' ' + p.k);
-        rosterCols = [tcol('roster', 'name', 'PLAYER', null, 'left', 1.6), tcol('roster', 'pos', 'POS', null, 'left', .6), tcol('roster', 'num', '#', null, 'left', .4), tcol('roster', 'age', 'AGE', null, 'right', .5), tcol('roster', 'paid', 'PAID', null, 'right', .9), tcol('roster', 'grade', 'GRADE', null, 'right', .6), tcol('roster', 'k', 'SCORE', null, 'right', .6)];
-        rosterSearchVals = searchFor('roster', histMenuFor('roster', cl.abbr), { table: 'roster', cols: ROSTER_SEARCH_COLS, placeholder: 'search the roster · player, position, number, age, salary, grade, score', count: rosterShown.length + ' of ' + cb.rosterOf.length, groups: colGroups(cb.rosterOf, rosterGet, ROSTER_SEARCH_COLS) });
+        rosterShown = tapply('roster', rosterAll, rosterGet, rowText(rosterGet));
+        rosterCols = rosterColDefs.map(([k, label, align, flex]) => tcol('roster', k, label, null, align, flex));
+        const rosterSearchCols = rosterColDefs.map(([k, label]) => [k, label]);
+        rosterSearchVals = searchFor('roster', histMenuFor('roster', cl.abbr), { table: 'roster', cols: rosterSearchCols, placeholder: 'search the roster · player, position, salary, grade, score', count: rosterShown.length + ' of ' + rosterAll.length, groups: colGroups(rosterAll, rosterGet, rosterSearchCols) });
+        const rosterCells = p => rosterColDefs.map(([k, , align, flex]) => { const v = rosterGet[k](p); const txt = v == null ? '—' : k === 'paid' ? S.M(v) : k === 'num' ? '#' + v : String(v);
+          return { v: txt, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : k === 'grade' || k === 'k' ? 'font-weight:700;color:' + (p.k != null ? gradeColor(p.k) : 'var(--muted)') : 'color:var(--second)') }; });
+        const seasonRows = seasonCardRows(cl.abbr);
         const cFell = false;
         const cRows = logRows.filter(r => rowMatch(r, 'profile')), cOpp = null;
         profHistAbbr = cl.abbr; profHistRows = logRows;
@@ -3468,13 +3515,21 @@ class Component extends DCLogic {
         const wins = margins.filter(v => v > 0).length;
         profile = {
           kind: 'CLUB', mono: cl.abbr, name: cl.name,
-          sub: sport + ' · ' + (standBy[cl.abbr] ? standBy[cl.abbr].record + ' · ' + placeWords(standBy[cl.abbr]) + ' · ' + seasonNote : (cl.record || '—') + ' · ' + ((cl.conf || '') + ' ' + (cl.div || '')).trim()),
-          headline: [
+          sub: sport + ' · ' + (profBy[cl.abbr] ? profBy[cl.abbr].record + ' · ' + placeWords(profBy[cl.abbr]) + ' · ' + (profPast ? profSeasonLabel + ' · final' : seasonNote) : profPast ? (profStand ? 'no table on record for ' + profSeasonLabel : 'loading…') : (cl.record || '—') + ' · ' + ((cl.conf || '') + ' ' + (cl.div || '')).trim()),
+          headline: profPast ? [
+            { k: 'RECORD', v: profBy[cl.abbr] ? profBy[cl.abbr].record : '—' },
+            { k: 'PLACE', v: profBy[cl.abbr] && profBy[cl.abbr].confRank ? ord(profBy[cl.abbr].confRank) + ' ' + (profBy[cl.abbr].conf || '') : '—' },
+            { k: 'DIFF', v: profBy[cl.abbr] && profBy[cl.abbr].diff != null ? (profBy[cl.abbr].diff > 0 ? '+' : '') + profBy[cl.abbr].diff : '—' }
+          ] : [
             { k: 'KWOTIENT', v: cl.k == null ? '—' : String(cl.k) },
             { k: 'RANK', v: cl.rank ? cl.rank + ' of ' + cl.of : '—' },
             { k: 'LAST ' + (margins.length || 12), v: margins.length ? wins + '-' + (margins.length - wins) : '—' }
           ],
-          stats: cb.stats,
+          stats: profPast ? (profBy[cl.abbr] ? [
+            { k: 'SEASON', v: profSeasonLabel }, { k: 'RECORD', v: profBy[cl.abbr].record }, { k: 'PLACE', v: placeWords(profBy[cl.abbr]) },
+            { k: 'HOME', v: profBy[cl.abbr].home || '—' }, { k: 'ROAD', v: profBy[cl.abbr].road || '—' }, { k: 'DIVISION', v: profBy[cl.abbr].divRec || '—' }, { k: 'CONFERENCE', v: profBy[cl.abbr].confRec || '—' },
+            { k: 'POINT DIFF', v: profBy[cl.abbr].diff != null ? (profBy[cl.abbr].diff > 0 ? '+' : '') + profBy[cl.abbr].diff : '—' }
+          ] : [{ k: 'SEASON', v: profSeasonLabel }, { k: 'TABLE', v: profStand ? 'not on record' : 'loading…' }]) : cb.stats,
           barsNote: logNote('team log') + (filtOn('profile') ? ' · ' + cRows.length + ' match the search' : '') + (margins.length ? ' · scoring margin' : ''),
           axisMax: '+' + mx.toFixed(0), axisLine: '0',
           lineMark: 'position:absolute;left:0;right:0;bottom:59px;height:0;border-top:1px dashed var(--brand);opacity:.6',
@@ -3533,14 +3588,15 @@ class Component extends DCLogic {
           edgeStyle: 'font-family:var(--kw);font-size:26px;font-weight:700;color:' + (cl.k == null ? 'var(--muted)' : gradeColor(cl.k)),
           edgeNote: 'of ' + (cl.of || clubs.length) + ' clubs on the Kwotient Score',
           factors: cb.factors,
-          card: cb.card,
+          // the card: today's engine and roster rows with the season's table beneath them; a
+          // past season is its table alone, ranked among that season's clubs
+          card: (() => { if (!profPast) { const c = Object.assign({}, cb.card); c.rows = cb.card.rows.concat(scorecard(seasonRows, '').rows); return c; }
+            const c = scorecard(seasonRows, sport + ' CLUBS · ' + profSeasonLabel + ' · n=' + Object.keys(profBy).length); if (!seasonRows.length) { c.overall = '—'; c.grade = '—'; c.color = 'var(--muted)'; } return c; })(),
           explorer: explorerFor(cl, clubs),
-          rosterNote: cb.rosterOf.length + ' rated players · ranked inside their own position',
+          rosterNote: profPast ? (rosterAll.length ? rosterAll.length + ' players on the ' + profSeasonLabel + ' club · the score and pay are today\'s' : 'no roster on record for the ' + profSeasonLabel + ' season') : cb.rosterOf.length + ' rated players · ranked inside their own position',
           roster: rosterShown.slice(0, rosterLimit).map(p => ({
-            mono: mono(p.full), name: p.full, pos: p.pos || '—', num: p.num ? '#' + p.num : '—', age: p.age != null ? String(p.age) : '—',
-            paid: S.M(p.paid), grade: gradeOf(p.k), score: String(p.k),
-            gradeStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + gradeColor(p.k),
-            open: () => this.openProfile('p:' + p.name, p)
+            cells: rosterCells(p),
+            open: () => { if (p.ent || !profPast) this.openProfile('p:' + p.name, p.ent || p); }
           })),
           news: cb.news
         };
@@ -4212,6 +4268,7 @@ paceRows: (() => {
       rosterShowLess: () => tset('roster', { limit: ROSTER_PAGE }),
       rosterCanCollapse: rosterLimit > ROSTER_PAGE,
       rosterPageNote: 'showing ' + Math.min(rosterLimit, rosterShown.length) + ' of ' + rosterShown.length,
+      profSeasonCol: seasonMenuFor('profile'),
       rosterCols, rosterSearch: rosterSearchVals || searchFor('roster', histMenuFor('roster', g.homeAbbr), { table: 'roster', cols: ROSTER_SEARCH_COLS }),
       profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', groups: logGroups(profHistRows) }),
       h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', groups: logGroups(profHistRows) }),
