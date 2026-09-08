@@ -819,6 +819,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </sc-if>
 
 
+              <div style="grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:13px;align-items:stretch;min-width:0">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
                   <button data-chev="1" onClick="{{ p.total.toggle }}" style="{{ p.total.btn }}">{{ p.total.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Team Stats</span></div>
@@ -868,6 +869,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
               </sc-if>
             </section>
+              </div>
             </div>
 
             <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
