@@ -261,6 +261,8 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     club: function (lg, code) { var c = String(code || '').toUpperCase(); return record.clubs(lg).filter(function (x) { return x.code === c; })[0] || null; },
     constants: function (lg) { var d = cache.data; return d && d.constants ? (lg ? d.constants[lg] : d.constants) : null; },
     captured: function (lg) { var d = cache.data; return d ? ((d.leagues[lg || 'nba'] || {}).captured || d.built) : null; },
+    /* the season the ratings are read on, and whether it is the one in play */
+    ratedSeason: function (lg) { var d = cache.data; var L = d ? (d.leagues[lg || 'nba'] || {}) : {}; return { season: L.ratedSeason || null, inPlay: !!L.inPlay, captured: L.captured || (d && d.built) || null }; },
     /* the profile under a card: everything the record holds, from the detail file */
     profile: function (lg, kind, id) {
       return record.detail().then(function (dt) {
@@ -714,6 +716,11 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     origin: function () { return kq().live.origin(); },
     get edgeUrl() { return kq().live.url; },
     captured: function (sport) { return kq().record.captured(lg(sport)); },
+    /* the season the ratings stand on: "2026 season · in play · as of Sep 8, 2026" or the completed one standing in */
+    ratedSeason: function (sport) { var r = kq().record.ratedSeason ? kq().record.ratedSeason(lg(sport)) : { season: null, inPlay: false, captured: kq().record.captured(lg(sport)) };
+      var L = lg(sport); var label = r.season == null ? '' : (L === 'nba' ? r.season + '-' + String(r.season + 1).slice(2) : String(r.season));
+      return { season: r.season, label: label, inPlay: r.inPlay, captured: r.captured,
+               text: (label ? label + ' season' : 'season') + (r.inPlay ? ' · in play' : ' · last completed') + (r.captured ? ' · as of ' + day(r.captured) : '') }; },
     built: function () { var d = kq().cohorts.doc(); return d ? d.built : ''; },
     players: players, clubs: clubs, clubK: clubK, cohorts: cohorts, cohortsFor: cohortsFor, cohortRecord: cohortRecord,
     programme: function () { var d = kq().cohorts.doc(); return d ? d.programme : null; },

@@ -3197,7 +3197,7 @@ class Component extends DCLogic {
     };
 
     // ---------- the explorer: the record's dimensions and skills, ranked inside the position ----------
-    const seasonLabel = () => (S ? 'captured ' + S.captured(sport) : '—');
+    const seasonLabel = () => (S && S.ratedSeason ? S.ratedSeason(sport).text : S ? 'as of ' + S.captured(sport) : '—');
     const ratingTable = () => {
       if (this._rt && this._rt.k === sport && this._rt.n === roster.length) return this._rt.map;
       const map = {};
