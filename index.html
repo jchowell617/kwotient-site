@@ -2254,9 +2254,9 @@ const LEAGUE_EDGE = { NBA: 2.5, NFL: 1.8 };   // the model's home edge, in point
 class Component extends DCLogic {
   constructor(p) {
     super(p);
-    // the site opens on the NFL live game
+    // the site opens on the NFL scoreboard
     const sport = (p && p.sport) || 'NFL';
-    this.state = { sport, kq: 'connecting', liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {}, tab: 'live', phase: 'ALL', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, bucketHover: null, pTrendHover: null, tTrendHover: null, mktSel: [], mktQ: '', shut: {}, propF: {}, propOpenCol: null, propSort: null, propDir: 'asc', trendQ: '', teamSide: 'home', propIdx: 0, dir: 'players', profileId: null, activeId: SLATES[sport][0].id, tick: 0, added: false, series: this.seed(sport) };
+    this.state = { sport, kq: 'connecting', liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {}, tab: 'board', phase: 'ALL', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, bucketHover: null, pTrendHover: null, tTrendHover: null, mktSel: [], mktQ: '', shut: {}, propF: {}, propOpenCol: null, propSort: null, propDir: 'asc', trendQ: '', teamSide: 'home', propIdx: 0, dir: 'players', profileId: null, activeId: SLATES[sport][0].id, tick: 0, added: false, series: this.seed(sport) };
   }
 
   seed(sport, list) {
@@ -2599,12 +2599,12 @@ class Component extends DCLogic {
   // the logo is the home button: back to the opening screen with every panel at rest, the
   // slate re-read from the edge and the trend log re-fetched — the same reset a sport switch
   // does, without changing the sport
-  // the logo is the front door: the NFL live game, regenerated
+  // the logo is the front door: the NFL scoreboard, regenerated
   goHome() {
     clearTimeout(this._liveT);
     const sport = 'NFL';
     this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
-    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'live', cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {}, dirSeason: null, trendId: null,
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'board', cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {}, dirSeason: null, trendId: null,
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
     try { window.scrollTo(0, 0); const m = document.querySelector('[data-shell=main]'); if (m) m.scrollTop = 0; } catch (e) {}
@@ -2614,7 +2614,10 @@ class Component extends DCLogic {
   switchSport(sport) {
     clearTimeout(this._liveT);
     this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
-    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, tab: 'live', activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {},
+    // a league the reader chose stays chosen, even with nothing on its slate; only the first
+    // load is allowed to open on the other league
+    this._autoSport = true;
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, tab: 'board', activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', dirSeason: null, propIdx: 0, trendQ: '', trendId: null, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     // the poll loads the trend logs and the props itself once the real slate is in hand, so
     // nothing is asked for the placeholder slate
