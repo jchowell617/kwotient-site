@@ -1326,7 +1326,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Buzz</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
-                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">signings, trades, rumors and roster news across the {{ sport }} slate · narrative and contract terms from the licensed feeds — sources in Reference · reference only, not live ingest</span>
+                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">live reads and the narrative for every game on the {{ sport }} slate, then signings, trades, rumors and roster news from the record{{ buzzLiveNote }}</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ buzzCount }}</span>
@@ -2171,7 +2171,7 @@ const matchQ = (text, q) => {
 };
 const PILL_A = 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ';
 const NAV = [
-  ['board', 'Scoreboard'], ['live', 'Live game'], ['alerts', 'Alerts'], ['buzz', "What's buzzing"],
+  ['board', 'Scoreboard'], ['live', 'Live game'], ['alerts', 'Alerts'], ['buzz', "Buzz"],
   ['profiles', 'Players & clubs'], ['model', 'Model']
 ];
 
@@ -2353,14 +2353,20 @@ class Component extends DCLogic {
   loadStory() {
     const S = SRC(); const st = this.state;
     if (!S || !st.liveSlate || !st.liveSlate.length) return;
-    const g = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
-    const phase = g.state === 'final' ? 'postgame' : g.state === 'in_progress' ? 'live' : 'pregame';
     const voice = st.voice || 'BETTING';
     const opts = { audience: voice === 'STATS' ? 'stats' : 'betting', tone: voice === 'HUMOR' ? 'humor' : 'editorial' };
+    this._storyKeys = this._storyKeys || {};
+    // the open game first, then the rest of the slate, so the buzz carries every game as it goes
+    const active = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
+    [active].concat(st.liveSlate.filter(x => x !== active)).forEach((g, i) => setTimeout(() => this.loadStoryFor(g, opts, voice), i * 120));
+  }
+  loadStoryFor(g, opts, voice) {
+    const S = SRC(); if (!S || !g || !g.live) return;
+    const phase = g.state === 'final' ? 'postgame' : g.state === 'in_progress' ? 'live' : 'pregame';
     const key = g.id + '|' + phase + '|' + voice;
-    if (this._storyKey === key && phase !== 'live') return;
-    this._storyKey = key;
-    S.story(st.sport, g.gameId, phase, opts).then(r => {
+    if (this._storyKeys[g.id] === key && phase !== 'live') return;
+    this._storyKeys[g.id] = key;
+    S.story(this.state.sport, g.gameId, phase, opts).then(r => {
       const list = r.ok ? (r.body.stories || (r.body.story ? [r.body.story] : [])) : [];
       const items = list.map(x => ({
         phase, at: x.created_at || x.timestamp || new Date().toISOString(), type: x.type || '',
@@ -3898,16 +3904,28 @@ class Component extends DCLogic {
     // ---------- what's buzzing: the record's ledgers ----------
     // every contract and injury change the daily captures saw, the researched posts and
     // the rumor ledger — dated the day the record first saw them, never a news crawl
-    const BUZZ_KINDS = ['ALL', 'SIGNING', 'INJURY', 'RUMOR'];
+    const BUZZ_KINDS = ['ALL', 'LIVE', 'STORY', 'SIGNING', 'INJURY', 'RUMOR'];
     const buzzKind = st.buzzKind || 'ALL';
-    const buzzAll = (S ? S.wire(sport) : []).slice(0, 60).map(w => ({ kind: w.kind, tone: w.tone, t: S.day(w.date), who: w.who || '—', head: w.head, body: w.body, src: w.src }));
+    // what is happening now: the narrative feed's pieces for every game on the slate and the
+    // edge's live reads (scores, line moves, model against market), newest first, on the beat
+    const liveBuzz = (() => {
+      const items = [];
+      slate.forEach(x => {
+        const sto = (st.stories || {})[x.id]; if (!sto || !sto.items) return;
+        sto.items.forEach(it => items.push({ kind: it.phase === 'live' ? 'LIVE' : 'STORY', tone: it.phase === 'live' ? 1 : 2, at: it.at || sto.at, t: S ? S.age(it.at || sto.at) + ' ago' : '', who: x.awayAbbr + ' @ ' + x.homeAbbr, mono: x.homeAbbr,
+          head: x.away + ' at ' + x.home + (it.phase === 'live' ? ' · live' : it.phase === 'pregame' ? ' · pregame' : ' · postgame'), body: it.text, src: 'narrative feed' }));
+      });
+      if (!slateSim) liveFeed().filter(a => a.phase === 'LIVE' || a.kind === 'LINE' || a.kind === 'EDGE').forEach(a => items.push({ kind: 'LIVE', tone: a.tone === 0 ? 0 : 1, at: st.liveMeta && st.liveMeta.fetched || new Date().toISOString(), t: a.t || 'now', who: a.game, mono: a.game, head: a.kind + ' · ' + a.game, body: a.text, src: 'live edge' }));
+      return items.sort((a, b) => String(b.at).localeCompare(String(a.at)));
+    })();
+    const buzzAll = liveBuzz.concat((S ? S.wire(sport) : []).slice(0, 60).map(w => ({ kind: w.kind, tone: w.tone, t: S.day(w.date), who: w.who || '—', head: w.head, body: w.body, src: w.src })));
     const buzzShut = st.shut || {};
     const buzzItems = buzzAll.filter(b => buzzKind === 'ALL' || b.kind === buzzKind).map(b => {
       const c = b.tone === 1 ? ACC : b.tone === 2 ? 'var(--lead)' : b.tone === 0 ? RED : 'var(--second)';
       const bk = 'bz' + buzzAll.indexOf(b);
       return {
         kind: b.kind, t: b.t, who: b.who, head: b.head, body: b.body, src: b.src,
-        mono: b.who,
+        mono: b.mono || b.who,
         open: !buzzShut[bk],
         chevron: buzzShut[bk] ? '▸' : '▾',
         toggle: () => this.setState(x => ({ shut: Object.assign({}, x.shut, { [bk]: !(x.shut || {})[bk] }) })),
@@ -4207,6 +4225,7 @@ class Component extends DCLogic {
       })),
       voiceNote: 'requested in the ' + (st.voice || 'BETTING').toLowerCase() + ' voice on ingest',
       buzzCount: buzzItems.length + ' of ' + buzzAll.length,
+      buzzLiveNote: liveOn && st.liveMeta && st.liveMeta.fetched && S ? ' · live · read ' + S.age(st.liveMeta.fetched) + ' ago' : '',
       isProfiles: st.tab === 'profiles',
       isAlerts: st.tab === 'alerts',
 
