@@ -204,6 +204,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <div style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key);margin-bottom:9px">SLATE</div>
         </div>
         <div data-shell="slate" style="overflow-y:auto;padding:0 8px 10px;display:flex;flex-direction:column;gap:3px">
+          <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second);padding:4px 8px 8px;line-height:1.5">{{ noSlateShort }}</div></sc-if>
           <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
             <div onClick="{{ g.select }}" style="{{ g.rowStyle }}">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
@@ -253,13 +254,19 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <span style="flex:1"></span>
               <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
             </div>
+            <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}">
+            <section style="border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:22px 20px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-size:15px;font-weight:600">{{ noSlateHead }}</span>
+              <span style="font-family:var(--kw);font-size:10.5px;color:var(--second);line-height:1.6">{{ noSlateNote }}</span>
+            </section>
+            </sc-if>
+            <sc-if value="{{ hasSlate }}" hint-placeholder-val="{{ true }}">
 
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:linear-gradient(180deg,var(--divider),var(--surface));padding:17px 19px">
               <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end">
                 <div style="display:flex;flex-direction:column;gap:8px;min-width:200px">
                   <div style="display:flex;align-items:center;gap:9px">
                     <span style="{{ heroStateStyle }}">{{ heroState }}</span>
-                    <span style="font-family:var(--kw);font-size:9px;color:var(--muted);letter-spacing:.14em">{{ venue }}</span>
                   </div>
                   <div style="display:flex;align-items:baseline;gap:12px">
                     <span style="font-size:23px;font-weight:600;flex:1">{{ awayName }}</span>
@@ -976,6 +983,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </sc-for>
             </sc-if>
             </section>
+            </sc-if>
           </div>
         </sc-if>
 
@@ -986,6 +994,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">click a card to open the live dashboard</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
             </div>
             <sc-if value="{{ p.boardCards.open }}" hint-placeholder-val="{{ true }}">
+              <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10.5px;color:var(--second);padding:6px 0 10px">{{ noSlateNote }}</div></sc-if>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(296px,1fr));gap:13px">
               <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
                 <section onClick="{{ g.select }}" style-hover="transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,.34);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px;cursor:pointer;display:flex;flex-direction:column;gap:12px">
@@ -3795,7 +3804,7 @@ class Component extends DCLogic {
             };
           })(),
           histRows: cRows.length ? [{ k: (filtOn('profile') ? 'SEARCH' : 'EVERY GAME') + ' · ' + histSeasonLabel(Number(log && log.season) || histEff), v: cRows.filter(r => r.margin > 0).length + '-' + cRows.filter(r => r.margin < 0).length + ' · avg margin ' + (av(margins) >= 0 ? '+' : '') + av(margins).toFixed(1) + (cRows.some(r => r.pf != null) ? ' · avg total ' + av(cRows.filter(r => r.pf != null).map(r => r.pf + r.pa)).toFixed(1) : '') }] : [],
-          predHead: tonight ? 'Tonight · ' + tonight.awayAbbr + ' @ ' + tonight.homeAbbr + (slateSim ? ' · simulated slate' : '') : 'No game on the slate',
+          predHead: tonight ? 'Tonight · ' + tonight.awayAbbr + ' @ ' + tonight.homeAbbr + '' : 'No game on the slate',
           predRows: [
             { k: 'MODEL WIN PROB', v: wpp == null ? '—' : wpp.toFixed(1) + '%' },
             { k: 'COMMITTED', v: S.M(cl.committed) },
@@ -3860,25 +3869,7 @@ class Component extends DCLogic {
     const HEX = (st.theme || 'dark') === 'dark'
       ? { brand: '#4d8bff', axis: '#2c3241', grid: '#1f232e', nested: '#171b25', second: '#98a3b3', lead: '#c9d1dc' }
       : { brand: '#1d5fd6', axis: '#b4c2d8', grid: '#d2dcec', nested: '#e2e9f4', second: '#5a6b82', lead: '#2c3a4e' };
-    const feedSim = [
-      { phase: 'LIVE', kind: 'EDGE', t: 'now', game: slate[0].homeAbbr, tone: 1, text: slate[0].homeAbbr + ' spread at ' + slate[0].line + ', model fair ' + slate[0].fair.toFixed(1) + '. Model favors the home side.' },
-      { phase: 'LIVE', kind: 'PACE', t: '0:18', game: slate[0].homeAbbr, tone: 3, text: nba ? 'Game running at 104.8 possessions/48 — 6.2 above both season paces.' : 'Both offenses averaging 24.1 seconds per snap, fastest of the week.' },
-      { phase: 'LIVE', kind: 'SWING', t: '0:42', game: sl(1).awayAbbr, tone: 2, text: sl(1).awayAbbr + ' win probability +11.4 across three possessions.' },
-      { phase: 'LIVE', kind: 'SHOOTING', t: '1:02', game: sl(1).homeAbbr, tone: 0, text: nba ? sl(1).homeAbbr + ' 4-of-19 from three, 11.4 points below shot-quality expectation.' : sl(1).homeAbbr + ' 2.9 yards per carry against a 4.4 expectation.' },
-      { phase: 'LIVE', kind: 'PROP', t: '1:18', game: slate[0].homeAbbr, tone: 1, text: PROPS[sport][0].name + ' pacing ' + (PROPS[sport][0].line + 4).toFixed(1) + ' against a ' + PROPS[sport][0].line + ' line.' },
-      { phase: 'LIVE', kind: 'RUN', t: '2:07', game: sl(3).awayAbbr, tone: 2, text: nba ? sl(3).awayAbbr + ' on a 14-2 run over 4:12 of clock.' : sl(3).awayAbbr + ' forced three straight three-and-outs.' },
-      { phase: 'LIVE', kind: 'INJURY', t: '3:04', game: sl(2).homeAbbr, tone: 0, text: sl(2).homeAbbr + ' starter to the locker room. Model re-rated -2.8.' },
-      { phase: 'LIVE', kind: nba ? 'FOULS' : 'PRESSURE', t: '3:36', game: sl(2).awayAbbr, tone: 3, text: nba ? sl(2).awayAbbr + ' in the penalty with 6:40 left — two starters on four fouls.' : sl(2).awayAbbr + ' pressure rate 41%, fourteen points above their season mark.' },
-      { phase: 'LIVE', kind: 'LINE', t: '5:31', game: sl(3).awayAbbr, tone: 3, text: sl(3).awayAbbr + ' line moved to ' + sl(3).line + ' across five books in the last twelve minutes.' },
-      { phase: 'PRE', kind: 'LINEUP', t: '-0:24', game: slate[0].homeAbbr, tone: 3, text: nba ? slate[0].homeAbbr + ' starting five confirmed, no changes. Model re-rated +1.2.' : slate[0].homeAbbr + ' inactives posted, both starting tackles active. Model re-rated +1.2.' },
-      { phase: 'PRE', kind: 'REST', t: '-1:10', game: sl(2).awayAbbr, tone: 2, text: nba ? sl(2).awayAbbr + ' on the second night of a back-to-back, fourth road game in six days.' : sl(2).awayAbbr + ' on a short week — six days rest against ten.' },
-      { phase: 'PRE', kind: nba ? 'MATCHUP' : 'WEATHER', t: '-1:45', game: sl(1).homeAbbr, tone: 3, text: nba ? sl(1).homeAbbr + ' concede 118.4 per 100 to pick-and-roll handlers, worst in the league.' : 'Wind 18mph gusting 27 at ' + slate[0].venue + '. Total shaded down 2.5.' },
-      { phase: 'PRE', kind: 'PROJ', t: '-2:30', game: sl(3).homeAbbr, tone: 3, text: nba ? sl(3).homeAbbr + ' projected 118.2 on 101 possessions, +4.1 on their season average.' : sl(3).homeAbbr + ' projected 26.4 points on 64 plays, +3.2 on their season average.' },
-      { phase: 'POST', kind: 'FINAL', t: 'yest', game: nba ? 'MIA' : 'GB', tone: 1, text: nba ? 'MIA 118 — ATL 112. Model closed the winner at 63.4%, market closed 57.1%.' : 'GB 24 — CHI 17. Model closed the winner at 61.8%, market closed 55.4%.' },
-      { phase: 'POST', kind: 'GRADE', t: 'yest', game: 'SLATE', tone: 1, text: 'Slate graded 7-4 on 2pt-plus edges. +2.1u on a 1u paper basis, closing line value +1.4 points per call.' },
-      { phase: 'POST', kind: 'MISS', t: 'yest', game: nba ? 'NYK' : 'SEA', tone: 0, text: nba ? 'NYK-CLE graded a miss. Post-mortem: rebound-rate input stale by two games.' : 'SEA-LAR graded a miss. Post-mortem: pressure-rate input stale by two games.' },
-      { phase: 'POST', kind: 'CALIB', t: '2d', game: 'MODEL', tone: 3, text: 'Calibration held inside 1.5 points in every decile across 148 settled games.' }
-    ];
+    const feedSim = [];   // nothing seeded stands in for a slate; an empty slate says so
 
     // on a real slate the feed is what the edge and the model actually said: one line per
     // game from the scoreboard, and the StoryStats narrative for the open game, verbatim
@@ -3920,7 +3911,7 @@ class Component extends DCLogic {
       .sort((a, b) => (b.k || 0) - (a.k || 0)).slice(0, 8)
       .map(p => ({ phase: 'PRE', kind: 'INJURY', t: 'record', game: p.team, tone: 0, real: true, text: p.full + ' (' + p.pos + (p.k != null ? ', KQ ' + p.k : '') + ') — ' + p.inj + ', on the captured report.' }));
     // the seeded feed's market-flavoured lines go with the market widgets
-    const feed = (slateSim ? feedSim.filter(a => ['EDGE', 'LINE', 'PROP', 'GRADE', 'STEAM'].indexOf(a.kind) < 0) : liveFeed()).concat(injuryItems);
+    const feed = (slateSim ? [] : liveFeed()).concat(injuryItems);
 
     // alerts scoped to the open fixture — either side of it, plus two derived live reads
     const gameAlerts = (() => {
@@ -4083,7 +4074,7 @@ class Component extends DCLogic {
 
     const navBtn = (active) => 'display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:none;border-radius:7px;cursor:pointer;transition:box-shadow .22s ease,transform .22s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:12.5px;font-weight:' + (active ? '600' : '400') + ';background:' + (active ? 'var(--nested)' : 'transparent') + ';color:' + (active ? 'var(--reversed)' : 'var(--second)') + ';box-shadow:' + (active ? 'inset 2px 0 0 ' + BLUE : 'none');
 
-    const badges = { board: slate.length + (slateSim ? ' sim' : ''), live: slateSim ? 'SIM' : 'LIVE', model: '', profiles: roster.length ? roster.length.toLocaleString() : '', alerts: feed.length + '', buzz: String(buzzAll.length) };
+    const badges = { board: slateSim ? '0' : String(slate.length), live: slateSim ? '—' : 'LIVE', model: '', profiles: roster.length ? roster.length.toLocaleString() : '', alerts: feed.length + '', buzz: String(buzzAll.length) };
 
     const pillOf = (v, unit) => {
       const pos = v > 0;
@@ -4093,7 +4084,11 @@ class Component extends DCLogic {
     return {
       sport,
       clockLabel: (() => { const d = new Date(); try { return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d) + ' · ' + new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(d); } catch (e) { return d.toLocaleString(); } })(),
-      windowTitle: sport + ' · ' + (slateSim ? 'simulated slate' : slate.length + (st.liveMeta && st.liveMeta.upcoming ? ' upcoming' : ' on the slate')),
+      noSlate: slateSim, hasSlate: !slateSim,
+      noSlateHead: st.liveMeta && st.liveMeta.ok === false ? 'The live edge did not answer' : 'No ' + sport + ' games on the slate today',
+      noSlateNote: st.liveMeta && st.liveMeta.ok === false ? 'Nothing stands in for it. The slate, the market and the box scores return when the edge answers.' : (sport === 'NBA' ? 'The 2026-27 season opens in October. The slate fills the day the schedule and the lines post, and every widget reads that game.' : 'The slate fills the day the schedule and the lines post, and every widget reads that game.') + ' The Players & clubs, Buzz and Cohorts tabs read the record in the meantime.',
+      noSlateShort: 'no ' + sport + ' games on the slate today',
+      windowTitle: sport + ' · ' + (slateSim ? 'no games on the slate' : slate.length + (st.liveMeta && st.liveMeta.upcoming ? ' upcoming' : ' on the slate')),
       theme: st.theme || 'dark',
       themeLabel: (st.theme || 'dark') === 'dark' ? 'LIGHT' : 'DARK',
       themeBtn: 'padding:3px 9px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--muted)',
@@ -4294,7 +4289,7 @@ class Component extends DCLogic {
       isProfiles: st.tab === 'profiles',
       isAlerts: st.tab === 'alerts',
 
-      games: slate.map(x => {
+      games: slateSim ? [] : slate.map(x => {
         const xs = st.series[x.id];
         const p = xs.hist[xs.hist.length - 1];
         const rising = p >= xs.hist[xs.hist.length - 8];
@@ -4504,7 +4499,7 @@ paceRows: (() => {
             hbar: 'height:100%;width:' + Math.round(h[i].v / mx * 100) + '%;background:' + BLUE + ';opacity:.9' };
         });
       })(),
-      paceNote: boxOn ? 'summed from the live box score' : (slateSim ? 'no box score on a simulated slate' : 'no box score until the game is in progress'),
+      paceNote: boxOn ? 'summed from the live box score' : 'no box score until the game is in progress',
 
       teamAbbr, teamSide,
       teamHomeBtn: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:10px;background:transparent;border:1px solid ' + (teamSide === 'home' ? BLUE : 'var(--axis)') + ';color:' + (teamSide === 'home' ? BLUE : 'var(--second)'),
@@ -4824,7 +4819,7 @@ paceRows: (() => {
           kindStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:' + c,
           pill: 'font-family:var(--kw);font-size:9px;letter-spacing:.12em;padding:4px 8px;border-radius:5px;text-align:center;color:' + c + ';border:1px solid ' + mix(c, 34),
           phaseStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:' + pc,
-          delivery: a.real ? 'RECORD' : slateSim ? 'SIMULATED' : (a.kind === 'STORY' ? 'STORY' : 'FEED ' + Math.round(((st.liveMeta && st.liveMeta.beat) || 8000) / 1000) + 's'),
+          delivery: a.real ? 'RECORD' : (a.kind === 'STORY' ? 'STORY' : 'FEED ' + Math.round(((st.liveMeta && st.liveMeta.beat) || 8000) / 1000) + 's'),
           deliveryStyle: 'font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:' +
             (pushed ? 'var(--brand)' : 'var(--muted)') + ';border:1px solid ' + (pushed ? 'var(--axis)' : 'var(--grid)')
         });
