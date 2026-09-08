@@ -2745,11 +2745,11 @@ class Component extends DCLogic {
       const opts = [{ label: label(cur) + ' · current', value: null }].concat(Array.from({ length: Math.max(0, cur - 2010) }, (_, n) => ({ label: label(cur - n - 1), value: cur - n - 1 })));
       const openMenu = () => this.setState(x => ({ logMenuOpen: x.logMenuOpen === key ? null : key, logMenuQ: '' }));
       return {
-        label: 'SEASON · ' + label(eff), arrow: '', open: on,
+        label: 'SEASON · ' + label(eff) + (chosen ? '' : ' · CURRENT'), arrow: '▾', open: on,
         cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
         menuStyle: 'position:absolute;top:22px;left:0;z-index:40;width:214px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
-        labelStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;cursor:pointer;background:transparent;border:none;padding:0;display:flex;align-items:center;gap:4px;white-space:nowrap;color:' + (chosen ? 'var(--reversed)' : 'var(--collabel)'),
-        dotStyle: 'width:5px;height:5px;border-radius:50%;background:' + BLUE + ';flex:none;display:' + (chosen ? 'block' : 'none'), click: openMenu, toggle: openMenu,
+        labelStyle: 'font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer;background:' + (chosen ? mix(BLUE, 14) : 'var(--nested)') + ';border:1px solid ' + (chosen ? BLUE : 'var(--axis)') + ';border-radius:100px;padding:7px 13px;display:flex;align-items:center;gap:7px;white-space:nowrap;color:' + (chosen ? BLUE : 'var(--reversed)'),
+        dotStyle: 'display:none', click: openMenu, toggle: openMenu,
         q: on ? (st.logMenuQ || '') : '', onQ: e => this.setState({ logMenuQ: e.target.value }),
         onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); const hit = opts.find(o => (st.logMenuQ || '').trim() && o.label.toLowerCase().indexOf((st.logMenuQ || '').trim().toLowerCase()) >= 0); if (hit && e.key !== 'Escape') this.setLogSeason(hit.value); else this.setState({ logMenuOpen: null }); } },
         clear: () => this.setLogSeason(null),
@@ -3097,7 +3097,19 @@ class Component extends DCLogic {
         : /^(OL|OT|OG|C|G|T|LT|RT|LG|RG)$/.test(P) ? []
         : [['tkl', 'Tackles'], ['tfl', 'Tackles for loss'], ['dsk', 'Sacks'], ['dint', 'Interceptions'], ['pd', 'Passes defended'], ['ff', 'Forced fumbles']];
       const seasonsHeld = S.seasons(sport).seasons, yr = seasonsHeld.length ? Math.max.apply(null, seasonsHeld) : null;
-      const statOf = (m, k) => { const sr = yr != null ? S.seasonRow(sport, m.full || m.name, yr) : null; const v = sr && sr.stats ? sr.stats[k] : null; return v == null || v === '' ? null : Number(v); };
+      const statAt = (m, k, y) => { const sr = y != null ? S.seasonRow(sport, m.full || m.name, y) : null; const v = sr && sr.stats ? sr.stats[k] : null; return v == null || v === '' ? null : Number(v); };
+      const statOf = (m, k) => statAt(m, k, yr);
+      // the card for one season: every stat of his kind of position that season, ranked among the
+      // cohort's men who played it, plus his games — the engine's dimensions are today's and stay off
+      const seasonCardFor = y => {
+        const rows = [];
+        const gp = (() => { const sr = S.seasonRow(sport, pl.full || pl.name, y); return sr ? Number(sr.gp) : null; })();
+        if (gp != null && isFinite(gp)) { const vals = members.map(m => { const sr = S.seasonRow(sport, m.full || m.name, y); return sr ? Number(sr.gp) : null; }).filter(v => v != null && isFinite(v)); if (vals.length >= 3) { const rk = rankIn(vals, gp, true); rows.push({ k: 'Games', rank: rk.rank, n: rk.n, pct: rk.pct }); } }
+        STAT_KEYS.forEach(([k, label, low]) => { const mine = statAt(pl, k, y); if (mine == null || !isFinite(mine)) return; const vals = members.map(m => statAt(m, k, y)).filter(v => v != null && isFinite(v)); if (vals.length < 3) return; const rk = rankIn(vals, mine, !low); rows.push({ k: label, rank: rk.rank, n: rk.n, pct: rk.pct }); });
+        const c = scorecard(rows, labelOf(pl.grp) + ' · ' + (sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y)) + ' · n=' + members.length);
+        if (!rows.length) { c.overall = '—'; c.grade = '—'; c.color = 'var(--muted)'; }
+        return c;
+      };
       // a stat the record already scores as a skill or a dimension is not listed twice
       const held = () => baseRows.concat(more).map(x => String(x.k).toLowerCase().replace(/[^a-z]/g, ''));
       const dup = label => { const n = label.toLowerCase().replace(/[^a-z]/g, ''); return held().some(h => h === n || h.indexOf(n) === 0); };
@@ -3127,7 +3139,7 @@ class Component extends DCLogic {
           (x.projection && x.projection.signProb != null ? ': sign probability ' + S.pct(x.projection.signProb) + ' as filed' : '') +
           (x.outcome ? '; a signing is on the record' : '') + '.' }));
       if (pl.exp != null) news.push({ kind: 'AVAILABILITY', t: 'capture', text: 'Expected games next season ' + pl.exp + ' on a persistence read' + (pl.av != null ? '; ' + pl.av + 'th percentile at his position.' : '.') });
-      return (this._bc.p[ck] = { card, factors, stats, news, cohorts: kc });
+      return (this._bc.p[ck] = { card, factors, stats, news, cohorts: kc, seasonCardFor });
     };
     const clubBundle = (cl) => {
       if (this._bc.c[cl.abbr]) return this._bc.c[cl.abbr];
@@ -3396,6 +3408,13 @@ class Component extends DCLogic {
       return rows;
     };
     // the players on a club in a past season, from the seasons the record holds
+    const explorerFromCard = (ex, card) => { const muted = 'font-family:var(--kw);font-size:9.5px;text-align:right;color:var(--muted)';
+      const rows = (card.rows || []).map(x => { const rc = ratingCell(Number(x.v)); return { k: x.k, v: x.v, rank: x.rank, rating: rc.rating, badge: rc.badge, fill: rc.fill, delta: profSeasonLabel, deltaStyle: muted, low: false }; });
+      const sPct = rows.length ? clamp(Number(card.overall), 2, 99) : 2;
+      const rec = rows.find(x => x.k === 'Record');
+      return Object.assign({}, ex, { rows, count: rows.length + ' of ' + rows.length, season: profSeasonLabel, standRank: rec ? rec.rank.replace('/', ' of ') : (rows[0] ? rows[0].rank.replace('/', ' of ') : '—'), standScore: rows.length ? String(Math.round(sPct)) : '—',
+        standTier: tierOf(sPct)[3], standStyle: 'font-family:var(--kw);font-size:44px;font-weight:700;line-height:1;color:' + tierOf(sPct)[1], standTierStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:' + tierOf(sPct)[1],
+        standBadge: 'width:88px;height:88px;flex:none;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;background:' + tierOf(sPct)[2] + ';border:1px solid ' + mix(tierOf(sPct)[1], 34), standFill: 'height:100%;width:' + Math.round(clamp(sPct, 2, 100)) + '%;border-radius:4px;background:' + tierOf(sPct)[1] }); };
     const seasonRosterOf = (abbr, season) => { const P = S ? S.seasons(sport).players : {}; const out = [];
       Object.keys(P).forEach(name => { const row = P[name].find(x => x[0] === season && x[1] === abbr); if (!row) return; const now = rosterByName[NK(name)] || null;
         out.push({ full: name, name: now ? now.name : name, pos: now ? now.pos : '—', num: now ? now.num : null, age: now ? now.age : null, paid: now ? now.paid : null, k: now && now.k != null ? now.k : null, gp: row[2], line: row[3] != null ? row[3] + ' ' + (row[4] || '') : '—', team: abbr, ent: now }); });
@@ -3428,7 +3447,11 @@ class Component extends DCLogic {
         profile = {
           kind: 'PLAYER', mono: mono(pl.full), name: pl.full,
           sub: (profRowOf(pl) ? profRowOf(pl).team + ' in ' + profSeasonLabel + ' · now ' + pl.team : pl.team) + ' · ' + pl.pos + (pl.num ? ' · #' + pl.num : '') + (pl.age ? ' · age ' + pl.age : '') + ' · ' + sport,
-          headline: [
+          headline: profPast ? (() => { const sr = profRowOf(pl); return [
+            { k: profSeasonLabel + ' LINE', v: sr && sr.value != null ? sr.value + ' ' + (sr.label || '') : '—' },
+            { k: 'GAMES', v: sr && sr.gp != null ? String(sr.gp) : '—' },
+            { k: 'CLUB', v: sr ? sr.team || '—' : '—' }
+          ]; })() : [
             { k: 'KWOTIENT', v: pl.k == null ? '—' : String(pl.k) },
             { k: 'AT ' + labelOf(pl.pos), v: pl.pr ? pl.pr + ' of ' + pl.pn : 'unrated' },
             { k: 'PAID VS BAND', v: pl.surplus == null ? '—' : (pl.surplus > 0 ? '+' : '') + S.M(pl.surplus) }
@@ -3481,8 +3504,8 @@ class Component extends DCLogic {
           edgeStyle: 'font-family:var(--kw);font-size:26px;font-weight:700;color:' + (pl.surplus == null ? 'var(--muted)' : pl.surplus > 0 ? ACC : RED),
           edgeNote: pl.surplus == null ? 'no comparable band can be read' : pl.surplus > 0 ? 'paid under his comparables' : 'paid over his comparables',
           factors: pb.factors,
-          card: pb.card,
-          explorer: explorerFor(pl, cohortOf(pl.grp)),
+          card: profPast ? pb.seasonCardFor(st.logSeason) : pb.card,
+          explorer: profPast ? explorerFromCard(explorerFor(pl, cohortOf(pl.grp)), pb.seasonCardFor(st.logSeason)) : explorerFor(pl, cohortOf(pl.grp)),
           news: pb.news
         };
       } else {
@@ -3592,7 +3615,7 @@ class Component extends DCLogic {
           // past season is its table alone, ranked among that season's clubs
           card: (() => { if (!profPast) { const c = Object.assign({}, cb.card); c.rows = cb.card.rows.concat(scorecard(seasonRows, '').rows); return c; }
             const c = scorecard(seasonRows, sport + ' CLUBS · ' + profSeasonLabel + ' · n=' + Object.keys(profBy).length); if (!seasonRows.length) { c.overall = '—'; c.grade = '—'; c.color = 'var(--muted)'; } return c; })(),
-          explorer: explorerFor(cl, clubs),
+          explorer: profPast ? explorerFromCard(explorerFor(cl, clubs), scorecard(seasonRows, '')) : explorerFor(cl, clubs),
           rosterNote: profPast ? (rosterAll.length ? rosterAll.length + ' players on the ' + profSeasonLabel + ' club · the score and pay are today\'s' : 'no roster on record for the ' + profSeasonLabel + ' season') : cb.rosterOf.length + ' rated players · ranked inside their own position',
           roster: rosterShown.slice(0, rosterLimit).map(p => ({
             cells: rosterCells(p),
