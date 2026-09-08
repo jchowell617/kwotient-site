@@ -2501,10 +2501,19 @@ class Component extends DCLogic {
     const trendSeasons = [0, 1, 2].slice(0, TREND_SEASONS).map(n => histCur - n);
     const trendLogs = pp.id ? trendSeasons.map(y => ({ y, rec: (st.logs || {})[pp.id + '@' + y] || null })) : [];
     this._logNeed = pp.id && pp.ent ? trendLogs.filter(x => !x.rec).map(x => ({ id: pp.id, ent: pp.ent, season: x.y })) : [];
+    const boxRowOf = boxRow;
     const trendLoading = trendLogs.some(x => x.rec && x.rec.state === 'loading');
     const tRowsAll = (() => { const seen = {}; const out = []; trendLogs.forEach(x => { if (!x.rec || !x.rec.rows) return; x.rec.rows.forEach(row => { if (seen[row.date]) return; seen[row.date] = true; out.push(Object.assign({}, row, { season: Number(x.rec.season) || x.y })); }); }); return out.sort((a, b) => String(a.date).localeCompare(String(b.date))); })();
     const oppAbbr0 = histOppOf(pp.team) || null;
-    const scoped = histScope(tRowsAll, pp.team);
+    // tonight's game rides at the end while it is on or just done: the box line for the player,
+    // the score for the club — until the provider's log carries the game itself
+    const gameOn = !!(g.live && (g.state === 'in_progress' || g.state === 'final'));
+    const todayKey = (() => { const d = new Date(); const p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); })();
+    const tonightWhen = 'tonight · ' + (g.state === 'final' ? 'final' : (g.status || 'in progress'));
+    const liveBox = gameOn ? boxRow(pp) : null;
+    const liveV = liveBox && S ? S.boxStat(sport, liveBox, pp.pos) : null;
+    const liveRow = gameOn && liveV != null && !tRowsAll.some(x => x.date === todayKey) ? { date: todayKey, when: tonightWhen, opp: oppAbbr0, home: !!pp.home, v: liveV, result: g.state === 'final' ? ((pp.home ? g.hs > g.as : g.as > g.hs) ? 'W' : 'L') : '', season: histCur, live: true } : null;
+    const scoped = histScope(tRowsAll, pp.team).concat(liveRow ? [liveRow] : []);
     const trendFell = false;
     const tRows = scoped;
     const oppAbbr = oppAbbr0;
@@ -3437,27 +3446,38 @@ class Component extends DCLogic {
     const teamSide = st.teamSide === 'away' ? 'away' : 'home';
     const teamAbbr = teamSide === 'home' ? g.homeAbbr : g.awayAbbr;
     const tLog = (st.logs || {})[this.logKey('c:' + teamAbbr)] || null;
-    const tRowsCAll = tLog && tLog.rows ? tLog.rows : [];
+    // the club's games against tonight's opponent across the last three seasons' logs, and
+    // tonight's score at the end while the game is on — the same read as the player's
+    const teamLogs = trendSeasons.map(y => ({ y, rec: (st.logs || {})['c:' + teamAbbr + '@' + y] || null }));
+    this._logNeed = (this._logNeed || []).concat(teamLogs.filter(x => !x.rec).map(x => ({ id: 'c:' + teamAbbr, ent: { abbr: teamAbbr }, season: x.y })));
+    const teamLoading = teamLogs.some(x => x.rec && x.rec.state === 'loading');
+    const tRowsCAll = (() => { const seen = {}; const out = []; teamLogs.forEach(x => { if (!x.rec || !x.rec.rows) return; x.rec.rows.forEach(row => { if (seen[row.date]) return; seen[row.date] = true; out.push(Object.assign({}, row, { season: Number(x.rec.season) || x.y })); }); }); return out.sort((a, b) => String(a.date).localeCompare(String(b.date))); })();
     const teamOppAbbr0 = histOppOf(teamAbbr) || null;
-    const teamScoped = histScope(tRowsCAll, teamAbbr);
-    const teamFell = hf.opp === 'opp' && !hf.game && tRowsCAll.length > 0 && teamScoped.length === 0;
-    const tRowsC = sq('team') ? tRowsCAll.filter(r => rowMatch(r, 'team')) : (teamFell ? tRowsCAll : teamScoped);
-    const teamOppAbbr = teamFell || sq('team') ? null : teamOppAbbr0;
+    const teamHome = teamAbbr === g.homeAbbr;
+    const teamLiveRow = gameOn && teamOppAbbr0 && !tRowsCAll.some(x => x.date === todayKey) ? (() => { const pf = teamHome ? g.hs : g.as, pa = teamHome ? g.as : g.hs; return { date: todayKey, when: tonightWhen, opp: teamOppAbbr0, home: teamHome, pf, pa, margin: pf - pa, result: g.state === 'final' ? (pf > pa ? 'W' : pf < pa ? 'L' : 'T') : '', season: histCur, live: true }; })() : null;
+    const teamScoped = histScope(tRowsCAll, teamAbbr).concat(teamLiveRow ? [teamLiveRow] : []);
+    const teamFell = false;
+    const tRowsC = sq('team') ? tRowsCAll.filter(r => rowMatch(r, 'team')) : teamScoped;
+    const teamOppAbbr = sq('team') ? null : teamOppAbbr0;
+    const teamSpan = (() => { const ys = Array.from(new Set(tRowsC.map(r => r.season).filter(Boolean))).sort(); return !ys.length ? '' : ys.length === 1 ? histSeasonLabel(ys[0]) : histSeasonLabel(ys[0]) + ' to ' + histSeasonLabel(ys[ys.length - 1]); })();
     const teamVsRows = tRowsC, teamUseVs = !!teamOppAbbr;
     const tMargins = tRowsC.map(r => r.margin);
     const tMx = Math.max.apply(null, tMargins.map(Math.abs).concat([1]));
     const tAvg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
     const tRoll = tMargins.map((_, i) => tAvg(tMargins.slice(Math.max(0, i - 2), i + 1)));
-    const tWins = tMargins.filter(v => v > 0).length;
-    const teamLogNote = !tLog ? 'team log not requested' : tLog.state === 'ready' ? (sq('team') ? tRowsC.length + ' games matching the search · ' : teamFell ? 'no game against ' + teamOppAbbr0 + ' in this log · every game · ' : teamOppAbbr ? tRowsC.length + ' games against ' + teamOppAbbr + ' · ' : '') + tLog.season + ' season' + (tLog.fellBack ? ' (no games yet in ' + tLog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
-      : tLog.state === 'loading' ? 'loading the team log…' : 'team log unavailable — ' + (tLog.reason || 'the feed did not answer');
+    const tDone = tRowsC.filter(x => !(x.live && !x.result)).map(x => x.margin);
+    const tWins = tDone.filter(v => v > 0).length;
+    const teamLogNote = !tRowsCAll.length ? (teamLoading || !tLog ? 'loading the team log…' : 'team log unavailable — ' + ((tLog && tLog.reason) || 'the feed did not answer'))
+      : sq('team') ? tRowsC.length + ' games matching the search · ' + teamSpan
+      : !tRowsC.length ? 'no game against ' + teamOppAbbr0 + ' in the last ' + TREND_SEASONS + ' seasons' + (teamLoading ? ' · still reading the earlier seasons' : '')
+      : tRowsC.length + (tRowsC.length === 1 ? ' game' : ' games') + ' against ' + teamOppAbbr + (teamLiveRow ? ', tonight live' : '') + ' · ' + teamSpan + (teamLoading ? ' · reading earlier seasons…' : '');
 
     const teamTrendBars = tMargins.map((v, i) => {
       const on = st.tTrendHover === i;
       const r = tRowsC[i];
       return {
         v: (v > 0 ? '+' : '') + v,
-        labelStyle: 'font-family:var(--kw);font-size:9px;color:' + (on ? 'var(--reversed)' : v > 0 ? ACC : 'var(--muted)') + (tMargins.length > 24 && !on ? ';display:none' : ''),
+        labelStyle: 'font-family:var(--kw);font-size:9px;color:' + (on ? 'var(--reversed)' : r.live ? 'var(--brand)' : v > 0 ? ACC : 'var(--muted)') + (tMargins.length > 24 && !on ? ';display:none' : ''),
         bar: 'width:100%;height:' + Math.max(3, (Math.abs(v) / tMx) * 54).toFixed(1) + 'px;border-radius:' + (v > 0 ? '3px 3px 0 0' : '0 0 3px 3px') +
           ';transition:opacity .15s ease;background:' + (v > 0 ? ACC : RED) +
           ';opacity:' + (st.tTrendHover === null || st.tTrendHover === undefined ? '.85' : on ? '1' : '.32') +
@@ -3469,7 +3489,7 @@ class Component extends DCLogic {
         tipStyle: 'position:absolute;bottom:126px;' + (i > tMargins.length - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
           'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none',
         tipMain: (v > 0 ? '+' : '') + v + ' · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + r.pf + '-' + r.pa,
-        tipSub: r.date + ' · ' + (v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'drawn ') + Math.abs(v),
+        tipSub: (r.when || r.date) + ' · ' + (r.live && !r.result ? (v > 0 ? 'up by ' : v < 0 ? 'down by ' : 'level, ') : v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'drawn ') + Math.abs(v),
         tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (v > 0 ? ACC : RED)
       };
     });
@@ -3919,7 +3939,7 @@ paceRows: (() => {
       pickHome: () => { this.setState({ teamSide: 'home', tTrendHover: null }); setTimeout(() => this.ensureTrendLog(), 0); },
       pickAway: () => { this.setState({ teamSide: 'away', tTrendHover: null }); setTimeout(() => this.ensureTrendLog(), 0); },
       teamTrendBars,
-      teamTrendNote: (tMargins.length ? tWins + '-' + (tMargins.length - tWins) + ' in the last ' + tMargins.length + ' · ' + (tAvg(tMargins) > 0 ? '+' : '') + tAvg(tMargins).toFixed(1) + ' average margin · ' : '') + teamLogNote,
+      teamTrendNote: (tDone.length ? tWins + '-' + (tDone.length - tWins) + ' in the last ' + tDone.length + ' · ' + (tAvg(tDone) > 0 ? '+' : '') + tAvg(tDone).toFixed(1) + ' average margin · ' : '') + teamLogNote,
       teamRollPath: tRoll.length > 1 ? this.path(tRoll, 100, 108, -tMx, tMx) : '',
       trendPlayer: pp.name + ' · ' + pp.team + ' ' + pp.pos + (pp.k != null ? ' · KQ ' + pp.k : ''),
       trendMarket: trendUnit + ' · vs season average',
@@ -3971,22 +3991,22 @@ paceRows: (() => {
         const d = v - season;
         return {
           v: big ? v : v.toFixed(1),
-          labelStyle: 'font-family:var(--kw);font-size:9px;color:' + (on ? 'var(--reversed)' : v > season ? ACC : 'var(--muted)') + (logs.length > 24 && !on ? ';display:none' : ''),
+          labelStyle: 'font-family:var(--kw);font-size:9px;color:' + (on ? 'var(--reversed)' : tRows[i].live ? 'var(--brand)' : v > season ? ACC : 'var(--muted)') + (logs.length > 24 && !on ? ';display:none' : ''),
           bar: 'width:100%;height:' + ((v / tMax) * 118).toFixed(1) + 'px;border-radius:3px 3px 0 0;transition:opacity .15s ease;background:' +
-            (v > season ? ACC : RED) + ';opacity:' + (st.trendHover === null || st.trendHover === undefined ? '.85' : on ? '1' : '.32'),
+            (v > season ? ACC : RED) + ';opacity:' + (st.trendHover === null || st.trendHover === undefined ? '.85' : on ? '1' : '.32') + (tRows[i].live ? ';outline:1.5px solid var(--brand);outline-offset:-1.5px' : ''),
           on: () => this.setState({ trendHover: i }),
           off: () => this.setState({ trendHover: null }),
           hovered: on,
           tipStyle: 'position:absolute;bottom:126px;' + (i > logs.length - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
             'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none',
           tipMain: (big ? v : v.toFixed(1)) + ' ' + String(trendUnit).toLowerCase() + ' · ' + (tRows[i].home ? 'vs ' : 'at ') + tRows[i].opp,
-          tipSub: tRows[i].date + ' · ' + (tRows[i].result || '') + ' · ' + (d >= 0 ? '+' : '') + d.toFixed(1) + ' vs season average',
+          tipSub: (tRows[i].when || tRows[i].date) + ' · ' + (tRows[i].result || '') + ' · ' + (d >= 0 ? '+' : '') + d.toFixed(1) + ' vs season average',
           tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (d >= 0 ? ACC : RED)
         };
       }),
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
-      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (trendSpan ? ' · ' + trendSpan : '') + (trendLoading ? ' · reading earlier seasons…' : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
+      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (liveRow ? ', tonight live' : '') + (trendSpan ? ' · ' + trendSpan : '') + (trendLoading ? ' · reading earlier seasons…' : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
       trendHist: histMenuFor('trend', pp.team, tRowsAll),
       trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players',
         picks: trendMatches.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : ''), pick: () => this.pickTrend(p) })) }); })(),
