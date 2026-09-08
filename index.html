@@ -474,7 +474,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <sc-if value="{{ p.wp.open }}" hint-placeholder-val="{{ true }}">
               <div style="position:relative;height:222px;padding-left:34px">
-                <div onMouseMove="{{ onHover }}" onMouseLeave="{{ offHover }}" onTouchStart="{{ onHoverTouchStart }}" onTouchMove="{{ onHoverTouchMove }}" onClick="{{ onHoverTap }}" style="position:relative;height:222px;cursor:crosshair;touch-action:pan-y;-webkit-user-select:none;user-select:none">
+                <div data-chart="1" onMouseMove="{{ onHover }}" onMouseLeave="{{ offHover }}" onTouchStart="{{ onHoverTouchStart }}" onTouchMove="{{ onHoverTouchMove }}" onClick="{{ onHoverTap }}" style="position:relative;height:222px;cursor:crosshair;touch-action:pan-y;-webkit-user-select:none;user-select:none">
                   <svg viewBox="0 0 600 222" preserveAspectRatio="none" style="width:100%;height:222px;display:block">
                     <defs>
                       <linearGradient id="cs-fill" x1="0" y1="0" x2="0" y2="1">
@@ -571,7 +571,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </div>
               <sc-if value="{{ p.mom.open }}" hint-placeholder-val="{{ true }}">
-                <div onMouseMove="{{ momHoverMove }}" onMouseLeave="{{ momHoverOff }}" onTouchStart="{{ momHoverTouchStart }}" onTouchMove="{{ momHoverTouchMove }}" onClick="{{ momHoverTap }}" style="position:relative;height:92px;cursor:crosshair;touch-action:pan-y;-webkit-user-select:none;user-select:none">
+                <div data-chart="1" onMouseMove="{{ momHoverMove }}" onMouseLeave="{{ momHoverOff }}" onTouchStart="{{ momHoverTouchStart }}" onTouchMove="{{ momHoverTouchMove }}" onClick="{{ momHoverTap }}" style="position:relative;height:92px;cursor:crosshair;touch-action:pan-y;-webkit-user-select:none;user-select:none">
                   <svg viewBox="0 0 300 92" preserveAspectRatio="none" style="width:100%;height:92px;display:block">
                     <defs>
                       <clipPath id="cs-mom-up"><rect x="0" y="0" width="300" height="46"></rect></clipPath>
@@ -933,7 +933,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <sc-if value="{{ hasPropLine }}" hint-placeholder-val="{{ false }}"><div style="{{ trendPropMark }}"></div><div style="{{ trendPropLabel }}">{{ trendPropLine }}</div></sc-if>
                   <div style="display:flex;align-items:flex-end;gap:5px;height:148px">
                     <sc-for list="{{ trendBars }}" as="b" hint-placeholder-count="12">
-                      <div onMouseEnter="{{ b.on }}" onMouseLeave="{{ b.off }}" onClick="{{ b.tap }}" style="position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;cursor:crosshair">
+                      <div data-chart="1" onMouseEnter="{{ b.on }}" onMouseLeave="{{ b.off }}" onClick="{{ b.tap }}" style="position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;cursor:crosshair">
                         <span style="{{ b.labelStyle }}">{{ b.v }}</span>
                         <div style="{{ b.bar }}"></div>
                         <sc-if value="{{ b.hovered }}" hint-placeholder-val="{{ false }}">
@@ -1003,7 +1003,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="position:absolute;left:0;right:0;top:54px;height:0;border-top:1px dashed var(--axis)"></div>
                 <div style="display:flex;align-items:stretch;gap:5px;height:108px">
                   <sc-for list="{{ teamTrendBars }}" as="tb" hint-placeholder-count="12">
-                    <div onMouseEnter="{{ tb.on }}" onMouseLeave="{{ tb.off }}" onClick="{{ tb.tap }}" style="{{ tb.wrap }}">
+                    <div data-chart="1" onMouseEnter="{{ tb.on }}" onMouseLeave="{{ tb.off }}" onClick="{{ tb.tap }}" style="{{ tb.wrap }}">
                       <span style="{{ tb.labelStyle }}">{{ tb.v }}</span>
                       <div style="{{ tb.bar }}"></div>
                       <sc-if value="{{ tb.hovered }}" hint-placeholder-val="{{ false }}">
@@ -1331,7 +1331,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <sc-if value="{{ p.cohErr.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:flex;align-items:flex-end;gap:8px;height:120px">
                     <sc-for list="{{ det.hist }}" as="h" hint-placeholder-count="6">
-                      <div onMouseEnter="{{ h.on }}" onMouseLeave="{{ h.off }}" onClick="{{ h.tap }}" style="position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;cursor:crosshair">
+                      <div data-chart="1" onMouseEnter="{{ h.on }}" onMouseLeave="{{ h.off }}" onClick="{{ h.tap }}" style="position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;cursor:crosshair">
                         <span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ h.n }}</span>
                         <div style="{{ h.bar }}"></div>
                         <span style="font-family:var(--kw);font-size:8.5px;color:var(--faint)">{{ h.label }}</span>
@@ -1890,7 +1890,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <div style="{{ profile.lineMark }}"></div>
                       <div style="display:flex;align-items:flex-end;gap:5px;height:148px">
                         <sc-for list="{{ profile.bars }}" as="b" hint-placeholder-count="12">
-                          <div onMouseEnter="{{ b.on }}" onMouseLeave="{{ b.off }}" onClick="{{ b.tap }}" style="position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;cursor:crosshair">
+                          <div data-chart="1" onMouseEnter="{{ b.on }}" onMouseLeave="{{ b.off }}" onClick="{{ b.tap }}" style="position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;cursor:crosshair">
                             <span style="{{ b.labelStyle }}">{{ b.v }}</span>
                             <div style="{{ b.bar }}"></div>
                             <sc-if value="{{ b.hovered }}" hint-placeholder-val="{{ false }}">
@@ -2392,6 +2392,15 @@ class Component extends DCLogic {
       setTimeout(() => { try { el.blur(); } catch (x) {} }, 0);
     };
     document.addEventListener('keydown', this._enterBlur, true);
+    // a reveal stays until you click off the chart: moving between bars only moves it
+    this._offChart = e => {
+      const t = e.target;
+      if (t && t.closest && t.closest('[data-chart]')) return;
+      const x = this.state;
+      if (x.hoverIdx == null && x.momHover == null && x.pTrendHover == null && x.tTrendHover == null && x.trendHover == null) return;
+      this.setState({ hoverIdx: null, momHover: null, pTrendHover: null, tTrendHover: null, trendHover: null });
+    };
+    document.addEventListener('click', this._offChart, true);
     this._visible = () => { if (document.visibilityState === 'visible' && this.state.kq === 'ready') { this.pollLive(); this.loadStandings(); } };
     document.addEventListener('visibilitychange', this._visible);
     // a beat a second, for the clock and the cohort countdowns
@@ -2439,7 +2448,7 @@ class Component extends DCLogic {
     this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
     list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
   }
-  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); } catch (e) {} }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); document.removeEventListener('click', this._offChart, true); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
   connectRecord() {
@@ -3916,7 +3925,7 @@ class Component extends DCLogic {
             labelStyle: 'font-family:var(--kw);font-size:9px;color:' + (st.pTrendHover === i ? 'var(--reversed)' : v > season ? ACC : 'var(--muted)'),
             on: () => this.setState({ pTrendHover: i }),
             off: () => this.setState({ pTrendHover: null }),
-            tap: () => this.setState(x => ({ pTrendHover: x.pTrendHover === i ? null : i })),
+            tap: () => this.setState({ pTrendHover: i }),
             hovered: st.pTrendHover === i,
             tipStyle: tipBox(i, vals.length),
             tipMain: v + ' ' + unit + ' · ' + (pRows[i].home ? 'vs ' : 'at ') + pRows[i].opp,
@@ -4003,7 +4012,7 @@ class Component extends DCLogic {
             labelStyle: 'font-family:var(--kw);font-size:9px;color:' + (st.pTrendHover === i ? 'var(--reversed)' : v > 0 ? ACC : 'var(--muted)'),
             on: () => this.setState({ pTrendHover: i }),
             off: () => this.setState({ pTrendHover: null }),
-            tap: () => this.setState(x => ({ pTrendHover: x.pTrendHover === i ? null : i })),
+            tap: () => this.setState({ pTrendHover: i }),
             hovered: st.pTrendHover === i,
             tipStyle: tipBox(i, margins.length),
             tipMain: (v > 0 ? '+' : '') + v + ' · ' + (cRows[i].home ? 'vs ' : 'at ') + cRows[i].opp + ' ' + cRows[i].pf + '-' + cRows[i].pa,
@@ -4271,7 +4280,7 @@ class Component extends DCLogic {
         wrap: 'position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:' + (v > 0 ? 'flex-end' : 'flex-start') + ';align-items:center;gap:4px;cursor:crosshair',
         on: () => this.setState({ tTrendHover: i }),
         off: () => this.setState({ tTrendHover: null }),
-        tap: () => this.setState(x => ({ tTrendHover: x.tTrendHover === i ? null : i })),
+        tap: () => this.setState({ tTrendHover: i }),
         hovered: on,
         tipStyle: this.tipBoxAt(i, tMargins.length),
         tipMain: (v > 0 ? '+' : '') + v + ' · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + r.pf + '-' + r.pa,
@@ -4697,10 +4706,7 @@ class Component extends DCLogic {
         return { onHover: move,
                  onHoverTouchStart: (e) => this.touchScrub(e, 'start'),
                  onHoverTouchMove: (e) => this.touchScrub(e, 'move', move),
-                 onHoverTap: (e) => {
-                   if (st.hoverIdx !== null && st.hoverIdx !== undefined) { this.setState({ hoverIdx: null }); return; }
-                   move(e);
-                 } };
+                 onHoverTap: move };
       })(),
       offHover: () => this.setState({ hoverIdx: null }),
       // one crosshair builder shared by the smaller live charts
@@ -4729,10 +4735,7 @@ class Component extends DCLogic {
             if (i !== st[key]) this.setState({ [key]: i });
           };
           out[key + 'Move'] = mv;
-          out[key + 'Tap'] = (e) => {
-            if (st[key] !== null && st[key] !== undefined) { this.setState({ [key]: null }); return; }
-            mv(e);
-          };
+          out[key + 'Tap'] = mv;
           out[key + 'TouchStart'] = (e) => this.touchScrub(e, 'start');
           out[key + 'TouchMove'] = (e) => this.touchScrub(e, 'move', mv);
           out[key + 'Off'] = () => this.setState({ [key]: null });
@@ -4884,7 +4887,7 @@ paceRows: (() => {
             (v > season ? ACC : RED) + ';opacity:' + (st.trendHover === null || st.trendHover === undefined ? '.85' : on ? '1' : '.32') + (tRows[i].live ? ';outline:1.5px solid var(--brand);outline-offset:-1.5px' : ''),
           on: () => this.setState({ trendHover: i }),
           off: () => this.setState({ trendHover: null }),
-          tap: () => this.setState(x => ({ trendHover: x.trendHover === i ? null : i })),
+          tap: () => this.setState({ trendHover: i }),
           hovered: on,
           tipStyle: this.tipBoxAt(i, logs.length),
           tipMain: (big ? v : v.toFixed(1)) + ' ' + String(trendUnit).toLowerCase() + ' · ' + (tRows[i].home ? 'vs ' : 'at ') + tRows[i].opp,
