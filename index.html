@@ -2472,8 +2472,11 @@ class Component extends DCLogic {
           : (!ids.length && String(st.activeId).indexOf('live:') === 0 ? SLATES[sport][0].id : st.activeId);
         return { liveSlate: games, liveMeta: Object.assign({}, r, { upcoming: !!upcoming }), odds: o, series, activeId };
       });
-      if (!(r.games || []).length && !market.length && !this._autoSport) {
-        // nothing for this league today: open on the other one if it has a slate, once
+      // nothing for this league today: open on the other one if it has a slate, once. Only a
+      // clean, definitive answer counts — a refused, stale or failed read is not an empty day,
+      // and switching on one would drop a reader onto the wrong league on a refresh.
+      const emptyForReal = r.ok && !r.stale && !r.refused && !(r.games || []).length && o && o.ok && !market.length;
+      if (emptyForReal && !this._autoSport) {
         this._autoSport = true;
         const other = sport === 'NBA' ? 'NFL' : 'NBA';
         Promise.all([S.slate(other), S.odds(other).catch(() => null)]).then(([r2, o2]) => {
