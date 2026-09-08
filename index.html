@@ -3292,8 +3292,7 @@ class Component extends DCLogic {
       if (pl.lr && pl.ln) more.push({ k: 'League', rank: pl.lr, n: pl.ln, pct: pctOfRank(pl.lr, pl.ln) });
       const skillName = k => titleCase(k).replace(/\btd\b/gi, 'TD').replace(/\bqbr\b/gi, 'QBR').replace(/\bepa\b/gi, 'EPA').replace(/\byac\b/gi, 'YAC').replace(/\badot\b/gi, 'ADOT').replace(/\bfg\b/gi, 'FG').replace(/\bxp\b/gi, 'XP').replace(/\bts\b/gi, 'TS').replace(/\bpie\b/gi, 'PIE');
       (pl.sk || []).forEach(sk => { const vals = members.map(m => { const x = (m.sk || []).find(y => y[0] === sk[0]); return x ? x[1] : null; }).filter(v => v != null); const rk = rankIn(vals, sk[1], true); more.push({ k: skillName(sk[0]), rank: rk.rank, n: rk.n, pct: sk[1] }); });
-      if (pl.surplus != null) { const vals = members.map(m => m.surplus).filter(v => v != null); const rk = rankIn(vals, pl.surplus, true); more.push({ k: 'Value', rank: rk.rank, n: rk.n, pct: rk.pct }); }
-      if (pl.paid != null) { const vals = members.map(m => m.paid).filter(v => v != null); const rk = rankIn(vals, pl.paid, true); more.push({ k: 'Paid', rank: rk.rank, n: rk.n, pct: rk.pct }); }
+      // pay is the Outlook panel's business: nothing about the contract enters the card
       const P = String(pl.pos || '').toUpperCase();
       const STAT_KEYS = sport === 'NBA' ? [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers', true], ['ts_pct', 'True shooting'], ['usg_pct', 'Usage'], ['net_rating', 'Net rating'], ['pie', 'PIE'], ['plus_minus', 'Plus-minus']]
         : /^QB$/.test(P) ? [['pyd', 'Passing yards'], ['ptd', 'Passing TD'], ['int', 'Interceptions', true], ['cmp', 'Completions'], ['sk', 'Sacked', true], ['ryd', 'Rushing yards']]
@@ -3378,7 +3377,7 @@ class Component extends DCLogic {
         const r = rankIn(all.map(x => x == null ? -Infinity : x), v, true);
         return { k, rank: r.rank, n: r.n, pct: r.pct };
       };
-      [['Record', a => a.winPct], ['Roster', a => a.rosterAvg], ['Top five', a => a.top5], ['Depth', a => a.depth], ['Value', a => a.value]]
+      [['Record', a => a.winPct], ['Roster', a => a.rosterAvg], ['Top five', a => a.top5], ['Depth', a => a.depth]]
         .concat(GROUPS.map(([k], i) => [k, a => a.groups ? a.groups[i] : null]))
         .forEach(([k, pick]) => { const m = metric(k, pick); if (!m.missing) rows.push(m); });
       const card = scorecard(rows.slice(0, 3), sport + ' CLUBS · n=' + clubs.length);
