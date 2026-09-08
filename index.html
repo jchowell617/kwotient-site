@@ -2240,6 +2240,9 @@ class Component extends DCLogic {
       });
     };
     document.addEventListener('mousedown', this._outside, true);
+    // back from the background: a fresh read at once rather than waiting out a throttled timer
+    this._visible = () => { if (document.visibilityState === 'visible' && this.state.kq === 'ready') { this.pollLive(); this.loadStandings(); } };
+    document.addEventListener('visibilitychange', this._visible);
     // a beat a second, for the clock and the cohort countdowns
     this._clock = setInterval(() => this.setState({ clockTick: Date.now() }), 1000);
     const rate = Math.max(220, Math.round(1200 / (this.props.tickRate ?? 1)));
@@ -2285,7 +2288,7 @@ class Component extends DCLogic {
     this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
     list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
   }
-  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); } catch (e) {} }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
   connectRecord() {
@@ -2341,6 +2344,7 @@ class Component extends DCLogic {
       this.loadStory();
       this.loadBox();
       this.loadProps();
+      if (!this._standingsAt || Date.now() - this._standingsAt > 15 * 60000) { this._standingsAt = Date.now(); this.loadStandings(); }
       setTimeout(() => this.ensureTrendLog(), 0);
       this._liveT = setTimeout(() => this.pollLive(), r.ok ? Math.max(8000, r.beat || 60000) : 60000);
     });
@@ -2409,6 +2413,8 @@ class Component extends DCLogic {
     if (!S || !st.liveSlate || !st.liveSlate.length) return;
     const g = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
     if (!g.live || !/^\d+$/.test(String(g.gameId))) return;
+    const have = (st.props || {})[g.id];
+    if (have && have.at && Date.now() - Date.parse(have.at) < 60000) return;
     S.props(st.sport, g.gameId).then(r => this.setState(x => ({ props: Object.assign({}, x.props, { [g.id]: Object.assign({ at: new Date().toISOString() }, r) }) })));
   }
   // the open game's first trend player gets his log without being clicked
