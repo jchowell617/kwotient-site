@@ -471,7 +471,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <sc-if value="{{ p.wp.open }}" hint-placeholder-val="{{ true }}">
               <div style="position:relative;height:222px;padding-left:34px">
-                <div onMouseMove="{{ onHover }}" onMouseLeave="{{ offHover }}" style="position:relative;height:222px;cursor:crosshair">
+                <div onMouseMove="{{ onHover }}" onMouseLeave="{{ offHover }}" onTouchStart="{{ onHover }}" onTouchMove="{{ onHover }}" style="position:relative;height:222px;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none">
                   <svg viewBox="0 0 600 222" preserveAspectRatio="none" style="width:100%;height:222px;display:block">
                     <defs>
                       <linearGradient id="cs-fill" x1="0" y1="0" x2="0" y2="1">
@@ -568,7 +568,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </div>
               <sc-if value="{{ p.mom.open }}" hint-placeholder-val="{{ true }}">
-                <div onMouseMove="{{ momHoverMove }}" onMouseLeave="{{ momHoverOff }}" style="position:relative;height:92px;cursor:crosshair">
+                <div onMouseMove="{{ momHoverMove }}" onMouseLeave="{{ momHoverOff }}" onTouchStart="{{ momHoverMove }}" onTouchMove="{{ momHoverMove }}" style="position:relative;height:92px;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none">
                   <svg viewBox="0 0 300 92" preserveAspectRatio="none" style="width:100%;height:92px;display:block">
                     <defs>
                       <clipPath id="cs-mom-up"><rect x="0" y="0" width="300" height="46"></rect></clipPath>
@@ -2669,8 +2669,25 @@ class Component extends DCLogic {
   // does, without changing the sport
   // the logo is the front door: the NFL scoreboard, regenerated
   // a section opens at its top, never where the last one was left
+  // every filter, search and open menu the app holds, cleared together
+  freshFilters() {
+    return { searchF: {}, searchQ: {}, searchOpen: null, tables: {}, colF: {}, openCol: null,
+             propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
+             histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '',
+             railEdgesAll: false, dirLimit: 12,
+             hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
+             pTrendHover: null, tTrendHover: null, bucketHover: null };
+  }
+  // where the pointer is, whether it is a mouse or a finger
+  ptX(e) {
+    if (e && e.touches && e.touches.length) return e.touches[0].clientX;
+    if (e && e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
+    return e ? e.clientX : 0;
+  }
   goTab(tab, extra) {
-    this.setState(Object.assign({ tab }, extra || {}));
+    // a section opens clean: its filters and menus reset with it
+    this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}));
     setTimeout(() => {
       try {
         window.scrollTo(0, 0);
@@ -4642,7 +4659,7 @@ class Component extends DCLogic {
       chartDots: dots,
       onHover: (e) => {
         const r = e.currentTarget.getBoundingClientRect();
-        const i = clamp(Math.round(((e.clientX - r.left) / r.width) * (hn - 1)), 0, hn - 1);
+        const i = clamp(Math.round(((this.ptX(e) - r.left) / r.width) * (hn - 1)), 0, hn - 1);
         if (i !== st.hoverIdx) this.setState({ hoverIdx: i });
       },
       offHover: () => this.setState({ hoverIdx: null }),
@@ -4668,7 +4685,7 @@ class Component extends DCLogic {
           out[key + 'On'] = idx !== null;
           out[key + 'Move'] = (e) => {
             const r = e.currentTarget.getBoundingClientRect();
-            const i = clamp(Math.round(((e.clientX - r.left) / r.width) * (n - 1)), 0, n - 1);
+            const i = clamp(Math.round(((this.ptX(e) - r.left) / r.width) * (n - 1)), 0, n - 1);
             if (i !== st[key]) this.setState({ [key]: i });
           };
           out[key + 'Off'] = () => this.setState({ [key]: null });
