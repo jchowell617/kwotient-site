@@ -3195,7 +3195,7 @@ class Component extends DCLogic {
     };
 
     // ---------- the explorer: the record's dimensions and skills, ranked inside the position ----------
-    const seasonLabel = () => (S && S.ratedSeason ? S.ratedSeason(sport).text : S ? 'as of ' + S.captured(sport) : '—');
+    const seasonLabel = () => (S && S.ratedSeason ? S.ratedSeason(sport).text : '—');
     const ratingTable = () => {
       if (this._rt && this._rt.k === sport && this._rt.n === roster.length) return this._rt.map;
       const map = {};
@@ -4687,7 +4687,7 @@ paceRows: (() => {
       drift: (() => {
         const m = st.liveMeta;
         const rows = [
-          ['Record', S ? 'as of ' + (/^\d{4}-\d{2}-\d{2}/.test(String(S.captured(sport))) ? S.day(S.captured(sport)) : S.captured(sport)) : st.kq, !!S],
+          ['Record', S && S.ratedSeason ? S.ratedSeason(sport).text : st.kq, !!S],
           ['Scores', !m ? 'not read yet' : m.ok ? 'read ' + (S ? S.age(m.fetched) : '') + ' ago' + (m.stale ? ' · catching up' : '') : 'unreachable', !!(m && m.ok && !m.stale)],
           ['Box score', boxOn ? 'live · ' + (S ? S.age(box.at) : '') : (box && box.reason ? box.reason : 'none open'), boxOn],
           ['Standings', (() => { const o = stand; if (!o) return 'not asked'; if (!o.ok) return o.refused ? 'refused from this origin' : 'unreachable'; if (!o.available) return 'no table'; return 'table · ' + seasonNote + ' · ' + (S ? S.age(o.fetched || o.at) : ''); })(), !!(stand && stand.ok && stand.available)],

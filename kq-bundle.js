@@ -716,11 +716,11 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     origin: function () { return kq().live.origin(); },
     get edgeUrl() { return kq().live.url; },
     captured: function (sport) { return kq().record.captured(lg(sport)); },
-    /* the season the ratings stand on: "2026 season · in play · as of Sep 8, 2026" or the completed one standing in */
+    /* the season the ratings stand on: "2026 season · in play" or the completed one standing in */
     ratedSeason: function (sport) { var r = kq().record.ratedSeason ? kq().record.ratedSeason(lg(sport)) : { season: null, inPlay: false, captured: kq().record.captured(lg(sport)) };
       var L = lg(sport); var label = r.season == null ? '' : (L === 'nba' ? r.season + '-' + String(r.season + 1).slice(2) : String(r.season));
       return { season: r.season, label: label, inPlay: r.inPlay, captured: r.captured,
-               text: (label ? label + ' season' : 'season') + (r.inPlay ? ' · in play' : ' · last completed') + (r.captured ? ' · as of ' + day(r.captured) : '') }; },
+               text: (label ? label + ' season' : 'season') + (r.inPlay ? ' · in play' : ' · last completed') }; },
     built: function () { var d = kq().cohorts.doc(); return d ? d.built : ''; },
     players: players, clubs: clubs, clubK: clubK, cohorts: cohorts, cohortsFor: cohortsFor, cohortRecord: cohortRecord,
     programme: function () { var d = kq().cohorts.doc(); return d ? d.programme : null; },
