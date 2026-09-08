@@ -150,6 +150,11 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 /* a widget with an open menu — a search list or a column menu — rises above the widgets after it,
    so the list is never cut off by the next card; the hover transform makes each card its own layer */
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
+/* A field under 16px makes iOS zoom the page on focus. At 16px it stays put, so the box keeps
+   its place and the list beneath it stays where the reader put it. */
+@media (max-width:767px), (max-height:520px){
+  [data-theme] input,[data-theme] textarea,[data-theme] select{font-size:16px!important}
+}
 /* A phone on its side keeps the desk's three columns, but the document still does the
    scrolling, so the browser can shrink its own bars there too. The menu and the rail stay
    pinned beside the widgets rather than stretching down the whole page. */
@@ -2454,6 +2459,45 @@ class Component extends DCLogic {
       setTimeout(() => { try { el.blur(); } catch (x) {} }, 0);
     };
     document.addEventListener('keydown', this._enterBlur, true);
+    // On a phone the keyboard takes the lower half of the screen. A box focused down the page
+    // would have its list hidden under it, so the box rides up under the header first.
+    this._liftField = e => {
+      const el = e.target;
+      if (!el || el.tagName !== 'INPUT') return;
+      try { if (!window.matchMedia('(max-width:767px), (max-height:520px)').matches) return; } catch (x) { return; }
+      const lift = () => {
+        try {
+          const doc = document.scrollingElement || document.documentElement;
+          const target = Math.max(0, doc.scrollTop + el.getBoundingClientRect().top - 58);
+          if (Math.abs(target - doc.scrollTop) > 10) window.scrollTo(0, target);
+        } catch (x) {}
+      };
+      setTimeout(lift, 120);
+      setTimeout(lift, 420);   // again once the keyboard has finished coming up
+      setTimeout(() => { this._fieldY = (document.scrollingElement || document.documentElement).scrollTop; }, 500);
+    };
+    document.addEventListener('focusin', this._liftField);
+    // The keyboard should never be a trap. Scrolling the page away from the box puts it down,
+    // and so does a tap anywhere that is not the box or the list hanging off it.
+    this._phone = () => { try { return window.matchMedia('(max-width:767px), (max-height:520px)').matches; } catch (x) { return false; } };
+    this._dropKeys = () => { const el = document.activeElement; if (el && el.tagName === 'INPUT') { try { el.blur(); } catch (x) {} } this._fieldY = null; };
+    this._scrollDrop = () => {
+      const el = document.activeElement;
+      if (!el || el.tagName !== 'INPUT' || !this._phone()) return;
+      const y = (document.scrollingElement || document.documentElement).scrollTop;
+      if (this._fieldY == null) { this._fieldY = y; return; }
+      if (Math.abs(y - this._fieldY) > 60) this._dropKeys();
+    };
+    window.addEventListener('scroll', this._scrollDrop, { passive: true });
+    this._tapOut = e => {
+      const el = document.activeElement;
+      if (!el || el.tagName !== 'INPUT' || !this._phone()) return;
+      const t = e.target;
+      if (t === el) return;
+      if (t && t.closest && (t.closest('[data-colmenu]') || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+      this._dropKeys();
+    };
+    document.addEventListener('pointerdown', this._tapOut, true);
     // a reveal stays until you click off the chart: moving between bars only moves it
     this._offChart = e => {
       const t = e.target;
@@ -2510,7 +2554,7 @@ class Component extends DCLogic {
     this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
     list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
   }
-  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); document.removeEventListener('click', this._offChart, true); } catch (e) {} }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); document.removeEventListener('focusin', this._liftField); window.removeEventListener('scroll', this._scrollDrop); document.removeEventListener('pointerdown', this._tapOut, true); document.removeEventListener('click', this._offChart, true); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
   connectRecord() {
