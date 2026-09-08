@@ -2423,7 +2423,7 @@ class Component extends DCLogic {
       const m = list => list.filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0));
       const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState({ searchOpen: null }); } }));
       const scope = H.label.replace(/^VS /, 'vs ').replace('ALL TEAMS', 'all teams');
-      const picks = !qv ? [] : (opts.picks || []).filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0)).slice(0, 12)
+      const picks = !qv ? [] : (opts.picks || []).filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv))
         .map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { if (x.pick) x.pick(); if (x.pick) setQ(''); else setQ(x.label); this.setState({ searchOpen: null }); } }));
       // the words in a widget's own rows: what the box offers as you type, when the widget names nothing itself
       const wordsOf = (rows, of, countOf) => { const by = {}; rows.forEach(r => { const w = of(r); if (!w) return; if (!by[w]) by[w] = { label: w, n: 0 }; by[w].n++; }); return Object.values(by).sort((a, b) => a.label.localeCompare(b.label)).map(x => ({ label: x.label, count: countOf ? countOf(x.n) : x.n + (x.n === 1 ? ' row' : ' rows') })); };
@@ -2477,10 +2477,16 @@ class Component extends DCLogic {
     const sideOf = (o, r) => { const c = o.consensus || {}; return { spread: c.spreadHome == null ? null : (r.home ? c.spreadHome : -c.spreadHome), total: c.total != null ? c.total : null, ml: r.home ? c.mlHome : c.mlAway, n: c.n || 0, closing: !!o.closing }; };
     const oddsNeedFor = (rows, rec) => rows.filter(r => sport === 'NBA' ? !!r.date : r.week != null).map(r => ({ key: oddsKeyFor(r, rec), at: oddsAtFor(r, rec) }));
     this._oddsNeed = [];
-    const logPicks = rows => Array.from(new Set((rows || []).map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: rows.filter(r => r.opp === o).length + ' games' }))
-      .concat((rows || []).map(r => ({ label: gameLabelOf(r), count: (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') })));
+    const logPicks = rows => { rows = rows || []; const n = f => rows.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
+      return Array.from(new Set(rows.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: 'OPPONENT · ' + cnt(n(r => r.opp === o)) }))
+        .concat([['W', r => r.result === 'W'], ['L', r => r.result === 'L'], ['home', r => r.home], ['away', r => !r.home], ['playoff', r => r.postseason]].filter(([, f]) => n(f)).map(([w, f]) => ({ label: w, count: 'RESULT · ' + cnt(n(f)) })))
+        .concat(rows.map(r => ({ label: gameLabelOf(r), count: 'GAME · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') }))); };
     const sq = k => String((st.searchQ || {})[k] || '').trim().toLowerCase();
-    const rowMatch = (r, k) => !sq(k) || matchQ((r.opp || '') + ' ' + gameLabelOf(r), sq(k));
+    const logText = r => (r.opp || '') + ' ' + gameLabelOf(r) + ' ' + (r.result ? 'result ' + r.result : '') + ' ' + (r.home ? 'home vs' : 'away at') + (r.pf != null ? ' ' + r.pf + '-' + r.pa : '') + (r.postseason ? ' playoff' : '');
+    const wordsMatch = (text, q) => { text = String(text || '').toLowerCase(); const toks = text.split(/\s+/);
+      const groups = String(q || '').toLowerCase().split(/[,;]/).map(t => t.trim()).filter(Boolean); if (!groups.length) return true;
+      return groups.some(t => t.split(/\s+/).every(w => w.length === 1 ? toks.indexOf(w) >= 0 : text.indexOf(w) >= 0)); };
+    const rowMatch = (r, k) => !sq(k) || wordsMatch(logText(r), sq(k));
     const trendPool = this.trendPoolFor(sport, g);
 
     const tq = (st.trendQ || '').trim().toLowerCase();
@@ -2600,6 +2606,10 @@ class Component extends DCLogic {
       };
     };
     const tdistinct = (rows, fn) => { const m = {}; rows.forEach(r => { const v = fn(r); if (v == null || v === '') return; m[v] = (m[v] || 0) + 1; }); return Object.keys(m).sort().map(v => ({ label: v, value: v, count: m[v] })); };
+    // the words of a row: every column's value, so the box finds anything the table shows
+    const rowText = getters => r => Object.keys(getters).map(k => { try { const v = getters[k](r); return v == null ? '' : String(v); } catch (e) { return ''; } }).join(' ');
+    // the picks the box offers: each column's distinct values, with the column and a count
+    const colPicks = (rows, getters, cols) => cols.reduce((acc, [k, label]) => acc.concat(tdistinct(rows, getters[k]).filter(v => v.label != null && v.label !== '' && v.label !== '—').map(v => ({ label: String(v.label), count: label + ' · ' + v.count + (v.count === 1 ? ' row' : ' rows') }))), []);
     const tapply = (table, rows, getters, text) => {
       const ts = tstate(table);
       const mv = (text, f) => f == null || f === '' ? true : (String(f).indexOf('~') === 0 ? String(text == null ? '' : text).toLowerCase().indexOf(String(f).slice(1).toLowerCase()) >= 0 : String(text) === String(f));
@@ -2640,7 +2650,7 @@ class Component extends DCLogic {
     };
     const propOrdered = playerProps.slice().sort((a, b) => ((a.market === 'player_anytime_td') - (b.market === 'player_anytime_td')) || String(a.label).localeCompare(String(b.label)) || String(a.who).localeCompare(String(b.who)));
     TABLES.props = { rows: propOrdered, get: propGet };
-    const propShown = tapply('props', propOrdered, propGet, r => r.who + ' ' + (propTeamOf(r) || '') + ' ' + (propPosOf(r) || '') + ' ' + r.label);
+    const propShown = tapply('props', propOrdered, propGet, rowText(propGet));
     // a page of twelve at a time, and a row of market chips for the one-click narrowing most
     // readers want before they ever open a column menu
     const PROP_PAGE = 12;
@@ -2662,7 +2672,7 @@ class Component extends DCLogic {
     });
     const bookGet = { book: r => bookName(r.b), team: r => r.team, spread: r => r.spread, ml: r => r.ml, total: r => r.b.total, age: r => r.b.updated || '' };
     TABLES.books = { rows: bookSides, get: bookGet };
-    const bookShown = tapply('books', bookSides.slice().sort((x, y) => bookGet.book(x).localeCompare(bookGet.book(y)) || (x.side === 'away' ? -1 : 1)), bookGet, r => bookName(r.b) + ' ' + r.team);
+    const bookShown = tapply('books', bookSides.slice().sort((x, y) => bookGet.book(x).localeCompare(bookGet.book(y)) || (x.side === 'away' ? -1 : 1)), bookGet, rowText(bookGet));
     const bookCols = [
       tcol('books', 'book', 'BOOK', tdistinct(bookSides, bookGet.book), 'left', 1.2), tcol('books', 'team', 'TEAM', tdistinct(bookSides, bookGet.team), 'left', .5),
       tcol('books', 'spread', 'SPREAD', null, 'left', 1), tcol('books', 'ml', 'MONEYLINE', null, 'left', .8),
@@ -3770,8 +3780,8 @@ class Component extends DCLogic {
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       bookLiveOn, bookHistOn, bookHistHead, bookHistCols, bookHistRows, bookHistNote, bookHist: histMenuFor('books', g.homeAbbr),
-      bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search books or clubs · type to filter, pick from the list',
-        picks: [{ label: g.awayAbbr, count: g.away }, { label: g.homeAbbr, count: g.home }].concat(Array.from(new Set(bookSides.map(r => bookName(r.b)))).sort().map(b => ({ label: b, count: 'book' }))), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
+      bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search anything on the table · type to filter, pick from the list',
+        picks: colPicks(bookSides, bookGet, [['book', 'BOOK'], ['team', 'TEAM'], ['spread', 'SPREAD'], ['ml', 'MONEYLINE'], ['total', 'TOTAL']]), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
       bookRows: bookShown.map(r => {
         const b = r.b;
         const cons = r.side === 'home' ? g.line : (g.line != null ? -g.line : null);
@@ -3877,8 +3887,8 @@ class Component extends DCLogic {
       momAwayBtn: 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ' + (momSide === 'away' ? BLUE : 'var(--axis)') + ';color:' + (momSide === 'away' ? BLUE : 'var(--second)'),
       momentumWindow: sport === 'NBA' ? '-6 min' : '-12 plays',
       teamHist: histMenuFor('team', teamAbbr), totalHist: histMenuFor('total', g.homeAbbr),
-      teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search games · a club code or a week · type to filter, pick from the list', count: tRowsC.length + ' games',
-        picks: Array.from(new Set(tRowsCAll.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: tRowsCAll.filter(r => r.opp === o).length + ' games' })).concat(tRowsCAll.map(r => ({ label: gameLabelOf(r), count: (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') }))) }); })(),
+      teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search games · club, week, W or L, home or away', count: tRowsC.length + ' games',
+        picks: logPicks(tRowsCAll) }); })(),
 
 
 paceRows: (() => {
@@ -3916,8 +3926,8 @@ paceRows: (() => {
       // the season the logs are read for: the one in play by default, or any the feed holds —
       // the same season everywhere, one menu per placement
       profHist: histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), h2hHist: histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null),
-      profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · a club code or a week · type to filter, pick from the list', count: profile ? profile.bars.length + ' games' : '', picks: logPicks(profHistRows) }),
-      h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · a club code or a week · type to filter, pick from the list', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', picks: logPicks(profHistRows) }),
+      profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', picks: logPicks(profHistRows) }),
+      h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', picks: logPicks(profHistRows) }),
       // the player to read: a menu over every rated player on the two clubs, the box a filter
       trendPlayerCol: (() => {
         const on = !!st.trendMenuOpen;
@@ -3981,9 +3991,8 @@ paceRows: (() => {
       propsCaption: hasProps ? playerProps.length + ' player lines · consensus across the books · ' + (S ? S.age(prS.fetched || prS.at) : '') + ' ago' + (prS.credits && prS.credits.remaining != null ? ' · ' + prS.credits.remaining.toLocaleString() + ' credits left this month' : '') : '',
       propsNote: (() => { if (!g.live) return 'props read on a real slate only'; if (!prS) return 'loading the props'; if (!prS.ok) return prS.refused ? 'the edge refused this origin' : 'the feed did not answer'; if (!prS.available) return prS.reason || 'no props posted for this game yet'; return ''; })(),
       // the lines a reader shops first: the yardage and volume markets, then the touchdown scorers
-      propCols, propSearch: searchFor('props', histMenuFor('props', g.homeAbbr), { table: 'props', placeholder: 'search players or markets · type to filter, pick from the list',
-        picks: Array.from(new Set(playerProps.map(r => r.who))).sort().map(w => { const rows = playerProps.filter(r => r.who === w); return { label: w, count: (propTeamOf(rows[0]) || '') + ' · ' + rows.length + (rows.length === 1 ? ' line' : ' lines') }; })
-          .concat(Array.from(new Set(playerProps.map(r => r.label))).sort().map(l => ({ label: l, count: playerProps.filter(r => r.label === l).length + ' lines' }))), count: propShown.length + ' of ' + playerProps.length }),
+      propCols, propSearch: searchFor('props', histMenuFor('props', g.homeAbbr), { table: 'props', placeholder: 'search anything on the table · player, team, position, market, line',
+        picks: colPicks(propOrdered, propGet, [['who', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS'], ['market', 'MARKET'], ['line', 'LINE'], ['books', 'BOOKS'], ['hit', 'VS OPP']]), count: propShown.length + ' of ' + playerProps.length }),
       propHist: histMenuFor('props', g.homeAbbr),
       propTable: propShown.slice(0, propLimit).map(r => { const v = readVsLine(r); const c = r.consensus || {}; return {
         who: r.who, pos: propPosOf(r) || '—', team: propTeamOf(r) || '—', teamStyle: 'font-family:var(--kw);font-size:10.5px;flex:.5;color:' + (propTeamOf(r) === g.homeAbbr ? 'var(--brand)' : propTeamOf(r) ? 'var(--lead)' : 'var(--muted)'),
