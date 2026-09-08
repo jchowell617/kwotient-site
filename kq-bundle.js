@@ -347,7 +347,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
   var M = function (n, dp) { return n == null ? '—' : (n < 0 ? '−' : '') + '$' + (Math.round(Math.abs(n) / 1e5) / 10).toFixed(dp == null ? 1 : dp) + 'M'; };
   var pct = function (x, dp) { return x == null ? '—' : (x * 100).toFixed(dp == null ? 0 : dp) + '%'; };
   var MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  var day = function (iso) { if (!iso) return ''; var m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? Number(m[3]) + ' ' + MON[Number(m[2]) - 1] + ' ' + m[1] : String(iso); };
+  var day = function (iso) { if (!iso) return ''; var m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/); return m ? MON[Number(m[2]) - 1] + ' ' + Number(m[3]) + ', ' + m[1] : String(iso); };
   var lg = function (sport) { return lower(sport) === 'nfl' ? 'nfl' : 'nba'; };
 
   /* ------------------------------------------------------ the live model */
@@ -466,7 +466,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
       status === 'frozen' ? 'Roster frozen ' + day(c.roster && c.roster.frozen) + ', ' + size + ' subjects. Projections file before ' + day(c.settleDate) + '.' :
       status === 'withdrawn' ? (c.addenda[0] ? c.addenda[0].title : 'Withdrawn ' + day(c.cutOn) + '.') :
       status === 'parked' ? 'Parked by decision — no permitted source of per-player contracts exists for this league.' :
-      status === 'retired' ? 'Programme retired 16 Aug 2026; nothing was frozen or filed.' :
+      status === 'retired' ? 'Program retired Aug 16, 2026; nothing was frozen or filed.' :
       'Freezes ' + (reg.freezes || day(c.freezeDate)) + '. ' + (reg.scale ? 'Scale: ' + reg.scale + '.' : '');
     var metrics = [
       ['Population', c.roster ? c.roster.size + ' frozen' : (reg.size ? reg.size + ' expected' : '—')],
@@ -545,7 +545,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
   function slateGame(g) {
     var hk = clubK(g.league, g.home.abbr), ak = clubK(g.league, g.away.abbr);
     var w = winProb(g, hk, ak);
-    var fair = -(w.priorPoints);                    /* home spread, in points: negative favours home */
+    var fair = -(w.priorPoints);                    /* home spread, in points: negative favors home */
     return {
       id: 'live:' + g.id, gameId: g.id, league: g.league, live: true, state: g.state, status: g.status || '', start: g.start || null,
       away: g.away.name || g.away.abbr, awayAbbr: g.away.abbr, home: g.home.name || g.home.abbr, homeAbbr: g.home.abbr,

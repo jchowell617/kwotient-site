@@ -1481,27 +1481,62 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                 </section>
 
                 <sc-if value="{{ profile.hasRoster }}" hint-placeholder-val="{{ false }}">
-                  <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);overflow:hidden">
+                  <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRoster.toggle }}" style="{{ p.pfRoster.btn }}">{{ p.pfRoster.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:14px 16px 12px;border-bottom:1px solid var(--grid);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
                       <div style="display:flex;flex-direction:column;gap:3px">
                         <span style="font-size:12.5px;font-weight:600">Current roster</span>
                         <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.rosterNote }}</span>
                       </div>
-                      <span style="font-family:var(--kw);font-size:9px;letter-spacing:.14em;color:var(--muted)">SCORE · GRADE</span>
+
                     </div></div></div>
                   <sc-if value="{{ p.pfRoster.open }}" hint-placeholder-val="{{ true }}">
+                    <div style="padding:10px 16px 0"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+                <input value="{{ rosterSearch.q }}" onChange="{{ rosterSearch.on }}" onFocus="{{ rosterSearch.focus }}" onDoubleClick="{{ rosterSearch.dbl }}" onKeyDown="{{ rosterSearch.onKey }}" placeholder="{{ rosterSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ rosterSearch.count }}</span>
+                <sc-for list="{{ rosterSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ rosterSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ rosterSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ rosterSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ rosterSearch.onKey }}" style="{{ rosterSearch.menuStyle }}">
+    <sc-if value="{{ rosterSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ rosterSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ rosterSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ rosterSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 16px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                      <sc-for list="{{ rosterCols }}" as="c" hint-placeholder-count="7">
+                  <div style="{{ c.cellStyle }}">
+                    <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                    <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                      <div data-colmenu="1" style="{{ c.menuStyle }}">
+                        <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                          <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                        </div>
+                        <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                </sc-for>
+                    </div>
                     <sc-for list="{{ profile.roster }}" as="rp" hint-placeholder-count="5">
-                      <div onClick="{{ rp.open }}" style="display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--divider);cursor:pointer" style-hover="background:var(--nested)">
-                        <div style="width:32px;height:32px;flex:none;border-radius:8px;background:var(--nested);border:1px solid var(--axis);display:flex;align-items:center;justify-content:center;font-family:var(--kw);font-size:11px;font-weight:700;color:var(--brand)">{{ rp.mono }}</div>
-                        <div style="display:flex;flex-direction:column;gap:2px;min-width:0;flex:1">
-                          <span style="font-size:12.5px;font-weight:500">{{ rp.name }}</span>
-                          <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ rp.pos }}</span>
-                        </div>
-                        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
-                          <span style="font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--muted)">{{ rp.statLabel }}</span>
-                          <span style="font-family:var(--kw);font-size:12px">{{ rp.stat }}</span>
-                        </div>
-                        <span style="{{ rp.gradeStyle }}">{{ rp.score }} {{ rp.grade }}</span>
+                      <div onClick="{{ rp.open }}" style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 16px;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;cursor:pointer" style-hover="background:var(--nested)">
+                        <span style="flex:1.6;min-width:0;display:flex;align-items:center;gap:8px"><span style="width:26px;height:26px;flex:none;border-radius:7px;background:var(--nested);border:1px solid var(--axis);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--brand)">{{ rp.mono }}</span><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed)">{{ rp.name }}</span></span>
+                        <span style="flex:.6;color:var(--second)">{{ rp.pos }}</span><span style="flex:.4;color:var(--second)">{{ rp.num }}</span><span style="flex:.5;text-align:right;color:var(--second)">{{ rp.age }}</span><span style="flex:.9;text-align:right;color:var(--lead)">{{ rp.paid }}</span><span style="{{ rp.gradeStyle }};flex:.6;text-align:right">{{ rp.grade }}</span><span style="{{ rp.gradeStyle }};flex:.6;text-align:right">{{ rp.score }}</span>
                       </div>
                     </sc-for>
                   </sc-if>
@@ -1852,7 +1887,7 @@ const RED = 'var(--critical)';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
 
-// Full stat catalogue for the explorer: [key, lo, hi, decimals, lowerIsBetter]
+// Full stat catalog for the explorer: [key, lo, hi, decimals, lowerIsBetter]
 const STAT_CATALOG = {
   guard: [['PTS',12,26,1,0],['REB',2.4,5.4,1,0],['AST',4.8,9.8,1,0],['STL',0.6,2.1,1,0],['BLK',0.1,0.6,1,0],['TOV',1.4,3.4,1,1],['MIN',26,37,1,0],['FG%',41,50,1,0],['3P%',32,42,1,0],['FT%',74,91,1,0],['TS%',54,63,1,0],['USG%',18,31,1,0],['RATING',12,24,1,0],['+/-',-4,8,1,0]],
   wing:  [['PTS',14,28,1,0],['REB',3.2,7.4,1,0],['AST',1.8,5.6,1,0],['STL',0.5,1.8,1,0],['BLK',0.2,1.0,1,0],['TOV',1.2,3.0,1,1],['MIN',28,37,1,0],['FG%',43,52,1,0],['3P%',33,42,1,0],['FT%',72,89,1,0],['TS%',55,64,1,0],['USG%',20,33,1,0],['RATING',13,25,1,0],['+/-',-3,9,1,0]],
@@ -2337,7 +2372,7 @@ class Component extends DCLogic {
   renderVals() {
     const st = this.state, sport = st.sport;
     const S = st.kq === 'ready' ? SRC() : null;
-    // the slate is the edge's when it answers with games; the seeded one, and labelled so, otherwise
+    // the slate is the edge's when it answers with games; the seeded one, and labeled so, otherwise
     const liveOn = !!(st.liveSlate && st.liveSlate.length);
     const slate = liveOn ? st.liveSlate : SLATES[sport];
     const slateSim = !liveOn;
@@ -2708,7 +2743,8 @@ class Component extends DCLogic {
       const reg = TABLES[table] || { rows: [], get: {} };
       const raw = options || (reg.get[key] ? tdistinct(reg.rows, r => { const v = reg.get[key](r); return v == null ? null : String(v); }) : []);
       // a numeric column lists its values in number order, not as text
-      const opts = (raw.length && raw.every(v => isFinite(Number(v.value)) && String(v.value).trim() !== '') ? raw.slice().sort((a, b) => Number(a.value) - Number(b.value)) : raw).slice(0, 80);
+      const opts = (raw.length && raw.every(v => isFinite(Number(v.value)) && String(v.value).trim() !== '') ? raw.slice().sort((a, b) => Number(a.value) - Number(b.value)) : raw).slice(0, 80)
+        .map(v => key === 'paid' && S && isFinite(Number(v.value)) ? Object.assign({}, v, { label: S.M(Number(v.value)) }) : v);
       const qv = on ? String(ts.mq || '').trim().toLowerCase() : '';
       const typed = activeList.length === 1 && String(activeList[0]).indexOf('~') === 0 ? String(activeList[0]).slice(1) : '';
       const openMenu = () => tset(table, { open: on ? null : key, mq: typed });
@@ -2960,7 +2996,7 @@ class Component extends DCLogic {
           rows.push({ k: sk[0], v: sk[1] + 'th', rank: '—', rating: rc.rating, badge: rc.badge, fill: rc.fill, delta: 'skill pct', deltaStyle: muted, low: false });
         });
       } else {
-        [['Offence', 'off'], ['Defence', 'def'], ['Ball security', 'ball']].forEach(([k, f]) => {
+        [['Offense', 'off'], ['Defense', 'def'], ['Ball security', 'ball']].forEach(([k, f]) => {
           const v = ent[f];
           if (v == null) return;
           const rk = rankIn(members.map(m => m[f] == null ? 0 : m[f]), v, true);
@@ -3010,7 +3046,35 @@ class Component extends DCLogic {
       const ck = pl.name + '|' + pl.team;
       if (this._bc.p[ck]) return this._bc.p[ck];
       const cohort = cohortOf(pl.grp);
-      const card = scorecard((pl.dims || []).map(dimRow), labelOf(pl.grp) + ' · n=' + cohort.length);
+      const baseRows = (pl.dims || []).map(dimRow);
+      const card = scorecard(baseRows, labelOf(pl.grp) + ' · n=' + cohort.length);
+      // the rest of the card ranks him inside his cohort on everything the record holds: his
+      // standing at the position and league-wide, each skill, his pay against his band, his
+      // pay itself, and the season's stat line for his kind of position
+      const members = cohort.length ? cohort : [pl];
+      const more = [];
+      const pctOfRank = (rank, n) => n > 1 ? Math.round(clamp((1 - (rank - 1) / (n - 1)) * 96 + 2, 2, 99)) : 60;
+      if (pl.pr && pl.pn) more.push({ k: 'At ' + labelOf(pl.pos), rank: pl.pr, n: pl.pn, pct: pctOfRank(pl.pr, pl.pn) });
+      if (pl.lr && pl.ln) more.push({ k: 'League', rank: pl.lr, n: pl.ln, pct: pctOfRank(pl.lr, pl.ln) });
+      const skillName = k => titleCase(k).replace(/\btd\b/gi, 'TD').replace(/\bqbr\b/gi, 'QBR').replace(/\bepa\b/gi, 'EPA').replace(/\byac\b/gi, 'YAC').replace(/\badot\b/gi, 'ADOT').replace(/\bfg\b/gi, 'FG').replace(/\bxp\b/gi, 'XP').replace(/\bts\b/gi, 'TS').replace(/\bpie\b/gi, 'PIE');
+      (pl.sk || []).forEach(sk => { const vals = members.map(m => { const x = (m.sk || []).find(y => y[0] === sk[0]); return x ? x[1] : null; }).filter(v => v != null); const rk = rankIn(vals, sk[1], true); more.push({ k: skillName(sk[0]), rank: rk.rank, n: rk.n, pct: sk[1] }); });
+      if (pl.surplus != null) { const vals = members.map(m => m.surplus).filter(v => v != null); const rk = rankIn(vals, pl.surplus, true); more.push({ k: 'Value', rank: rk.rank, n: rk.n, pct: rk.pct }); }
+      if (pl.paid != null) { const vals = members.map(m => m.paid).filter(v => v != null); const rk = rankIn(vals, pl.paid, true); more.push({ k: 'Paid', rank: rk.rank, n: rk.n, pct: rk.pct }); }
+      const P = String(pl.pos || '').toUpperCase();
+      const STAT_KEYS = sport === 'NBA' ? [['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['stl', 'Steals'], ['blk', 'Blocks'], ['tov', 'Turnovers', true], ['ts_pct', 'True shooting'], ['usg_pct', 'Usage'], ['net_rating', 'Net rating'], ['pie', 'PIE'], ['plus_minus', 'Plus-minus']]
+        : /^QB$/.test(P) ? [['pyd', 'Passing yards'], ['ptd', 'Passing TD'], ['int', 'Interceptions', true], ['cmp', 'Completions'], ['sk', 'Sacked', true], ['ryd', 'Rushing yards']]
+        : /^(RB|FB|HB)$/.test(P) ? [['ryd', 'Rushing yards'], ['rtd', 'Rushing TD'], ['car', 'Carries'], ['rec', 'Receptions'], ['cyd', 'Receiving yards'], ['fum', 'Fumbles', true]]
+        : /^(WR|TE)$/.test(P) ? [['rec', 'Receptions'], ['cyd', 'Receiving yards'], ['ctd', 'Receiving TD'], ['tgt', 'Targets'], ['fum', 'Fumbles', true]]
+        : /^(K|P|PK|LS)$/.test(P) ? [['fgm', 'Field goals'], ['fga', 'FG attempts'], ['xpm', 'Extra points']]
+        : /^(OL|OT|OG|C|G|T|LT|RT|LG|RG)$/.test(P) ? []
+        : [['tkl', 'Tackles'], ['tfl', 'Tackles for loss'], ['dsk', 'Sacks'], ['dint', 'Interceptions'], ['pd', 'Passes defended'], ['ff', 'Forced fumbles']];
+      const seasonsHeld = S.seasons(sport).seasons, yr = seasonsHeld.length ? Math.max.apply(null, seasonsHeld) : null;
+      const statOf = (m, k) => { const sr = yr != null ? S.seasonRow(sport, m.full || m.name, yr) : null; const v = sr && sr.stats ? sr.stats[k] : null; return v == null || v === '' ? null : Number(v); };
+      // a stat the record already scores as a skill or a dimension is not listed twice
+      const held = () => baseRows.concat(more).map(x => String(x.k).toLowerCase().replace(/[^a-z]/g, ''));
+      const dup = label => { const n = label.toLowerCase().replace(/[^a-z]/g, ''); return held().some(h => h === n || h.indexOf(n) === 0); };
+      if (yr != null) STAT_KEYS.forEach(([k, label, low]) => { if (dup(label)) return; const mine = statOf(pl, k); if (mine == null || !isFinite(mine)) return; const vals = members.map(m => statOf(m, k)).filter(v => v != null && isFinite(v)); if (vals.length < 3) return; const rk = rankIn(vals, mine, !low); more.push({ k: label, rank: rk.rank, n: rk.n, pct: rk.pct }); });
+      card.rows = scorecard(baseRows.concat(more), '').rows;
       card.overall = pl.k == null ? '—' : String(pl.k);
       card.grade = pl.k == null ? '—' : gradeOf(pl.k);
       card.color = pl.k == null ? 'var(--muted)' : gradeColor(pl.k);
@@ -3039,15 +3103,44 @@ class Component extends DCLogic {
     };
     const clubBundle = (cl) => {
       if (this._bc.c[cl.abbr]) return this._bc.c[cl.abbr];
-      const rows = [['Offence', 'off'], ['Defence', 'def'], ['Ball security', 'ball']].map(([k, f]) => {
+      const rows = [['Offense', 'off'], ['Defense', 'def'], ['Ball security', 'ball']].map(([k, f]) => {
         const v = cl[f]; const r = rankIn(clubs.map(x => x[f] == null ? 0 : x[f]), v == null ? 0 : v, true);
         return { k, rank: r.rank, n: r.n, pct: v == null ? 50 : v };
       });
-      const card = scorecard(rows, sport + ' CLUBS · n=' + clubs.length);
+      // the rest of the card reads the record and the roster the same way: a club's number
+      // against every club in the league, ranked, the bar its percentile
+      const GROUPS = sport === 'NFL'
+        ? [['Quarterback', /^QB$/, 1], ['Backs', /^(RB|FB|HB)$/, 2], ['Receivers', /^WR$/, 3], ['Tight ends', /^TE$/, 2], ['O-line', /^(OL|OT|OG|C|G|T|LT|RT|LG|RG)$/, 5], ['D-line', /^(DE|DT|DL|NT|EDGE)$/, 4], ['Linebackers', /^(LB|ILB|OLB|MLB)$/, 3], ['Secondary', /^(CB|DB|S|FS|SS|SAF)$/, 4]]
+        : [['Guards', /G/, 3], ['Wings', /F/, 3], ['Bigs', /C/, 2]];
+      const agg = this._bc.agg || (this._bc.agg = (() => {
+        const by = {}; const meanOf = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+        clubs.forEach(c => {
+          const ps = roster.filter(p => p.team === c.abbr && p.k != null).sort((a, b) => b.k - a.k);
+          const wl = String((standBy[c.abbr] && standBy[c.abbr].record) || c.record || '').match(/^(\d+)-(\d+)/);
+          by[c.abbr] = {
+            winPct: wl && Number(wl[1]) + Number(wl[2]) > 0 ? Number(wl[1]) / (Number(wl[1]) + Number(wl[2])) : null,
+            rosterAvg: meanOf(ps.map(p => p.k)), top5: meanOf(ps.slice(0, 5).map(p => p.k)), depth: ps.filter(p => p.k >= 70).length,
+            value: ps.some(p => p.surplus != null) ? ps.reduce((t, p) => t + (p.surplus || 0), 0) : null,
+            groups: GROUPS.map(([, re, n]) => meanOf(ps.filter(p => re.test(String(p.pos || '').toUpperCase())).slice(0, n).map(p => p.k)))
+          };
+        });
+        return by;
+      })());
+      const metric = (k, pick) => {
+        const all = clubs.map(x => pick(agg[x.abbr] || {})), v = pick(agg[cl.abbr] || {});
+        if (v == null) return { k, rank: '—', n: clubs.length, pct: 50, missing: true };
+        const r = rankIn(all.map(x => x == null ? -Infinity : x), v, true);
+        return { k, rank: r.rank, n: r.n, pct: r.pct };
+      };
+      [['Record', a => a.winPct], ['Roster', a => a.rosterAvg], ['Top five', a => a.top5], ['Depth', a => a.depth], ['Value', a => a.value]]
+        .concat(GROUPS.map(([k], i) => [k, a => a.groups ? a.groups[i] : null]))
+        .forEach(([k, pick]) => { const m = metric(k, pick); if (!m.missing) rows.push(m); });
+      const card = scorecard(rows.slice(0, 3), sport + ' CLUBS · n=' + clubs.length);
+      card.rows = scorecard(rows, '').rows;
       card.overall = cl.k == null ? '—' : String(cl.k);
       card.grade = cl.k == null ? '—' : gradeOf(cl.k);
       card.color = cl.k == null ? 'var(--muted)' : gradeColor(cl.k);
-      const factors = rows.map(r => [r.k, (r.pct - 50) / 16]);
+      const factors = rows.slice(0, 3).map(r => [r.k, (r.pct - 50) / 16]);
       const stats = [
         { k: 'KWOTIENT', v: cl.k == null ? '—' : String(cl.k) },
         { k: 'RANK', v: cl.rank ? cl.rank + '/' + cl.of : '—' },
@@ -3059,7 +3152,7 @@ class Component extends DCLogic {
       ];
       const rosterOf = roster.filter(p => p.team === cl.abbr && p.k != null).sort((a, b) => b.k - a.k);
       const news = [
-        { kind: 'SCORE', t: 'capture', text: cl.name + ' — Kwotient Score ' + cl.k + ', ' + cl.rank + ' of ' + cl.of + ' clubs on the flat mean of offence, defence and ball security ranks.' },
+        { kind: 'SCORE', t: 'capture', text: cl.name + ' — Kwotient Score ' + cl.k + ', ' + cl.rank + ' of ' + cl.of + ' clubs on the flat mean of offense, defense and ball security ranks.' },
         { kind: 'MONEY', t: 'capture', text: 'Committed ' + S.M(cl.committed) + (cl.standing ? ' — ' + cl.standing + '.' : '.') },
         { kind: 'ROSTER', t: 'capture', text: rosterOf.length + ' rated players' + (rosterOf[0] ? '; best rated ' + rosterOf[0].full + ' at ' + rosterOf[0].k + '.' : '.') }
       ];
@@ -3258,7 +3351,8 @@ class Component extends DCLogic {
       clear: () => setCol(k, null)
     }));
 
-    let profile = null, profHistAbbr = null, profHistRows = [];
+    let profile = null, profHistAbbr = null, profHistRows = [], rosterShown = [], rosterCols = [], rosterSearchVals = null;
+    const ROSTER_SEARCH_COLS = [['name', 'PLAYER'], ['pos', 'POS'], ['num', '#'], ['age', 'AGE'], ['paid', 'PAID'], ['grade', 'GRADE'], ['k', 'SCORE']];
     if (st.profileId && S && (roster.length || clubs.length)) {
       const isP = st.profileId.slice(0, 2) === 'p:';
       const key = st.profileId.slice(2);
@@ -3345,6 +3439,12 @@ class Component extends DCLogic {
       } else {
         const cl = clubs.find(x => x.abbr === key) || clubs[0];
         const cb = clubBundle(cl);
+        // the roster is a table like the others: every column sorts and filters, the box searches them all
+        const rosterGet = { name: p => p.full, pos: p => p.pos || null, num: p => p.num != null ? Number(p.num) : null, age: p => p.age != null ? Number(p.age) : null, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => gradeOf(p.k), k: p => p.k };
+        TABLES.roster = { rows: cb.rosterOf, get: rosterGet };
+        rosterShown = tapply('roster', cb.rosterOf, rosterGet, p => p.full + ' ' + (p.pos || '') + ' ' + (p.num != null ? '#' + p.num : '') + ' ' + (p.age != null ? p.age : '') + ' ' + S.M(p.paid) + ' ' + gradeOf(p.k) + ' ' + p.k);
+        rosterCols = [tcol('roster', 'name', 'PLAYER', null, 'left', 1.6), tcol('roster', 'pos', 'POS', null, 'left', .6), tcol('roster', 'num', '#', null, 'left', .4), tcol('roster', 'age', 'AGE', null, 'right', .5), tcol('roster', 'paid', 'PAID', null, 'right', .9), tcol('roster', 'grade', 'GRADE', null, 'right', .6), tcol('roster', 'k', 'SCORE', null, 'right', .6)];
+        rosterSearchVals = searchFor('roster', histMenuFor('roster', cl.abbr), { table: 'roster', cols: ROSTER_SEARCH_COLS, placeholder: 'search the roster · player, position, number, age, salary, grade, score', count: rosterShown.length + ' of ' + cb.rosterOf.length, groups: colGroups(cb.rosterOf, rosterGet, ROSTER_SEARCH_COLS) });
         const cFell = false;
         const cRows = logRows.filter(r => rowMatch(r, 'profile')), cOpp = null;
         profHistAbbr = cl.abbr; profHistRows = logRows;
@@ -3374,7 +3474,7 @@ class Component extends DCLogic {
             hovered: st.pTrendHover === i,
             tipStyle: tipBox(i, margins.length),
             tipMain: (v > 0 ? '+' : '') + v + ' · ' + (cRows[i].home ? 'vs ' : 'at ') + cRows[i].opp + ' ' + cRows[i].pf + '-' + cRows[i].pa,
-            tipSub: cRows[i].date + ' · ' + (v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'drawn ') + Math.abs(v),
+            tipSub: cRows[i].date + ' · ' + (v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'tied at ') + Math.abs(v),
             tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (v > 0 ? ACC : RED),
             bar: 'width:100%;height:' + Math.max(3, (Math.abs(v) / mx) * 59).toFixed(1) + 'px;border-radius:3px 3px 0 0;background:' + (v > 0 ? ACC : RED) + ';opacity:.85;margin-bottom:' + (v > 0 ? '59px' : '0')
           })),
@@ -3423,10 +3523,9 @@ class Component extends DCLogic {
           card: cb.card,
           explorer: explorerFor(cl, clubs),
           rosterNote: cb.rosterOf.length + ' rated players · ranked inside their own position',
-          roster: cb.rosterOf.slice(0, 40).map(p => ({
-            mono: mono(p.full), name: p.full, pos: p.pos + (p.num ? ' · #' + p.num : ''),
-            statLabel: 'PAID', stat: S.M(p.paid),
-            grade: gradeOf(p.k), score: String(p.k),
+          roster: rosterShown.map(p => ({
+            mono: mono(p.full), name: p.full, pos: p.pos || '—', num: p.num ? '#' + p.num : '—', age: p.age != null ? String(p.age) : '—',
+            paid: S.M(p.paid), grade: gradeOf(p.k), score: String(p.k),
             gradeStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + gradeColor(p.k),
             open: () => this.openProfile('p:' + p.name, p)
           })),
@@ -3465,7 +3564,7 @@ class Component extends DCLogic {
       ? { brand: '#4d8bff', axis: '#2c3241', grid: '#1f232e', nested: '#171b25', second: '#98a3b3', lead: '#c9d1dc' }
       : { brand: '#1d5fd6', axis: '#b4c2d8', grid: '#d2dcec', nested: '#e2e9f4', second: '#5a6b82', lead: '#2c3a4e' };
     const feedSim = [
-      { phase: 'LIVE', kind: 'EDGE', t: 'now', game: slate[0].homeAbbr, tone: 1, text: slate[0].homeAbbr + ' spread at ' + slate[0].line + ', model fair ' + slate[0].fair.toFixed(1) + '. Model favours the home side.' },
+      { phase: 'LIVE', kind: 'EDGE', t: 'now', game: slate[0].homeAbbr, tone: 1, text: slate[0].homeAbbr + ' spread at ' + slate[0].line + ', model fair ' + slate[0].fair.toFixed(1) + '. Model favors the home side.' },
       { phase: 'LIVE', kind: 'PACE', t: '0:18', game: slate[0].homeAbbr, tone: 3, text: nba ? 'Game running at 104.8 possessions/48 — 6.2 above both season paces.' : 'Both offenses averaging 24.1 seconds per snap, fastest of the week.' },
       { phase: 'LIVE', kind: 'SWING', t: '0:42', game: sl(1).awayAbbr, tone: 2, text: sl(1).awayAbbr + ' win probability +11.4 across three possessions.' },
       { phase: 'LIVE', kind: 'SHOOTING', t: '1:02', game: sl(1).homeAbbr, tone: 0, text: nba ? sl(1).homeAbbr + ' 4-of-19 from three, 11.4 points below shot-quality expectation.' : sl(1).homeAbbr + ' 2.9 yards per carry against a 4.4 expectation.' },
@@ -3627,7 +3726,7 @@ class Component extends DCLogic {
         tipStyle: 'position:absolute;bottom:126px;' + (i > tMargins.length - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
           'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none',
         tipMain: (v > 0 ? '+' : '') + v + ' · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + r.pf + '-' + r.pa,
-        tipSub: (r.when || r.date) + ' · ' + (r.live && !r.result ? (v > 0 ? 'up by ' : v < 0 ? 'down by ' : 'level, ') : v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'drawn ') + Math.abs(v),
+        tipSub: (r.when || r.date) + ' · ' + (r.live && !r.result ? (v > 0 ? 'up by ' : v < 0 ? 'down by ' : 'level, ') : v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'tied at ') + Math.abs(v),
         tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (v > 0 ? ACC : RED)
       };
     });
@@ -3716,13 +3815,13 @@ class Component extends DCLogic {
       ],
       refGlossary: [
         { k: 'KQ rating', v: 'The record\'s 0 to 100 rating of a player or club for the season in play: a rank inside the position cohort, never a blend or a guess.' },
-        { k: 'Model line', v: 'The model\'s own fair spread for a game, from the two club cards and the score; negative favours the home side.' },
+        { k: 'Model line', v: 'The model\'s own fair spread for a game, from the two club cards and the score; negative favors the home side.' },
         { k: 'Prior', v: 'The model\'s win probability before a ball is played, from the two club cards alone.' },
         { k: 'Consensus', v: 'The median line across the books that post one; for the moneyline, the mean implied probability with the vig removed.' },
         { k: 'Implied probability', v: 'What a moneyline says about a side\'s chance once the book\'s margin is taken out, so the two sides sum to 100.' },
         { k: 'Edge', v: 'The gap between the model\'s fair line and the market\'s, in points on the home spread; a point or more is worth noting, two is an alert.' },
         { k: 'L10', v: 'A player\'s last ten games in the record\'s game log; against a line, how many of them cleared it.' },
-        { k: 'Best number', v: 'The most favourable line or price on a side among the books listed, and the book that posts it.' },
+        { k: 'Best number', v: 'The most favorable line or price on a side among the books listed, and the book that posts it.' },
         { k: 'Cohort', v: 'A registered population the record freezes on a date, files projections for, and settles against the outcome — frozen, filed, settled, in that order.' },
         { k: 'Momentum', v: 'The running swing in win probability over the last stretch of play, read from either side.' }
       ],
@@ -3783,7 +3882,7 @@ class Component extends DCLogic {
         const next = own.filter(c => c.status === 'queued' && c.daysToFreeze != null && c.daysToFreeze >= 0).sort((a, b) => a.daysToFreeze - b.daysToFreeze)[0];
         const pop = fixed.reduce((a, c) => a + (Number(c.size) || 0), 0);
         return [
-          { k: 'ON PROGRAMME', v: String(own.length), sub: sport + ' cohorts on the register' + (S ? ' · built ' + S.day(S.built()) : ''), tone: 0 },
+          { k: 'ON PROGRAM', v: String(own.length), sub: sport + ' cohorts on the register' + (S ? ' · built ' + S.day(S.built()) : ''), tone: 0 },
           { k: 'FROZEN OR FILED', v: String(fixed.length), sub: 'rosters fixed, claims on the record', tone: 0 },
           { k: 'NEXT FREEZE', v: next ? next.daysToFreeze + 'd' : '—', sub: next ? next.cohort + ' · ' + S.day(next.freezeDate) : 'none scheduled', tone: 1 },
           { k: 'POPULATION', v: String(pop), sub: 'frozen subjects across cohorts', tone: 0 }
@@ -4092,6 +4191,7 @@ paceRows: (() => {
       // the season the logs are read for: the one in play by default, or any the feed holds —
       // the same season everywhere, one menu per placement
       profHist: histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), h2hHist: histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null),
+      rosterCols, rosterSearch: rosterSearchVals || searchFor('roster', histMenuFor('roster', g.homeAbbr), { table: 'roster', cols: ROSTER_SEARCH_COLS }),
       profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', groups: logGroups(profHistRows) }),
       h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', groups: logGroups(profHistRows) }),
       // the player to read: a menu over every rated player on the two clubs, the box a filter
