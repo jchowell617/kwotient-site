@@ -506,11 +506,18 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 </div>
                 <span style="font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ marketHeader }}</span>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" onKeyDown="{{ bookSearch.onKey }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ bookSearch.count }}</span>
                 <sc-if value="{{ bookSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bookSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ bookSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" style="{{ bookSearch.menuStyle }}">
+                    <sc-for list="{{ bookSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
               </div>
               <sc-if value="{{ bookLiveOn }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
@@ -582,11 +589,18 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">the two right-hand columns read each player's games in the history chosen — tonight's opponent by default — where his log is loaded</span>
               </div>
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" onKeyDown="{{ propSearch.onKey }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ propSearch.count }}</span>
                 <sc-if value="{{ propSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ propSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ propSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" style="{{ propSearch.menuStyle }}">
+                    <sc-for list="{{ propSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                 <span style="flex:none;width:18px;display:flex;align-items:center"><button data-chev="1" onClick="{{ p.playerProps.toggle }}" style="{{ p.playerProps.btn }}">{{ p.playerProps.chevron }}</button></span>
@@ -723,11 +737,18 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 </div>
               </div>
               <sc-if value="{{ p.teamTrend.open }}" hint-placeholder-val="{{ true }}">
-              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ teamSearch.count }}</span>
                 <sc-if value="{{ teamSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ teamSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ teamSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" style="{{ teamSearch.menuStyle }}">
+                    <sc-for list="{{ teamSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
               </div>
               <div style="position:relative">
                 <div style="position:absolute;left:0;right:0;top:54px;height:0;border-top:1px dashed var(--axis)"></div>
@@ -1510,11 +1531,18 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.barsNote }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfTrend.open }}" hint-placeholder-val="{{ true }}">
-                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                    <input value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                    <input value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" onKeyDown="{{ profSearch.onKey }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ profSearch.count }}</span>
                     <sc-if value="{{ profSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ profSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                    <sc-if value="{{ profSearch.open }}" hint-placeholder-val="{{ false }}">
+                      <div data-colmenu="1" style="{{ profSearch.menuStyle }}">
+                        <sc-for list="{{ profSearch.values }}" as="v" hint-placeholder-count="6">
+                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
                   </div>
                   <div style="position:relative;height:148px;padding-left:30px">
                     <div style="position:relative;height:148px">
@@ -1551,11 +1579,18 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head to head</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.h2h.head }}</span></div></div>
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
-                  <div style="margin-top:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                    <input value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                    <input value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" onKeyDown="{{ h2hSearch.onKey }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ h2hSearch.count }}</span>
                     <sc-if value="{{ h2hSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ h2hSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                    <sc-if value="{{ h2hSearch.open }}" hint-placeholder-val="{{ false }}">
+                      <div data-colmenu="1" style="{{ h2hSearch.menuStyle }}">
+                        <sc-for list="{{ h2hSearch.values }}" as="v" hint-placeholder-count="6">
+                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
                   </div></div>
                   <sc-for list="{{ profile.h2h.rows }}" as="r" hint-placeholder-count="3">
                     <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline">
@@ -2388,7 +2423,10 @@ class Component extends DCLogic {
       const m = list => list.filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0));
       const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState({ searchOpen: null }); } }));
       const scope = H.label.replace(/^VS /, 'vs ').replace('ALL TEAMS', 'all teams');
-      const picks = !qv ? [] : (opts.picks || []).slice(0, 12).map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState({ searchOpen: null }); } }));
+      const picks = !qv ? [] : (opts.picks || []).filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0)).slice(0, 12)
+        .map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { if (x.pick) x.pick(); if (x.pick) setQ(''); else setQ(x.label); this.setState({ searchOpen: null }); } }));
+      // the words in a widget's own rows: what the box offers as you type, when the widget names nothing itself
+      const wordsOf = (rows, of, countOf) => { const by = {}; rows.forEach(r => { const w = of(r); if (!w) return; if (!by[w]) by[w] = { label: w, n: 0 }; by[w].n++; }); return Object.values(by).sort((a, b) => a.label.localeCompare(b.label)).map(x => ({ label: x.label, count: countOf ? countOf(x.n) : x.n + (x.n === 1 ? ' row' : ' rows') })); };
       // a sub-filter in the column-header format: the title with the value, a dot when it is
       // set, and the column menu beneath — a type box, clear, the values
       const sub = (name, title, items, active, clearFn) => {
@@ -2439,6 +2477,8 @@ class Component extends DCLogic {
     const sideOf = (o, r) => { const c = o.consensus || {}; return { spread: c.spreadHome == null ? null : (r.home ? c.spreadHome : -c.spreadHome), total: c.total != null ? c.total : null, ml: r.home ? c.mlHome : c.mlAway, n: c.n || 0, closing: !!o.closing }; };
     const oddsNeedFor = (rows, rec) => rows.filter(r => sport === 'NBA' ? !!r.date : r.week != null).map(r => ({ key: oddsKeyFor(r, rec), at: oddsAtFor(r, rec) }));
     this._oddsNeed = [];
+    const logPicks = rows => Array.from(new Set((rows || []).map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: rows.filter(r => r.opp === o).length + ' games' }))
+      .concat((rows || []).map(r => ({ label: gameLabelOf(r), count: (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') })));
     const sq = k => String((st.searchQ || {})[k] || '').trim().toLowerCase();
     const rowMatch = (r, k) => !sq(k) || matchQ((r.opp || '') + ' ' + gameLabelOf(r), sq(k));
     const trendPool = this.trendPoolFor(sport, g);
@@ -3072,7 +3112,7 @@ class Component extends DCLogic {
         const pl = roster.find(x => x.name === key) || roster[0];
         const pb = playerBundle(pl);
         const pScoped = histScope(logRows, pl.team), pFell = hf.opp === 'opp' && !hf.game && logRows.length > 0 && pScoped.length === 0;
-        const pRows = (pFell ? logRows : pScoped).filter(r => rowMatch(r, 'profile')), pOpp = pFell ? null : histOppOf(pl.team);
+        const pRows = sq('profile') ? logRows.filter(r => rowMatch(r, 'profile')) : (pFell ? logRows : pScoped), pOpp = pFell || sq('profile') ? null : histOppOf(pl.team);
         profHistAbbr = pl.team; profHistRows = logRows;
         const vals = pRows.map(r => r.v);
         const season = av(logRows.map(r => r.v)), l10 = av(vals.slice(-10));
@@ -3143,7 +3183,7 @@ class Component extends DCLogic {
         const cl = clubs.find(x => x.abbr === key) || clubs[0];
         const cb = clubBundle(cl);
         const cScoped = histScope(logRows, cl.abbr), cFell = hf.opp === 'opp' && !hf.game && logRows.length > 0 && cScoped.length === 0;
-        const cRows = (cFell ? logRows : cScoped).filter(r => rowMatch(r, 'profile')), cOpp = cFell ? null : histOppOf(cl.abbr);
+        const cRows = sq('profile') ? logRows.filter(r => rowMatch(r, 'profile')) : (cFell ? logRows : cScoped), cOpp = cFell || sq('profile') ? null : histOppOf(cl.abbr);
         profHistAbbr = cl.abbr; profHistRows = logRows;
         const margins = cRows.map(r => r.margin);
         const mx = Math.max.apply(null, margins.map(Math.abs).concat([1])) * 1.25;
@@ -3181,7 +3221,7 @@ class Component extends DCLogic {
           // already holds, with the closing line the edge filed for each when it has one
           h2h: (() => {
             const meetings = (cOpp ? logRows.filter(r => r.opp === cOpp) : logRows).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-            const shown = (hf.game ? meetings.filter(r => r.date === hf.game) : meetings).filter(r => rowMatch(r, 'h2h')).slice(0, 20);
+            const shown = (sq('h2h') ? logRows.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).filter(r => rowMatch(r, 'h2h')) : hf.game ? meetings.filter(r => r.date === hf.game) : meetings).slice(0, 20);
             const wins = meetings.filter(r => r.result === 'W').length, losses = meetings.filter(r => r.result === 'L').length;
             this._oddsNeed = this._oddsNeed.concat(oddsNeedFor(shown.slice(0, 10), log));
             return {
@@ -3384,15 +3424,15 @@ class Component extends DCLogic {
     const teamOppAbbr0 = histOppOf(teamAbbr) || null;
     const teamScoped = histScope(tRowsCAll, teamAbbr);
     const teamFell = hf.opp === 'opp' && !hf.game && tRowsCAll.length > 0 && teamScoped.length === 0;
-    const tRowsC = (teamFell ? tRowsCAll : teamScoped).filter(r => rowMatch(r, 'team'));
-    const teamOppAbbr = teamFell ? null : teamOppAbbr0;
+    const tRowsC = sq('team') ? tRowsCAll.filter(r => rowMatch(r, 'team')) : (teamFell ? tRowsCAll : teamScoped);
+    const teamOppAbbr = teamFell || sq('team') ? null : teamOppAbbr0;
     const teamVsRows = tRowsC, teamUseVs = !!teamOppAbbr;
     const tMargins = tRowsC.map(r => r.margin);
     const tMx = Math.max.apply(null, tMargins.map(Math.abs).concat([1]));
     const tAvg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
     const tRoll = tMargins.map((_, i) => tAvg(tMargins.slice(Math.max(0, i - 2), i + 1)));
     const tWins = tMargins.filter(v => v > 0).length;
-    const teamLogNote = !tLog ? 'team log not requested' : tLog.state === 'ready' ? (teamFell ? 'no game against ' + teamOppAbbr0 + ' in this log · every game · ' : teamOppAbbr ? tRowsC.length + ' games against ' + teamOppAbbr + ' · ' : '') + tLog.season + ' season' + (tLog.fellBack ? ' (no games yet in ' + tLog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+    const teamLogNote = !tLog ? 'team log not requested' : tLog.state === 'ready' ? (sq('team') ? tRowsC.length + ' games matching the search · ' : teamFell ? 'no game against ' + teamOppAbbr0 + ' in this log · every game · ' : teamOppAbbr ? tRowsC.length + ' games against ' + teamOppAbbr + ' · ' : '') + tLog.season + ' season' + (tLog.fellBack ? ' (no games yet in ' + tLog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
       : tLog.state === 'loading' ? 'loading the team log…' : 'team log unavailable — ' + (tLog.reason || 'the feed did not answer');
 
     const teamTrendBars = tMargins.map((v, i) => {
@@ -3730,7 +3770,8 @@ class Component extends DCLogic {
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       bookLiveOn, bookHistOn, bookHistHead, bookHistCols, bookHistRows, bookHistNote, bookHist: histMenuFor('books', g.homeAbbr),
-      bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search books or clubs · commas for several', count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
+      bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search books or clubs · type to filter, pick from the list',
+        picks: [{ label: g.awayAbbr, count: g.away }, { label: g.homeAbbr, count: g.home }].concat(Array.from(new Set(bookSides.map(r => bookName(r.b)))).sort().map(b => ({ label: b, count: 'book' }))), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
       bookRows: bookShown.map(r => {
         const b = r.b;
         const cons = r.side === 'home' ? g.line : (g.line != null ? -g.line : null);
@@ -3836,7 +3877,8 @@ class Component extends DCLogic {
       momAwayBtn: 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ' + (momSide === 'away' ? BLUE : 'var(--axis)') + ';color:' + (momSide === 'away' ? BLUE : 'var(--second)'),
       momentumWindow: sport === 'NBA' ? '-6 min' : '-12 plays',
       teamHist: histMenuFor('team', teamAbbr), totalHist: histMenuFor('total', g.homeAbbr),
-      teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { count: tRowsC.length + ' games' }); })(),
+      teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search games · a club code or a week · type to filter, pick from the list', count: tRowsC.length + ' games',
+        picks: Array.from(new Set(tRowsCAll.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: tRowsCAll.filter(r => r.opp === o).length + ' games' })).concat(tRowsCAll.map(r => ({ label: gameLabelOf(r), count: (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') }))) }); })(),
 
 
 paceRows: (() => {
@@ -3874,8 +3916,8 @@ paceRows: (() => {
       // the season the logs are read for: the one in play by default, or any the feed holds —
       // the same season everywhere, one menu per placement
       profHist: histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), h2hHist: histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null),
-      profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { count: profile ? profile.bars.length + ' games' : '' }),
-      h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '' }),
+      profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · a club code or a week · type to filter, pick from the list', count: profile ? profile.bars.length + ' games' : '', picks: logPicks(profHistRows) }),
+      h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · a club code or a week · type to filter, pick from the list', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', picks: logPicks(profHistRows) }),
       // the player to read: a menu over every rated player on the two clubs, the box a filter
       trendPlayerCol: (() => {
         const on = !!st.trendMenuOpen;
@@ -3939,7 +3981,9 @@ paceRows: (() => {
       propsCaption: hasProps ? playerProps.length + ' player lines · consensus across the books · ' + (S ? S.age(prS.fetched || prS.at) : '') + ' ago' + (prS.credits && prS.credits.remaining != null ? ' · ' + prS.credits.remaining.toLocaleString() + ' credits left this month' : '') : '',
       propsNote: (() => { if (!g.live) return 'props read on a real slate only'; if (!prS) return 'loading the props'; if (!prS.ok) return prS.refused ? 'the edge refused this origin' : 'the feed did not answer'; if (!prS.available) return prS.reason || 'no props posted for this game yet'; return ''; })(),
       // the lines a reader shops first: the yardage and volume markets, then the touchdown scorers
-      propCols, propSearch: searchFor('props', histMenuFor('props', g.homeAbbr), { table: 'props', placeholder: 'search players or markets · commas for several', count: propShown.length + ' of ' + playerProps.length }),
+      propCols, propSearch: searchFor('props', histMenuFor('props', g.homeAbbr), { table: 'props', placeholder: 'search players or markets · type to filter, pick from the list',
+        picks: Array.from(new Set(playerProps.map(r => r.who))).sort().map(w => { const rows = playerProps.filter(r => r.who === w); return { label: w, count: (propTeamOf(rows[0]) || '') + ' · ' + rows.length + (rows.length === 1 ? ' line' : ' lines') }; })
+          .concat(Array.from(new Set(playerProps.map(r => r.label))).sort().map(l => ({ label: l, count: playerProps.filter(r => r.label === l).length + ' lines' }))), count: propShown.length + ' of ' + playerProps.length }),
       propHist: histMenuFor('props', g.homeAbbr),
       propTable: propShown.slice(0, propLimit).map(r => { const v = readVsLine(r); const c = r.consensus || {}; return {
         who: r.who, pos: propPosOf(r) || '—', team: propTeamOf(r) || '—', teamStyle: 'font-family:var(--kw);font-size:10.5px;flex:.5;color:' + (propTeamOf(r) === g.homeAbbr ? 'var(--brand)' : propTeamOf(r) ? 'var(--lead)' : 'var(--muted)'),
