@@ -2415,53 +2415,6 @@ class Component extends DCLogic {
     // ---------- the player trend: the two clubs' rated players, logs from the edge ----------
     // No props feed is licensed on the edge, so there is no book line here. The reference is
     // the player's own season average from the log the edge returned, and the panel says so.
-    const trendPool = this.trendPoolFor(sport, g);
-    const tq = (st.trendQ || '').trim().toLowerCase();
-    const trendMatches = trendPool.filter(p => !tq || matchQ(p.name + ' ' + (p.full || '') + ' ' + p.pos + ' ' + p.team, tq));
-    const ppSel = trendPool.find(p => p.id === st.trendId) || null;
-    const pp = (ppSel && trendMatches.indexOf(ppSel) >= 0 ? ppSel : trendMatches[0]) || trendPool[0] ||
-      { name: '—', pos: '', home: true, team: g.homeAbbr, k: null, ent: null, id: null, market: '' };
-    const tlog = pp.id ? (st.logs || {})[this.logKey(pp.id)] || null : null;
-    // the live widget regards the matchup: the player's games against tonight's opponent when
-    // the log holds two or more, every game otherwise, and the reader can switch
-    const tRowsAll = tlog && tlog.rows ? tlog.rows : [];
-    const oppAbbr = histOppOf(pp.team) || null;
-    const tRows = histScope(tRowsAll, pp.team);
-    const vsRows = tRows, useVs = !!oppAbbr;
-    const logs = tRows.map(r => r.v);
-    const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
-    const season = avg(logs), l5 = avg(logs.slice(-5)), l10 = avg(logs.slice(-10));
-    const big = season > 12;
-    const tMax = Math.max.apply(null, logs.concat([season || 1])) * 1.18;
-    const hits = logs.filter(v => v > season).length;
-    const roll = logs.map((_, i) => avg(logs.slice(Math.max(0, i - 2), i + 1)));
-    const fmt = v => big ? v.toFixed(1) : v.toFixed(2);
-    const trendUnit = tlog && tlog.label ? tlog.label : pp.market;
-    // the props for the open game, from the edge, with the record's game logs beside the
-    // lines: a player's last ten against the consensus line, where his log is loaded and the
-    // market is the stat his position is read on
-    const prS = (st.props || {})[g.id] || null;
-    const propAll = prS && prS.ok && prS.available ? prS.rows : [];
-    const playerProps = propAll.filter(r => !r.team), teamProps = propAll.filter(r => r.team);
-    const hasProps = playerProps.length > 0;
-    const NK = x => String(x || '').toLowerCase().replace(/[^a-z]/g, '');
-    const marketOfPos = pos => sport === 'NBA' ? 'player_points' : /QB/.test(pos || '') ? 'player_pass_yds' : /RB|FB/.test(pos || '') ? 'player_rush_yds' : /WR|TE/.test(pos || '') ? 'player_reception_yds' : null;
-    const poolByName = {}; trendPool.forEach(p => { poolByName[NK(p.full || p.name)] = p; });
-    // the props' history: the player's games this season against tonight's opponent (first),
-    // or every game, read against the line
-    const propUseVs = hf.opp !== 'all';
-    const readVsLine = row => {
-      const p = poolByName[NK(row.who)];
-      const lgr = p && p.id ? (st.logs || {})[this.logKey(p.id)] : null;
-      if (!p || !lgr || !lgr.rows || !lgr.rows.length || marketOfPos(p.pos) !== row.market || !row.consensus || row.consensus.line == null) return null;
-      const rows = histScope(lgr.rows, p.team);
-      if (!rows.length) return null;
-      const vals = rows.map(r => Number(r.v) || 0);
-      return { l10: vals.reduce((a, b) => a + b, 0) / vals.length, over: vals.filter(v => v > row.consensus.line).length, n: vals.length };
-    };
-    const ppProp = pp.id ? playerProps.find(r => NK(r.who) === NK(pp.full || pp.name) && r.market === marketOfPos(pp.pos)) || null : null;
-    const ppLine = ppProp && ppProp.consensus && ppProp.consensus.line != null ? ppProp.consensus.line : null;
-    const oddsFmtP = v => v == null ? '—' : (v > 0 ? '+' : '') + Math.round(v);
     // ONE history filter for the live tab: the opponent (tonight's by default, any club, or all),
     // the season (in play by default), and one meeting by week — the same state behind every widget
     const hf = Object.assign({ opp: 'opp', game: null }, st.hist || {});
@@ -2509,6 +2462,53 @@ class Component extends DCLogic {
         opps: filt(opps), seasons: filt(seasons), games: filt(games)
       };
     };
+    const trendPool = this.trendPoolFor(sport, g);
+    const tq = (st.trendQ || '').trim().toLowerCase();
+    const trendMatches = trendPool.filter(p => !tq || matchQ(p.name + ' ' + (p.full || '') + ' ' + p.pos + ' ' + p.team, tq));
+    const ppSel = trendPool.find(p => p.id === st.trendId) || null;
+    const pp = (ppSel && trendMatches.indexOf(ppSel) >= 0 ? ppSel : trendMatches[0]) || trendPool[0] ||
+      { name: '—', pos: '', home: true, team: g.homeAbbr, k: null, ent: null, id: null, market: '' };
+    const tlog = pp.id ? (st.logs || {})[this.logKey(pp.id)] || null : null;
+    // the live widget regards the matchup: the player's games against tonight's opponent when
+    // the log holds two or more, every game otherwise, and the reader can switch
+    const tRowsAll = tlog && tlog.rows ? tlog.rows : [];
+    const oppAbbr = histOppOf(pp.team) || null;
+    const tRows = histScope(tRowsAll, pp.team);
+    const vsRows = tRows, useVs = !!oppAbbr;
+    const logs = tRows.map(r => r.v);
+    const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
+    const season = avg(logs), l5 = avg(logs.slice(-5)), l10 = avg(logs.slice(-10));
+    const big = season > 12;
+    const tMax = Math.max.apply(null, logs.concat([season || 1])) * 1.18;
+    const hits = logs.filter(v => v > season).length;
+    const roll = logs.map((_, i) => avg(logs.slice(Math.max(0, i - 2), i + 1)));
+    const fmt = v => big ? v.toFixed(1) : v.toFixed(2);
+    const trendUnit = tlog && tlog.label ? tlog.label : pp.market;
+    // the props for the open game, from the edge, with the record's game logs beside the
+    // lines: a player's last ten against the consensus line, where his log is loaded and the
+    // market is the stat his position is read on
+    const prS = (st.props || {})[g.id] || null;
+    const propAll = prS && prS.ok && prS.available ? prS.rows : [];
+    const playerProps = propAll.filter(r => !r.team), teamProps = propAll.filter(r => r.team);
+    const hasProps = playerProps.length > 0;
+    const NK = x => String(x || '').toLowerCase().replace(/[^a-z]/g, '');
+    const marketOfPos = pos => sport === 'NBA' ? 'player_points' : /QB/.test(pos || '') ? 'player_pass_yds' : /RB|FB/.test(pos || '') ? 'player_rush_yds' : /WR|TE/.test(pos || '') ? 'player_reception_yds' : null;
+    const poolByName = {}; trendPool.forEach(p => { poolByName[NK(p.full || p.name)] = p; });
+    // the props' history: the player's games this season against tonight's opponent (first),
+    // or every game, read against the line
+    const propUseVs = hf.opp !== 'all';
+    const readVsLine = row => {
+      const p = poolByName[NK(row.who)];
+      const lgr = p && p.id ? (st.logs || {})[this.logKey(p.id)] : null;
+      if (!p || !lgr || !lgr.rows || !lgr.rows.length || marketOfPos(p.pos) !== row.market || !row.consensus || row.consensus.line == null) return null;
+      const rows = histScope(lgr.rows, p.team);
+      if (!rows.length) return null;
+      const vals = rows.map(r => Number(r.v) || 0);
+      return { l10: vals.reduce((a, b) => a + b, 0) / vals.length, over: vals.filter(v => v > row.consensus.line).length, n: vals.length };
+    };
+    const ppProp = pp.id ? playerProps.find(r => NK(r.who) === NK(pp.full || pp.name) && r.market === marketOfPos(pp.pos)) || null : null;
+    const ppLine = ppProp && ppProp.consensus && ppProp.consensus.line != null ? ppProp.consensus.line : null;
+    const oddsFmtP = v => v == null ? '—' : (v > 0 ? '+' : '') + Math.round(v);
     // a SEASON menu for one placement: the season in play by default, the four before it as history
     const seasonMenuFor = key => {
       const on = st.logMenuOpen === key, cur = this.logSeasonDefault(sport), chosen = st.logSeason || null, eff = chosen || cur;
