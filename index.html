@@ -566,7 +566,7 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                   <span style="font-family:var(--kw);font-size:9.5px;padding:4px 9px;border-radius:100px;border:1px solid var(--axis);color:var(--lead);white-space:nowrap"><span style="color:var(--second)">{{ x.k }}</span> {{ x.v }} <span style="color:var(--muted);text-transform:capitalize">· {{ x.b }}</span></span>
                 </sc-for>
               </div>
-              <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">one row per club per book · a spread in green sits a point or more off the consensus · lines are the books' own numbers, not a recommendation</div>
+              <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">green · a point or more off the consensus</div>
               </sc-if>
               </sc-if>
               <sc-if value="{{ bookHistOn }}" hint-placeholder-val="{{ false }}">
@@ -602,7 +602,7 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
                 
                 
-                <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">the two right-hand columns read each player's games in the history chosen — tonight's opponent by default — where his log is loaded</span>
+
               </div>
               <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
@@ -665,7 +665,6 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                   <button onClick="{{ propShowLess }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">Show fewer</button>
                 </sc-if>
               </div>
-              <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">the history columns come from the game log where a player's log is loaded and the market is the stat his position is read on · lines are the books' own numbers, not a recommendation</div>
               </sc-if>
               </sc-if>
             </section>
@@ -676,7 +675,7 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                 <button data-chev="1" onClick="{{ p.playerTrend.toggle }}" style="{{ p.playerTrend.btn }}">{{ p.playerTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player performance trend</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
-                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ trendPlayer }} · {{ trendMarket }} · {{ trendGames }} · game log from the feed{{ trendPropNote }}</span>
+                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ trendPlayer }} · {{ trendMarket }} · {{ trendGames }}{{ trendPropNote }}</span>
                 </div>
                 <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--second)">
                   <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--good);display:block"></span>OVER</span>
@@ -2853,10 +2852,10 @@ class Component extends DCLogic {
     const bhRowStyle = (pick, strong) => 'display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline;' + (pick ? 'cursor:pointer;' : '') + (strong ? 'background:var(--nested);border-radius:5px;padding-left:6px;padding-right:6px;' : '');
     const bookHistRows = (() => {
       if (!bookHistOn) return [];
-      if (!bookLog.length) return [{ cells: [bhCell(bookRec && bookRec.state === 'loading' ? 'loading the team log…' : 'no season log for ' + g.homeAbbr, 6, 'var(--second)')], style: bhRowStyle(false), pick: () => {} }];
+      if (!bookLog.length) return [{ cells: [bhCell(bookRec && bookRec.state === 'loading' ? 'loading…' : 'no games on record for ' + g.homeAbbr, 6, 'var(--second)')], style: bhRowStyle(false), pick: () => {} }];
       if (bookHistGame) {
         const r = bookHistGame, o = oddsGameFor(r, g.homeAbbr, bookRec), state = oddsStateFor(r, bookRec);
-        if (!o) return [{ cells: [bhCell(state === 'loading' || state === 'none' ? 'asking the edge for the lines…' : 'no lines on file for this meeting', 6, 'var(--second)')], style: bhRowStyle(false), pick: () => {} }];
+        if (!o) return [{ cells: [bhCell(state === 'loading' || state === 'none' ? 'loading…' : 'no lines on file for this meeting', 6, 'var(--second)')], style: bhRowStyle(false), pick: () => {} }];
         const sd = sideOf(o, r);
         const head = { cells: [bhCell(sd.closing ? 'closing consensus' : 'consensus', 1.3, 'var(--reversed)', 'font-weight:700'), bhCell(g.homeAbbr, .6, 'var(--reversed)'), bhCell(sgn(sd.spread), .9, 'var(--reversed)'), bhCell(oddsFmt(sd.ml), .9, 'var(--reversed)'), bhCell(sd.total, .8, 'var(--reversed)'), bhCell(sd.n + ' books', .9, 'var(--second)')], style: bhRowStyle(false, true), pick: () => {} };
         return [head].concat((o.books || []).map(b => ({ cells: [bhCell(bookName(b), 1.3, 'var(--lead)', 'text-transform:capitalize'), bhCell(g.homeAbbr, .6, 'var(--second)'), bhCell(sgn(r.home ? b.spreadHome : b.spreadAway), .9), bhCell(oddsFmt(r.home ? b.mlHome : b.mlAway), .9, 'var(--second)'), bhCell(b.total, .8, 'var(--second)'), bhCell(b.updated && S ? S.age(b.updated) + ' ago' : '—', .9, 'var(--faint)')], style: bhRowStyle(false), pick: () => {} })));
@@ -2873,11 +2872,10 @@ class Component extends DCLogic {
       });
     })();
     const bookHistHead = 'PAST MEETINGS · ' + (bookOpp ? g.homeAbbr + ' VS ' + bookOpp : g.homeAbbr + ' · EVERY GAME') + ' · ' + histSeasonLabel(Number(bookRec && bookRec.season) || histEff).toUpperCase() + (bookRec && bookRec.fellBack ? ' (NO GAMES YET IN ' + histSeasonLabel(histEff).toUpperCase() + ')' : '') + (bookHistGame ? ' · ' + gameLabelOf(bookHistGame).toUpperCase() : bookMeetingsAll.length > 10 ? ' · THE LAST 10 OF ' + bookMeetingsAll.length : '');
-    const bookHistNote = (bookHistGame ? 'the consensus row is what the edge filed at tip; the book rows are the lines the provider still holds for the game' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side of the closing consensus the edge filed at tip · cover reads the final score against it")
-      + ' · the edge files a closing line for every game it watches from 8 Sep 2026, so earlier meetings show none';
-    const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons' + (trendLoading ? ' · still reading the earlier seasons' : '')
-      : !tlog ? 'log not requested' : tlog.state === 'ready' ? 'last ' + logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
-      : tlog.state === 'loading' ? 'loading the game log…' : 'game log unavailable — ' + (tlog.reason || 'the feed did not answer');
+    const bookHistNote = bookHistGame ? 'the consensus at tip, then each book' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side at tip · cover reads the final score against it";
+    const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons'
+      : !tlog ? 'no game log yet' : tlog.state === 'ready' ? 'last ' + logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+      : tlog.state === 'loading' ? 'loading…' : 'no game log yet';
     // the same pool as a props-style table: what he did, not what a book priced
     const logOf = p => { const l = (st.logs || {})[this.logKey(p.id)]; return l && l.state === 'ready' ? l.rows.map(r => r.v) : null; };
     const GRADES = [[90, 'A+'], [85, 'A'], [80, 'A-'], [75, 'B+'], [70, 'B'], [65, 'B-'], [60, 'C+'], [55, 'C'], [50, 'C-'], [45, 'D+'], [40, 'D'], [0, 'F']];
@@ -3269,10 +3267,10 @@ class Component extends DCLogic {
       const av = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
       const tipBox = (i, n) => 'position:absolute;bottom:126px;' + (i > n - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
         'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none';
-      const logNote = (what) => !log ? what + ' not requested'
+      const logNote = (what) => !log ? 'no ' + what + ' yet'
         : log.state === 'ready' ? 'last ' + logRows.length + ' games · ' + what + ' · ' + log.season + ' season' + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (st.logSeason ? ' · history' : '')
-        : log.state === 'loading' ? 'loading the ' + what + '…'
-        : what + ' unavailable — ' + (log.reason || 'the feed did not answer');
+        : log.state === 'loading' ? 'loading…'
+        : 'no ' + what + ' yet';
       if (isP) {
         const pl = roster.find(x => x.name === key) || roster[0];
         const pb = playerBundle(pl);
@@ -3390,13 +3388,13 @@ class Component extends DCLogic {
             const wins = meetings.filter(r => r.result === 'W').length, losses = meetings.filter(r => r.result === 'L').length;
             this._oddsNeed = this._oddsNeed.concat(oddsNeedFor(shown.slice(0, 10), log));
             return {
-              head: !log ? 'season log not requested' : log.state === 'loading' ? 'loading the season…' : log.state === 'failed' ? (log.reason || 'no season log')
+              head: !log ? 'no season on record yet' : log.state === 'loading' ? 'loading…' : log.state === 'failed' ? 'no season on record yet'
                 : cl.abbr + ' ' + wins + '-' + losses + (cOpp ? ' against ' + cOpp : ' · every game') + ' in ' + histSeasonLabel(Number(log.season) || histEff) + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (cFell ? ' · no game against ' + histOppOf(cl.abbr) + ' yet' : '') + (meetings.length > 20 ? ' · the last 20' : ''),
               rows: shown.map(r => { const o = oddsGameFor(r, cl.abbr, log), sd = o ? sideOf(o, r) : null, state = oddsStateFor(r, log); return { when: gameLabelOf(r), where: r.home ? 'vs ' + r.opp : 'at ' + r.opp, score: (r.pf != null ? r.pf : '—') + '–' + (r.pa != null ? r.pa : '—'), result: r.result || '—',
                 line: sd ? cl.abbr + ' ' + sgn(sd.spread) + ' · O/U ' + (sd.total != null ? sd.total : '—') : (state === 'loading' || state === 'none' ? '…' : 'no line on file'),
                 resultStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (r.result === 'W' ? ACC : r.result === 'L' ? RED : 'var(--second)') }; }),
               empty: log && log.state === 'ready' && !meetings.length ? 'no meeting with ' + (cOpp || 'anyone') + ' in that season' : '',
-              note: 'the meetings from the season log · the line is the closing consensus the edge filed at tip; it files one for every game it watches from 8 Sep 2026, so earlier meetings show none'
+              note: 'the line is the closing consensus where one is on file'
             };
           })(),
           histRows: cRows.length ? [{ k: cFell ? histLabel(cl.abbr).replace('VS ' + histOppOf(cl.abbr), 'ALL TEAMS') : histLabel(cl.abbr), v: cRows.filter(r => r.margin > 0).length + '-' + cRows.filter(r => r.margin < 0).length + ' · avg margin ' + (av(margins) >= 0 ? '+' : '') + av(margins).toFixed(1) + (cRows.some(r => r.pf != null) ? ' · avg total ' + av(cRows.filter(r => r.pf != null).map(r => r.pf + r.pa)).toFixed(1) : '') }] : [],
@@ -3606,10 +3604,10 @@ class Component extends DCLogic {
     const tRoll = tMargins.map((_, i) => tAvg(tMargins.slice(Math.max(0, i - 2), i + 1)));
     const tDone = tRowsC.filter(x => !(x.live && !x.result)).map(x => x.margin);
     const tWins = tDone.filter(v => v > 0).length;
-    const teamLogNote = !tRowsCAll.length ? (teamLoading || !tLog ? 'loading the team log…' : 'team log unavailable — ' + ((tLog && tLog.reason) || 'the feed did not answer'))
+    const teamLogNote = !tRowsCAll.length ? (teamLoading || !tLog ? 'loading…' : 'no team log yet')
       : filtOn('team') ? tRowsC.length + ' of ' + teamScoped.length + ' games against ' + teamOppAbbr0 + ' match the search' + (teamSpan ? ' · ' + teamSpan : '')
-      : !tRowsC.length ? 'no game against ' + teamOppAbbr0 + ' in the last ' + TREND_SEASONS + ' seasons' + (teamLoading ? ' · still reading the earlier seasons' : '')
-      : tRowsC.length + (tRowsC.length === 1 ? ' game' : ' games') + ' against ' + teamOppAbbr + (teamLiveRow ? ', tonight live' : '') + ' · ' + teamSpan + (teamLoading ? ' · reading earlier seasons…' : '');
+      : !tRowsC.length ? 'no game against ' + teamOppAbbr0 + ' in the last ' + TREND_SEASONS + ' seasons'
+      : tRowsC.length + (tRowsC.length === 1 ? ' game' : ' games') + ' against ' + teamOppAbbr + (teamLiveRow ? ', tonight live' : '') + ' · ' + teamSpan;
 
     const teamTrendBars = tMargins.map((v, i) => {
       const on = st.tTrendHover === i;
@@ -4146,7 +4144,7 @@ paceRows: (() => {
       }),
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
-      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (liveRow && tRows.indexOf(liveRow) >= 0 ? ', tonight live' : '') + (trendSeasonPicks.length ? ' · ' + trendSeasonPicks.join(', ') + ' only' : trendSpan ? ' · ' + trendSpan : '') + (trendLoading ? ' · reading earlier seasons…' : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
+      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (liveRow && tRows.indexOf(liveRow) >= 0 ? ', tonight live' : '') + (trendSeasonPicks.length ? ' · ' + trendSeasonPicks.join(', ') + ' only' : trendSpan ? ' · ' + trendSpan : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
       trendHist: histMenuFor('trend', pp.team, tRowsAll),
       trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players', display: pp.name || '', params: trendP,
         groups: [
@@ -4160,8 +4158,8 @@ paceRows: (() => {
       trendPropLabel: 'position:absolute;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) + 2 : 0).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--good)',
       trendPropLine: ppLine != null ? 'LINE ' + ppLine : '',
       hasProps,
-      propsCaption: hasProps ? playerProps.length + ' player lines · consensus across the books · ' + (S ? S.age(prS.fetched || prS.at) : '') + ' ago' + (prS.credits && prS.credits.remaining != null ? ' · ' + prS.credits.remaining.toLocaleString() + ' credits left this month' : '') : '',
-      propsNote: (() => { if (!g.live) return 'props read on a real slate only'; if (!prS) return 'loading the props'; if (!prS.ok) return prS.refused ? 'the edge refused this origin' : 'the feed did not answer'; if (!prS.available) return prS.reason || 'no props posted for this game yet'; return ''; })(),
+      propsCaption: hasProps ? playerProps.length + ' player lines · ' + (S ? S.age(prS.fetched || prS.at) : '') + ' ago' : '',
+      propsNote: (() => { if (!g.live) return ''; if (!prS) return 'loading…'; if (!prS.ok) return 'no lines yet'; if (!prS.available) return 'no lines posted for this game yet'; return ''; })(),
       // the lines a reader shops first: the yardage and volume markets, then the touchdown scorers
       propCols, propSearch: searchFor('props', histMenuFor('props', g.homeAbbr), { table: 'props', placeholder: 'search anything on the table · player, team, position, market, line',
         cols: PROP_SEARCH_COLS, groups: colGroups(propOrdered, propGet, PROP_SEARCH_COLS), count: propShown.length + ' of ' + playerProps.length }),
@@ -4276,11 +4274,11 @@ paceRows: (() => {
             style: 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + ((dirSeason || null) === o.value ? 'var(--nested)' : 'transparent') + ';color:' + ((dirSeason || null) === o.value ? BLUE : 'var(--lead)') }))
         };
       })(),
-      seasonNoteDir: dirSeason ? 'the ' + (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : dirSeason) + ' season' + (isPlayers ? ' from the record: each man on the club he was with, his games and his line that season' : ' table from the feed') + ' · the rating and the injury report are the record\'s current ones' : '',
+      seasonNoteDir: dirSeason ? 'the ' + (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : dirSeason) + ' season' + (isPlayers ? ' · each man on the club he was with, his games and his line that season' : '') + ' · the rating and the injury report are current' : '',
       hasSeasonNote: !!dirSeason,
       colsStand: isPlayers ? [] : [col('record', 'REC', distinct(recOf), 'left'), col('conf', 'CONF', distinct(confPlOf), 'left'), col('div', 'DIV PL', distinct(divPlOf), 'left')],
       dirGrid: isPlayers ? '18px 24px minmax(88px,1.8fr) 44px 38px 64px minmax(56px,1fr) 36px' : '18px 24px minmax(88px,1.6fr) 40px 62px 54px 72px 62px 64px minmax(48px,1fr) 36px',
-      standingsNote: !isPlayers ? (seasonNote ? 'table ' + seasonNote + ' · from the feed' : 'table not loaded') : '',
+      standingsNote: !isPlayers ? (seasonNote ? 'table ' + seasonNote : '') : '',
       sections, activeFilters,
       hasFilters: activeFilters.length > 0,
       clearAll: () => this.setState({ colF: {}, dirQ: '', dirLimit: 12, openCol: null }),
