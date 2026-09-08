@@ -137,14 +137,13 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 /* a wide table scrolls sideways inside its own frame on a phone; on a wider screen the frame
    is open, so a column menu can hang below it. On a phone the menu becomes a sheet at the
    bottom of the screen instead of being cut off by the scrolling frame. */
-@media (min-width:700px) and (min-height:521px){[data-scroll=x]>div{min-width:0!important}[data-scroll=x]{overflow:visible}}
-@media (max-width:699px), (max-height:520px){[data-scroll=x]{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+@media (min-width:700px){[data-scroll=x]>div{min-width:0!important}[data-scroll=x]{overflow:visible}}
+@media (max-width:699px){[data-scroll=x]{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
   [data-scroll=x] [data-colmenu][style*="absolute"]{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;z-index:80!important}}
 /* a widget with an open menu — a search list or a column menu — rises above the widgets after it,
    so the list is never cut off by the next card; the hover transform makes each card its own layer */
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
-/* a phone on its side is a phone: the stacked, scrolling layout, not the desk's columns */
-@media (max-width:767px), (max-height:520px){
+@media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
   [data-shell=wintitle]{display:none!important}
   [data-shell=clock]{display:none!important}
@@ -289,7 +288,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
       
 
-      <main data-shell="main" style="flex:1;min-width:0;overflow-y:auto;padding:16px 18px 44px;display:flex;flex-direction:column;gap:13px">
+      <main data-shell="main" style="flex:1;min-width:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 18px 44px;display:flex;flex-direction:column;gap:13px">
 
         <sc-if value="{{ isLive }}" hint-placeholder-val="{{ true }}">
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
@@ -2089,7 +2088,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <sc-for list="{{ tabItems }}" as="n" hint-placeholder-count="7">
           <button onClick="{{ n.go }}" style="{{ n.style }}"><span style="{{ n.dot }}"></span>{{ n.short }}</button>
         </sc-for>
-      </nav><aside data-shell="rail" style="width:284px;flex:none;border-left:1px solid var(--grid);background:var(--rail);display:flex;flex-direction:column;min-height:0;overflow-y:auto">
+      </nav><aside data-shell="rail" style="width:284px;flex:none;border-left:1px solid var(--grid);background:var(--rail);display:flex;flex-direction:column;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain">
 
         <sc-if value="{{ railEdgesOn }}" hint-placeholder-val="{{ false }}">
         <div style="padding:14px 15px 13px;border-bottom:1px solid var(--grid);display:flex;flex-direction:column;gap:7px">
