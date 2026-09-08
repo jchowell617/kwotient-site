@@ -1539,6 +1539,17 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                         <span style="flex:.6;color:var(--second)">{{ rp.pos }}</span><span style="flex:.4;color:var(--second)">{{ rp.num }}</span><span style="flex:.5;text-align:right;color:var(--second)">{{ rp.age }}</span><span style="flex:.9;text-align:right;color:var(--lead)">{{ rp.paid }}</span><span style="{{ rp.gradeStyle }};flex:.6;text-align:right">{{ rp.grade }}</span><span style="{{ rp.gradeStyle }};flex:.6;text-align:right">{{ rp.score }}</span>
                       </div>
                     </sc-for>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 16px 12px">
+                      <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ rosterPageNote }}</span>
+                      <span style="flex:1"></span>
+                      <sc-if value="{{ rosterHasMore }}" hint-placeholder-val="{{ true }}">
+                        <button onClick="{{ rosterShowMore }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--lead)">{{ rosterMoreLabel }}</button>
+                        <button onClick="{{ rosterShowAll }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ rosterAllLabel }}</button>
+                      </sc-if>
+                      <sc-if value="{{ rosterCanCollapse }}" hint-placeholder-val="{{ false }}">
+                        <button onClick="{{ rosterShowLess }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">Show fewer</button>
+                      </sc-if>
+                    </div>
                   </sc-if>
                 </section>
                 </sc-if>
@@ -3352,6 +3363,7 @@ class Component extends DCLogic {
     }));
 
     let profile = null, profHistAbbr = null, profHistRows = [], rosterShown = [], rosterCols = [], rosterSearchVals = null;
+    const ROSTER_PAGE = 12; let rosterLimit = ROSTER_PAGE;
     const ROSTER_SEARCH_COLS = [['name', 'PLAYER'], ['pos', 'POS'], ['num', '#'], ['age', 'AGE'], ['paid', 'PAID'], ['grade', 'GRADE'], ['k', 'SCORE']];
     if (st.profileId && S && (roster.length || clubs.length)) {
       const isP = st.profileId.slice(0, 2) === 'p:';
@@ -3442,6 +3454,7 @@ class Component extends DCLogic {
         // the roster is a table like the others: every column sorts and filters, the box searches them all
         const rosterGet = { name: p => p.full, pos: p => p.pos || null, num: p => p.num != null ? Number(p.num) : null, age: p => p.age != null ? Number(p.age) : null, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => gradeOf(p.k), k: p => p.k };
         TABLES.roster = { rows: cb.rosterOf, get: rosterGet };
+        rosterLimit = tstate('roster').limit || ROSTER_PAGE;
         rosterShown = tapply('roster', cb.rosterOf, rosterGet, p => p.full + ' ' + (p.pos || '') + ' ' + (p.num != null ? '#' + p.num : '') + ' ' + (p.age != null ? p.age : '') + ' ' + S.M(p.paid) + ' ' + gradeOf(p.k) + ' ' + p.k);
         rosterCols = [tcol('roster', 'name', 'PLAYER', null, 'left', 1.6), tcol('roster', 'pos', 'POS', null, 'left', .6), tcol('roster', 'num', '#', null, 'left', .4), tcol('roster', 'age', 'AGE', null, 'right', .5), tcol('roster', 'paid', 'PAID', null, 'right', .9), tcol('roster', 'grade', 'GRADE', null, 'right', .6), tcol('roster', 'k', 'SCORE', null, 'right', .6)];
         rosterSearchVals = searchFor('roster', histMenuFor('roster', cl.abbr), { table: 'roster', cols: ROSTER_SEARCH_COLS, placeholder: 'search the roster · player, position, number, age, salary, grade, score', count: rosterShown.length + ' of ' + cb.rosterOf.length, groups: colGroups(cb.rosterOf, rosterGet, ROSTER_SEARCH_COLS) });
@@ -3523,7 +3536,7 @@ class Component extends DCLogic {
           card: cb.card,
           explorer: explorerFor(cl, clubs),
           rosterNote: cb.rosterOf.length + ' rated players · ranked inside their own position',
-          roster: rosterShown.map(p => ({
+          roster: rosterShown.slice(0, rosterLimit).map(p => ({
             mono: mono(p.full), name: p.full, pos: p.pos || '—', num: p.num ? '#' + p.num : '—', age: p.age != null ? String(p.age) : '—',
             paid: S.M(p.paid), grade: gradeOf(p.k), score: String(p.k),
             gradeStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + gradeColor(p.k),
@@ -4191,6 +4204,14 @@ paceRows: (() => {
       // the season the logs are read for: the one in play by default, or any the feed holds —
       // the same season everywhere, one menu per placement
       profHist: histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), h2hHist: histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null),
+      rosterHasMore: rosterShown.length > rosterLimit,
+      rosterMoreLabel: 'Show ' + Math.min(ROSTER_PAGE, rosterShown.length - rosterLimit) + ' more',
+      rosterAllLabel: 'Show all ' + rosterShown.length,
+      rosterShowMore: () => tset('roster', { limit: rosterLimit + ROSTER_PAGE }),
+      rosterShowAll: () => tset('roster', { limit: rosterShown.length }),
+      rosterShowLess: () => tset('roster', { limit: ROSTER_PAGE }),
+      rosterCanCollapse: rosterLimit > ROSTER_PAGE,
+      rosterPageNote: 'showing ' + Math.min(rosterLimit, rosterShown.length) + ' of ' + rosterShown.length,
       rosterCols, rosterSearch: rosterSearchVals || searchFor('roster', histMenuFor('roster', g.homeAbbr), { table: 'roster', cols: ROSTER_SEARCH_COLS }),
       profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', groups: logGroups(profHistRows) }),
       h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', groups: logGroups(profHistRows) }),
