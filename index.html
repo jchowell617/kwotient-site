@@ -204,7 +204,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
             <button onClick="{{ n.go }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ n.style }}">
               <span style="flex:1;text-align:left">{{ n.label }}</span>
-              <span style="font-family:var(--kw);font-size:9.5px;color:{{ n.badgeColor }}">{{ n.badge }}</span>
+              <span style="{{ n.badgeStyle }}">{{ n.badge }}</span>
             </button>
           </sc-for>
         </nav>
@@ -1018,7 +1018,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
                 <section onClick="{{ g.select }}" style-hover="transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,.34);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px;cursor:pointer;display:flex;flex-direction:column;gap:12px">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
-                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--critical)">● {{ g.clock }}</span>
+                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--critical);display:inline-flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--critical);display:block;flex:none;animation:pulseDot 1.6s ease-in-out infinite"></span>{{ g.clock }}</span>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ g.lineLabel }}</span>
                   </div>
                   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
@@ -2252,9 +2252,9 @@ const LEAGUE_EDGE = { NBA: 2.5, NFL: 1.8 };   // the model's home edge, in point
 class Component extends DCLogic {
   constructor(p) {
     super(p);
-    // the site opens on the NFL scoreboard
+    // the site opens on the NFL live game
     const sport = (p && p.sport) || 'NFL';
-    this.state = { sport, kq: 'connecting', liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {}, tab: 'board', phase: 'ALL', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, bucketHover: null, pTrendHover: null, tTrendHover: null, mktSel: [], mktQ: '', shut: {}, propF: {}, propOpenCol: null, propSort: null, propDir: 'asc', trendQ: '', teamSide: 'home', propIdx: 0, dir: 'players', profileId: null, activeId: SLATES[sport][0].id, tick: 0, added: false, series: this.seed(sport) };
+    this.state = { sport, kq: 'connecting', liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {}, tab: 'live', phase: 'ALL', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, bucketHover: null, pTrendHover: null, tTrendHover: null, mktSel: [], mktQ: '', shut: {}, propF: {}, propOpenCol: null, propSort: null, propDir: 'asc', trendQ: '', teamSide: 'home', propIdx: 0, dir: 'players', profileId: null, activeId: SLATES[sport][0].id, tick: 0, added: false, series: this.seed(sport) };
   }
 
   seed(sport, list) {
@@ -2597,12 +2597,12 @@ class Component extends DCLogic {
   // the logo is the home button: back to the opening screen with every panel at rest, the
   // slate re-read from the edge and the trend log re-fetched — the same reset a sport switch
   // does, without changing the sport
-  // the logo is the front door: the NFL scoreboard, regenerated
+  // the logo is the front door: the NFL live game, regenerated
   goHome() {
     clearTimeout(this._liveT);
     const sport = 'NFL';
     this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
-    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'board', cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {}, dirSeason: null, trendId: null,
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'live', cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {}, dirSeason: null, trendId: null,
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
     try { window.scrollTo(0, 0); const m = document.querySelector('[data-shell=main]'); if (m) m.scrollTop = 0; } catch (e) {}
@@ -2612,7 +2612,7 @@ class Component extends DCLogic {
   switchSport(sport) {
     clearTimeout(this._liveT);
     this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
-    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, tab: 'board', activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {},
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, tab: 'live', activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', dirSeason: null, propIdx: 0, trendQ: '', trendId: null, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     // the poll loads the trend logs and the props itself once the real slate is in hand, so
     // nothing is asked for the placeholder slate
@@ -4227,6 +4227,8 @@ class Component extends DCLogic {
 
       navItems: NAV.map(([k, label]) => ({
         label, badge: badges[k], badgeColor: k === 'live' ? 'var(--critical)' : 'var(--muted)',
+        // the live badge breathes like the header's dot; the counts sit still
+        badgeStyle: 'font-family:var(--kw);font-size:9.5px;color:' + (k === 'live' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--muted)'),
         style: navBtn(st.tab === k), go: () => this.setState({ tab: k })
       })),
       // the phone's bottom tab bar: the same sections, short names, the cohorts first
