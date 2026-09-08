@@ -159,9 +159,13 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     /* the market for the league's games in the window: per-book spread, total and moneyline
        with a consensus per game, the opening consensus when the provider has posted one, and
        the consensus history sampled on the edge's beat */
-    odds: function (lg) {
+    odds: function (lg, at) {
       lg = league(lg); if (!lg) return bad('league must be nba or nfl');
-      return ask('/live/odds', { league: lg }).then(function (r) {
+      var params = { league: lg };
+      /* a slate that is not today's: an NBA date, or an NFL season and week — the lines of a past meeting */
+      if (at && at.date) { if (!/^\d{4}-\d{2}-\d{2}$/.test(String(at.date))) return bad('date must be YYYY-MM-DD'); params.date = at.date; }
+      else if (at && at.season != null) { if (!/^\d{4}$/.test(String(at.season)) || !/^\d{1,2}$/.test(String(at.week))) return bad('season and week are needed'); params.season = at.season; params.week = at.week; }
+      return ask('/live/odds', params).then(function (r) {
         r.games = r.ok && r.body ? (r.body.games || []) : [];
         r.available = !!(r.ok && r.body && r.body.available);
         r.source = r.ok && r.body ? r.body.source || null : null;
@@ -553,10 +557,10 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     };
   }
   /* the market for the league, from the edge's odds route */
-  function odds(sport) {
+  function odds(sport, at) {
     var L = lg(sport);
     var t0 = Date.now();
-    return kq().live.odds(L).then(function (r) {
+    return kq().live.odds(L, at || null).then(function (r) {
       return { ok: r.ok, available: !!r.available, source: r.source || null, reason: r.reason || (r.body && r.body.reason) || null,
                refused: !!r.refused, status: r.status, ms: Date.now() - t0, fetched: r.fetched || null, stale: !!r.stale,
                games: r.games || [] };
@@ -713,7 +717,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     built: function () { var d = kq().cohorts.doc(); return d ? d.built : ''; },
     players: players, clubs: clubs, clubK: clubK, cohorts: cohorts, cohortsFor: cohortsFor, cohortRecord: cohortRecord,
     programme: function () { var d = kq().cohorts.doc(); return d ? d.programme : null; },
-    wire: wire, slate: slate, slateGame: slateGame, odds: odds, marketFor: marketFor, withMarket: withMarket, upcoming: upcoming, props: props, standings: standings, seasons: seasons, seasonRow: seasonRow, gamelog: gamelog, teamlog: teamlog, story: story,
+    wire: wire, slate: slate, slateGame: slateGame, odds: odds, oddsAt: odds, marketFor: marketFor, withMarket: withMarket, upcoming: upcoming, props: props, standings: standings, seasons: seasons, seasonRow: seasonRow, gamelog: gamelog, teamlog: teamlog, story: story,
     boxscore: boxscore, boxStat: boxStat, teamLine: teamLine, topLine: topLine,
     winProb: winProb, remaining: remaining, LEAGUE: LEAGUE, age: AGE, day: day, M: M, pct: pct, get sources() { return kq().sources; }
   };

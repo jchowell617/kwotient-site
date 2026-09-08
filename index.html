@@ -459,22 +459,20 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                   <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--grid);display:flex;flex-direction:column;gap:6px">
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--collabel)">TEAM TOTALS</span>
                     <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><div style="{{ totalHist.cellStyle }}">
-  <button data-colmenu="1" onClick="{{ totalHist.click }}" style="{{ totalHist.labelStyle }}">{{ totalHist.label }}<span style="font-size:7px">▾</span></button>
+  <button data-colmenu="1" onClick="{{ totalHist.click }}" style="{{ totalHist.labelStyle }}">{{ totalHist.label }}<span style="font-size:7px">▾</span><span style="{{ totalHist.dotStyle }}"></span></button>
   <sc-if value="{{ totalHist.open }}" hint-placeholder-val="{{ false }}">
   <div data-colmenu="1" style="{{ totalHist.menuStyle }}">
-    <form onSubmit="{{ totalHist.onKey }}" style="margin:0"><input value="{{ totalHist.q }}" onChange="{{ totalHist.onQ }}" onKeyDown="{{ totalHist.onKey }}" placeholder="type an opponent, a season or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ totalHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
-    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">OPPONENT</div>
-    <sc-for list="{{ totalHist.opps }}" as="v" hint-placeholder-count="4">
-      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-    </sc-for>
-    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">SEASON</div>
-    <sc-for list="{{ totalHist.seasons }}" as="v" hint-placeholder-count="4">
-      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-    </sc-for>
-    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">GAME</div>
-    <sc-for list="{{ totalHist.games }}" as="v" hint-placeholder-count="4">
-      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+    <form onSubmit="{{ totalHist.onKey }}" style="margin:0"><input value="{{ totalHist.q }}" onChange="{{ totalHist.onQ }}" onKeyDown="{{ totalHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ totalHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+    <sc-for list="{{ totalHist.sections }}" as="s" hint-placeholder-count="3">
+      <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+      <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+          <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+          </sc-for>
+        </div>
+      </sc-if>
     </sc-for>
   </div>
   </sc-if>
@@ -521,11 +519,30 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Market · the books</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Market · the books</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span><div style="{{ bookHist.cellStyle }}">
+                    <button data-colmenu="1" onClick="{{ bookHist.click }}" style="{{ bookHist.labelStyle }}">{{ bookHist.label }}<span style="font-size:7px">▾</span><span style="{{ bookHist.dotStyle }}"></span></button>
+                    <sc-if value="{{ bookHist.open }}" hint-placeholder-val="{{ false }}">
+                    <div data-colmenu="1" style="{{ bookHist.menuStyle }}">
+                      <form onSubmit="{{ bookHist.onKey }}" style="margin:0"><input value="{{ bookHist.q }}" onChange="{{ bookHist.onQ }}" onKeyDown="{{ bookHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ bookHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+                      <sc-for list="{{ bookHist.sections }}" as="s" hint-placeholder-count="3">
+                        <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+                        <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+                            <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </sc-for>
+                    </div>
+                    </sc-if>
+                  </div></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ marketCaption }}</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ marketHeader }}</span>
               </div>
+              <sc-if value="{{ bookLiveOn }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
                 <input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
@@ -565,6 +582,25 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
               </div>
               <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">one row per club per book · a spread in green sits a point or more off the consensus · lines are the books' own numbers, not a recommendation</div>
               </sc-if>
+              </sc-if>
+              <sc-if value="{{ bookHistOn }}" hint-placeholder-val="{{ false }}">
+              <div style="font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--collabel);margin-bottom:6px">{{ bookHistHead }}</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid)">
+                <sc-for list="{{ bookHistCols }}" as="c" hint-placeholder-count="6">
+                  <span style="{{ c.style }}">{{ c.label }}</span>
+                </sc-for>
+              </div>
+              <sc-if value="{{ p.books.open }}" hint-placeholder-val="{{ true }}">
+              <sc-for list="{{ bookHistRows }}" as="r" hint-placeholder-count="4">
+                <div onClick="{{ r.pick }}" style="{{ r.style }}">
+                  <sc-for list="{{ r.cells }}" as="x" hint-placeholder-count="6">
+                    <span style="{{ x.style }}">{{ x.v }}</span>
+                  </sc-for>
+                </div>
+              </sc-for>
+              <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">{{ bookHistNote }}</div>
+              </sc-if>
+              </sc-if>
             </section>
             </sc-if>
 
@@ -578,28 +614,25 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
               </div>
               <sc-if value="{{ hasProps }}" hint-placeholder-val="{{ false }}">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-                <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--collabel)">HISTORY</span>
                 <div style="{{ propHist.cellStyle }}">
-                  <button data-colmenu="1" onClick="{{ propHist.click }}" style="{{ propHist.labelStyle }}">{{ propHist.label }}<span style="font-size:7px">▾</span></button>
-                  <sc-if value="{{ propHist.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" style="{{ propHist.menuStyle }}">
-                    <form onSubmit="{{ propHist.onKey }}" style="margin:0"><input value="{{ propHist.q }}" onChange="{{ propHist.onQ }}" onKeyDown="{{ propHist.onKey }}" placeholder="type an opponent, a season or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ propHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
-                    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">OPPONENT</div>
-                    <sc-for list="{{ propHist.opps }}" as="v" hint-placeholder-count="4">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">SEASON</div>
-                    <sc-for list="{{ propHist.seasons }}" as="v" hint-placeholder-count="4">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">GAME</div>
-                    <sc-for list="{{ propHist.games }}" as="v" hint-placeholder-count="4">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
+                    <button data-colmenu="1" onClick="{{ propHist.click }}" style="{{ propHist.labelStyle }}">{{ propHist.label }}<span style="font-size:7px">▾</span><span style="{{ propHist.dotStyle }}"></span></button>
+                    <sc-if value="{{ propHist.open }}" hint-placeholder-val="{{ false }}">
+                    <div data-colmenu="1" style="{{ propHist.menuStyle }}">
+                      <form onSubmit="{{ propHist.onKey }}" style="margin:0"><input value="{{ propHist.q }}" onChange="{{ propHist.onQ }}" onKeyDown="{{ propHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ propHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+                      <sc-for list="{{ propHist.sections }}" as="s" hint-placeholder-count="3">
+                        <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+                        <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+                            <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </sc-for>
+                    </div>
+                    </sc-if>
                   </div>
-                  </sc-if>
-                </div>
                 
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">the two right-hand columns read each player's games in the history chosen — tonight's opponent by default — where his log is loaded</span>
               </div>
@@ -686,26 +719,24 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 
                 
                 <div style="{{ trendHist.cellStyle }}">
-                  <button data-colmenu="1" onClick="{{ trendHist.click }}" style="{{ trendHist.labelStyle }}">{{ trendHist.label }}<span style="font-size:7px">▾</span></button>
-                  <sc-if value="{{ trendHist.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" style="{{ trendHist.menuStyle }}">
-                    <form onSubmit="{{ trendHist.onKey }}" style="margin:0"><input value="{{ trendHist.q }}" onChange="{{ trendHist.onQ }}" onKeyDown="{{ trendHist.onKey }}" placeholder="type an opponent, a season or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ trendHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
-                    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">OPPONENT</div>
-                    <sc-for list="{{ trendHist.opps }}" as="v" hint-placeholder-count="4">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">SEASON</div>
-                    <sc-for list="{{ trendHist.seasons }}" as="v" hint-placeholder-count="4">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">GAME</div>
-                    <sc-for list="{{ trendHist.games }}" as="v" hint-placeholder-count="4">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
+                    <button data-colmenu="1" onClick="{{ trendHist.click }}" style="{{ trendHist.labelStyle }}">{{ trendHist.label }}<span style="font-size:7px">▾</span><span style="{{ trendHist.dotStyle }}"></span></button>
+                    <sc-if value="{{ trendHist.open }}" hint-placeholder-val="{{ false }}">
+                    <div data-colmenu="1" style="{{ trendHist.menuStyle }}">
+                      <form onSubmit="{{ trendHist.onKey }}" style="margin:0"><input value="{{ trendHist.q }}" onChange="{{ trendHist.onQ }}" onKeyDown="{{ trendHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ trendHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+                      <sc-for list="{{ trendHist.sections }}" as="s" hint-placeholder-count="3">
+                        <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+                        <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+                            <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </sc-for>
+                    </div>
+                    </sc-if>
                   </div>
-                  </sc-if>
-                </div>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ trendMatchNote }}</span>
               </div>
               <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:15px">
@@ -763,22 +794,20 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <button data-chev="1" onClick="{{ p.teamTrend.toggle }}" style="{{ p.teamTrend.btn }}">{{ p.teamTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team performance trend</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span><div style="{{ teamHist.cellStyle }}">
-  <button data-colmenu="1" onClick="{{ teamHist.click }}" style="{{ teamHist.labelStyle }}">{{ teamHist.label }}<span style="font-size:7px">▾</span></button>
+  <button data-colmenu="1" onClick="{{ teamHist.click }}" style="{{ teamHist.labelStyle }}">{{ teamHist.label }}<span style="font-size:7px">▾</span><span style="{{ teamHist.dotStyle }}"></span></button>
   <sc-if value="{{ teamHist.open }}" hint-placeholder-val="{{ false }}">
   <div data-colmenu="1" style="{{ teamHist.menuStyle }}">
-    <form onSubmit="{{ teamHist.onKey }}" style="margin:0"><input value="{{ teamHist.q }}" onChange="{{ teamHist.onQ }}" onKeyDown="{{ teamHist.onKey }}" placeholder="type an opponent, a season or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ teamHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
-    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">OPPONENT</div>
-    <sc-for list="{{ teamHist.opps }}" as="v" hint-placeholder-count="4">
-      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-    </sc-for>
-    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">SEASON</div>
-    <sc-for list="{{ teamHist.seasons }}" as="v" hint-placeholder-count="4">
-      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-    </sc-for>
-    <div style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);margin:6px 0 3px">GAME</div>
-    <sc-for list="{{ teamHist.games }}" as="v" hint-placeholder-count="4">
-      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+    <form onSubmit="{{ teamHist.onKey }}" style="margin:0"><input value="{{ teamHist.q }}" onChange="{{ teamHist.onQ }}" onKeyDown="{{ teamHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ teamHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+    <sc-for list="{{ teamHist.sections }}" as="s" hint-placeholder-count="3">
+      <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+      <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+          <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+          </sc-for>
+        </div>
+      </sc-if>
     </sc-for>
   </div>
   </sc-if>
@@ -1568,18 +1597,23 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfTrend.toggle }}" style="{{ p.pfTrend.btn }}">{{ p.pfTrend.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Trend</span><div style="{{ logSeasonCol.cellStyle }}">
-  <button data-colmenu="1" onClick="{{ logSeasonCol.click }}" style="{{ logSeasonCol.labelStyle }}">{{ logSeasonCol.label }}<span style="font-size:7px">{{ logSeasonCol.arrow }}</span><span style="{{ logSeasonCol.dotStyle }}"></span></button>
-  <sc-if value="{{ logSeasonCol.open }}" hint-placeholder-val="{{ false }}">
-    <div data-colmenu="1" style="{{ logSeasonCol.menuStyle }}">
-      <form onSubmit="{{ logSeasonCol.onKey }}" style="margin:0"><input value="{{ logSeasonCol.q }}" onChange="{{ logSeasonCol.onQ }}" onKeyDown="{{ logSeasonCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-        <button onClick="{{ logSeasonCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-      </div>
-      <sc-for list="{{ logSeasonCol.values }}" as="v" hint-placeholder-count="6">
-        <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-      </sc-for>
-    </div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Trend</span><div style="{{ profHist.cellStyle }}">
+  <button data-colmenu="1" onClick="{{ profHist.click }}" style="{{ profHist.labelStyle }}">{{ profHist.label }}<span style="font-size:7px">▾</span><span style="{{ profHist.dotStyle }}"></span></button>
+  <sc-if value="{{ profHist.open }}" hint-placeholder-val="{{ false }}">
+  <div data-colmenu="1" style="{{ profHist.menuStyle }}">
+    <form onSubmit="{{ profHist.onKey }}" style="margin:0"><input value="{{ profHist.q }}" onChange="{{ profHist.onQ }}" onKeyDown="{{ profHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ profHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+    <sc-for list="{{ profHist.sections }}" as="s" hint-placeholder-count="3">
+      <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+      <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+          <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </sc-for>
+  </div>
   </sc-if>
 </div><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.barsNote }}</span>
@@ -1621,52 +1655,29 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.h2h.head }}</span></div></div>
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0 10px">
-                    <div style="{{ profile.h2h.oppCol.cellStyle }}">
-                      <button data-colmenu="1" onClick="{{ profile.h2h.oppCol.click }}" style="{{ profile.h2h.oppCol.labelStyle }}">{{ profile.h2h.oppCol.label }}<span style="font-size:7px">{{ profile.h2h.oppCol.arrow }}</span><span style="{{ profile.h2h.oppCol.dotStyle }}"></span></button>
-                      <sc-if value="{{ profile.h2h.oppCol.open }}" hint-placeholder-val="{{ false }}">
-                        <div data-colmenu="1" style="{{ profile.h2h.oppCol.menuStyle }}">
-                          <form onSubmit="{{ profile.h2h.oppCol.onKey }}" style="margin:0"><input value="{{ profile.h2h.oppCol.q }}" onChange="{{ profile.h2h.oppCol.onQ }}" onKeyDown="{{ profile.h2h.oppCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                            <button onClick="{{ profile.h2h.oppCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                          </div>
-                          <sc-for list="{{ profile.h2h.oppCol.values }}" as="v" hint-placeholder-count="6">
-                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                          </sc-for>
-                        </div>
-                      </sc-if>
-                    </div>
-                    <div style="{{ profile.h2h.seasonCol.cellStyle }}">
-                      <button data-colmenu="1" onClick="{{ profile.h2h.seasonCol.click }}" style="{{ profile.h2h.seasonCol.labelStyle }}">{{ profile.h2h.seasonCol.label }}<span style="font-size:7px">{{ profile.h2h.seasonCol.arrow }}</span><span style="{{ profile.h2h.seasonCol.dotStyle }}"></span></button>
-                      <sc-if value="{{ profile.h2h.seasonCol.open }}" hint-placeholder-val="{{ false }}">
-                        <div data-colmenu="1" style="{{ profile.h2h.seasonCol.menuStyle }}">
-                          <form onSubmit="{{ profile.h2h.seasonCol.onKey }}" style="margin:0"><input value="{{ profile.h2h.seasonCol.q }}" onChange="{{ profile.h2h.seasonCol.onQ }}" onKeyDown="{{ profile.h2h.seasonCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                            <button onClick="{{ profile.h2h.seasonCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                          </div>
-                          <sc-for list="{{ profile.h2h.seasonCol.values }}" as="v" hint-placeholder-count="6">
-                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                          </sc-for>
-                        </div>
-                      </sc-if>
-                    </div>
-                    <div style="{{ profile.h2h.gameCol.cellStyle }}">
-                      <button data-colmenu="1" onClick="{{ profile.h2h.gameCol.click }}" style="{{ profile.h2h.gameCol.labelStyle }}">{{ profile.h2h.gameCol.label }}<span style="font-size:7px">{{ profile.h2h.gameCol.arrow }}</span><span style="{{ profile.h2h.gameCol.dotStyle }}"></span></button>
-                      <sc-if value="{{ profile.h2h.gameCol.open }}" hint-placeholder-val="{{ false }}">
-                        <div data-colmenu="1" style="{{ profile.h2h.gameCol.menuStyle }}">
-                          <form onSubmit="{{ profile.h2h.gameCol.onKey }}" style="margin:0"><input value="{{ profile.h2h.gameCol.q }}" onChange="{{ profile.h2h.gameCol.onQ }}" onKeyDown="{{ profile.h2h.gameCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                            <button onClick="{{ profile.h2h.gameCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                          </div>
-                          <sc-for list="{{ profile.h2h.gameCol.values }}" as="v" hint-placeholder-count="6">
-                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                          </sc-for>
-                        </div>
+                    <div style="{{ h2hHist.cellStyle }}">
+                      <button data-colmenu="1" onClick="{{ h2hHist.click }}" style="{{ h2hHist.labelStyle }}">{{ h2hHist.label }}<span style="font-size:7px">▾</span><span style="{{ h2hHist.dotStyle }}"></span></button>
+                      <sc-if value="{{ h2hHist.open }}" hint-placeholder-val="{{ false }}">
+                      <div data-colmenu="1" style="{{ h2hHist.menuStyle }}">
+                        <form onSubmit="{{ h2hHist.onKey }}" style="margin:0"><input value="{{ h2hHist.q }}" onChange="{{ h2hHist.onQ }}" onKeyDown="{{ h2hHist.onKey }}" placeholder="type a season, a team or a week · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px"><button onClick="{{ h2hHist.reset }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--brand)">back to the live game</button></div>
+                        <sc-for list="{{ h2hHist.sections }}" as="s" hint-placeholder-count="3">
+                          <button onClick="{{ s.toggle }}" style="{{ s.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:52px;flex:none">{{ s.label }}</span><span style="{{ s.valueStyle }}">{{ s.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ s.chev }}</span></button>
+                          <sc-if value="{{ s.open }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid)">
+                              <sc-for list="{{ s.items }}" as="v" hint-placeholder-count="4">
+                                <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                              </sc-for>
+                            </div>
+                          </sc-if>
+                        </sc-for>
+                      </div>
                       </sc-if>
                     </div>
                   </div>
                   <sc-for list="{{ profile.h2h.rows }}" as="r" hint-placeholder-count="3">
                     <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline">
-                      <span style="flex:1.6;color:var(--lead)">{{ r.when }}</span><span style="flex:.8;color:var(--second)">{{ r.where }}</span><span style="flex:.8;color:var(--reversed)">{{ r.score }}</span><span style="{{ r.resultStyle }};flex:.4;text-align:right">{{ r.result }}</span>
+                      <span style="flex:1.6;color:var(--lead)">{{ r.when }}</span><span style="flex:.8;color:var(--second)">{{ r.where }}</span><span style="flex:.8;color:var(--reversed)">{{ r.score }}</span><span style="flex:1.3;color:var(--second)">{{ r.line }}</span><span style="{{ r.resultStyle }};flex:.4;text-align:right">{{ r.result }}</span>
                     </div>
                   </sc-for>
                   <sc-if value="{{ profile.h2h.empty }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:8px 0">{{ profile.h2h.empty }}</div></sc-if>
@@ -1694,6 +1705,11 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 <sc-for list="{{ profile.propRows }}" as="r" hint-placeholder-count="0">
                         <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:10.5px;padding-bottom:8px;border-bottom:1px solid var(--divider)">
                           <span style="color:var(--second)">{{ r.k }}</span><span>{{ r.v }}</span>
+                        </div>
+                      </sc-for>
+                      <sc-for list="{{ profile.histRows }}" as="r" hint-placeholder-count="0">
+                        <div style="display:flex;justify-content:space-between;gap:12px;font-family:var(--kw);font-size:10.5px;padding-bottom:8px;border-bottom:1px solid var(--divider)">
+                          <span style="color:var(--second);flex:none">{{ r.k }}</span><span style="text-align:right">{{ r.v }}</span>
                         </div>
                       </sc-for>
                     </div>
@@ -2006,7 +2022,7 @@ class Component extends DCLogic {
   constructor(p) {
     super(p);
     const sport = (p && p.sport) || 'NBA';
-    this.state = { sport, kq: 'connecting', liveSlate: [], liveMeta: null, logs: {}, stories: {}, box: {}, tab: 'live', phase: 'ALL', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, bucketHover: null, pTrendHover: null, tTrendHover: null, mktSel: [], mktQ: '', shut: {}, propF: {}, propOpenCol: null, propSort: null, propDir: 'asc', trendQ: '', teamSide: 'home', propIdx: 0, dir: 'players', profileId: null, activeId: SLATES[sport][0].id, tick: 0, added: false, series: this.seed(sport) };
+    this.state = { sport, kq: 'connecting', liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, tab: 'live', phase: 'ALL', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, bucketHover: null, pTrendHover: null, tTrendHover: null, mktSel: [], mktQ: '', shut: {}, propF: {}, propOpenCol: null, propSort: null, propDir: 'asc', trendQ: '', teamSide: 'home', propIdx: 0, dir: 'players', profileId: null, activeId: SLATES[sport][0].id, tick: 0, added: false, series: this.seed(sport) };
   }
 
   seed(sport, list) {
@@ -2093,6 +2109,20 @@ class Component extends DCLogic {
     }, rate);
     this.connectRecord();
   }
+  componentDidUpdate() { this.ensureOddsHist(); }
+  // the lines of past meetings: asked of the edge once per slate the history filter reaches,
+  // held per date (NBA) or per week (NFL); the edge answers from its own closing-line file
+  ensureOddsHist() {
+    const need = this._oddsNeed || []; if (!need.length) return;
+    const S = SRC(); if (!S) return;
+    const have = this.state.oddsHist || {};
+    const seen = {};
+    const list = need.filter(n => n && n.key && !have[n.key] && !seen[n.key] && (seen[n.key] = true));
+    if (!list.length) return;
+    const sport = this.state.sport;
+    this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
+    list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
+  }
   componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
@@ -2174,30 +2204,11 @@ class Component extends DCLogic {
     });
   }
   openProfile(id, ent) {
-    this.setState({ profileId: id, profileEnt: ent, h2hOpp: null, h2hSeason: null, h2hGame: null, h2hMenu: null });
+    this.setState({ profileId: id, profileEnt: ent, histMenu: null, histSub: null });
     this.loadLog(id, ent);
-    if (id.slice(0, 2) === 'c:' && ent && ent.abbr) this.loadH2H(ent.abbr, this.logSeasonDefault(this.state.sport));
   }
   // a club's whole season, for the meetings with one opponent; a season the club has not
   // played yet falls back to the previous one, and the panel says so
-  loadH2H(abbr, season) {
-    const S = SRC(); if (!S || !abbr) return;
-    const key = abbr + '@' + season;
-    const have = (this.state.h2h || {})[key];
-    if (have && have.state !== 'failed') return;
-    const sport = this.state.sport;
-    this.setState(x => ({ h2h: Object.assign({}, x.h2h, { [key]: { state: 'loading', rows: [] } }) }));
-    S.teamlog(sport, abbr, String(season), 400).then(r => {
-      const store = (rr, yr, fb) => this.setState(x => ({ h2h: Object.assign({}, x.h2h, { [key]: { state: rr.ok ? 'ready' : 'failed', rows: rr.rows || [], season: String(yr), fellBack: !!fb, reason: rr.ok ? '' : (rr.reason || 'the feed did not answer') } }) }));
-      if (r.ok && !(r.rows || []).length && Number(season) === this.logSeasonDefault(sport)) return S.teamlog(sport, abbr, String(Number(season) - 1), 400).then(r2 => store(r2, Number(season) - 1, true));
-      store(r, season, false);
-    });
-  }
-  setH2H(patch) {
-    this.setState(Object.assign({ h2hMenu: null, h2hQ: '' }, patch), () => {
-      const ent = this.state.profileEnt; if (ent && ent.abbr) this.loadH2H(ent.abbr, this.state.h2hSeason || this.logSeasonDefault(this.state.sport));
-    });
-  }
   // the two clubs' best-rated players, the pool the trend and props widgets read
   trendPoolFor(sport, g) {
     const S = SRC(); if (!S || !g) return [];
@@ -2299,14 +2310,14 @@ class Component extends DCLogic {
   goHome() {
     clearTimeout(this._liveT);
     const sport = this.state.sport;
-    this.setState({ tab: 'live', cohortSel: null, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, stories: {}, box: {},
+    this.setState({ tab: 'live', cohortSel: null, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.ensureTrendLog(); this.loadProps(); this.loadStandings(); }, 0);
     try { window.scrollTo(0, 0); } catch (e) {}
   }
   switchSport(sport) {
     clearTimeout(this._liveT);
-    this.setState({ cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, stories: {},
+    this.setState({ cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, propIdx: 0, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
   }
@@ -2420,7 +2431,8 @@ class Component extends DCLogic {
     const hf = Object.assign({ opp: 'opp', game: null }, st.hist || {});
     const histSeasonLabel = y => sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y);
     const histCur = this.logSeasonDefault(sport), histEff = st.logSeason || histCur;
-    const oppFor = abbr => abbr === g.homeAbbr ? g.awayAbbr : g.homeAbbr;
+    const oppFor = abbr => abbr === g.homeAbbr ? g.awayAbbr : abbr === g.awayAbbr ? g.homeAbbr
+      : (() => { const gm = (slate || []).find(x => x.homeAbbr === abbr || x.awayAbbr === abbr); return gm ? (gm.homeAbbr === abbr ? gm.awayAbbr : gm.homeAbbr) : null; })();
     const histOppOf = abbr => hf.opp === 'opp' ? oppFor(abbr) : hf.opp === 'all' ? null : hf.opp;
     const histScope = (rows, abbr) => {
       const o = histOppOf(abbr);
@@ -2430,18 +2442,22 @@ class Component extends DCLogic {
     };
     const clubLog = abbr => { const l = abbr ? (st.logs || {})[this.logKey('c:' + abbr)] : null; return l && l.rows ? l.rows : []; };
     const gameLabelOf = r => (r.week != null ? (r.postseason ? 'Playoff week ' : 'Week ') + r.week + ' · ' : '') + (S ? S.day(r.date) : r.date);
-    const histLabel = abbr => 'HISTORY · ' + (hf.opp === 'opp' ? 'VS ' + (oppFor(abbr) || '—') : hf.opp === 'all' ? 'ALL TEAMS' : 'VS ' + hf.opp) + ' · ' + histSeasonLabel(histEff) + (hf.game ? ' · ' + gameLabelOf(clubLog(abbr).find(r => r.date === hf.game) || clubLog(oppFor(abbr)).find(r => r.date === hf.game) || { date: hf.game }) : '');
+    const histLabel = abbr => 'HISTORY · ' + (hf.opp === 'opp' ? (oppFor(abbr) ? 'VS ' + oppFor(abbr) : 'ALL TEAMS') : hf.opp === 'all' ? 'ALL TEAMS' : 'VS ' + hf.opp) + ' · ' + histSeasonLabel(histEff) + (hf.game ? ' · ' + gameLabelOf(clubLog(abbr).find(r => r.date === hf.game) || clubLog(oppFor(abbr)).find(r => r.date === hf.game) || { date: hf.game }) : '');
+    const histActive = hf.opp !== 'opp' || !!st.logSeason || !!hf.game;
     const setHist = patch => this.setState(x => ({ hist: Object.assign({}, x.hist || {}, patch), histQ: '' }));
-    const histMenuFor = (key, abbr) => {
+    // the control: one header-style label, and beneath it three sub-filters that open one at a
+    // time — SEASON, TEAM, GAME — so the panel stays short until a section is asked for. Typing
+    // opens whichever sections hold a match. The same state stands behind every placement.
+    const histMenuFor = (key, abbr, rowsIn) => {
       const on = st.histMenu === key, qv = on ? String(st.histQ || '').trim().toLowerCase() : '';
-      const openMenu = () => this.setState(x => ({ histMenu: x.histMenu === key ? null : key, histQ: '' }));
+      const openMenu = () => this.setState(x => ({ histMenu: x.histMenu === key ? null : key, histQ: '', histSub: null }));
       const row = (label, count, active, pick) => ({ label, count: count == null ? '' : String(count), pick,
         style: 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:5px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + (active ? 'var(--nested)' : 'transparent') + ';color:' + (active ? BLUE : 'var(--lead)') });
-      const log = clubLog(abbr);
+      const log = rowsIn || clubLog(abbr);
       const clubs = Array.from(new Set(log.map(r => r.opp).filter(Boolean))).sort();
       const tonight = oppFor(abbr);
-      const opps = [row('VS ' + (tonight || '—') + ' · tonight', log.filter(r => r.opp === tonight).length + ' games', hf.opp === 'opp', () => setHist({ opp: 'opp', game: null })),
-                    row('ALL TEAMS', log.length + ' games', hf.opp === 'all', () => setHist({ opp: 'all', game: null }))]
+      const teams = (tonight ? [row('VS ' + tonight + ' · tonight', log.filter(r => r.opp === tonight).length + ' games', hf.opp === 'opp', () => setHist({ opp: 'opp', game: null }))] : [])
+        .concat([row('ALL TEAMS', log.length + ' games', hf.opp === 'all' || (hf.opp === 'opp' && !tonight), () => setHist({ opp: 'all', game: null }))])
         .concat(clubs.filter(c => c !== tonight).map(c => row('VS ' + c, log.filter(r => r.opp === c).length + ' games', hf.opp === c, () => setHist({ opp: c, game: null }))));
       const seasons = [row(histSeasonLabel(histCur) + ' · current', '', !st.logSeason, () => { this.setLogSeason(null); setHist({ game: null }); })]
         .concat([1, 2, 3, 4].map(n => row(histSeasonLabel(histCur - n), '', st.logSeason === histCur - n, () => { this.setLogSeason(histCur - n); setHist({ game: null }); })));
@@ -2450,19 +2466,44 @@ class Component extends DCLogic {
       const games = [row('EVERY GAME', meetings.length + ' games', !hf.game, () => setHist({ game: null }))]
         .concat(meetings.map(r => row(gameLabelOf(r) + ' · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || ''), '', hf.game === r.date, () => setHist({ game: r.date }))));
       const filt = list => list.filter(x => !qv || x.label.toLowerCase().indexOf(qv) >= 0);
+      const picked = hf.game ? (log.find(r => r.date === hf.game) || { date: hf.game }) : null;
+      const section = (k, label, value, items, active) => {
+        const shown = filt(items), open = qv ? shown.length > 0 : st.histSub === k;
+        return { key: k, label, value, open, items: open ? shown : [], chev: open ? '▴' : '▾',
+          toggle: () => this.setState(x => ({ histSub: x.histSub === k ? null : k })),
+          style: 'display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border:none;border-top:1px solid var(--grid);background:transparent;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;color:var(--lead)',
+          valueStyle: 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;color:' + (active ? BLUE : 'var(--reversed)') };
+      };
+      const sections = [
+        section('season', 'SEASON', histSeasonLabel(histEff) + (st.logSeason ? '' : ' · current'), seasons, !!st.logSeason),
+        section('team', 'TEAM', hf.opp === 'opp' ? (tonight ? 'vs ' + tonight + ' · tonight' : 'all teams') : hf.opp === 'all' ? 'all teams' : 'vs ' + hf.opp, teams, hf.opp !== 'opp'),
+        section('game', 'GAME', picked ? gameLabelOf(picked) : 'every game · ' + meetings.length, games, !!hf.game)
+      ];
       return {
         label: histLabel(abbr), open: on,
         cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
-        menuStyle: 'position:absolute;top:24px;left:0;z-index:40;width:270px;max-height:360px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
-        labelStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.08em;cursor:pointer;background:transparent;border:1px solid ' + (hf.opp !== 'opp' || st.logSeason || hf.game ? BLUE : 'var(--axis)') + ';border-radius:100px;padding:4px 9px;display:flex;align-items:center;gap:6px;color:' + (hf.opp !== 'opp' || st.logSeason || hf.game ? BLUE : 'var(--second)'),
+        menuStyle: 'position:absolute;top:19px;left:0;z-index:40;width:262px;max-height:380px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
+        labelStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;cursor:pointer;background:transparent;border:none;padding:0;display:flex;align-items:center;gap:4px;white-space:nowrap;color:' + (histActive ? BLUE : 'var(--collabel)'),
+        dotStyle: 'width:5px;height:5px;border-radius:50%;background:' + BLUE + ';flex:none;display:' + (histActive ? 'block' : 'none'),
         click: openMenu, toggle: openMenu,
         q: on ? (st.histQ || '') : '', onQ: e => this.setState({ histQ: e.target.value }),
-        onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); if (e.key !== 'Escape' && qv) { const hit = filt(opps)[0] || filt(seasons)[0] || filt(games)[0]; if (hit) hit.pick(); } this.setState({ histMenu: null, histQ: '' }); } },
-        reset: () => { this.setLogSeason(null); this.setState({ hist: { opp: 'opp', game: null }, histMenu: null, histQ: '' }); },
-        opps: filt(opps), seasons: filt(seasons), games: filt(games)
+        onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); if (e.key !== 'Escape' && qv) { const hit = filt(seasons)[0] || filt(teams)[0] || filt(games)[0]; if (hit) hit.pick(); } this.setState({ histMenu: null, histQ: '' }); } },
+        reset: () => { this.setLogSeason(null); this.setState({ hist: { opp: 'opp', game: null }, histMenu: null, histQ: '', histSub: null }); },
+        sections
       };
     };
+    // the lines of a past meeting, from the edge's closing-line file: keyed by date (NBA) or
+    // by season and week (NFL); the club's own side of the consensus is what a panel shows
+    const logRecOf = abbr => (st.logs || {})[this.logKey('c:' + abbr)] || null;
+    const oddsKeyFor = (r, rec) => sport === 'NBA' ? 'nba:' + r.date : 'nfl:' + ((rec && rec.season) || histEff) + ':' + r.week;
+    const oddsAtFor = (r, rec) => sport === 'NBA' ? { date: r.date } : { season: String((rec && rec.season) || histEff), week: r.week };
+    const oddsGameFor = (r, abbr, rec) => { const h = (st.oddsHist || {})[oddsKeyFor(r, rec)]; if (!h || h.state !== 'ready') return null; const ho = r.home ? abbr : r.opp, aw = r.home ? r.opp : abbr; return (h.games || []).find(x => x.homeAbbr === ho && x.awayAbbr === aw) || null; };
+    const oddsStateFor = (r, rec) => { const h = (st.oddsHist || {})[oddsKeyFor(r, rec)]; return h ? h.state : 'none'; };
+    const sideOf = (o, r) => { const c = o.consensus || {}; return { spread: c.spreadHome == null ? null : (r.home ? c.spreadHome : -c.spreadHome), total: c.total != null ? c.total : null, ml: r.home ? c.mlHome : c.mlAway, n: c.n || 0, closing: !!o.closing }; };
+    const oddsNeedFor = (rows, rec) => rows.filter(r => sport === 'NBA' ? !!r.date : r.week != null).map(r => ({ key: oddsKeyFor(r, rec), at: oddsAtFor(r, rec) }));
+    this._oddsNeed = [];
     const trendPool = this.trendPoolFor(sport, g);
+
     const tq = (st.trendQ || '').trim().toLowerCase();
     const trendMatches = trendPool.filter(p => !tq || matchQ(p.name + ' ' + (p.full || '') + ' ' + p.pos + ' ' + p.team, tq));
     const ppSel = trendPool.find(p => p.id === st.trendId) || null;
@@ -2648,6 +2689,48 @@ class Component extends DCLogic {
       tcol('books', 'spread', 'SPREAD', null, 'left', 1), tcol('books', 'ml', 'MONEYLINE', null, 'left', .8),
       tcol('books', 'total', 'TOTAL', null, 'left', 1.6), tcol('books', 'age', 'AGE', null, 'right', .5)
     ];
+    // ---------- the books through the history filter: the lines of past meetings ----------
+    // the provider holds lines for the slate in front of it only (every past date and week
+    // answered empty on 7 Sep 2026), so the edge files a closing consensus for every game it
+    // watches from launch day; a past meeting shows that, and a picked meeting its books
+    const bookLiveOn = !histActive || !hasMarket;
+    const bookHistOn = histActive && hasMarket;
+    const bookRec = logRecOf(g.homeAbbr), bookLog = clubLog(g.homeAbbr);
+    const bookOpp = histOppOf(g.homeAbbr);
+    const bookMeetingsAll = (bookOpp ? bookLog.filter(r => r.opp === bookOpp) : bookLog).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+    const bookMeetings = bookMeetingsAll.slice(0, 10);
+    const bookHistGame = hf.game ? (bookMeetingsAll.find(r => r.date === hf.game) || null) : null;
+    if (bookHistOn) this._oddsNeed = this._oddsNeed.concat(oddsNeedFor(bookHistGame ? [bookHistGame] : bookMeetings, bookRec));
+    const bhCell = (v, flex, color, extra) => ({ v: v == null ? '—' : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (color || 'var(--lead)') + (extra ? ';' + extra : '') });
+    const bookHistColsDef = bookHistGame
+      ? [['BOOK', 1.3], ['SIDE', .6], ['SPREAD', .9], ['MONEYLINE', .9], ['TOTAL', .8], ['UPDATED', .9]]
+      : [['MEETING', 1.7], ['RESULT', .9], ['SPREAD', .9], ['COVER', .7], ['TOTAL', 1], ['LINES', .8]];
+    const bookHistCols = bookHistColsDef.map(([label, flex]) => ({ label, style: 'flex:' + flex + ';font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);white-space:nowrap' }));
+    const bhRowStyle = (pick, strong) => 'display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline;' + (pick ? 'cursor:pointer;' : '') + (strong ? 'background:var(--nested);border-radius:5px;padding-left:6px;padding-right:6px;' : '');
+    const bookHistRows = (() => {
+      if (!bookHistOn) return [];
+      if (!bookLog.length) return [{ cells: [bhCell(bookRec && bookRec.state === 'loading' ? 'loading the team log…' : 'no season log for ' + g.homeAbbr, 6, 'var(--second)')], style: bhRowStyle(false), pick: () => {} }];
+      if (bookHistGame) {
+        const r = bookHistGame, o = oddsGameFor(r, g.homeAbbr, bookRec), state = oddsStateFor(r, bookRec);
+        if (!o) return [{ cells: [bhCell(state === 'loading' || state === 'none' ? 'asking the edge for the lines…' : 'no lines on file for this meeting', 6, 'var(--second)')], style: bhRowStyle(false), pick: () => {} }];
+        const sd = sideOf(o, r);
+        const head = { cells: [bhCell(sd.closing ? 'closing consensus' : 'consensus', 1.3, 'var(--reversed)', 'font-weight:700'), bhCell(g.homeAbbr, .6, 'var(--reversed)'), bhCell(sgn(sd.spread), .9, 'var(--reversed)'), bhCell(oddsFmt(sd.ml), .9, 'var(--reversed)'), bhCell(sd.total, .8, 'var(--reversed)'), bhCell(sd.n + ' books', .9, 'var(--second)')], style: bhRowStyle(false, true), pick: () => {} };
+        return [head].concat((o.books || []).map(b => ({ cells: [bhCell(bookName(b), 1.3, 'var(--lead)', 'text-transform:capitalize'), bhCell(g.homeAbbr, .6, 'var(--second)'), bhCell(sgn(r.home ? b.spreadHome : b.spreadAway), .9), bhCell(oddsFmt(r.home ? b.mlHome : b.mlAway), .9, 'var(--second)'), bhCell(b.total, .8, 'var(--second)'), bhCell(b.updated && S ? S.age(b.updated) + ' ago' : '—', .9, 'var(--faint)')], style: bhRowStyle(false), pick: () => {} })));
+      }
+      return bookMeetings.map(r => {
+        const o = oddsGameFor(r, g.homeAbbr, bookRec), state = oddsStateFor(r, bookRec), sd = o ? sideOf(o, r) : null;
+        const margin = r.pf != null && r.pa != null ? r.pf - r.pa : null, tot = r.pf != null && r.pa != null ? r.pf + r.pa : null;
+        const cover = sd && sd.spread != null && margin != null ? (margin + sd.spread > 0 ? 'covered' : margin + sd.spread < 0 ? 'missed' : 'push') : '—';
+        const totalCell = sd && sd.total != null ? sd.total + (tot != null ? (tot > sd.total ? ' · over' : tot < sd.total ? ' · under' : ' · push') : '') : '—';
+        return { cells: [bhCell(gameLabelOf(r) + ' · ' + (r.home ? 'vs ' : 'at ') + r.opp, 1.7, 'var(--lead)'), bhCell((r.result || '—') + (r.pf != null ? ' ' + r.pf + '-' + r.pa : ''), .9, r.result === 'W' ? ACC : r.result === 'L' ? RED : 'var(--second)'),
+                         bhCell(sd ? g.homeAbbr + ' ' + sgn(sd.spread) : (state === 'loading' || state === 'none' ? '…' : '—'), .9, 'var(--reversed)'), bhCell(cover, .7, cover === 'covered' ? ACC : cover === 'missed' ? RED : 'var(--second)'),
+                         bhCell(totalCell, 1, 'var(--second)'), bhCell(sd ? sd.n + ' books' : (state === 'ready' || state === 'failed' ? 'none on file' : ''), .8, 'var(--faint)')],
+                 style: bhRowStyle(true), pick: () => setHist({ game: r.date }) };
+      });
+    })();
+    const bookHistHead = 'PAST MEETINGS · ' + (bookOpp ? g.homeAbbr + ' VS ' + bookOpp : g.homeAbbr + ' · EVERY GAME') + ' · ' + histSeasonLabel(Number(bookRec && bookRec.season) || histEff).toUpperCase() + (bookRec && bookRec.fellBack ? ' (NO GAMES YET IN ' + histSeasonLabel(histEff).toUpperCase() + ')' : '') + (bookHistGame ? ' · ' + gameLabelOf(bookHistGame).toUpperCase() : bookMeetingsAll.length > 10 ? ' · THE LAST 10 OF ' + bookMeetingsAll.length : '');
+    const bookHistNote = (bookHistGame ? 'the consensus row is what the edge filed at tip; the book rows are the lines the provider still holds for the game' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side of the closing consensus the edge filed at tip · cover reads the final score against it")
+      + ' · the edge files a closing line for every game it watches from 8 Sep 2026, so earlier meetings show none';
     const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game ' + (oppAbbr ? 'against ' + oppAbbr : '') + (hf.game ? ' on that date' : '') + ' in this log — widen the history filter'
       : !tlog ? 'log not requested' : tlog.state === 'ready' ? 'last ' + logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
       : tlog.state === 'loading' ? 'loading the game log…' : 'game log unavailable — ' + (tlog.reason || 'the feed did not answer');
@@ -3033,7 +3116,7 @@ class Component extends DCLogic {
       clear: () => setCol(k, null)
     }));
 
-    let profile = null;
+    let profile = null, profHistAbbr = null, profHistRows = [];
     if (st.profileId && S && (roster.length || clubs.length)) {
       const isP = st.profileId.slice(0, 2) === 'p:';
       const key = st.profileId.slice(2);
@@ -3049,8 +3132,11 @@ class Component extends DCLogic {
       if (isP) {
         const pl = roster.find(x => x.name === key) || roster[0];
         const pb = playerBundle(pl);
-        const vals = logRows.map(r => r.v);
-        const season = av(vals), l10 = av(vals.slice(-10));
+        const pScoped = histScope(logRows, pl.team), pFell = hf.opp === 'opp' && !hf.game && logRows.length > 0 && pScoped.length === 0;
+        const pRows = pFell ? logRows : pScoped, pOpp = pFell ? null : histOppOf(pl.team);
+        profHistAbbr = pl.team; profHistRows = logRows;
+        const vals = pRows.map(r => r.v);
+        const season = av(logRows.map(r => r.v)), l10 = av(vals.slice(-10));
         const unit = (log && log.label ? log.label : 'PTS').toLowerCase();
         const mx = Math.max.apply(null, vals.concat([season || 1])) * 1.18;
         const roll = vals.map((_, i) => av(vals.slice(Math.max(0, i - 2), i + 1)));
@@ -3073,7 +3159,7 @@ class Component extends DCLogic {
             const cells = L.filter(([k]) => sr.stats[k] != null).map(([k, label, scale]) => ({ k: label, v: fmt(sr.stats[k], scale) }));
             return cells.length ? [{ k: 'SEASON', v: (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : String(dirSeason)) }, { k: 'CLUB', v: sr.team || '—' }].concat(cells) : pb.stats;
           })(),
-          barsNote: logNote('game log') + (vals.length ? ' · ' + unit + ' against his ' + season.toFixed(1) + ' average' : ''),
+          barsNote: logNote('game log') + (pFell ? ' · no game against ' + histOppOf(pl.team) + ' in this log · every game' : pOpp ? ' · ' + pRows.length + ' against ' + pOpp : '') + (hf.game ? ' · one meeting' : '') + (vals.length ? ' · ' + unit + ' against his ' + season.toFixed(1) + ' average' : ''),
           axisMax: mx.toFixed(0), axisLine: vals.length ? season.toFixed(1) : '—',
           lineMark: 'position:absolute;left:0;right:0;bottom:' + ((vals.length ? season / mx : 0) * 118).toFixed(1) + 'px;height:0;border-top:1px dashed var(--brand);opacity:.6',
           lineLabel: 'position:absolute;left:0;width:26px;bottom:' + ((vals.length ? season / mx : 0) * 118 - 5).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
@@ -3084,14 +3170,21 @@ class Component extends DCLogic {
             off: () => this.setState({ pTrendHover: null }),
             hovered: st.pTrendHover === i,
             tipStyle: tipBox(i, vals.length),
-            tipMain: v + ' ' + unit + ' · ' + (logRows[i].home ? 'vs ' : 'at ') + logRows[i].opp,
-            tipSub: logRows[i].date + ' · ' + (logRows[i].result || '') + ' · ' + (v - season >= 0 ? '+' : '') + (v - season).toFixed(1) + ' vs season average',
+            tipMain: v + ' ' + unit + ' · ' + (pRows[i].home ? 'vs ' : 'at ') + pRows[i].opp,
+            tipSub: pRows[i].date + ' · ' + (pRows[i].result || '') + ' · ' + (v - season >= 0 ? '+' : '') + (v - season).toFixed(1) + ' vs season average',
             tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (v > season ? ACC : RED),
             bar: 'width:100%;height:' + ((v / mx) * 118).toFixed(1) + 'px;border-radius:3px 3px 0 0;transition:opacity .15s ease;background:' + (v > season ? ACC : RED) +
               ';opacity:' + (st.pTrendHover === null || st.pTrendHover === undefined ? '.85' : st.pTrendHover === i ? '1' : '.32')
           })),
           avgPath: vals.length > 1 ? this.path(roll, 100, 118, 0, mx) : '',
           isClub: false, h2h: null,
+          // what he did inside the history scope, beside tonight's line when a book posts one
+          histRows: (() => {
+            if (!vals.length) return [];
+            const u = unit.toUpperCase();
+            const line = (playerProps.find(r => NK(r.who) === NK(pl.full || pl.n || pl.name) && String(r.label).toUpperCase() === u) || {}).consensus;
+            return [{ k: (pFell ? histLabel(pl.team).replace('VS ' + histOppOf(pl.team), 'ALL TEAMS') : histLabel(pl.team)) + ' · ' + u, v: av(vals).toFixed(1) + ' avg in ' + vals.length + (vals.length === 1 ? ' game' : ' games') + ' · high ' + Math.max.apply(null, vals) + (line && line.line != null ? ' · over ' + line.line + ' in ' + vals.filter(v => v > line.line).length + ' of ' + vals.length : '') }];
+          })(),
           predHead: 'The record · ' + pl.team + (pl.end ? ' · through ' + pl.end : ''),
           propRows: playerProps.filter(r => NK(r.who) === NK(pl.full || pl.n || pl.name)).map(r => { const c = r.consensus || {}; return { k: 'TONIGHT · ' + String(r.label).toUpperCase() + ' LINE', v: (c.line != null ? c.line : '—') + ' · ' + oddsFmtP(c.over) + ' / ' + oddsFmtP(c.under) + ' · ' + (c.n || 0) + ' books' }; }),
           predRows: [
@@ -3110,7 +3203,10 @@ class Component extends DCLogic {
       } else {
         const cl = clubs.find(x => x.abbr === key) || clubs[0];
         const cb = clubBundle(cl);
-        const margins = logRows.map(r => r.margin);
+        const cScoped = histScope(logRows, cl.abbr), cFell = hf.opp === 'opp' && !hf.game && logRows.length > 0 && cScoped.length === 0;
+        const cRows = cFell ? logRows : cScoped, cOpp = cFell ? null : histOppOf(cl.abbr);
+        profHistAbbr = cl.abbr; profHistRows = logRows;
+        const margins = cRows.map(r => r.margin);
         const mx = Math.max.apply(null, margins.map(Math.abs).concat([1])) * 1.25;
         const tonight = slate.find(gm => gm.homeAbbr === cl.abbr || gm.awayAbbr === cl.abbr) || null;
         const wpp = tonight ? (() => { const ss = st.series[tonight.id]; const w = ss ? ss.hist[ss.hist.length - 1] : 50; return tonight.homeAbbr === cl.abbr ? w : 100 - w; })() : null;
@@ -3124,7 +3220,7 @@ class Component extends DCLogic {
             { k: 'LAST ' + (margins.length || 12), v: margins.length ? wins + '-' + (margins.length - wins) : '—' }
           ],
           stats: cb.stats,
-          barsNote: logNote('team log') + (margins.length ? ' · scoring margin' : ''),
+          barsNote: logNote('team log') + (cFell ? ' · no game against ' + histOppOf(cl.abbr) + ' in this log · every game' : cOpp ? ' · ' + cRows.length + ' against ' + cOpp : '') + (hf.game ? ' · one meeting' : '') + (margins.length ? ' · scoring margin' : ''),
           axisMax: '+' + mx.toFixed(0), axisLine: '0',
           lineMark: 'position:absolute;left:0;right:0;bottom:59px;height:0;border-top:1px dashed var(--brand);opacity:.6',
           lineLabel: 'position:absolute;left:0;width:26px;bottom:54px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
@@ -3135,54 +3231,31 @@ class Component extends DCLogic {
             off: () => this.setState({ pTrendHover: null }),
             hovered: st.pTrendHover === i,
             tipStyle: tipBox(i, margins.length),
-            tipMain: (v > 0 ? '+' : '') + v + ' · ' + (logRows[i].home ? 'vs ' : 'at ') + logRows[i].opp + ' ' + logRows[i].pf + '-' + logRows[i].pa,
-            tipSub: logRows[i].date + ' · ' + (v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'drawn ') + Math.abs(v),
+            tipMain: (v > 0 ? '+' : '') + v + ' · ' + (cRows[i].home ? 'vs ' : 'at ') + cRows[i].opp + ' ' + cRows[i].pf + '-' + cRows[i].pa,
+            tipSub: cRows[i].date + ' · ' + (v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'drawn ') + Math.abs(v),
             tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (v > 0 ? ACC : RED),
             bar: 'width:100%;height:' + Math.max(3, (Math.abs(v) / mx) * 59).toFixed(1) + 'px;border-radius:3px 3px 0 0;background:' + (v > 0 ? ACC : RED) + ';opacity:.85;margin-bottom:' + (v > 0 ? '59px' : '0')
           })),
           avgPath: margins.length > 1 ? this.path(margins.map(v => v + mx), 100, 118, 0, mx * 2) : '',
           isClub: true,
-          // head to head: the meetings with one opponent in one season, and one of them on request
+          // head to head: the meetings inside the history scope, from the season log the profile
+          // already holds, with the closing line the edge filed for each when it has one
           h2h: (() => {
-            const cur = this.logSeasonDefault(sport);
-            const label = y => sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y);
-            const season = st.h2hSeason || cur;
-            const rec = (st.h2h || {})[cl.abbr + '@' + season] || null;
-            const all = rec && rec.rows ? rec.rows : [];
-            const oppDefault = tonight ? (tonight.homeAbbr === cl.abbr ? tonight.awayAbbr : tonight.homeAbbr) : null;
-            const opps = Array.from(new Set(all.map(r => r.opp).filter(Boolean))).sort();
-            const opp = st.h2hOpp || (oppDefault && opps.indexOf(oppDefault) >= 0 ? oppDefault : (oppDefault || opps[0] || null));
-            const meetings = all.filter(r => r.opp === opp);
-            const gameLabel = (r, i) => (r.week != null ? (r.postseason ? 'Playoff week ' : 'Week ') + r.week : (r.postseason ? 'Playoff game ' : 'Game ') + (i + 1)) + ' · ' + S.day(r.date);
-            const shown = st.h2hGame != null ? meetings.filter((r, i) => gameLabel(r, i) === st.h2hGame) : meetings;
-            const mk = (key, lbl, opts, active, pick, clear) => {
-              const on = st.h2hMenu === key; const qv = on ? String(st.h2hQ || '').trim().toLowerCase() : '';
-              const openMenu = () => this.setState(x => ({ h2hMenu: x.h2hMenu === key ? null : key, h2hQ: '' }));
-              return {
-                label: lbl, arrow: '', open: on,
-                cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
-                menuStyle: 'position:absolute;top:22px;left:0;z-index:40;width:214px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
-                labelStyle: 'font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;cursor:pointer;background:transparent;border:1px solid ' + (active ? BLUE : 'var(--axis)') + ';border-radius:100px;padding:5px 10px;display:flex;align-items:center;gap:6px;color:' + (active ? BLUE : 'var(--second)'),
-                dotStyle: 'display:none', click: openMenu, toggle: openMenu,
-                q: on ? (st.h2hQ || '') : '', onQ: e => this.setState({ h2hQ: e.target.value }),
-                onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); const hit = opts.find(o => (st.h2hQ || '').trim() && o.label.toLowerCase().indexOf((st.h2hQ || '').trim().toLowerCase()) >= 0); if (hit && e.key !== 'Escape') pick(hit.value); else this.setState({ h2hMenu: null }); } },
-                clear,
-                values: opts.filter(o => !qv || o.label.toLowerCase().indexOf(qv) >= 0).map(o => ({ label: o.label, count: o.count || '', pick: () => pick(o.value),
-                  style: 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + (o.on ? 'var(--nested)' : 'transparent') + ';color:' + (o.on ? BLUE : 'var(--lead)') }))
-              };
-            };
+            const meetings = (cOpp ? logRows.filter(r => r.opp === cOpp) : logRows).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+            const shown = (hf.game ? meetings.filter(r => r.date === hf.game) : meetings).slice(0, 20);
             const wins = meetings.filter(r => r.result === 'W').length, losses = meetings.filter(r => r.result === 'L').length;
+            this._oddsNeed = this._oddsNeed.concat(oddsNeedFor(shown.slice(0, 10), log));
             return {
-              oppCol: mk('opp', 'OPPONENT · ' + (opp || '—'), opps.map(o => ({ label: o, value: o, count: all.filter(r => r.opp === o).length + ' games', on: o === opp })), !!st.h2hOpp, v => this.setH2H({ h2hOpp: v, h2hGame: null }), () => this.setH2H({ h2hOpp: null, h2hGame: null })),
-              seasonCol: mk('season', 'SEASON · ' + label(season) + (st.h2hSeason ? ' · history' : ''), [{ label: label(cur) + ' · current', value: null, on: !st.h2hSeason }].concat([1, 2, 3, 4].map(n => ({ label: label(cur - n), value: cur - n, on: st.h2hSeason === cur - n }))), !!st.h2hSeason, v => this.setH2H({ h2hSeason: v, h2hGame: null }), () => this.setH2H({ h2hSeason: null, h2hGame: null })),
-              gameCol: mk('game', st.h2hGame || 'EVERY MEETING', [{ label: 'every meeting', value: null, on: !st.h2hGame }].concat(meetings.map((r, i) => ({ label: gameLabel(r, i), value: gameLabel(r, i), on: st.h2hGame === gameLabel(r, i) }))), !!st.h2hGame, v => this.setState({ h2hGame: v, h2hMenu: null, h2hQ: '' }), () => this.setState({ h2hGame: null, h2hMenu: null, h2hQ: '' })),
-              head: !rec ? 'loading the season…' : rec.state === 'failed' ? (rec.reason || 'no season log') : opp ? cl.abbr + ' ' + wins + '-' + losses + ' against ' + opp + ' in ' + label(Number(rec.season || season)) + (rec.fellBack ? ' (no games yet in ' + label(season) + ')' : '') : 'pick an opponent',
-              rows: shown.map((r, i) => ({ when: gameLabel(r, meetings.indexOf(r)), where: r.home ? 'vs ' + r.opp : 'at ' + r.opp, score: (r.pf != null ? r.pf : '—') + '–' + (r.pa != null ? r.pa : '—'), result: r.result || '—',
-                resultStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (r.result === 'W' ? ACC : r.result === 'L' ? RED : 'var(--second)') })),
-              empty: rec && rec.state === 'ready' && opp && !meetings.length ? 'no meeting with ' + opp + ' in that season' : '',
-              note: 'the meetings from the season log · closing lines for past games are not in the feeds held, so no odds are shown against them'
+              head: !log ? 'season log not requested' : log.state === 'loading' ? 'loading the season…' : log.state === 'failed' ? (log.reason || 'no season log')
+                : cl.abbr + ' ' + wins + '-' + losses + (cOpp ? ' against ' + cOpp : ' · every game') + ' in ' + histSeasonLabel(Number(log.season) || histEff) + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (cFell ? ' · no game against ' + histOppOf(cl.abbr) + ' yet' : '') + (meetings.length > 20 ? ' · the last 20' : ''),
+              rows: shown.map(r => { const o = oddsGameFor(r, cl.abbr, log), sd = o ? sideOf(o, r) : null, state = oddsStateFor(r, log); return { when: gameLabelOf(r), where: r.home ? 'vs ' + r.opp : 'at ' + r.opp, score: (r.pf != null ? r.pf : '—') + '–' + (r.pa != null ? r.pa : '—'), result: r.result || '—',
+                line: sd ? cl.abbr + ' ' + sgn(sd.spread) + ' · O/U ' + (sd.total != null ? sd.total : '—') : (state === 'loading' || state === 'none' ? '…' : 'no line on file'),
+                resultStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (r.result === 'W' ? ACC : r.result === 'L' ? RED : 'var(--second)') }; }),
+              empty: log && log.state === 'ready' && !meetings.length ? 'no meeting with ' + (cOpp || 'anyone') + ' in that season' : '',
+              note: 'the meetings from the season log · the line is the closing consensus the edge filed at tip; it files one for every game it watches from 8 Sep 2026, so earlier meetings show none'
             };
           })(),
+          histRows: cRows.length ? [{ k: cFell ? histLabel(cl.abbr).replace('VS ' + histOppOf(cl.abbr), 'ALL TEAMS') : histLabel(cl.abbr), v: cRows.filter(r => r.margin > 0).length + '-' + cRows.filter(r => r.margin < 0).length + ' · avg margin ' + (av(margins) >= 0 ? '+' : '') + av(margins).toFixed(1) + (cRows.some(r => r.pf != null) ? ' · avg total ' + av(cRows.filter(r => r.pf != null).map(r => r.pf + r.pa)).toFixed(1) : '') }] : [],
           predHead: tonight ? 'Tonight · ' + tonight.awayAbbr + ' @ ' + tonight.homeAbbr + (slateSim ? ' · simulated slate' : '') : 'No game on the slate',
           predRows: [
             { k: 'MODEL WIN PROB', v: wpp == null ? '—' : wpp.toFixed(1) + '%' },
@@ -3717,6 +3790,7 @@ class Component extends DCLogic {
       ].filter(Boolean).map(x => Object.assign(x, { b: String(x.b || '').replace(/_/g, ' ') })),
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
+      bookLiveOn, bookHistOn, bookHistHead, bookHistCols, bookHistRows, bookHistNote, bookHist: histMenuFor('books', g.homeAbbr),
       bookCols, bookSearch: tsearch('books', 'search books or clubs · commas for several', bookSides.length, bookShown.length),
       bookRows: bookShown.map(r => {
         const b = r.b;
@@ -3859,7 +3933,7 @@ paceRows: (() => {
       trendMatchNote: (tq ? trendMatches.length + ' of ' + trendPool.length + ' players' : trendPool.length + ' rated players on the two clubs') + ' · ' + trendNote,
       // the season the logs are read for: the one in play by default, or any the feed holds —
       // the same season everywhere, one menu per placement
-      logSeasonCol: seasonMenuFor('profile'), trendSeasonCol: seasonMenuFor('trend'), teamSeasonCol: seasonMenuFor('team'), propSeasonCol: seasonMenuFor('props'), totalSeasonCol: seasonMenuFor('total'),
+      profHist: histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), h2hHist: histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null),
       // the player to read: a menu over every rated player on the two clubs, the box a filter
       trendPlayerCol: (() => {
         const on = !!st.trendMenuOpen;
@@ -3912,7 +3986,7 @@ paceRows: (() => {
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
       trendGames: (trendFell ? 'no game against ' + oppAbbr0 + ' in this log · every game, ' + logs.length : oppAbbr ? logs.length + ' games against ' + oppAbbr : 'every game, ' + logs.length) + (hf.game ? ', one meeting' : '') + ' · ' + histSeasonLabel(histEff) + ' against the season average',
-      trendHist: histMenuFor('trend', pp.team),
+      trendHist: histMenuFor('trend', pp.team, tRowsAll),
       hasPropLine: ppLine != null && logs.length > 0,
       trendPropMark: 'position:absolute;left:0;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) : 0).toFixed(1) + 'px;height:0;border-top:1px dotted var(--good);opacity:.9',
       trendPropLabel: 'position:absolute;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) + 2 : 0).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--good)',
