@@ -2600,14 +2600,20 @@ class Component extends DCLogic {
     const sport = this.state.sport;
     this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'live', cohortSel: null, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
-    setTimeout(() => { this.pollLive(); this.ensureTrendLog(); this.loadProps(); this.loadStandings(); }, 0);
-    try { window.scrollTo(0, 0); } catch (e) {}
+    setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
+    try { window.scrollTo(0, 0); const m = document.querySelector('[data-shell=main]'); if (m) m.scrollTop = 0; } catch (e) {}
   }
+  // a league tab is a fresh page, the way a sports site regenerates when you cross leagues:
+  // every read is dropped and asked for again, whether or not the league changed
   switchSport(sport) {
     clearTimeout(this._liveT);
-    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {},
-      buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, propIdx: 0, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, bucketHover: null });
+    this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, tab: 'live', activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {},
+      buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', dirSeason: null, propIdx: 0, trendQ: '', trendId: null, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
+    // the poll loads the trend logs and the props itself once the real slate is in hand, so
+    // nothing is asked for the placeholder slate
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
+    try { window.scrollTo(0, 0); const m = document.querySelector('[data-shell=main]'); if (m) m.scrollTop = 0; } catch (e) {}
   }
 
 
