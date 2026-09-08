@@ -151,8 +151,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 @media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
   [data-shell=wintitle]{display:none!important}
-  [data-shell=clock]{display:none!important}
-  [data-shell=clockshort]{display:inline!important}
+  [data-shell=chrome]{flex-wrap:wrap!important;row-gap:2px!important}
+  [data-shell=clock]{font-size:9px!important}
   [data-shell=body]{flex-direction:column!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   [data-shell=side]{width:auto!important;border-right:0!important;border-bottom:1px solid var(--grid);flex:none!important}
   [data-shell=nav],[data-shell=health],[data-shell=spacer],[data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{display:none!important}
@@ -185,7 +185,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <span data-shell="wintitle" style="font-family:var(--kw);font-size:9.5px;color:var(--muted);margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ windowTitle }}</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;font-family:var(--kw);font-size:9.5px;color:var(--muted);flex:none">
-        <span data-shell="clock" style="white-space:nowrap;color:var(--reversed)">{{ clockLabel }}</span><span data-shell="clockshort" style="white-space:nowrap;color:var(--reversed);display:none">{{ clockShort }}</span>
+        <span data-shell="clock" style="white-space:nowrap;color:var(--reversed)">{{ clockLabel }}</span>
         <span style="width:6px;height:6px;border-radius:50%;background:var(--brand);display:block;animation:pulseDot 1.6s ease-in-out infinite"></span>
       </div>
     </div>
@@ -4257,8 +4257,6 @@ class Component extends DCLogic {
 
     return {
       sport,
-      // the phone's header has room for the time, not the date
-      clockShort: (() => { const d = new Date(); try { return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(d); } catch (e) { return d.toLocaleTimeString(); } })(),
       clockLabel: (() => { const d = new Date(); try { return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d) + ' · ' + new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(d); } catch (e) { return d.toLocaleString(); } })(),
       noSlate: slateSim, hasSlate: !slateSim,
       noSlateHead: st.liveMeta && st.liveMeta.ok === false ? 'The live edge did not answer' : 'No ' + sport + ' games on the slate today',
