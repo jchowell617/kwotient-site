@@ -819,7 +819,7 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                 </div>
               </div>
               <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--faint);margin-top:10px;padding-top:9px;border-top:1px solid var(--grid)">
-                <span>12 GAMES AGO</span><span style="color:var(--good)">ABOVE · WON</span><span>LAST GAME</span>
+                <span>{{ teamAxisLeft }}</span><span style="color:var(--good)">ABOVE · WON</span><span>LAST GAME</span>
               </div>
             </sc-if>
             </section>
@@ -2302,14 +2302,14 @@ class Component extends DCLogic {
   goHome() {
     clearTimeout(this._liveT);
     const sport = this.state.sport;
-    this.setState({ tab: 'live', cohortSel: null, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {},
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'live', cohortSel: null, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {}, box: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.ensureTrendLog(); this.loadProps(); this.loadStandings(); }, 0);
     try { window.scrollTo(0, 0); } catch (e) {}
   }
   switchSport(sport) {
     clearTimeout(this._liveT);
-    this.setState({ cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {},
+    this.setState({ searchF: {}, searchQ: {}, searchOpen: null, cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, searchQ: {}, searchOpen: null, stories: {},
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, propIdx: 0, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
   }
@@ -2572,7 +2572,7 @@ class Component extends DCLogic {
     const sideOf = (o, r) => { const c = o.consensus || {}; return { spread: c.spreadHome == null ? null : (r.home ? c.spreadHome : -c.spreadHome), total: c.total != null ? c.total : null, ml: r.home ? c.mlHome : c.mlAway, n: c.n || 0, closing: !!o.closing }; };
     const oddsNeedFor = (rows, rec) => rows.filter(r => sport === 'NBA' ? !!r.date : r.week != null).map(r => ({ key: oddsKeyFor(r, rec), at: oddsAtFor(r, rec) }));
     this._oddsNeed = [];
-    const logGroups = rows => { rows = rows || []; const n = f => rows.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
+    const logGroups = rows => { rows = (rows || []).filter(x => !x.live); const n = f => rows.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
       return [
         { label: 'OPPONENT', items: Array.from(new Set(rows.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: 'OPPONENT · ' + cnt(n(r => r.opp === o)) })) },
         { label: 'RESULT', items: [['W', r => r.result === 'W'], ['L', r => r.result === 'L'], ['home', r => r.home], ['away', r => !r.home], ['playoff', r => r.postseason]].filter(([, f]) => n(f)).map(([w, f]) => ({ label: w, count: 'RESULT · ' + cnt(n(f)) })) },
@@ -3596,8 +3596,8 @@ class Component extends DCLogic {
     const teamLiveRow = gameOn && teamOppAbbr0 && !tRowsCAll.some(x => x.date === todayKey) ? (() => { const pf = teamHome ? g.hs : g.as, pa = teamHome ? g.as : g.hs; return { date: todayKey, when: tonightWhen, opp: teamOppAbbr0, home: teamHome, pf, pa, margin: pf - pa, result: g.state === 'final' ? (pf > pa ? 'W' : pf < pa ? 'L' : 'T') : '', season: histCur, live: true }; })() : null;
     const teamScoped = histScope(tRowsCAll, teamAbbr).concat(teamLiveRow ? [teamLiveRow] : []);
     const teamFell = false;
-    const tRowsC = filtOn('team') ? tRowsCAll.filter(r => rowMatch(r, 'team')) : teamScoped;
-    const teamOppAbbr = filtOn('team') ? null : teamOppAbbr0;
+    const tRowsC = filtOn('team') ? teamScoped.filter(r => rowMatch(r, 'team')) : teamScoped;
+    const teamOppAbbr = teamOppAbbr0;
     const teamSpan = (() => { const ys = Array.from(new Set(tRowsC.map(r => r.season).filter(Boolean))).sort(); return !ys.length ? '' : ys.length === 1 ? histSeasonLabel(ys[0]) : histSeasonLabel(ys[0]) + ' to ' + histSeasonLabel(ys[ys.length - 1]); })();
     const teamVsRows = tRowsC, teamUseVs = !!teamOppAbbr;
     const tMargins = tRowsC.map(r => r.margin);
@@ -3607,7 +3607,7 @@ class Component extends DCLogic {
     const tDone = tRowsC.filter(x => !(x.live && !x.result)).map(x => x.margin);
     const tWins = tDone.filter(v => v > 0).length;
     const teamLogNote = !tRowsCAll.length ? (teamLoading || !tLog ? 'loading the team log…' : 'team log unavailable — ' + ((tLog && tLog.reason) || 'the feed did not answer'))
-      : filtOn('team') ? tRowsC.length + ' games matching the search · ' + teamSpan
+      : filtOn('team') ? tRowsC.length + ' of ' + teamScoped.length + ' games against ' + teamOppAbbr0 + ' match the search' + (teamSpan ? ' · ' + teamSpan : '')
       : !tRowsC.length ? 'no game against ' + teamOppAbbr0 + ' in the last ' + TREND_SEASONS + ' seasons' + (teamLoading ? ' · still reading the earlier seasons' : '')
       : tRowsC.length + (tRowsC.length === 1 ? ' game' : ' games') + ' against ' + teamOppAbbr + (teamLiveRow ? ', tonight live' : '') + ' · ' + teamSpan + (teamLoading ? ' · reading earlier seasons…' : '');
 
@@ -3886,7 +3886,7 @@ class Component extends DCLogic {
           sparkColor: rising ? ACC : RED,
           probBar: 'height:100%;width:' + p.toFixed(1) + '%;background:' + (rising ? ACC : RED) + ';transition:width .5s ease',
           rowStyle: 'padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent'),
-          select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null }); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
+          select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
         };
       }),
 
@@ -4054,7 +4054,7 @@ class Component extends DCLogic {
       momentumWindow: sport === 'NBA' ? '-6 min' : '-12 plays',
       teamHist: histMenuFor('team', teamAbbr), totalHist: histMenuFor('total', g.homeAbbr),
       teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search games · club, week, W or L, home or away', count: tRowsC.length + ' games',
-        groups: logGroups(tRowsCAll) }); })(),
+        groups: logGroups(teamScoped).filter(gp => gp.label !== 'OPPONENT') }); })(),
 
 
 paceRows: (() => {
@@ -4079,6 +4079,7 @@ paceRows: (() => {
       pickAway: () => { this.setState({ teamSide: 'away', tTrendHover: null }); setTimeout(() => this.ensureTrendLog(), 0); },
       teamTrendBars,
       teamTrendNote: (tDone.length ? tWins + '-' + (tDone.length - tWins) + ' in the last ' + tDone.length + ' · ' + (tAvg(tDone) > 0 ? '+' : '') + tAvg(tDone).toFixed(1) + ' average margin · ' : '') + teamLogNote,
+      teamAxisLeft: (tRowsC.length + (tRowsC.length === 1 ? ' GAME' : ' GAMES') + ' VS ' + (teamOppAbbr0 || '—') + (teamSpan ? ' · ' + teamSpan : '')).toUpperCase(),
       teamRollPath: tRoll.length > 1 ? this.path(tRoll, 100, 108, -tMx, tMx) : '',
       trendPlayer: pp.name + ' · ' + pp.team + ' ' + pp.pos + (pp.k != null ? ' · KQ ' + pp.k : ''),
       trendMarket: trendUnit + ' · vs season average',
