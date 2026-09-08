@@ -472,7 +472,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <sc-if value="{{ p.wp.open }}" hint-placeholder-val="{{ true }}">
               <div style="position:relative;height:222px;padding-left:34px">
-                <div onMouseMove="{{ onHover }}" onMouseLeave="{{ offHover }}" onTouchStart="{{ onHover }}" onTouchMove="{{ onHover }}" style="position:relative;height:222px;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none">
+                <div onMouseMove="{{ onHover }}" onMouseLeave="{{ offHover }}" onTouchStart="{{ onHoverTouchStart }}" onTouchMove="{{ onHoverTouchMove }}" style="position:relative;height:222px;cursor:crosshair;touch-action:pan-y;-webkit-user-select:none;user-select:none">
                   <svg viewBox="0 0 600 222" preserveAspectRatio="none" style="width:100%;height:222px;display:block">
                     <defs>
                       <linearGradient id="cs-fill" x1="0" y1="0" x2="0" y2="1">
@@ -569,7 +569,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </div>
               <sc-if value="{{ p.mom.open }}" hint-placeholder-val="{{ true }}">
-                <div onMouseMove="{{ momHoverMove }}" onMouseLeave="{{ momHoverOff }}" onTouchStart="{{ momHoverMove }}" onTouchMove="{{ momHoverMove }}" style="position:relative;height:92px;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none">
+                <div onMouseMove="{{ momHoverMove }}" onMouseLeave="{{ momHoverOff }}" onTouchStart="{{ momHoverTouchStart }}" onTouchMove="{{ momHoverTouchMove }}" style="position:relative;height:92px;cursor:crosshair;touch-action:pan-y;-webkit-user-select:none;user-select:none">
                   <svg viewBox="0 0 300 92" preserveAspectRatio="none" style="width:100%;height:92px;display:block">
                     <defs>
                       <clipPath id="cs-mom-up"><rect x="0" y="0" width="300" height="46"></rect></clipPath>
@@ -2689,6 +2689,22 @@ class Component extends DCLogic {
       'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;' +
       'box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none';
   }
+  // A finger on a chart is a scroll until it proves otherwise. Nothing happens on a tap or a
+  // vertical swipe — the page scrolls as it should. Once the finger has travelled sideways
+  // further than it has travelled down, the drag takes over and reads the chart.
+  touchScrub(e, phase, move) {
+    const t = (e.touches && e.touches[0]) || (e.changedTouches && e.changedTouches[0]);
+    if (!t) return;
+    if (phase === 'start') { this._scrub = { x: t.clientX, y: t.clientY, on: false }; return; }
+    const g = this._scrub; if (!g) return;
+    if (!g.on) {
+      const dx = Math.abs(t.clientX - g.x), dy = Math.abs(t.clientY - g.y);
+      if (dx < 12 || dx <= dy) return;
+      g.on = true;
+    }
+    if (e.cancelable) e.preventDefault();
+    move(e);
+  }
   // where the pointer is, whether it is a mouse or a finger
   ptX(e) {
     if (e && e.touches && e.touches.length) return e.touches[0].clientX;
@@ -4665,11 +4681,16 @@ class Component extends DCLogic {
       railEdgeStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (edgeSide ? ACC : 'var(--second)'),
       awayPath: this.path(s.hist.map(v => 100 - v), 600, 222, 0, 100),
       chartDots: dots,
-      onHover: (e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        const i = clamp(Math.round(((this.ptX(e) - r.left) / r.width) * (hn - 1)), 0, hn - 1);
-        if (i !== st.hoverIdx) this.setState({ hoverIdx: i });
-      },
+      ...(() => {
+        const move = (e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          const i = clamp(Math.round(((this.ptX(e) - r.left) / r.width) * (hn - 1)), 0, hn - 1);
+          if (i !== st.hoverIdx) this.setState({ hoverIdx: i });
+        };
+        return { onHover: move,
+                 onHoverTouchStart: (e) => this.touchScrub(e, 'start'),
+                 onHoverTouchMove: (e) => this.touchScrub(e, 'move', move) };
+      })(),
       offHover: () => this.setState({ hoverIdx: null }),
       // one crosshair builder shared by the smaller live charts
       ...(() => {
@@ -4691,11 +4712,14 @@ class Component extends DCLogic {
           const x = idx === null ? 0 : (idx / (n - 1)) * 100;
           const out = {};
           out[key + 'On'] = idx !== null;
-          out[key + 'Move'] = (e) => {
+          const mv = (e) => {
             const r = e.currentTarget.getBoundingClientRect();
             const i = clamp(Math.round(((this.ptX(e) - r.left) / r.width) * (n - 1)), 0, n - 1);
             if (i !== st[key]) this.setState({ [key]: i });
           };
+          out[key + 'Move'] = mv;
+          out[key + 'TouchStart'] = (e) => this.touchScrub(e, 'start');
+          out[key + 'TouchMove'] = (e) => this.touchScrub(e, 'move', mv);
           out[key + 'Off'] = () => this.setState({ [key]: null });
           out[key + 'Line'] = 'position:absolute;top:0;bottom:0;width:1px;background:var(--brand);opacity:.45;left:' + x + '%';
           out[key + 'Rings'] = series.map(sr => {
