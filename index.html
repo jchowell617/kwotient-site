@@ -188,7 +188,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <div data-shell="cohortbtn" style="padding:0 8px 10px">
           <button onClick="{{ goCohorts }}" style="{{ cohortNavBtn }}" style-hover="transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.3)">
             <span style="display:flex;text-align:left;flex:1;min-width:0">
-              <span style="font-family:var(--kw);font-size:12.5px;font-weight:600">Kwotient cohorts</span>
+              <span style="font-family:var(--kw);font-size:12.5px;font-weight:600">Cohorts</span>
             </span>
             <span style="font-family:var(--kw);font-size:9.5px;color:var(--brand);flex:none">{{ cohortBadge }}</span>
           </button>
@@ -300,7 +300,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <button data-chev="1" onClick="{{ p.pbox.toggle }}" style="{{ p.pbox.btn }}">{{ p.pbox.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Live box score · players</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Box Score</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ pboxCaption }}</span>
                 </div>
               </div>
@@ -384,7 +384,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
                 <button data-chev="1" onClick="{{ p.wp.toggle }}" style="{{ p.wp.btn }}">{{ p.wp.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Win probability · both sides</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Win Probability</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ wpSubtitle }}</span>
                 </div>
                 <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9.5px;color:var(--second)">
@@ -501,7 +501,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px;flex-wrap:wrap">
-                  <button data-chev="1" onClick="{{ p.line.toggle }}" style="{{ p.line.btn }}">{{ p.line.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Line movement</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">MARKET</span></div>
+                  <button data-chev="1" onClick="{{ p.line.toggle }}" style="{{ p.line.btn }}">{{ p.line.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Line Movement</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">MARKET</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px"><span style="color:var(--lead)">{{ awayLineNow }}</span><span style="color:var(--faint)"> / </span><span style="color:var(--brand)">{{ lineNow }}</span></span>
                 </div>
               <sc-if value="{{ p.line.open }}" hint-placeholder-val="{{ true }}">
@@ -531,7 +531,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px;flex-wrap:wrap">
-                  <button data-chev="1" onClick="{{ p.mtotal.toggle }}" style="{{ p.mtotal.btn }}">{{ p.mtotal.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Total · market vs pace</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">MARKET</span></div>
+                  <button data-chev="1" onClick="{{ p.mtotal.toggle }}" style="{{ p.mtotal.btn }}">{{ p.mtotal.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Over/Under</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">MARKET</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ mtotalOpen }}</span>
                 </div>
               <sc-if value="{{ p.mtotal.open }}" hint-placeholder-val="{{ true }}">
@@ -559,7 +559,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
-                  <button data-chev="1" onClick="{{ p.total.toggle }}" style="{{ p.total.btn }}">{{ p.total.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Live box score · both sides</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <button data-chev="1" onClick="{{ p.total.toggle }}" style="{{ p.total.btn }}">{{ p.total.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Team Stats</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">summed lines</span>
                 </div>
               <sc-if value="{{ p.total.open }}" hint-placeholder-val="{{ true }}">
@@ -588,7 +588,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Market · the books</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Sportsbook Lines</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ marketCaption }}</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ marketHeader }}</span>
@@ -678,7 +678,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player props · the lines</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Props</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ propsCaption }}{{ propsNote }}</span>
                 </div>
               </div>
@@ -758,7 +758,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
                 <button data-chev="1" onClick="{{ p.playerTrend.toggle }}" style="{{ p.playerTrend.btn }}">{{ p.playerTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player performance trend</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Matchup History</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ trendPlayer }} · {{ trendMarket }} · {{ trendGames }}{{ trendPropNote }}</span>
                 </div>
                 <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--second)">
@@ -850,7 +850,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
                 <button data-chev="1" onClick="{{ p.teamTrend.toggle }}" style="{{ p.teamTrend.btn }}">{{ p.teamTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team performance trend</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team Matchup History</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ teamAbbr }} · {{ teamTrendNote }}</span>
                 </div>
                 <div style="display:flex;gap:6px">
@@ -914,7 +914,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 16px 12px;border-bottom:1px solid var(--grid)">
                 <button data-chev="1" onClick="{{ p.gameAlerts.toggle }}" style="{{ p.gameAlerts.btn }}">{{ p.gameAlerts.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game alerts</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game Alerts</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ gameAlertsLabel }} only</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ gameAlertsCount }}</span>
@@ -977,7 +977,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">Model</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:16px 18px">
               <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mFactors.toggle }}" style="{{ p.mFactors.btn }}">{{ p.mFactors.chevron }}</button><span style="font-size:13.5px;font-weight:600">Why the model disagrees · {{ awayAbbr }} @ {{ homeAbbr }}</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mFactors.toggle }}" style="{{ p.mFactors.btn }}">{{ p.mFactors.chevron }}</button><span style="font-size:13.5px;font-weight:600">Model vs. Market · {{ awayAbbr }} @ {{ homeAbbr }}</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">the model's parts, in win-probability points</span>
               </div>
               <sc-if value="{{ p.mFactors.open }}" hint-placeholder-val="{{ true }}">
@@ -999,7 +999,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Feature drift</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Feature Drift</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                 <sc-if value="{{ p.mDrift.open }}" hint-placeholder-val="{{ true }}">
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 14px">the inputs this panel runs on, and how fresh each one is</div>
                 <div style="display:flex;flex-direction:column;gap:12px">
@@ -1016,7 +1016,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </section>
             </div>
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mRef.toggle }}" style="{{ p.mRef.btn }}">{{ p.mRef.chevron }}</button><span style="font-size:13.5px;font-weight:600">Reference · sources and glossary</span></div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mRef.toggle }}" style="{{ p.mRef.btn }}">{{ p.mRef.chevron }}</button><span style="font-size:13.5px;font-weight:600">Glossary &amp; Sources</span></div>
               <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">where every number on these screens comes from, and what the words mean · not official league data · not betting advice</span>
               <sc-if value="{{ p.mRef.open }}" hint-placeholder-val="{{ true }}">
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px">
@@ -1049,7 +1049,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
               <div style="display:flex;flex-direction:column;gap:5px">
                 <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
-                  <span style="font-size:15px;font-weight:600">Kwotient cohorts · the record</span>
+                  <span style="font-size:15px;font-weight:600">Cohorts · The Record</span>
                   <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--on-brand);background:var(--brand)">PROPRIETARY</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">a population is frozen, projections are filed before the outcome, and the settlement grades them against a declared baseline — click a cohort for its charts</span>
@@ -1173,7 +1173,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ det.pending }}" hint-placeholder-val="{{ false }}">
                 <section style="border:1px dashed var(--axis);border-radius:12px;background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:13px">
                   <div style="display:flex;flex-direction:column;gap:3px">
-                    <span style="font-size:12.5px;font-weight:600">Before settlement</span>
+                    <span style="font-size:12.5px;font-weight:600">Before Settlement</span>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">calibration, error distribution and skill are produced by the settlement — nothing is graded until {{ det.dateShort }}</span>
                   </div>
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px">
@@ -1192,7 +1192,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:14px">
                   <div style="display:flex;flex-direction:column;gap:3px">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                      <span style="font-size:12.5px;font-weight:600">Calibration · stated vs actual</span>
+                      <span style="font-size:12.5px;font-weight:600">Calibration</span>
                       <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
                     </div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">aggregate deciles across the cohort — no per-subject rows leave the record</span>
@@ -1221,7 +1221,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <span style="font-size:12.5px;font-weight:600">Error distribution</span>
+                    <span style="font-size:12.5px;font-weight:600">Error Distribution</span>
                     <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
                   </div>
                   <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 16px">count of subjects by absolute error, bucketed</div>
@@ -1244,7 +1244,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <span style="font-size:12.5px;font-weight:600">Skill over baseline</span>
+                    <span style="font-size:12.5px;font-weight:600">Skill vs. Baseline</span>
                     <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
                   </div>
                   <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 16px">cumulative Brier skill from freeze to {{ det.dateShort }}</div>
@@ -1273,7 +1273,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ det.settled }}" hint-placeholder-val="{{ true }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 14px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                  <span style="font-size:12.5px;font-weight:600">Model against the declared baseline</span>
+                  <span style="font-size:12.5px;font-weight:600">Model vs. Baseline</span>
                   <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
                 </div>
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 15px">share of the cohort called correctly · {{ det.headline }}</div>
@@ -1302,7 +1302,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">What's buzzing</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Buzz</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">signings, trades, rumors and roster news across the {{ sport }} slate · narrative and contract terms from the licensed feeds — sources in Reference · reference only, not live ingest</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
@@ -1583,7 +1583,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRoster.toggle }}" style="{{ p.pfRoster.btn }}">{{ p.pfRoster.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:14px 16px 12px;border-bottom:1px solid var(--grid);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
                       <div style="display:flex;flex-direction:column;gap:3px">
-                        <span style="font-size:12.5px;font-weight:600">Current roster</span>
+                        <span style="font-size:12.5px;font-weight:600">Roster</span>
                         <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.rosterNote }}</span>
                       </div>
 
@@ -1655,7 +1655,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfStats.toggle }}" style="{{ p.pfStats.btn }}">{{ p.pfStats.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Season stats</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div></div></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfStats.toggle }}" style="{{ p.pfStats.btn }}">{{ p.pfStats.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Season Stats</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div></div></div>
                   <sc-if value="{{ p.pfStats.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px;margin-top:13px">
                     <sc-for list="{{ profile.stats }}" as="s" hint-placeholder-count="6">
@@ -1672,7 +1672,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfExplorer.toggle }}" style="{{ p.pfExplorer.btn }}">{{ p.pfExplorer.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:15px 17px 13px;border-bottom:1px solid var(--grid);display:flex;flex-direction:column;gap:12px">
                     <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
                       <div style="display:flex;flex-direction:column;gap:3px">
-                        <span style="font-size:12.5px;font-weight:600">Stat explorer</span>
+                        <span style="font-size:12.5px;font-weight:600">Rankings</span>
                         <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.explorer.season }} season · ranked inside {{ profile.card.cohort }}</span>
                       </div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ profile.explorer.count }} stats</span>
@@ -1723,7 +1723,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfTrend.toggle }}" style="{{ p.pfTrend.btn }}">{{ p.pfTrend.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Trend</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game Log</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.barsNote }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfTrend.open }}" hint-placeholder-val="{{ true }}">
@@ -1784,7 +1784,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
                 <sc-if value="{{ profile.isClub }}" hint-placeholder-val="{{ false }}">
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head to head</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head-to-Head</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.h2h.head }}</span></div></div>
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
                   <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -1825,7 +1825,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfPred.toggle }}" style="{{ p.pfPred.btn }}">{{ p.pfPred.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Prediction</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Outlook</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.predHead }}</span>
                     </div></div></div>
                   <sc-if value="{{ p.pfPred.open }}" hint-placeholder-val="{{ true }}">
@@ -1855,7 +1855,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfPerf.toggle }}" style="{{ p.pfPerf.btn }}">{{ p.pfPerf.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Performance analysis</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Model Factors</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">contribution to the model view, in points</span>
                     </div></div></div>
                   <sc-if value="{{ p.pfPerf.open }}" hint-placeholder-val="{{ true }}">
@@ -1877,7 +1877,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);overflow:hidden">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfNews.toggle }}" style="{{ p.pfNews.btn }}">{{ p.pfNews.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:14px 16px 12px;border-bottom:1px solid var(--grid);display:flex;flex-direction:column;gap:3px">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">News feed</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">News</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">filtered to {{ profile.name }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfNews.open }}" hint-placeholder-val="{{ true }}">
