@@ -513,7 +513,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-for list="{{ bookSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                 <sc-if value="{{ bookSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bookSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ bookSearch.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" style="{{ bookSearch.menuStyle }}">
+                  <div data-colmenu="1" onKeyDown="{{ bookSearch.onKey }}" style="{{ bookSearch.menuStyle }}">
     <sc-if value="{{ bookSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ bookSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
                     <sc-for list="{{ bookSearch.groups }}" as="gp" hint-placeholder-count="3">
                       <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
@@ -608,7 +608,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-for list="{{ propSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                 <sc-if value="{{ propSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ propSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ propSearch.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" style="{{ propSearch.menuStyle }}">
+                  <div data-colmenu="1" onKeyDown="{{ propSearch.onKey }}" style="{{ propSearch.menuStyle }}">
     <sc-if value="{{ propSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ propSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
                     <sc-for list="{{ propSearch.groups }}" as="gp" hint-placeholder-count="3">
                       <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
@@ -692,7 +692,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-for list="{{ trendSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                 <sc-if value="{{ trendSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trendSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ trendSearch.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" style="{{ trendSearch.menuStyle }}">
+                  <div data-colmenu="1" onKeyDown="{{ trendSearch.onKey }}" style="{{ trendSearch.menuStyle }}">
     <sc-if value="{{ trendSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ trendSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
                     <sc-for list="{{ trendSearch.groups }}" as="gp" hint-placeholder-count="3">
                       <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
@@ -780,7 +780,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-for list="{{ teamSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                 <sc-if value="{{ teamSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ teamSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ teamSearch.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" style="{{ teamSearch.menuStyle }}">
+                  <div data-colmenu="1" onKeyDown="{{ teamSearch.onKey }}" style="{{ teamSearch.menuStyle }}">
     <sc-if value="{{ teamSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ teamSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
                     <sc-for list="{{ teamSearch.groups }}" as="gp" hint-placeholder-count="3">
                       <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
@@ -1586,7 +1586,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-for list="{{ profSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                     <sc-if value="{{ profSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ profSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                     <sc-if value="{{ profSearch.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ profSearch.menuStyle }}">
+                      <div data-colmenu="1" onKeyDown="{{ profSearch.onKey }}" style="{{ profSearch.menuStyle }}">
     <sc-if value="{{ profSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ profSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
                         <sc-for list="{{ profSearch.groups }}" as="gp" hint-placeholder-count="3">
                           <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
@@ -1646,7 +1646,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-for list="{{ h2hSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                     <sc-if value="{{ h2hSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ h2hSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                     <sc-if value="{{ h2hSearch.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ h2hSearch.menuStyle }}">
+                      <div data-colmenu="1" onKeyDown="{{ h2hSearch.onKey }}" style="{{ h2hSearch.menuStyle }}">
     <sc-if value="{{ h2hSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ h2hSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
                         <sc-for list="{{ h2hSearch.groups }}" as="gp" hint-placeholder-count="3">
                           <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
@@ -2548,7 +2548,7 @@ class Component extends DCLogic {
         dbl: () => this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }),
         groups, browse,
         onKey: e => {
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length) picks[0].pick(); else this.setState(close); }
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length && !st.searchBrowse) picks[0].pick(); else this.setState(close); }
           else if (e.key === 'Escape') { e.preventDefault(); this.setState(close); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
