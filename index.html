@@ -4053,7 +4053,7 @@ class Component extends DCLogic {
       momAwayBtn: 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ' + (momSide === 'away' ? BLUE : 'var(--axis)') + ';color:' + (momSide === 'away' ? BLUE : 'var(--second)'),
       momentumWindow: sport === 'NBA' ? '-6 min' : '-12 plays',
       teamHist: histMenuFor('team', teamAbbr), totalHist: histMenuFor('total', g.homeAbbr),
-      teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search games · club, week, W or L, home or away', count: tRowsC.length + ' games',
+      teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search the games against ' + (teamOppAbbr0 || 'tonight\'s opponent') + ' · week, season, W or L, home or away', count: tRowsC.length + ' games',
         groups: logGroups(teamScoped).filter(gp => gp.label !== 'OPPONENT') }); })(),
 
 
