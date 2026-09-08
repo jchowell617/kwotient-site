@@ -458,26 +458,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 <sc-if value="{{ hasTeamTotals }}" hint-placeholder-val="{{ false }}">
                   <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--grid);display:flex;flex-direction:column;gap:6px">
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--collabel)">TEAM TOTALS</span>
-                    <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                       <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                      <form onSubmit="{{ totalSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ totalSearch.q }}" onChange="{{ totalSearch.on }}" onKeyDown="{{ totalSearch.onKey }}" placeholder="{{ totalSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                      <input value="{{ totalSearch.q }}" onChange="{{ totalSearch.on }}" placeholder="{{ totalSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                       <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ totalSearch.count }}</span>
-                      <sc-for list="{{ totalSearch.subs }}" as="c" hint-placeholder-count="3">
-                        <div style="{{ c.cellStyle }}">
-                          <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                          <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                            <div data-colmenu="1" style="{{ c.menuStyle }}">
-                              <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                              <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                                <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                              </div>
-                              <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                                <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                              </sc-for>
-                            </div>
-                          </sc-if>
-                        </div>
-                      </sc-for>
                       <sc-if value="{{ totalSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ totalSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                     </div>
                     <sc-for list="{{ teamTotalRows }}" as="r" hint-placeholder-count="2">
@@ -527,26 +511,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 </div>
                 <span style="font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ marketHeader }}</span>
               </div>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <form onSubmit="{{ bookSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" onKeyDown="{{ bookSearch.onKey }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                <input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ bookSearch.count }}</span>
-                <sc-for list="{{ bookSearch.subs }}" as="c" hint-placeholder-count="3">
-                  <div style="{{ c.cellStyle }}">
-                    <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                    <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ c.menuStyle }}">
-                        <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                          <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                        </div>
-                        <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                        </sc-for>
-                      </div>
-                    </sc-if>
-                  </div>
-                </sc-for>
                 <sc-if value="{{ bookSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bookSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
               </div>
               <sc-if value="{{ bookLiveOn }}" hint-placeholder-val="{{ true }}">
@@ -619,26 +587,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">the two right-hand columns read each player's games in the history chosen — tonight's opponent by default — where his log is loaded</span>
               </div>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <form onSubmit="{{ propSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" onKeyDown="{{ propSearch.onKey }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                <input value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ propSearch.count }}</span>
-                <sc-for list="{{ propSearch.subs }}" as="c" hint-placeholder-count="3">
-                  <div style="{{ c.cellStyle }}">
-                    <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                    <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ c.menuStyle }}">
-                        <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                          <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                        </div>
-                        <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                        </sc-for>
-                      </div>
-                    </sc-if>
-                  </div>
-                </sc-for>
                 <sc-if value="{{ propSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ propSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
               </div>
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
@@ -700,26 +652,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
               </div>
               <sc-if value="{{ p.playerTrend.open }}" hint-placeholder-val="{{ true }}">
 
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <form onSubmit="{{ trendSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" onKeyDown="{{ trendSearch.onKey }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                <input value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trendSearch.count }}</span>
-                <sc-for list="{{ trendSearch.subs }}" as="c" hint-placeholder-count="3">
-                  <div style="{{ c.cellStyle }}">
-                    <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                    <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ c.menuStyle }}">
-                        <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                          <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                        </div>
-                        <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                        </sc-for>
-                      </div>
-                    </sc-if>
-                  </div>
-                </sc-for>
                 <sc-if value="{{ trendSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trendSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
               </div>
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px">
@@ -805,26 +741,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                 </div>
               </div>
               <sc-if value="{{ p.teamTrend.open }}" hint-placeholder-val="{{ true }}">
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <form onSubmit="{{ teamSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ teamSearch.count }}</span>
-                <sc-for list="{{ teamSearch.subs }}" as="c" hint-placeholder-count="3">
-                  <div style="{{ c.cellStyle }}">
-                    <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                    <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ c.menuStyle }}">
-                        <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                          <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                        </div>
-                        <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                        </sc-for>
-                      </div>
-                    </sc-if>
-                  </div>
-                </sc-for>
                 <sc-if value="{{ teamSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ teamSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
               </div>
               <div style="position:relative">
@@ -1608,26 +1528,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.barsNote }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfTrend.open }}" hint-placeholder-val="{{ true }}">
-                  <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                    <form onSubmit="{{ profSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" onKeyDown="{{ profSearch.onKey }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                    <input value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ profSearch.count }}</span>
-                    <sc-for list="{{ profSearch.subs }}" as="c" hint-placeholder-count="3">
-                      <div style="{{ c.cellStyle }}">
-                        <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                        <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                          <div data-colmenu="1" style="{{ c.menuStyle }}">
-                            <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                              <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                            </div>
-                            <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                            </sc-for>
-                          </div>
-                        </sc-if>
-                      </div>
-                    </sc-for>
                     <sc-if value="{{ profSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ profSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                   </div>
                   <div style="position:relative;height:148px;padding-left:30px">
@@ -1665,26 +1569,10 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head to head</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.h2h.head }}</span></div></div>
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
-                  <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap">
+                  <div style="margin-top:12px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                    <form onSubmit="{{ h2hSearch.onKey }}" style="flex:1;min-width:140px;display:flex;margin:0"><input value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" onKeyDown="{{ h2hSearch.onKey }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></form>
+                    <input value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ h2hSearch.count }}</span>
-                    <sc-for list="{{ h2hSearch.subs }}" as="c" hint-placeholder-count="3">
-                      <div style="{{ c.cellStyle }}">
-                        <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">▾</span><span style="{{ c.dotStyle }}"></span></button>
-                        <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
-                          <div data-colmenu="1" style="{{ c.menuStyle }}">
-                            <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                              <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                            </div>
-                            <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="5">
-                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                            </sc-for>
-                          </div>
-                        </sc-if>
-                      </div>
-                    </sc-for>
                     <sc-if value="{{ h2hSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ h2hSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                   </div></div>
                   <sc-for list="{{ profile.h2h.rows }}" as="r" hint-placeholder-count="3">
