@@ -296,6 +296,90 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
             </section>
 
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
+                <button data-chev="1" onClick="{{ p.pbox.toggle }}" style="{{ p.pbox.btn }}">{{ p.pbox.chevron }}</button>
+                <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Live box score · players</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ pboxCaption }}</span>
+                </div>
+              </div>
+              <sc-if value="{{ p.pbox.open }}" hint-placeholder-val="{{ true }}">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+                <input value="{{ pboxSearch.q }}" onChange="{{ pboxSearch.on }}" onFocus="{{ pboxSearch.focus }}" onDoubleClick="{{ pboxSearch.dbl }}" onKeyDown="{{ pboxSearch.onKey }}" placeholder="{{ pboxSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ pboxSearch.count }}</span>
+                <sc-for list="{{ pboxSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ pboxSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ pboxSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ pboxSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ pboxSearch.onKey }}" style="{{ pboxSearch.menuStyle }}">
+    <sc-if value="{{ pboxSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ pboxSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ pboxSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ pboxSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 18px">
+                <sc-for list="{{ pboxSides }}" as="sd" hint-placeholder-count="2">
+                  <div style="min-width:0">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 4px;border-bottom:1px solid var(--grid)">
+                      <span style="{{ sd.titleStyle }}">{{ sd.title }}</span><span style="font-family:var(--kw);font-size:16px;font-weight:700;color:var(--reversed)">{{ sd.score }}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                      <sc-for list="{{ sd.cols }}" as="c" hint-placeholder-count="6">
+                        <div style="{{ c.cellStyle }}">
+                    <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                    <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                      <div data-colmenu="1" style="{{ c.menuStyle }}">
+                        <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                          <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                        </div>
+                        <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                        </sc-for>
+                      </div>
+                    </sc-if>
+                  </div>
+                
+                      </sc-for>
+                    </div>
+                    <sc-for list="{{ sd.rows }}" as="b" hint-placeholder-count="6">
+                      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px">
+                        <sc-for list="{{ b.cells }}" as="x" hint-placeholder-count="6">
+                          <span style="{{ x.style }}">{{ x.v }}</span>
+                        </sc-for>
+                      </div>
+                    </sc-for>
+                    <sc-if value="{{ sd.empty }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:10px 0">{{ sd.empty }}</div></sc-if>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
+                <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ pboxPageNote }}</span>
+                <span style="flex:1"></span>
+                <sc-if value="{{ pboxHasMore }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ pboxShowMore }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--lead)">{{ pboxMoreLabel }}</button>
+                  <button onClick="{{ pboxShowAll }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--lead);color:var(--second)">{{ pboxAllLabel }}</button>
+                </sc-if>
+                <sc-if value="{{ pboxCanCollapse }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ pboxShowLess }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--lead);color:var(--second)">Show fewer</button>
+                </sc-if>
+              </div>
+              </sc-if>
+            </section>
+
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 9px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
                 <button data-chev="1" onClick="{{ p.wp.toggle }}" style="{{ p.wp.btn }}">{{ p.wp.chevron }}</button>
@@ -2937,6 +3021,46 @@ class Component extends DCLogic {
     })();
     const bookHistHead = 'PAST MEETINGS · ' + (bookOpp ? g.homeAbbr + ' VS ' + bookOpp : g.homeAbbr + ' · EVERY GAME') + ' · ' + histSeasonLabel(Number(bookRec && bookRec.season) || histEff).toUpperCase() + (bookRec && bookRec.fellBack ? ' (NO GAMES YET IN ' + histSeasonLabel(histEff).toUpperCase() + ')' : '') + (bookHistGame ? ' · ' + gameLabelOf(bookHistGame).toUpperCase() : bookMeetingsAll.length > 10 ? ' · THE LAST 10 OF ' + bookMeetingsAll.length : '');
     const bookHistNote = bookHistGame ? 'the consensus at tip, then each book' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side at tip · cover reads the final score against it";
+    // ---------- the live box score, per player, both clubs side by side ----------
+    // the feed's box lines for the game in progress; one table state (sort, filters, search)
+    // reads both sides, each side its own column
+    const PBOX_PAGE = 12;
+    const pboxDefs = sport === 'NBA'
+      ? [['name', 'PLAYER', 'left', 1.5], ['pos', 'POS', 'left', .5], ['min', 'MIN', 'right', .5], ['pts', 'PTS', 'right', .5], ['reb', 'REB', 'right', .5], ['ast', 'AST', 'right', .5], ['pm', '+/-', 'right', .5], ['line', 'LINE', 'left', 1.7]]
+      : [['name', 'PLAYER', 'left', 1.5], ['pos', 'POS', 'left', .5], ['yds', 'YDS', 'right', .5], ['td', 'TD', 'right', .4], ['line', 'LINE', 'left', 2.4]];
+    const n0 = v => v == null ? 0 : Number(v) || 0;
+    const nflLine = x => { const parts = [];
+      if (n0(x.pass_att)) parts.push(n0(x.pass_cmp) + '/' + n0(x.pass_att) + ', ' + n0(x.pass_yds) + ' yds' + (n0(x.pass_td) ? ', ' + n0(x.pass_td) + ' TD' : '') + (n0(x.pass_int) ? ', ' + n0(x.pass_int) + ' INT' : ''));
+      if (n0(x.rush_att)) parts.push(n0(x.rush_att) + ' car, ' + n0(x.rush_yds) + ' yds' + (n0(x.rush_td) ? ', ' + n0(x.rush_td) + ' TD' : ''));
+      if (n0(x.rec) || n0(x.tgt)) parts.push(n0(x.rec) + ' rec, ' + n0(x.rec_yds) + ' yds' + (n0(x.rec_td) ? ', ' + n0(x.rec_td) + ' TD' : ''));
+      if (n0(x.tkl)) parts.push(n0(x.tkl) + ' tkl' + (n0(x.sacks) ? ', ' + n0(x.sacks) + ' sack' : '') + (n0(x.int) ? ', ' + n0(x.int) + ' INT' : '') + (n0(x.pd) ? ', ' + n0(x.pd) + ' PD' : '') + (n0(x.tfl) ? ', ' + n0(x.tfl) + ' TFL' : ''));
+      if (n0(x.fga) || n0(x.xpm)) parts.push(n0(x.fgm) + '/' + n0(x.fga) + ' FG' + (n0(x.xpm) ? ', ' + n0(x.xpm) + ' XP' : ''));
+      if (n0(x.punts)) parts.push(n0(x.punts) + ' punts, ' + n0(x.punt_avg) + ' avg');
+      if (n0(x.kr) || n0(x.pr)) parts.push((n0(x.kr) ? n0(x.kr) + ' KR ' + n0(x.kr_yds) + ' yds' : '') + (n0(x.kr) && n0(x.pr) ? ', ' : '') + (n0(x.pr) ? n0(x.pr) + ' PR ' + n0(x.pr_yds) + ' yds' : ''));
+      return parts.join(' · ') || '—'; };
+    const nbaLine = x => n0(x.fgm) + '-' + n0(x.fga) + ' FG · ' + n0(x.fg3m) + '-' + n0(x.fg3a) + ' 3PT · ' + n0(x.ftm) + '-' + n0(x.fta) + ' FT · ' + n0(x.stl) + ' STL · ' + n0(x.blk) + ' BLK · ' + n0(x.tov) + ' TO';
+    const pboxGet = sport === 'NBA'
+      ? { name: x => x.n, pos: x => x.pos || null, min: x => x.min != null ? Math.round(x.min) : null, pts: x => n0(x.pts), reb: x => n0(x.reb), ast: x => n0(x.ast), pm: x => x.plus_minus != null ? Number(x.plus_minus) : null, line: x => nbaLine(x) }
+      : { name: x => x.n, pos: x => x.pos || null, yds: x => n0(x.pass_yds) + n0(x.rush_yds) + n0(x.rec_yds), td: x => n0(x.pass_td) + n0(x.rush_td) + n0(x.rec_td) + n0(x.int_td) + n0(x.fum_td) + n0(x.kr_td) + n0(x.pr_td), line: x => nflLine(x) };
+    const pboxMain = sport === 'NBA' ? pboxGet.pts : pboxGet.yds;
+    const pboxAllRows = boxOn ? [].concat(box.away.map(x => Object.assign({ team: g.awayAbbr, side: 'away' }, x)), box.home.map(x => Object.assign({ team: g.homeAbbr, side: 'home' }, x))) : [];
+    const pboxGetT = Object.assign({ team: x => x.team }, pboxGet);
+    TABLES.pbox = { rows: pboxAllRows, get: pboxGetT };
+    const pboxLimit = tstate('pbox').limit || PBOX_PAGE;
+    const pboxShownAll = tapply('pbox', pboxAllRows.slice().sort((a, b) => pboxMain(b) - pboxMain(a)), pboxGetT, rowText(pboxGetT));
+    const pboxCols = pboxDefs.map(([k, label, align, flex]) => tcol('pbox', k, label, null, align, flex));
+    const pboxSearchCols = [['team', 'TEAM']].concat(pboxDefs.map(([k, label]) => [k, label]));
+    const pboxCell = (x, [k, , align, flex]) => { const v = pboxGetT[k](x); const txt = v == null ? '—' : k === 'pm' ? (v > 0 ? '+' : '') + v : String(v);
+      return { v: txt, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : k === 'line' ? 'color:var(--second);font-size:10px' : k === 'pts' || k === 'yds' ? 'font-weight:700;color:var(--lead)' : 'color:var(--second)') }; };
+    const pboxSides = [['away', g.awayAbbr, g.away, g.as], ['home', g.homeAbbr, g.home, g.hs]].map(([side, abbr, name, score], i) => {
+      const rows = pboxShownAll.filter(x => x.side === side);
+      return { title: abbr + ' · ' + (side === 'away' ? 'AWAY' : 'HOME'), titleStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.14em;color:' + (side === 'home' ? 'var(--brand)' : 'var(--collabel)'), score: String(score == null ? 0 : score),
+        cols: i === 0 ? pboxCols : pboxCols.map(c => Object.assign({}, c, { open: false })),
+        rows: rows.slice(0, pboxLimit).map(x => ({ cells: pboxDefs.map(d => pboxCell(x, d)) })),
+        empty: !boxOn ? (g.state === 'scheduled' || !g.live ? 'the box score fills once the game is in progress' : 'no box score yet') : !rows.length ? 'no ' + abbr + ' line matches' : '' };
+    });
+    const pboxPerSide = Math.max.apply(null, [0].concat(pboxSides.map((sd, i) => pboxShownAll.filter(x => x.side === (i === 0 ? 'away' : 'home')).length)));
+    const pboxCaption = !g.live ? 'players\' lines from the feed once a game is on' : g.state === 'in_progress' ? (g.status || 'in progress') + ' · ' + pboxAllRows.length + ' players' : g.state === 'final' ? 'final · ' + pboxAllRows.length + ' players' : 'kickoff ' + (g.status || '') + ' · the box score fills once the game is in progress';
     const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons'
       : !tlog ? 'no game log yet' : tlog.state === 'ready' ? logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '')
       : tlog.state === 'loading' ? 'loading…' : 'no game log yet';
@@ -3827,7 +3951,7 @@ class Component extends DCLogic {
 
     // per-widget collapse; purely display, no grouping or reordering
     const shut = st.shut || {};
-    const PANELS = ['wp', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
+    const PANELS = ['pbox', 'wp', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
     const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews'];
     const DIR_PANELS = ['dirSearch', 'dirTable'];
     const BUZZ_PANELS = ['bz0', 'bz1', 'bz2', 'bz3', 'bz4', 'bz5', 'bz6', 'bz7'];
@@ -4135,6 +4259,11 @@ class Component extends DCLogic {
       ].filter(Boolean).map(x => Object.assign(x, { b: String(x.b || '').replace(/_/g, ' ') })),
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
+      pboxSides, pboxCaption,
+      pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: 'search the box score · player, team, position, line', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols.filter(([k]) => k === 'team' || k === 'pos' || k === 'name')) }),
+      pboxHasMore: pboxPerSide > pboxLimit, pboxMoreLabel: 'Show ' + Math.min(PBOX_PAGE, pboxPerSide - pboxLimit) + ' more', pboxAllLabel: 'Show all ' + pboxPerSide,
+      pboxShowMore: () => tset('pbox', { limit: pboxLimit + PBOX_PAGE }), pboxShowAll: () => tset('pbox', { limit: pboxPerSide }), pboxShowLess: () => tset('pbox', { limit: PBOX_PAGE }), pboxCanCollapse: pboxLimit > PBOX_PAGE,
+      pboxPageNote: boxOn ? 'showing ' + Math.min(pboxLimit, pboxPerSide) + ' of ' + pboxPerSide + ' a side' : '',
       bookLiveOn, bookHistOn, bookHistHead, bookHistCols, bookHistRows, bookHistNote, bookHist: histMenuFor('books', g.homeAbbr),
       bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search anything on the table · type to filter, pick from the list',
         cols: BOOK_SEARCH_COLS, groups: colGroups(bookSides, bookGet, BOOK_SEARCH_COLS), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
