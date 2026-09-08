@@ -1022,17 +1022,18 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Feature Drift</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Model Today</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                 <sc-if value="{{ p.mDrift.open }}" hint-placeholder-val="{{ true }}">
-                <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 14px">the inputs this panel runs on, and how fresh each one is</div>
-                <div style="display:flex;flex-direction:column;gap:12px">
+                <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 14px">how the model is doing on today's {{ sport }} slate, on the live beat</div>
+                <div style="display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ modelToday }}" as="d" hint-placeholder-count="5">
+                    <div style="display:flex;justify-content:space-between;gap:12px;font-family:var(--kw);font-size:10.5px;padding-bottom:8px;border-bottom:1px solid var(--divider)"><span style="color:var(--second);flex:none">{{ d.k }}</span><span style="text-align:right;color:var(--lead)">{{ d.v }}</span></div>
+                  </sc-for>
+                </div>
+                <div style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);margin:14px 0 8px">FEEDS</div>
+                <div style="display:flex;flex-direction:column;gap:7px">
                   <sc-for list="{{ drift }}" as="d" hint-placeholder-count="4">
-                    <div style="display:flex;flex-direction:column;gap:6px">
-                      <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:10px"><span style="color:var(--second)">{{ d.k }}</span><span>{{ d.v }}</span></div>
-                      <svg viewBox="0 0 200 26" preserveAspectRatio="none" style="width:100%;height:26px;display:block">
-                        <path d="{{ d.path }}" fill="none" stroke="{{ d.color }}" stroke-width="1.4" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                      </svg>
-                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:12px;font-family:var(--kw);font-size:10px"><span style="color:var(--second);flex:none">{{ d.k }}</span><span style="{{ d.style }}">{{ d.v }}</span></div>
                   </sc-for>
                 </div>
               </sc-if>
@@ -4689,15 +4690,37 @@ paceRows: (() => {
       drift: (() => {
         const m = st.liveMeta;
         const rows = [
-          ['Record capture', S ? S.captured(sport) : st.kq, !!S],
-          ['Live edge', !m ? 'not asked' : m.ok ? m.ms + 'ms' + (m.stale ? ' · stale' : '') : (m.refused ? 'refused from this origin' : 'unreachable'), !!(m && m.ok && !m.stale)],
+          ['Record', S ? 'as of ' + (/^\d{4}-\d{2}-\d{2}/.test(String(S.captured(sport))) ? S.day(S.captured(sport)) : S.captured(sport)) : st.kq, !!S],
+          ['Scores', !m ? 'not read yet' : m.ok ? 'read ' + (S ? S.age(m.fetched) : '') + ' ago' + (m.stale ? ' · catching up' : '') : 'unreachable', !!(m && m.ok && !m.stale)],
           ['Box score', boxOn ? 'live · ' + (S ? S.age(box.at) : '') : (box && box.reason ? box.reason : 'none open'), boxOn],
           ['Standings', (() => { const o = stand; if (!o) return 'not asked'; if (!o.ok) return o.refused ? 'refused from this origin' : 'unreachable'; if (!o.available) return 'no table'; return 'table · ' + seasonNote + ' · ' + (S ? S.age(o.fetched || o.at) : ''); })(), !!(stand && stand.ok && stand.available)],
-          ['Props', (() => { const o = (st.props || {})[g.id]; if (!g.live) return 'real slate only'; if (!o) return 'not asked'; if (!o.ok) return o.refused ? 'refused from this origin' : 'unreachable'; if (!o.available) return o.reason || 'none posted'; return o.rows.length + ' lines · ' + (S ? S.age(o.fetched || o.at) : '') + (o.credits && o.credits.remaining != null ? ' · ' + o.credits.remaining.toLocaleString() + ' credits left' : ''); })(), !!((st.props || {})[g.id] && (st.props || {})[g.id].available)],
+          ['Props', (() => { const o = (st.props || {})[g.id]; if (!g.live) return 'real slate only'; if (!o) return 'not asked'; if (!o.ok) return o.refused ? 'refused from this origin' : 'unreachable'; if (!o.available) return o.reason || 'none posted'; return o.rows.length + ' lines · ' + (S ? S.age(o.fetched || o.at) : ''); })(), !!((st.props || {})[g.id] && (st.props || {})[g.id].available)],
           ['Market', (() => { const o = st.odds; if (!o) return 'not asked'; if (!o.ok) return o.refused ? 'refused from this origin' : 'unreachable'; if (!o.available) return o.reason || 'no game on the market'; return o.games.length + ' games · ' + o.games.filter(x => x.opening).length + ' with an opening line · ' + (S ? S.age(o.fetched) : ''); })(), !!(st.odds && st.odds.ok && st.odds.available)],
           ['Narrative', (() => { const sto = (st.stories || {})[g.id]; return !sto ? 'not asked' : sto.items.length ? sto.items.length + ' pieces · ' + (S ? S.age(sto.at) : '') : sto.pending ? 'not written yet' : (sto.reason || 'no answer'); })(), !!((st.stories || {})[g.id] && (st.stories || {})[g.id].items.length)]
         ];
-        return rows.map(([k, v, ok]) => ({ k, v, color: ok ? ACC : 'var(--lead)', path: this.path([50, 50], 200, 26, 0, 100) }));
+        return rows.map(([k, v, ok]) => ({ k, v, style: 'text-align:right;color:' + (ok ? ACC : 'var(--lead)') }));
+      })(),
+      // the model against today's slate, from the slate itself: the lines, the finals, the games on
+      modelToday: (() => {
+        const games = slate.filter(x => x.live);
+        const finals = games.filter(x => x.state === 'final'), live = games.filter(x => x.state === 'in_progress'), ahead = games.filter(x => x.state !== 'final' && x.state !== 'in_progress');
+        const gaps = games.filter(x => x.market && x.line != null && x.fair != null).map(x => ({ x, gap: x.fair - x.line }));
+        const avgGap = gaps.length ? gaps.reduce((a, b) => a + Math.abs(b.gap), 0) / gaps.length : null;
+        const big = gaps.slice().sort((a, b) => Math.abs(b.gap) - Math.abs(a.gap))[0];
+        const decided = finals.filter(x => x.hs !== x.as);
+        const favN = decided.filter(x => x.model && x.model.priorPoints).length;
+        const favRight = decided.filter(x => x.model && x.model.priorPoints && ((x.model.priorPoints > 0) === (x.hs > x.as))).length;
+        const mktN = decided.filter(x => x.market && x.line).length;
+        const mktRight = decided.filter(x => x.market && x.line && ((x.line < 0) === (x.hs > x.as))).length;
+        const apart = live.filter(x => x.market && x.mktProb != null && Math.abs(x.wp - x.mktProb) >= 2).length;
+        if (!games.length) return [{ k: 'SLATE', v: 'no ' + sport + ' games on the slate today' }];
+        return [
+          { k: 'SLATE', v: games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + live.length + ' live · ' + finals.length + ' final · ' + ahead.length + ' ahead' },
+          { k: 'MODEL VS MARKET', v: avgGap != null ? avgGap.toFixed(1) + ' pts apart on average across ' + gaps.length + ' lines' + (big ? ' · widest ' + big.x.awayAbbr + ' @ ' + big.x.homeAbbr + ' ' + sgn(big.gap) : '') : 'no lines posted yet' },
+          { k: 'MODEL FAVORITES', v: favN ? favRight + ' of ' + favN + ' won' : 'no finals yet today' },
+          { k: 'MARKET FAVORITES', v: mktN ? mktRight + ' of ' + mktN + ' won' : 'no finals yet today' },
+          { k: 'IN PROGRESS', v: live.length ? live.length + ' on now · model and market 2+ pts apart in ' + apart : 'nothing on right now' }
+        ];
       })(),
 
       dirPlayers: isPlayers,
