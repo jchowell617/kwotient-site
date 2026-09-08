@@ -124,6 +124,11 @@ a:hover{color:oklch(0.9 0.14 150);}
 [data-page] > *:nth-child(5){animation-delay:.22s}
 [data-page] > *:nth-child(n+6){animation-delay:.26s}
 @media (prefers-reduced-motion:reduce){[data-page],[data-page] > section,[data-page] > div{animation:none}}
+@keyframes csFade{from{opacity:0}to{opacity:1}}
+@keyframes csLift{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+[data-veil]{animation:csFade .3s ease both}
+[data-veil] > [role=dialog]{animation:csLift .42s cubic-bezier(.22,.7,.3,1) both;animation-delay:.04s}
+@media (prefers-reduced-motion:reduce){[data-veil],[data-veil] > [role=dialog]{animation:none}}
 @keyframes pulseDot{0%,100%{opacity:1}50%{opacity:.3}}
 @keyframes csDot{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}50%{transform:translate(-50%,-50%) scale(1.4);opacity:.7}}
 .cs-glow{filter:drop-shadow(0 0 7px rgba(77,139,255,.55))}
@@ -186,7 +191,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
     </div>
 
     <sc-if value="{{ contactOpen }}" hint-placeholder-val="{{ false }}">
-    <div onClick="{{ closeContact }}" style="position:fixed;inset:0;z-index:250;background:rgba(8,10,14,.55);display:flex;align-items:center;justify-content:center;padding:20px">
+    <div data-veil="1" onClick="{{ closeContact }}" style="position:fixed;inset:0;z-index:250;background:rgba(8,10,14,.55);display:flex;align-items:center;justify-content:center;padding:20px">
       <div data-colmenu="1" onClick="{{ keepContact }}" role="dialog" aria-modal="true" style="background:var(--surface);border:1px solid var(--axis);border-radius:12px;max-width:440px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.35);overflow:hidden">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--grid)">
           <span style="font-family:var(--kw);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--reversed)">CONTACT US</span>
