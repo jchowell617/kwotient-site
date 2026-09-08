@@ -81,12 +81,12 @@
   --kw:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
 }
 [data-theme="light"]{
-  --ink:#f7f9fd;--desk:#d8dfeb;--surface:#f4f7fc;--rail:#e9eef7;--nested:#e2e9f4;--divider:#d5dfee;
-  --grid:#d2dcec;--axis:#b4c2d8;--bar-track:#dde5f2;
-  --bar-top:#edf2fa;--bar-bot:#e2e9f4;--hero-top:#e2ebfa;--hero-bot:#f4f7fc;
+  --ink:#dde5ef;--desk:#c7d2e2;--surface:#f8fafd;--rail:#e4eaf3;--nested:#e8eef6;--divider:#d3dce9;
+  --grid:#c4d0e1;--axis:#9fb1ca;--bar-track:#d4ddea;
+  --bar-top:#f2f6fb;--bar-bot:#e6edf7;--hero-top:#e3ebf8;--hero-bot:#f8fafd;
   --reversed:#0d1522;--lead:#2c3a4e;--second:#5a6b82;--key:#3d6099;--muted:#5c6d86;--faint:#8494ab;--collabel:#42618f;
   --brand:#1d5fd6;--brand-deep:#1848a8;--brand-lite:#4f88ee;--good:#0f8a52;--critical:#c8283a;--on-brand:#ffffff;--on-good:#ffffff;
-  --shadow:0 18px 50px rgba(28,46,80,.14),0 0 0 1px rgba(29,95,214,0.10);
+  --shadow:0 18px 50px rgba(28,46,80,.20),0 0 0 1px rgba(29,95,214,0.14);
 }
 html,body{margin:0;padding:0;background:#03050a;font-family:var(--kw);-webkit-font-smoothing:antialiased;}
 *{box-sizing:border-box;}
@@ -168,12 +168,34 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <span data-shell="wintitle" style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ windowTitle }}</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;font-family:var(--kw);font-size:9.5px;color:var(--muted)">
+        <button onClick="{{ openContact }}" style="{{ themeBtn }}">CONTACT</button>
         <button onClick="{{ toggleTheme }}" style="{{ themeBtn }}">{{ themeLabel }}</button>
         <span data-shell="clock" style="white-space:nowrap;color:var(--reversed)">{{ clockLabel }}</span>
         <span style="width:6px;height:6px;border-radius:50%;background:var(--brand);display:block;animation:pulseDot 1.6s ease-in-out infinite"></span>
       </div>
     </div>
 
+    <sc-if value="{{ contactOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeContact }}" style="position:fixed;inset:0;z-index:250;background:rgba(8,10,14,.55);display:flex;align-items:center;justify-content:center;padding:20px">
+      <div data-colmenu="1" onClick="{{ keepContact }}" role="dialog" aria-modal="true" style="background:var(--surface);border:1px solid var(--axis);border-radius:12px;max-width:440px;width:100%;box-shadow:0 18px 50px rgba(0,0,0,.35);overflow:hidden">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid var(--grid)">
+          <span style="font-family:var(--kw);font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--reversed)">CONTACT US</span>
+          <button onClick="{{ closeContact }}" aria-label="Close" style="background:none;border:none;font-size:20px;line-height:1;color:var(--muted);cursor:pointer">×</button>
+        </div>
+        <form onSubmit="{{ contactSend }}" style="padding:14px 16px;display:flex;flex-direction:column;gap:10px;margin:0">
+          <div style="display:flex;gap:10px">
+            <label style="flex:1;display:flex;flex-direction:column;gap:4px;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--second)">FIRST NAME<input value="{{ cf.first }}" onChange="{{ onCfFirst }}" autoComplete="given-name" required="required" style="{{ cfInput }}" /></label>
+            <label style="flex:1;display:flex;flex-direction:column;gap:4px;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--second)">LAST NAME<input value="{{ cf.last }}" onChange="{{ onCfLast }}" autoComplete="family-name" required="required" style="{{ cfInput }}" /></label>
+          </div>
+          <label style="display:flex;flex-direction:column;gap:4px;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--second)">EMAIL<input value="{{ cf.email }}" onChange="{{ onCfEmail }}" type="email" autoComplete="email" required="required" style="{{ cfInput }}" /></label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--second)"><span>PHONE <span style="color:var(--muted);letter-spacing:0">(optional)</span></span><input value="{{ cf.phone }}" onChange="{{ onCfPhone }}" type="tel" autoComplete="tel" style="{{ cfInput }}" /></label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--second)">COMMENT<textarea value="{{ cf.comment }}" onChange="{{ onCfComment }}" rows="5" required="required" style="{{ cfArea }}"></textarea></label>
+          <button type="submit" style="padding:9px 14px;border-radius:8px;border:1px solid var(--brand);background:var(--brand);color:var(--on-brand);font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer">COMPOSE EMAIL</button>
+          <span style="font-family:var(--kw);font-size:9px;color:var(--muted);line-height:1.5">Opens your email app addressed to info@kwotient.io. Nothing is stored on this site.</span>
+        </form>
+      </div>
+    </div>
+    </sc-if>
     <div data-shell="body" style="flex:1;display:flex;min-height:0;align-items:stretch">
 
       <aside data-shell="side" style="width:214px;flex:none;background:var(--rail);border-right:1px solid var(--grid);display:flex;flex-direction:column;min-height:0">
@@ -2291,6 +2313,8 @@ class Component extends DCLogic {
     };
     document.addEventListener('mousedown', this._outside, true);
     // back from the background: a fresh read at once rather than waiting out a throttled timer
+    this._esc = e => { if (e.key === 'Escape' && this.state.contactOpen) this.setState({ contactOpen: false }); };
+    document.addEventListener('keydown', this._esc);
     this._visible = () => { if (document.visibilityState === 'visible' && this.state.kq === 'ready') { this.pollLive(); this.loadStandings(); } };
     document.addEventListener('visibilitychange', this._visible);
     // a beat a second, for the clock and the cohort countdowns
@@ -2338,7 +2362,7 @@ class Component extends DCLogic {
     this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
     list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
   }
-  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); } catch (e) {} }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
   connectRecord() {
@@ -4091,6 +4115,24 @@ class Component extends DCLogic {
       windowTitle: sport + ' · ' + (slateSim ? 'no games on the slate' : slate.length + (st.liveMeta && st.liveMeta.upcoming ? ' upcoming' : ' on the slate')),
       theme: st.theme || 'dark',
       themeLabel: (st.theme || 'dark') === 'dark' ? 'LIGHT' : 'DARK',
+      contactOpen: !!st.contactOpen,
+      openContact: () => this.setState({ contactOpen: true }),
+      closeContact: () => this.setState({ contactOpen: false }),
+      keepContact: e => { if (e && e.stopPropagation) e.stopPropagation(); },
+      cf: Object.assign({ first: '', last: '', email: '', phone: '', comment: '' }, st.cf || {}),
+      onCfFirst: e => this.setState(x => ({ cf: Object.assign({}, x.cf, { first: e.target.value }) })),
+      onCfLast: e => this.setState(x => ({ cf: Object.assign({}, x.cf, { last: e.target.value }) })),
+      onCfEmail: e => this.setState(x => ({ cf: Object.assign({}, x.cf, { email: e.target.value }) })),
+      onCfPhone: e => this.setState(x => ({ cf: Object.assign({}, x.cf, { phone: e.target.value }) })),
+      onCfComment: e => this.setState(x => ({ cf: Object.assign({}, x.cf, { comment: e.target.value }) })),
+      cfInput: 'padding:7px 9px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px;width:100%;box-sizing:border-box',
+      cfArea: 'padding:7px 9px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px;width:100%;box-sizing:border-box;resize:vertical;min-height:90px',
+      // the visitor's own mail app carries the message; this site stores nothing
+      contactHref: (() => { const f = Object.assign({ first: '', last: '', email: '', phone: '', comment: '' }, st.cf || {}); const subject = 'Contact from kwotient.io — ' + f.first + ' ' + f.last;
+        const body = 'Name: ' + f.first + ' ' + f.last + '\nEmail: ' + f.email + (f.phone ? '\nPhone: ' + f.phone : '') + '\n\n' + f.comment; return 'mailto:info@kwotient.io?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body); })(),
+      contactSend: e => { if (e && e.preventDefault) e.preventDefault(); const f = Object.assign({ first: '', last: '', email: '', phone: '', comment: '' }, this.state.cf || {}); if (!f.first || !f.last || !f.email || !f.comment) return;
+        const subject = 'Contact from kwotient.io — ' + f.first + ' ' + f.last; const body = 'Name: ' + f.first + ' ' + f.last + '\nEmail: ' + f.email + (f.phone ? '\nPhone: ' + f.phone : '') + '\n\n' + f.comment;
+        window.location.href = 'mailto:info@kwotient.io?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body); this.setState({ contactOpen: false }); },
       themeBtn: 'padding:3px 9px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--muted)',
       toggleTheme: () => this.setState(s => ({ theme: (s.theme || 'dark') === 'dark' ? 'light' : 'dark' })),
       edgeLabel: (() => {
