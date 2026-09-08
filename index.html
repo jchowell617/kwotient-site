@@ -1592,7 +1592,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:0 14px 0 0">
                     <div style="display:flex;align-items:baseline;gap:7px">
                       <span style="{{ profile.cardStyle }}">{{ profile.card.overall }}</span>
-                      <span style="{{ profile.cardGradeStyle }}">{{ profile.card.grade }}</span>
                     </div>
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">OVERALL SCORE</span>
                   </div>
@@ -1612,17 +1611,16 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Scorecard</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">ranked inside cohort {{ profile.card.cohort }}</span>
                     </div>
-                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">OVERALL {{ profile.card.overall }} · {{ profile.card.grade }}</span>
+                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">OVERALL {{ profile.card.overall }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfCard.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:11px 22px">
                     <sc-for list="{{ profile.card.rows }}" as="r" hint-placeholder-count="6">
-                      <div style="display:grid;grid-template-columns:92px 1fr 34px 30px 28px;gap:9px;align-items:center">
+                      <div style="display:grid;grid-template-columns:92px 1fr 40px 34px;gap:9px;align-items:center">
                         <span style="font-size:12px">{{ r.k }}</span>
                         <div style="height:6px;background:var(--nested);border-radius:3px;overflow:hidden"><div style="{{ r.bar }}"></div></div>
                         <span style="font-family:var(--kw);font-size:9.5px;text-align:right;color:var(--muted)">{{ r.rank }}</span>
-                        <span style="font-family:var(--kw);font-size:10.5px;text-align:right;color:var(--second)">{{ r.v }}</span>
-                        <span style="{{ r.gradeStyle }}">{{ r.grade }}</span>
+                        <span style="{{ r.gradeStyle }}">{{ r.v }}</span>
                       </div>
                     </sc-for>
                   </div>
@@ -3628,7 +3626,7 @@ class Component extends DCLogic {
         out.push({ full: name, name: now ? now.name : name, pos: now ? now.pos : '—', num: now ? now.num : null, age: now ? now.age : null, paid: now ? now.paid : null, k: now && now.k != null ? now.k : null, gp: row[2], line: row[3] != null ? row[3] + ' ' + (row[4] || '') : '—', team: abbr, ent: now }); });
       return out.sort((a, b) => (b.k == null ? -1 : b.k) - (a.k == null ? -1 : a.k)); };
     const ROSTER_PAGE = 12; let rosterLimit = ROSTER_PAGE;
-    const ROSTER_SEARCH_COLS = [['name', 'PLAYER'], ['pos', 'POS'], ['num', '#'], ['age', 'AGE'], ['paid', 'PAID'], ['grade', 'GRADE'], ['k', 'SCORE']];
+    const ROSTER_SEARCH_COLS = [['name', 'PLAYER'], ['pos', 'POS'], ['num', '#'], ['age', 'AGE'], ['paid', 'PAID'], ['k', 'SCORE']];
     if (st.profileId && S && (roster.length || clubs.length)) {
       const isP = st.profileId.slice(0, 2) === 'p:';
       const key = st.profileId.slice(2);
@@ -3722,19 +3720,19 @@ class Component extends DCLogic {
         // the roster is a table like the others: every column sorts and filters, the box searches them all
         const rosterAll = profPast ? seasonRosterOf(cl.abbr, profSeason) : cb.rosterOf;
         const rosterGet = profPast
-          ? { name: p => p.full, pos: p => p.pos || null, gp: p => p.gp != null ? Number(p.gp) : null, line: p => p.line, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => p.k != null ? gradeOf(p.k) : null, k: p => p.k }
-          : { name: p => p.full, pos: p => p.pos || null, num: p => p.num != null ? Number(p.num) : null, age: p => p.age != null ? Number(p.age) : null, paid: p => p.paid != null ? Number(p.paid) : null, grade: p => gradeOf(p.k), k: p => p.k };
+          ? { name: p => p.full, pos: p => p.pos || null, gp: p => p.gp != null ? Number(p.gp) : null, line: p => p.line, paid: p => p.paid != null ? Number(p.paid) : null, k: p => p.k }
+          : { name: p => p.full, pos: p => p.pos || null, num: p => p.num != null ? Number(p.num) : null, age: p => p.age != null ? Number(p.age) : null, paid: p => p.paid != null ? Number(p.paid) : null, k: p => p.k };
         const rosterColDefs = profPast
-          ? [['name', 'PLAYER', 'left', 1.6], ['pos', 'POS', 'left', .6], ['gp', 'GP', 'right', .5], ['line', profSeasonLabel + ' LINE', 'left', 1.2], ['paid', 'PAID NOW', 'right', .9], ['grade', 'GRADE', 'right', .6], ['k', 'SCORE', 'right', .6]]
-          : [['name', 'PLAYER', 'left', 1.6], ['pos', 'POS', 'left', .6], ['num', '#', 'left', .4], ['age', 'AGE', 'right', .5], ['paid', 'PAID', 'right', .9], ['grade', 'GRADE', 'right', .6], ['k', 'SCORE', 'right', .6]];
+          ? [['name', 'PLAYER', 'left', 1.6], ['pos', 'POS', 'left', .6], ['gp', 'GP', 'right', .5], ['line', profSeasonLabel + ' LINE', 'left', 1.2], ['paid', 'PAID NOW', 'right', .9], ['k', 'SCORE', 'right', .6]]
+          : [['name', 'PLAYER', 'left', 1.6], ['pos', 'POS', 'left', .6], ['num', '#', 'left', .4], ['age', 'AGE', 'right', .5], ['paid', 'PAID', 'right', .9], ['k', 'SCORE', 'right', .6]];
         TABLES.roster = { rows: rosterAll, get: rosterGet };
         rosterLimit = tstate('roster').limit || ROSTER_PAGE;
         rosterShown = tapply('roster', rosterAll, rosterGet, rowText(rosterGet));
         rosterCols = rosterColDefs.map(([k, label, align, flex]) => tcol('roster', k, label, null, align, flex));
         const rosterSearchCols = rosterColDefs.map(([k, label]) => [k, label]);
-        rosterSearchVals = searchFor('roster', histMenuFor('roster', cl.abbr), { table: 'roster', cols: rosterSearchCols, placeholder: 'search the roster · player, position, salary, grade, score', count: rosterShown.length + ' of ' + rosterAll.length, groups: colGroups(rosterAll, rosterGet, rosterSearchCols) });
+        rosterSearchVals = searchFor('roster', histMenuFor('roster', cl.abbr), { table: 'roster', cols: rosterSearchCols, placeholder: 'search the roster · player, position, salary, score', count: rosterShown.length + ' of ' + rosterAll.length, groups: colGroups(rosterAll, rosterGet, rosterSearchCols) });
         const rosterCells = p => rosterColDefs.map(([k, , align, flex]) => { const v = rosterGet[k](p); const txt = v == null ? '—' : k === 'paid' ? S.M(v) : k === 'num' ? '#' + v : String(v);
-          return { v: txt, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : k === 'grade' || k === 'k' ? 'font-weight:700;color:' + (p.k != null ? gradeColor(p.k) : 'var(--muted)') : 'color:var(--second)') }; });
+          return { v: txt, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : k === 'k' ? 'font-weight:700;color:' + (p.k != null ? gradeColor(p.k) : 'var(--muted)') : 'color:var(--second)') }; });
         const seasonRows = seasonCardRows(cl.abbr);
         const cFell = false;
         const cRows = logRows.filter(r => rowMatch(r, 'profile')), cOpp = null;
