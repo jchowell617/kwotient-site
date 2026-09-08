@@ -120,6 +120,12 @@ a:hover{color:oklch(0.9 0.14 150);}
    so these override by attribute. Safe-area insets keep the bar clear of the home indicator. */
 html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 [data-shell=tabs]{display:none}
+/* a wide table scrolls sideways inside its own frame on a phone; on a wider screen the frame
+   is open, so a column menu can hang below it. On a phone the menu becomes a sheet at the
+   bottom of the screen instead of being cut off by the scrolling frame. */
+@media (min-width:700px){[data-scroll=x]>div{min-width:0!important}[data-scroll=x]{overflow:visible}}
+@media (max-width:699px){[data-scroll=x]{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+  [data-scroll=x] [data-colmenu][style*="absolute"]{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;z-index:80!important}}
 /* a widget with an open menu — a search list or a column menu — rises above the widgets after it,
    so the list is never cut off by the next card; the hover transform makes each card its own layer */
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
@@ -336,6 +342,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 4px;border-bottom:1px solid var(--grid)">
                       <span style="{{ sd.titleStyle }}">{{ sd.title }}</span><span style="font-family:var(--kw);font-size:16px;font-weight:700;color:var(--reversed)">{{ sd.score }}</span>
                     </div>
+<div data-scroll="x"><div style="min-width:420px">
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                       <sc-for list="{{ sd.cols }}" as="c" hint-placeholder-count="6">
                         <div style="{{ c.cellStyle }}">
@@ -363,6 +370,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                     </sc-for>
                     <sc-if value="{{ sd.empty }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:10px 0">{{ sd.empty }}</div></sc-if>
+</div></div>
                   </div>
                 </sc-for>
               </div>
@@ -649,6 +657,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
               </div>
               <sc-if value="{{ bookLiveOn }}" hint-placeholder-val="{{ true }}">
+<div data-scroll="x"><div style="min-width:520px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                 <span style="flex:none;width:18px;display:flex;align-items:center"><button data-chev="1" onClick="{{ p.books.toggle }}" style="{{ p.books.btn }}">{{ p.books.chevron }}</button></span>
                 <sc-for list="{{ bookCols }}" as="c" hint-placeholder-count="5">
@@ -682,9 +691,11 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">green · a point or more off the consensus</div>
               </sc-if>
+</div></div>
               </sc-if>
               <sc-if value="{{ bookHistOn }}" hint-placeholder-val="{{ false }}">
               <div style="font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--collabel);margin-bottom:6px">{{ bookHistHead }}</div>
+<div data-scroll="x"><div style="min-width:560px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid)">
                 <sc-for list="{{ bookHistCols }}" as="c" hint-placeholder-count="6">
                   <span style="{{ c.style }}">{{ c.label }}</span>
@@ -700,6 +711,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </sc-for>
               <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:8px">{{ bookHistNote }}</div>
               </sc-if>
+</div></div>
               </sc-if>
             </section>
             </sc-if>
@@ -743,6 +755,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </sc-if>
               </div>
+<div data-scroll="x"><div style="min-width:620px">
               <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                 <span style="flex:none;width:18px;display:flex;align-items:center"><button data-chev="1" onClick="{{ p.playerProps.toggle }}" style="{{ p.playerProps.btn }}">{{ p.playerProps.chevron }}</button></span>
                 <sc-for list="{{ propCols }}" as="c" hint-placeholder-count="5">
@@ -780,6 +793,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
               </div>
               </sc-if>
+</div></div>
               </sc-if>
             </section>
             </sc-if>
@@ -1623,6 +1637,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </sc-if>
               </div></div>
+<div data-scroll="x"><div style="min-width:560px">
                     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 16px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                       <sc-for list="{{ rosterCols }}" as="c" hint-placeholder-count="7">
                   <div style="{{ c.cellStyle }}">
@@ -1659,6 +1674,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         <button onClick="{{ rosterShowLess }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">Show fewer</button>
                       </sc-if>
                     </div>
+</div></div>
                   </sc-if>
                 </section>
                 </sc-if>
@@ -1872,7 +1888,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <sc-for list="{{ profile.factors }}" as="fa" hint-placeholder-count="6">
                         <div style="display:grid;grid-template-columns:118px 1fr 48px;gap:12px;align-items:center">
                           <span style="font-size:12px">{{ fa.k }}</span>
-                          <div style="position:relative;height:15px;background:var(--nested);border-radius:3px">
+                          <div style="position:relative;height:15px;background:var(--nested);border-radius:3px;overflow:hidden">
                             <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--axis)"></div>
                             <div style="{{ fa.bar }}"></div>
                           </div>
@@ -4545,7 +4561,7 @@ paceRows: (() => {
       factors: (g.live && g.model ? [['Club card gap', g.model.priorPoints - (g.homeK != null ? LEAGUE_EDGE[sport] : 0)], ['Home edge', g.homeK != null ? LEAGUE_EDGE[sport] : 0], ['Score margin', g.model.margin], ['Game left', g.model.f * 4 - 2]] : []).map(([k, v]) => ({
         k, v: (v > 0 ? '+' : '') + v.toFixed(1),
         valStyle: 'font-family:var(--kw);font-size:11.5px;text-align:right;color:' + (v > 0 ? ACC : RED),
-        bar: 'position:absolute;top:3px;bottom:3px;border-radius:2px;background:' + (v > 0 ? ACC : RED) + ';' + (v > 0 ? 'left:50%;width:' + (Math.abs(v) / 4) * 48 + '%' : 'right:50%;width:' + (Math.abs(v) / 4) * 48 + '%')
+        bar: 'position:absolute;top:3px;bottom:3px;border-radius:2px;background:' + (v > 0 ? ACC : RED) + ';' + (v > 0 ? 'left:50%;width:' + Math.min(48, (Math.abs(v) / 4) * 48) + '%' : 'right:50%;width:' + Math.min(48, (Math.abs(v) / 4) * 48) + '%')
       })),
       // calibration read as a plain claim: when the model says X%, how often was it right?
       calib: (() => {
