@@ -2650,6 +2650,16 @@ class Component extends DCLogic {
   // slate re-read from the edge and the trend log re-fetched — the same reset a sport switch
   // does, without changing the sport
   // the logo is the front door: the NFL scoreboard, regenerated
+  // a section opens at its top, never where the last one was left
+  goTab(tab, extra) {
+    this.setState(Object.assign({ tab }, extra || {}));
+    setTimeout(() => {
+      try {
+        window.scrollTo(0, 0);
+        ['main', 'body', 'rail'].forEach(k => { const el = document.querySelector('[data-shell=' + k + ']'); if (el) el.scrollTop = 0; });
+      } catch (e) {}
+    }, 0);
+  }
   goHome() {
     clearTimeout(this._liveT);
     const sport = 'NFL';
@@ -4287,11 +4297,11 @@ class Component extends DCLogic {
         label, badge: badges[k], badgeColor: k === 'live' ? 'var(--critical)' : 'var(--muted)',
         // the live badge breathes like the header's dot; the counts sit still
         badgeStyle: 'font-family:var(--kw);font-size:9.5px;color:' + (k === 'live' ? 'var(--critical)' + (anyOn ? ';animation:pulseDot 1.6s ease-in-out infinite' : '') : 'var(--muted)'),
-        style: navBtn(st.tab === k), go: () => this.setState({ tab: k })
+        style: navBtn(st.tab === k), go: () => this.goTab(k)
       })),
       // the phone's bottom tab bar: the same sections, short names, the cohorts first
       // the model sits last, after the cohorts, in the side nav and on the phone's bar alike
-      goModel: () => this.setState({ tab: 'model' }),
+      goModel: () => this.goTab('model'),
       modelNavBtn: navBtn(st.tab === 'model'),
       contactNavBtn: navBtn(!!st.contactOpen),
       modelBadge: badges.model,
@@ -4301,7 +4311,7 @@ class Component extends DCLogic {
           short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'Model' })[k] || label,
           style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--reversed)' : 'var(--muted)'),
           dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (active ? '1' : '0'),
-          go: () => this.setState({ tab: k, profileId: k === 'profiles' ? st.profileId : null })
+          go: () => this.goTab(k, { profileId: k === 'profiles' ? st.profileId : null })
         };
       }).concat([{
         short: 'Contact Us',
@@ -4368,7 +4378,7 @@ class Component extends DCLogic {
       showModelNow: () => this.setState({ modelView: 'now' }),
       isBuzz: st.tab === 'buzz',
       isCohorts: st.tab === 'cohorts',
-      goCohorts: () => this.setState({ tab: 'cohorts' }),
+      goCohorts: () => this.goTab('cohorts'),
       goHome: () => this.goHome(),
       tabKey: st.tab,
       cohortBadge: String(KWC.filter(c => !c.unpublished).length),
