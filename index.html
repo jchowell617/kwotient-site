@@ -637,6 +637,159 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </section>
               </sc-if>
 
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+                <button data-chev="1" onClick="{{ p.teamTrend.toggle }}" style="{{ p.teamTrend.btn }}">{{ p.teamTrend.chevron }}</button>
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team Matchup History</span></div>
+                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ teamAbbr }} · {{ teamTrendNote }}</span>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button onClick="{{ pickAway }}" style="{{ teamAwayBtn }}">{{ awayAbbr }}</button>
+                  <button onClick="{{ pickHome }}" style="{{ teamHomeBtn }}">{{ homeAbbr }}</button>
+                </div>
+              </div>
+              <sc-if value="{{ p.teamTrend.open }}" hint-placeholder-val="{{ true }}">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onFocus="{{ teamSearch.focus }}" onClick="{{ teamSearch.click }}" onDoubleClick="{{ teamSearch.dbl }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ teamSearch.count }}</span>
+                <sc-for list="{{ teamSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ teamSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ teamSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ teamSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ teamSearch.onKey }}" style="{{ teamSearch.menuStyle }}">
+    <sc-if value="{{ teamSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ teamSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ teamSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ teamSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="position:relative">
+                <div style="position:absolute;left:0;right:0;top:54px;height:0;border-top:1px dashed var(--axis)"></div>
+                <div style="display:flex;align-items:stretch;gap:5px;height:108px">
+                  <sc-for list="{{ teamTrendBars }}" as="tb" hint-placeholder-count="12">
+                    <div data-chart="1" onMouseEnter="{{ tb.on }}" onMouseLeave="{{ tb.off }}" onClick="{{ tb.tap }}" style="{{ tb.wrap }}">
+                      <span style="{{ tb.labelStyle }}">{{ tb.v }}</span>
+                      <div style="{{ tb.bar }}"></div>
+                      <sc-if value="{{ tb.hovered }}" hint-placeholder-val="{{ false }}">
+                        <div style="{{ tb.tipStyle }}">
+                          <div style="font-family:var(--kw);font-size:11px;color:var(--reversed)">{{ tb.tipMain }}</div>
+                          <div style="{{ tb.tipSubStyle }}">{{ tb.tipSub }}</div>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--faint);margin-top:10px;padding-top:9px;border-top:1px solid var(--grid)">
+                <span>{{ teamAxisLeft }}</span><span style="color:var(--good)">ABOVE · WON</span><span>LAST GAME</span>
+              </div>
+            </sc-if>
+            </section>
+
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
+                <button data-chev="1" onClick="{{ p.playerTrend.toggle }}" style="{{ p.playerTrend.btn }}">{{ p.playerTrend.chevron }}</button>
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Matchup History</span></div>
+                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ trendPlayer }} · {{ trendMarket }} · {{ trendGames }}{{ trendPropNote }}</span>
+                </div>
+                <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--second)">
+                  <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--good);display:block"></span>OVER</span>
+                  <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--critical);display:block"></span>UNDER</span>
+                  <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:2px;background:var(--brand);display:block"></span>3-GAME AVG</span>
+                  <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:1px dashed var(--brand);display:block"></span>AVG</span>
+                  <sc-if value="{{ hasPropLine }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:1px dotted var(--good);display:block"></span>MARKET LINE</span></sc-if>
+                </div>
+              </div>
+              <sc-if value="{{ p.playerTrend.open }}" hint-placeholder-val="{{ true }}">
+
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:12px">
+                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+                <input value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" onFocus="{{ trendSearch.focus }}" onClick="{{ trendSearch.click }}" onDoubleClick="{{ trendSearch.dbl }}" onKeyDown="{{ trendSearch.onKey }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trendSearch.count }}</span>
+                <sc-for list="{{ trendSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ trendSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trendSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ trendSearch.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ trendSearch.onKey }}" style="{{ trendSearch.menuStyle }}">
+    <sc-if value="{{ trendSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ trendSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ trendSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ trendSearch.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:15px">
+                <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted);flex:none">MARKET</span>
+                <sc-for list="{{ marketTabs }}" as="mt" hint-placeholder-count="4">
+                  <button onClick="{{ mt.pick }}" style="{{ mt.style }}">{{ mt.name }}</button>
+                </sc-for>
+              </div>
+
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px;margin-bottom:16px">
+                <sc-for list="{{ trendStats }}" as="s" hint-placeholder-count="5">
+                  <div style="display:flex;flex-direction:column;gap:4px;padding:9px 11px;border:1px solid var(--grid);border-radius:8px;background:var(--nested)">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ s.k }}</span>
+                    <span style="{{ s.valStyle }}">{{ s.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="position:relative;height:148px;padding-left:30px">
+                <div style="position:relative;height:148px">
+                  <div style="{{ trendLineMark }}"></div>
+                    <sc-if value="{{ hasPropLine }}" hint-placeholder-val="{{ false }}"><div style="{{ trendPropMark }}"></div><div style="{{ trendPropLabel }}">{{ trendPropLine }}</div></sc-if>
+                  <div style="display:flex;align-items:flex-end;gap:5px;height:148px">
+                    <sc-for list="{{ trendBars }}" as="b" hint-placeholder-count="12">
+                      <div data-chart="1" onMouseEnter="{{ b.on }}" onMouseLeave="{{ b.off }}" onClick="{{ b.tap }}" style="position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;cursor:crosshair">
+                        <span style="{{ b.labelStyle }}">{{ b.v }}</span>
+                        <div style="{{ b.bar }}"></div>
+                        <sc-if value="{{ b.hovered }}" hint-placeholder-val="{{ false }}">
+                          <div style="{{ b.tipStyle }}">
+                            <div style="font-family:var(--kw);font-size:11px;color:var(--reversed)">{{ b.tipMain }}</div>
+                            <div style="{{ b.tipSubStyle }}">{{ b.tipSub }}</div>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="position:absolute;left:calc(100%/24);right:calc(100%/24);bottom:0;height:118px;pointer-events:none">
+                    <svg viewBox="0 0 100 118" preserveAspectRatio="none" style="width:100%;height:118px;display:block">
+                      <path d="{{ trendAvgPath }}" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+                    </svg>
+                  </div>
+                </div>
+                <div style="{{ trendLineLabel }}">{{ trendLine }}</div>
+                <div style="position:absolute;left:0;top:-4px;font-family:var(--kw);font-size:9px;color:var(--faint)">{{ trendMax }}</div>
+                <div style="position:absolute;left:0;bottom:-2px;font-family:var(--kw);font-size:9px;color:var(--faint)">0</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint);padding:8px 0 0 30px">
+                <span>{{ trendAxisLeft }}</span><span>LAST</span>
+              </div>
+            </sc-if>
+            </section>
+
               <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px;flex-wrap:wrap">
@@ -869,158 +1022,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             </section>
             </sc-if>
 
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
-              <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
-                <button data-chev="1" onClick="{{ p.playerTrend.toggle }}" style="{{ p.playerTrend.btn }}">{{ p.playerTrend.chevron }}</button>
-                <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Matchup History</span></div>
-                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ trendPlayer }} · {{ trendMarket }} · {{ trendGames }}{{ trendPropNote }}</span>
-                </div>
-                <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--second)">
-                  <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--good);display:block"></span>OVER</span>
-                  <span style="display:flex;align-items:center;gap:6px"><span style="width:10px;height:10px;border-radius:2px;background:var(--critical);display:block"></span>UNDER</span>
-                  <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:2px;background:var(--brand);display:block"></span>3-GAME AVG</span>
-                  <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:1px dashed var(--brand);display:block"></span>AVG</span>
-                  <sc-if value="{{ hasPropLine }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:1px dotted var(--good);display:block"></span>MARKET LINE</span></sc-if>
-                </div>
-              </div>
-              <sc-if value="{{ p.playerTrend.open }}" hint-placeholder-val="{{ true }}">
 
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:12px">
-                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" onFocus="{{ trendSearch.focus }}" onClick="{{ trendSearch.click }}" onDoubleClick="{{ trendSearch.dbl }}" onKeyDown="{{ trendSearch.onKey }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
-                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trendSearch.count }}</span>
-                <sc-for list="{{ trendSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
-                <sc-if value="{{ trendSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trendSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
-                <sc-if value="{{ trendSearch.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" onKeyDown="{{ trendSearch.onKey }}" style="{{ trendSearch.menuStyle }}">
-    <sc-if value="{{ trendSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ trendSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
-                    <sc-for list="{{ trendSearch.groups }}" as="gp" hint-placeholder-count="3">
-                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
-                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
-                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
-                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
-                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                          </sc-for>
-                        </div>
-                      </sc-if>
-                    </sc-for>
-                    <sc-for list="{{ trendSearch.values }}" as="v" hint-placeholder-count="6">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                  </div>
-                </sc-if>
-              </div>
-              <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:15px">
-                <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted);flex:none">MARKET</span>
-                <sc-for list="{{ marketTabs }}" as="mt" hint-placeholder-count="4">
-                  <button onClick="{{ mt.pick }}" style="{{ mt.style }}">{{ mt.name }}</button>
-                </sc-for>
-              </div>
-
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px;margin-bottom:16px">
-                <sc-for list="{{ trendStats }}" as="s" hint-placeholder-count="5">
-                  <div style="display:flex;flex-direction:column;gap:4px;padding:9px 11px;border:1px solid var(--grid);border-radius:8px;background:var(--nested)">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ s.k }}</span>
-                    <span style="{{ s.valStyle }}">{{ s.v }}</span>
-                  </div>
-                </sc-for>
-              </div>
-
-              <div style="position:relative;height:148px;padding-left:30px">
-                <div style="position:relative;height:148px">
-                  <div style="{{ trendLineMark }}"></div>
-                    <sc-if value="{{ hasPropLine }}" hint-placeholder-val="{{ false }}"><div style="{{ trendPropMark }}"></div><div style="{{ trendPropLabel }}">{{ trendPropLine }}</div></sc-if>
-                  <div style="display:flex;align-items:flex-end;gap:5px;height:148px">
-                    <sc-for list="{{ trendBars }}" as="b" hint-placeholder-count="12">
-                      <div data-chart="1" onMouseEnter="{{ b.on }}" onMouseLeave="{{ b.off }}" onClick="{{ b.tap }}" style="position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;cursor:crosshair">
-                        <span style="{{ b.labelStyle }}">{{ b.v }}</span>
-                        <div style="{{ b.bar }}"></div>
-                        <sc-if value="{{ b.hovered }}" hint-placeholder-val="{{ false }}">
-                          <div style="{{ b.tipStyle }}">
-                            <div style="font-family:var(--kw);font-size:11px;color:var(--reversed)">{{ b.tipMain }}</div>
-                            <div style="{{ b.tipSubStyle }}">{{ b.tipSub }}</div>
-                          </div>
-                        </sc-if>
-                      </div>
-                    </sc-for>
-                  </div>
-                  <div style="position:absolute;left:calc(100%/24);right:calc(100%/24);bottom:0;height:118px;pointer-events:none">
-                    <svg viewBox="0 0 100 118" preserveAspectRatio="none" style="width:100%;height:118px;display:block">
-                      <path d="{{ trendAvgPath }}" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
-                    </svg>
-                  </div>
-                </div>
-                <div style="{{ trendLineLabel }}">{{ trendLine }}</div>
-                <div style="position:absolute;left:0;top:-4px;font-family:var(--kw);font-size:9px;color:var(--faint)">{{ trendMax }}</div>
-                <div style="position:absolute;left:0;bottom:-2px;font-family:var(--kw);font-size:9px;color:var(--faint)">0</div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint);padding:8px 0 0 30px">
-                <span>{{ trendAxisLeft }}</span><span>LAST</span>
-              </div>
-            </sc-if>
-            </section>
-
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
-              <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
-                <button data-chev="1" onClick="{{ p.teamTrend.toggle }}" style="{{ p.teamTrend.btn }}">{{ p.teamTrend.chevron }}</button>
-                <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team Matchup History</span></div>
-                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ teamAbbr }} · {{ teamTrendNote }}</span>
-                </div>
-                <div style="display:flex;gap:6px">
-                  <button onClick="{{ pickAway }}" style="{{ teamAwayBtn }}">{{ awayAbbr }}</button>
-                  <button onClick="{{ pickHome }}" style="{{ teamHomeBtn }}">{{ homeAbbr }}</button>
-                </div>
-              </div>
-              <sc-if value="{{ p.teamTrend.open }}" hint-placeholder-val="{{ true }}">
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
-                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onFocus="{{ teamSearch.focus }}" onClick="{{ teamSearch.click }}" onDoubleClick="{{ teamSearch.dbl }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
-                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ teamSearch.count }}</span>
-                <sc-for list="{{ teamSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
-                <sc-if value="{{ teamSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ teamSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
-                <sc-if value="{{ teamSearch.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" onKeyDown="{{ teamSearch.onKey }}" style="{{ teamSearch.menuStyle }}">
-    <sc-if value="{{ teamSearch.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ teamSearch.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
-                    <sc-for list="{{ teamSearch.groups }}" as="gp" hint-placeholder-count="3">
-                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
-                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
-                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
-                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
-                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                          </sc-for>
-                        </div>
-                      </sc-if>
-                    </sc-for>
-                    <sc-for list="{{ teamSearch.values }}" as="v" hint-placeholder-count="6">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                  </div>
-                </sc-if>
-              </div>
-              <div style="position:relative">
-                <div style="position:absolute;left:0;right:0;top:54px;height:0;border-top:1px dashed var(--axis)"></div>
-                <div style="display:flex;align-items:stretch;gap:5px;height:108px">
-                  <sc-for list="{{ teamTrendBars }}" as="tb" hint-placeholder-count="12">
-                    <div data-chart="1" onMouseEnter="{{ tb.on }}" onMouseLeave="{{ tb.off }}" onClick="{{ tb.tap }}" style="{{ tb.wrap }}">
-                      <span style="{{ tb.labelStyle }}">{{ tb.v }}</span>
-                      <div style="{{ tb.bar }}"></div>
-                      <sc-if value="{{ tb.hovered }}" hint-placeholder-val="{{ false }}">
-                        <div style="{{ tb.tipStyle }}">
-                          <div style="font-family:var(--kw);font-size:11px;color:var(--reversed)">{{ tb.tipMain }}</div>
-                          <div style="{{ tb.tipSubStyle }}">{{ tb.tipSub }}</div>
-                        </div>
-                      </sc-if>
-                    </div>
-                  </sc-for>
-                </div>
-              </div>
-              <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;letter-spacing:.1em;color:var(--faint);margin-top:10px;padding-top:9px;border-top:1px solid var(--grid)">
-                <span>{{ teamAxisLeft }}</span><span style="color:var(--good)">ABOVE · WON</span><span>LAST GAME</span>
-              </div>
-            </sc-if>
-            </section>
 
 
             
