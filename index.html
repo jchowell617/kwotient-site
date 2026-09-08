@@ -372,7 +372,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <button data-chev="1" onClick="{{ p.pbox.toggle }}" style="{{ p.pbox.btn }}">{{ p.pbox.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Box Score</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Box Score</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ pboxCaption }}</span>
                 </div>
               </div>
@@ -460,7 +460,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
                 <button data-chev="1" onClick="{{ p.wp.toggle }}" style="{{ p.wp.btn }}">{{ p.wp.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Win Probability</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Win Probability</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ wpSubtitle }}</span>
                 </div>
                 <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9.5px;color:var(--second)">
@@ -529,7 +529,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:16px 18px">
               <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mFactors.toggle }}" style="{{ p.mFactors.btn }}">{{ p.mFactors.chevron }}</button><span style="font-size:13.5px;font-weight:600">Model Breakdown · {{ awayAbbr }} @ {{ homeAbbr }}</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mFactors.toggle }}" style="{{ p.mFactors.btn }}">{{ p.mFactors.chevron }}</button><span style="font-size:13.5px;font-weight:600">Model Breakdown · {{ awayAbbr }} @ {{ homeAbbr }}</span></div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ factorsCaption }}</span>
               </div>
               <sc-if value="{{ p.mFactors.open }}" hint-placeholder-val="{{ true }}">
@@ -561,7 +561,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
-                  <button data-chev="1" onClick="{{ p.mom.toggle }}" style="{{ p.mom.btn }}">{{ p.mom.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Momentum</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <button data-chev="1" onClick="{{ p.mom.toggle }}" style="{{ p.mom.btn }}">{{ p.mom.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Momentum</span></div>
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ momentumLabel }}</span>
                     <button onClick="{{ momAway }}" style="{{ momAwayBtn }}">{{ awayAbbr }}</button><button onClick="{{ momHome }}" style="{{ momHomeBtn }}">{{ homeAbbr }}</button>
@@ -607,7 +607,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px;flex-wrap:wrap">
-                  <button data-chev="1" onClick="{{ p.line.toggle }}" style="{{ p.line.btn }}">{{ p.line.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Line Movement</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">MARKET</span></div>
+                  <button data-chev="1" onClick="{{ p.line.toggle }}" style="{{ p.line.btn }}">{{ p.line.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Line Movement</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px"><span style="color:var(--lead)">{{ awayLineNow }}</span><span style="color:var(--faint)"> / </span><span style="color:var(--brand)">{{ lineNow }}</span></span>
                 </div>
               <sc-if value="{{ p.line.open }}" hint-placeholder-val="{{ true }}">
@@ -637,7 +637,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;gap:8px;flex-wrap:wrap">
-                  <button data-chev="1" onClick="{{ p.mtotal.toggle }}" style="{{ p.mtotal.btn }}">{{ p.mtotal.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Over/Under</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">MARKET</span></div>
+                  <button data-chev="1" onClick="{{ p.mtotal.toggle }}" style="{{ p.mtotal.btn }}">{{ p.mtotal.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Over/Under</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ mtotalOpen }}</span>
                 </div>
               <sc-if value="{{ p.mtotal.open }}" hint-placeholder-val="{{ true }}">
@@ -665,7 +665,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
-                  <button data-chev="1" onClick="{{ p.total.toggle }}" style="{{ p.total.btn }}">{{ p.total.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Team Stats</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <button data-chev="1" onClick="{{ p.total.toggle }}" style="{{ p.total.btn }}">{{ p.total.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Team Stats</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">summed lines</span>
                 </div>
               <sc-if value="{{ p.total.open }}" hint-placeholder-val="{{ true }}">
@@ -694,7 +694,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Sportsbook Lines</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Sportsbook Lines</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ marketCaption }}</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ marketHeader }}</span>
@@ -788,7 +788,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Props</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Props</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ propsCaption }}{{ propsNote }}</span>
                 </div>
               </div>
@@ -870,7 +870,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
                 <button data-chev="1" onClick="{{ p.playerTrend.toggle }}" style="{{ p.playerTrend.btn }}">{{ p.playerTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Matchup History</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Player Matchup History</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ trendPlayer }} · {{ trendMarket }} · {{ trendGames }}{{ trendPropNote }}</span>
                 </div>
                 <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--second)">
@@ -962,7 +962,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
                 <button data-chev="1" onClick="{{ p.teamTrend.toggle }}" style="{{ p.teamTrend.btn }}">{{ p.teamTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team Matchup History</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Team Matchup History</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ teamAbbr }} · {{ teamTrendNote }}</span>
                 </div>
                 <div style="display:flex;gap:6px">
@@ -1026,7 +1026,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 16px 12px;border-bottom:1px solid var(--grid)">
                 <button data-chev="1" onClick="{{ p.gameAlerts.toggle }}" style="{{ p.gameAlerts.btn }}">{{ p.gameAlerts.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game Alerts</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game Alerts</span></div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ gameAlertsLabel }} only</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ gameAlertsCount }}</span>
@@ -1051,7 +1051,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
             <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">{{ sport }} scoreboard · {{ gameCount }} games</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">{{ sport }} scoreboard · {{ gameCount }} games</span></div>
               <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">click a card to open the live dashboard</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
             </div>
             <sc-if value="{{ p.boardCards.open }}" hint-placeholder-val="{{ true }}">
@@ -1092,7 +1092,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Model Today</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Model Today</span></div>
                 <sc-if value="{{ p.mDrift.open }}" hint-placeholder-val="{{ true }}">
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 14px">how the model is doing on today's {{ sport }} slate, on the live beat</div>
                 <div style="display:flex;flex-direction:column;gap:9px">
@@ -1242,13 +1242,14 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;padding:14px 16px 12px;border-bottom:1px solid var(--grid)">
                   <div style="display:flex;flex-direction:column;gap:3px">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                      <span style="font-size:12.5px;font-weight:600">The population · {{ det.size }} subjects</span>
-                      <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FACTS + MODEL</span>
+                      <button data-chev="1" onClick="{{ p.cohPop.toggle }}" style="{{ p.cohPop.btn }}">{{ p.cohPop.chevron }}</button><span style="font-size:12.5px;font-weight:600">The population · {{ det.size }} subjects</span>
+                      
                     </div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ det.memberNote }}</span>
                   </div>
                   <span style="font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--key)">{{ det.memberUnit }}</span>
                 </div>
+                <sc-if value="{{ p.cohPop.open }}" hint-placeholder-val="{{ true }}">
                 <div style="display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1.5fr) minmax(0,.95fr) minmax(0,.95fr) minmax(0,.85fr) minmax(0,.75fr);column-gap:10px;padding:10px 16px;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">
                   <span>SUBJECT</span><span>DETAIL</span><span style="text-align:right">BASELINE</span><span style="text-align:right">KWOTIENT</span><span style="text-align:right">ACTUAL</span><span style="text-align:right">Δ</span>
                 </div>
@@ -1262,14 +1263,16 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <span style="{{ mb.deltaStyle }}">{{ mb.delta }}</span>
                   </div>
                 </sc-for>
+                </sc-if>
               </section>
 
               <sc-if value="{{ det.pending }}" hint-placeholder-val="{{ false }}">
                 <section style="border:1px dashed var(--axis);border-radius:12px;background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:13px">
                   <div style="display:flex;flex-direction:column;gap:3px">
-                    <span style="font-size:12.5px;font-weight:600">Before Settlement</span>
+                    <button data-chev="1" onClick="{{ p.cohBefore.toggle }}" style="{{ p.cohBefore.btn }}">{{ p.cohBefore.chevron }}</button><span style="font-size:12.5px;font-weight:600">Before Settlement</span>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">calibration, error distribution and skill are produced by the settlement — nothing is graded until {{ det.dateShort }}</span>
                   </div>
+                <sc-if value="{{ p.cohBefore.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:10px">
                     <sc-for list="{{ det.metrics }}" as="pm" hint-placeholder-count="3">
                       <div style="display:flex;flex-direction:column;gap:4px;padding:10px 12px;border:1px solid var(--grid);border-radius:8px;background:var(--nested)">
@@ -1278,6 +1281,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                     </sc-for>
                   </div>
+                </sc-if>
                 </section>
               </sc-if>
 
@@ -1286,13 +1290,14 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:14px">
                   <div style="display:flex;flex-direction:column;gap:3px">
                     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                      <span style="font-size:12.5px;font-weight:600">Calibration</span>
-                      <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
+                      <button data-chev="1" onClick="{{ p.cohCalib.toggle }}" style="{{ p.cohCalib.btn }}">{{ p.cohCalib.chevron }}</button><span style="font-size:12.5px;font-weight:600">Calibration</span>
+                      
                     </div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">aggregate deciles across the cohort — no per-subject rows leave the record</span>
                   </div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">mean error {{ det.calibError }}</span>
                 </div>
+                <sc-if value="{{ p.cohCalib.open }}" hint-placeholder-val="{{ true }}">
                 <div onMouseMove="{{ det.calibMove }}" onMouseLeave="{{ det.calibOff }}" style="position:relative;height:180px;cursor:crosshair">
                   <svg viewBox="0 0 600 180" preserveAspectRatio="none" style="width:100%;height:180px;display:block">
                     <line x1="0" y1="180" x2="600" y2="0" stroke="var(--grid)" stroke-width="1" stroke-dasharray="4 5" vector-effect="non-scaling-stroke"></line>
@@ -1310,15 +1315,17 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint);padding:7px 0 0">
                   <span>STATED 10%</span><span>30%</span><span>50%</span><span>70%</span><span>STATED 90%</span>
                 </div>
+                </sc-if>
               </section>
 
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <span style="font-size:12.5px;font-weight:600">Error Distribution</span>
-                    <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
+                    <button data-chev="1" onClick="{{ p.cohErr.toggle }}" style="{{ p.cohErr.btn }}">{{ p.cohErr.chevron }}</button><span style="font-size:12.5px;font-weight:600">Error Distribution</span>
+                    
                   </div>
                   <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 16px">count of subjects by absolute error, bucketed</div>
+                <sc-if value="{{ p.cohErr.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:flex;align-items:flex-end;gap:8px;height:120px">
                     <sc-for list="{{ det.hist }}" as="h" hint-placeholder-count="6">
                       <div onMouseEnter="{{ h.on }}" onMouseLeave="{{ h.off }}" style="position:relative;flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%;cursor:crosshair">
@@ -1334,14 +1341,16 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                     </sc-for>
                   </div>
+                </sc-if>
                 </section>
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <span style="font-size:12.5px;font-weight:600">Skill vs. Baseline</span>
-                    <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
+                    <button data-chev="1" onClick="{{ p.cohSkill.toggle }}" style="{{ p.cohSkill.btn }}">{{ p.cohSkill.chevron }}</button><span style="font-size:12.5px;font-weight:600">Skill vs. Baseline</span>
+                    
                   </div>
                   <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 16px">cumulative Brier skill from freeze to {{ det.dateShort }}</div>
+                <sc-if value="{{ p.cohSkill.open }}" hint-placeholder-val="{{ true }}">
                   <div onMouseMove="{{ det.skillMove }}" onMouseLeave="{{ det.skillOff }}" style="position:relative;height:120px;cursor:crosshair">
                     <svg viewBox="0 0 320 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
                       <line x1="0" y1="60" x2="320" y2="60" stroke="var(--grid)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
@@ -1360,6 +1369,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint);padding:7px 0 0">
                     <span>FREEZE</span><span>FILED</span><span>{{ det.skillEnd }}</span>
                   </div>
+                </sc-if>
                 </section>
               </div>
               </sc-if>
@@ -1368,7 +1378,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 14px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                   <span style="font-size:12.5px;font-weight:600">Model vs. Baseline</span>
-                  <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span>
+                  
                 </div>
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 15px">share of the cohort called correctly · {{ det.headline }}</div>
                 <div style="display:flex;flex-direction:column;gap:11px">
@@ -1396,7 +1406,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Buzz</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Buzz</span></div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">live reads and the narrative for every game on the {{ sport }} slate, then signings, trades, rumors and roster news from the record{{ buzzLiveNote }}</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
@@ -1521,7 +1531,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface)">
                   <div style="display:flex;align-items:center;gap:9px;padding:10px 14px;border-bottom:1px solid var(--grid)">
-                    <span style="font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;color:var(--reversed);flex:none">RESULTS</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span><span style="flex:1;min-width:0"></span>
+                    <span style="font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;color:var(--reversed);flex:none">RESULTS</span><span style="flex:1;min-width:0"></span>
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ dirCount }}</span>
                     <sc-if value="{{ isClubs }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--kw);font-size:9px;color:var(--second);flex:none">· {{ standingsNote }}</span></sc-if>
                   </div>
@@ -1678,7 +1688,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfCard.toggle }}" style="{{ p.pfCard.btn }}">{{ p.pfCard.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:15px">
                     <div style="display:flex;flex-direction:column;gap:3px">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Scorecard</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Scorecard</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">ranked inside cohort {{ profile.card.cohort }}</span>
                     </div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">OVERALL {{ profile.card.overall }}</span>
@@ -1775,7 +1785,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfStats.toggle }}" style="{{ p.pfStats.btn }}">{{ p.pfStats.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Season Stats</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div></div></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfStats.toggle }}" style="{{ p.pfStats.btn }}">{{ p.pfStats.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Season Stats</span></div></div></div>
                   <sc-if value="{{ p.pfStats.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px;margin-top:13px">
                     <sc-for list="{{ profile.stats }}" as="s" hint-placeholder-count="6">
@@ -1843,7 +1853,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfTrend.toggle }}" style="{{ p.pfTrend.btn }}">{{ p.pfTrend.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game Log</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Game Log</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.barsNote }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfTrend.open }}" hint-placeholder-val="{{ true }}">
@@ -1904,7 +1914,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
                 <sc-if value="{{ profile.isClub }}" hint-placeholder-val="{{ false }}">
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head-to-Head</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">FEED</span></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head-to-Head</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.h2h.head }}</span></div></div>
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
                   <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -1945,7 +1955,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfPred.toggle }}" style="{{ p.pfPred.btn }}">{{ p.pfPred.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Outlook</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Outlook</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.predHead }}</span>
                     </div></div></div>
                   <sc-if value="{{ p.pfPred.open }}" hint-placeholder-val="{{ true }}">
@@ -1975,7 +1985,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfPerf.toggle }}" style="{{ p.pfPerf.btn }}">{{ p.pfPerf.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Model Factors</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Model Factors</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">contribution to the model view, in points</span>
                     </div></div></div>
                   <sc-if value="{{ p.pfPerf.open }}" hint-placeholder-val="{{ true }}">
@@ -1997,7 +2007,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);overflow:hidden">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfNews.toggle }}" style="{{ p.pfNews.btn }}">{{ p.pfNews.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:14px 16px 12px;border-bottom:1px solid var(--grid);display:flex;flex-direction:column;gap:3px">
-                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">News</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--muted);border:1px solid var(--grid)">STORY · SS</span></div>
+                    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">News</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">filtered to {{ profile.name }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfNews.open }}" hint-placeholder-val="{{ true }}">
@@ -2022,7 +2032,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Alerts</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Alerts</span></div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">pregame, in-game and settled — edge threshold {{ threshold }} pts{{ buzzLiveNote }}</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
@@ -4229,7 +4239,8 @@ class Component extends DCLogic {
       toggle: () => this.setState(s => ({ shut: Object.assign({}, s.shut, { [k]: !(s.shut || {})[k] }) })),
       btn: 'background:transparent;border:none;cursor:pointer;padding:0 2px;font-size:11px;line-height:1;color:var(--brand);flex:none'
     });
-    const TAB_PANELS = { board: ['boardCards'], model: ['mDrift', 'mRef'], alerts: ['alertsList'], cohorts: ['cohortBody'] };
+    const TAB_PANELS = { board: ['boardCards'], model: ['mDrift', 'mRef'], alerts: ['alertsList'],
+                        cohorts: ['cohortBody', 'cohPop', 'cohBefore', 'cohCalib', 'cohErr', 'cohSkill'] };
     const panels = PANELS.concat(PROFILE_PANELS).concat(DIR_PANELS).concat(BUZZ_PANELS).concat(TAB_PANELS.board, TAB_PANELS.model, TAB_PANELS.alerts, TAB_PANELS.cohorts).reduce((a, k) => (a[k] = panel(k), a), {});
     // one expand / collapse tool at the top of every tab, over the panels that tab shows
     const tabKeys = st.tab === 'live' ? PANELS : st.tab === 'profiles' ? (st.profileId ? PROFILE_PANELS : DIR_PANELS) : st.tab === 'buzz' ? BUZZ_PANELS : (TAB_PANELS[st.tab] || []);
