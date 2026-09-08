@@ -2473,7 +2473,41 @@ class Component extends DCLogic {
     if (!S || !st.liveSlate || !st.liveSlate.length) return;
     const g = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
     if (g.state !== 'in_progress' && g.state !== 'final') return;
-    S.boxscore(st.sport, g.gameId).then(b => this.setState(x => ({ box: Object.assign({}, x.box, { [g.id]: b }) })));
+    S.boxscore(st.sport, g.gameId).then(b => this.setState(x => ({ box: Object.assign({}, x.box, { [g.id]: this.floorOf(st.sport, (x.box || {})[g.id], b) }) })));
+  }
+  // seconds into the game, from the period and the clock: four twelves, then fives
+  gameElapsed(sport, b) {
+    if (!b || b.period == null || sport !== 'NBA') return null;
+    const per = Number(b.period) || 0; if (!per) return null;
+    const len = p => p <= 4 ? 720 : 300;
+    let before = 0; for (let p = 1; p < per; p++) before += len(p);
+    const c = String(b.clock == null ? '' : b.clock).trim();
+    let rem = null; const mm = c.match(/^(\d+):(\d+(?:\.\d+)?)$/);
+    if (mm) rem = Number(mm[1]) * 60 + Number(mm[2]); else if (/^\d+(?:\.\d+)?$/.test(c)) rem = Number(c); else if (c === '' || /^end|final/i.test(c)) rem = 0;
+    if (rem == null) return null;
+    return before + Math.max(0, len(per) - rem);
+  }
+  // who is on the floor: the feed's flag when it sends one, otherwise whose seconds moved with
+  // the game clock since the last read; a stopped clock keeps the last answer
+  floorOf(sport, prev, b) {
+    if (sport !== 'NBA' || !b || !b.available) return b;
+    const elapsed = this.gameElapsed(sport, b);
+    const pe = prev && prev.available ? prev.elapsed : null;
+    const dClock = elapsed != null && pe != null ? elapsed - pe : null;
+    const wall = prev && prev.at && b.at ? Date.parse(b.at) - Date.parse(prev.at) : null;
+    const side = (rows, prevRows) => (rows || []).map(r => {
+      const sec = r.sec != null ? Number(r.sec) : r.min != null ? Math.round(Number(r.min) * 60) : null;
+      let on = r.on != null ? !!r.on : null;
+      const pr = on == null && prevRows ? prevRows.find(q => String(q.n || '').toLowerCase() === String(r.n || '').toLowerCase()) : null;
+      if (on == null && pr && sec != null && pr.sec != null) {
+        const moved = sec - pr.sec;
+        if (dClock != null && dClock > 0) on = moved >= dClock * 0.5;
+        else if (dClock === 0) on = pr.on == null ? null : pr.on;
+        else on = moved > 0 ? true : (wall != null && wall > 45000 ? false : (pr.on == null ? null : pr.on));
+      }
+      return Object.assign({}, r, { sec, on });
+    });
+    return Object.assign({}, b, { elapsed, home: side(b.home, prev && prev.home), away: side(b.away, prev && prev.away) });
   }
   // the season's table for the league, from the edge, on its own quarter-hour
   loadStandings(season) {
@@ -3140,11 +3174,13 @@ class Component extends DCLogic {
     const n0 = v => v == null ? 0 : Number(v) || 0;
     const f1 = v => v == null || !isFinite(Number(v)) ? null : Number(v).toFixed(1);
     const nm = x => x.n, ps = x => x.pos || null;
+    // on the floor or on the bench, read from the feed's flag or from whose clock is running
+    const fl = x => x.on === true ? 'ON FLOOR' : x.on === false ? 'BENCH' : null;
     // the categories a box score is read in: the NFL's by what a man did, the NBA's one table
     const PBOX_CATS = sport === 'NBA' ? [
       { key: 'all', label: 'PLAYERS', has: x => true, main: 'pts', minw: 760,
-        cols: [['name', 'PLAYER', 'left', 1.8], ['pos', 'POS', 'left', .5], ['min', 'MIN', 'right', .5], ['pts', 'PTS', 'right', .5], ['fg', 'FG', 'right', .7], ['fg3', '3PT', 'right', .7], ['ft', 'FT', 'right', .7], ['oreb', 'OREB', 'right', .55], ['dreb', 'DREB', 'right', .55], ['reb', 'REB', 'right', .5], ['ast', 'AST', 'right', .5], ['stl', 'STL', 'right', .5], ['blk', 'BLK', 'right', .5], ['tov', 'TO', 'right', .5], ['pf', 'PF', 'right', .5], ['pm', '+/-', 'right', .55]],
-        get: { name: nm, pos: ps, min: x => x.min != null ? Math.round(x.min) : null, pts: x => n0(x.pts), fg: x => n0(x.fgm) + '-' + n0(x.fga), fg3: x => n0(x.fg3m) + '-' + n0(x.fg3a), ft: x => n0(x.ftm) + '-' + n0(x.fta), oreb: x => n0(x.oreb), dreb: x => n0(x.dreb), reb: x => n0(x.reb), ast: x => n0(x.ast), stl: x => n0(x.stl), blk: x => n0(x.blk), tov: x => n0(x.tov), pf: x => n0(x.pf), pm: x => x.plus_minus != null ? Number(x.plus_minus) : null } }
+        cols: [['name', 'PLAYER', 'left', 1.8], ['pos', 'POS', 'left', .5], ['floor', 'FLOOR', 'left', .8], ['min', 'MIN', 'right', .5], ['pts', 'PTS', 'right', .5], ['fg', 'FG', 'right', .7], ['fg3', '3PT', 'right', .7], ['ft', 'FT', 'right', .7], ['oreb', 'OREB', 'right', .55], ['dreb', 'DREB', 'right', .55], ['reb', 'REB', 'right', .5], ['ast', 'AST', 'right', .5], ['stl', 'STL', 'right', .5], ['blk', 'BLK', 'right', .5], ['tov', 'TO', 'right', .5], ['pf', 'PF', 'right', .5], ['pm', '+/-', 'right', .55]],
+        get: { name: nm, pos: ps, floor: fl, min: x => x.min != null ? Math.round(x.min) : null, pts: x => n0(x.pts), fg: x => n0(x.fgm) + '-' + n0(x.fga), fg3: x => n0(x.fg3m) + '-' + n0(x.fg3a), ft: x => n0(x.ftm) + '-' + n0(x.fta), oreb: x => n0(x.oreb), dreb: x => n0(x.dreb), reb: x => n0(x.reb), ast: x => n0(x.ast), stl: x => n0(x.stl), blk: x => n0(x.blk), tov: x => n0(x.tov), pf: x => n0(x.pf), pm: x => x.pm != null ? Number(x.pm) : x.plus_minus != null ? Number(x.plus_minus) : null } }
     ] : [
       { key: 'pass', label: 'PASSING', has: x => n0(x.pass_att) > 0, main: 'yds', minw: 520,
         cols: [['name', 'PLAYER', 'left', 1.8], ['cmp', 'C/ATT', 'right', .8], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['int', 'INT', 'right', .5], ['sk', 'SACKED', 'right', .7], ['rtg', 'RTG', 'right', .6]],
@@ -3170,18 +3206,19 @@ class Component extends DCLogic {
     ];
     const pboxAllRows = boxOn ? [].concat(box.away.map(x => Object.assign({ team: g.awayAbbr, side: 'away' }, x)), box.home.map(x => Object.assign({ team: g.homeAbbr, side: 'home' }, x))) : [];
     // the search box reads the whole box: name, club and position, and its picks are column filters on those
-    const pboxGetT = { name: nm, team: x => x.team, pos: ps };
+    const pboxGetT = sport === 'NBA' ? { name: nm, team: x => x.team, pos: ps, floor: fl } : { name: nm, team: x => x.team, pos: ps };
     TABLES.pbox = { rows: pboxAllRows, get: pboxGetT };
     const pboxLimit = tstate('pbox').limit || PBOX_PAGE;
     const pboxShownAll = tapply('pbox', pboxAllRows, pboxGetT, rowText(pboxGetT));
-    const pboxSearchCols = [['name', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS']];
-    const cellOf = (v, [k, , align, flex]) => ({ v: v == null || v === '' ? '—' : k === 'pm' ? (v > 0 ? '+' : '') + v : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : 'color:var(--second)') });
+    const pboxSearchCols = sport === 'NBA' ? [['name', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS'], ['floor', 'FLOOR']] : [['name', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS']];
+    const pboxOnFloor = sport === 'NBA' ? pboxAllRows.filter(x => x.on === true).length : 0;
+    const cellOf = (v, [k, , align, flex]) => ({ v: v == null || v === '' ? '—' : k === 'pm' ? (v > 0 ? '+' : '') + v : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : k === 'floor' && v === 'ON FLOOR' ? 'color:var(--brand);font-weight:700' : 'color:var(--second)') });
     PBOX_CATS.forEach(cat => { TABLES['pbox:' + cat.key] = { rows: pboxAllRows.filter(cat.has), get: cat.get }; });
     const pboxSides = [['away', g.awayAbbr, g.away, g.as], ['home', g.homeAbbr, g.home, g.hs]].map(([side, abbr, name, score], i) => {
       const mine = pboxShownAll.filter(x => x.side === side);
       const groups = PBOX_CATS.map(cat => {
         const tk = 'pbox:' + cat.key;
-        const rows = tapply(tk, mine.filter(cat.has).sort((a, b) => (Number(cat.get[cat.main](b)) || 0) - (Number(cat.get[cat.main](a)) || 0)), cat.get, rowText(cat.get));
+        const rows = tapply(tk, mine.filter(cat.has).sort((a, b) => ((b.on === true) - (a.on === true)) || ((Number(cat.get[cat.main](b)) || 0) - (Number(cat.get[cat.main](a)) || 0))), cat.get, rowText(cat.get));
         const cols = cat.cols.map(([k, label, align, flex]) => tcol(tk, k, label, null, align, flex));
         return { key: cat.key, label: cat.label, wrapStyle: 'min-width:' + cat.minw + 'px', total: rows.length,
           cols: i === 0 ? cols : cols.map(c => Object.assign({}, c, { open: false })),
@@ -3191,7 +3228,7 @@ class Component extends DCLogic {
         groups, empty: !boxOn ? (g.state === 'scheduled' || !g.live ? 'the box score fills once the game is in progress' : 'no box score yet') : !mine.length ? 'no ' + abbr + ' line matches' : '' };
     });
     const pboxPerSide = Math.max.apply(null, [0].concat(pboxSides.map(sd => Math.max.apply(null, [0].concat(sd.groups.map(gp => gp.total))))));
-    const pboxCaption = !g.live ? 'players\' lines from the feed once a game is on' : g.state === 'in_progress' ? (g.status || 'in progress') + ' · ' + pboxAllRows.length + ' players' : g.state === 'final' ? 'final · ' + pboxAllRows.length + ' players' : 'kickoff ' + (g.status || '') + ' · the box score fills once the game is in progress';
+    const pboxCaption = !g.live ? 'players\' lines from the feed once a game is on' : g.state === 'in_progress' ? (g.status || 'in progress') + (pboxOnFloor ? ' · ' + pboxOnFloor + ' on the floor' : '') + ' · ' + pboxAllRows.length + ' players' : g.state === 'final' ? 'final · ' + pboxAllRows.length + ' players' : 'kickoff ' + (g.status || '') + ' · the box score fills once the game is in progress';
     const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons'
       : !tlog ? 'no game log yet' : tlog.state === 'ready' ? logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '')
       : tlog.state === 'loading' ? 'loading…' : 'no game log yet';
@@ -4428,7 +4465,7 @@ class Component extends DCLogic {
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       pboxSides, pboxCaption,
-      pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: 'search the box score · player, team, position', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols) }),
+      pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: sport === 'NBA' ? 'search the box score · player, team, position, on the floor' : 'search the box score · player, team, position', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols) }),
       pboxHasMore: pboxPerSide > pboxLimit, pboxMoreLabel: 'Show ' + Math.min(PBOX_PAGE, pboxPerSide - pboxLimit) + ' more', pboxAllLabel: 'Show all ' + pboxPerSide,
       pboxShowMore: () => tset('pbox', { limit: pboxLimit + PBOX_PAGE }), pboxShowAll: () => tset('pbox', { limit: pboxPerSide }), pboxShowLess: () => tset('pbox', { limit: PBOX_PAGE }), pboxCanCollapse: pboxLimit > PBOX_PAGE,
       pboxPageNote: boxOn ? 'up to ' + Math.min(pboxLimit, pboxPerSide) + ' a category · ' + pboxAllRows.length + ' players' : '',
