@@ -508,11 +508,21 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
               </div>
               <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" onKeyDown="{{ bookSearch.onKey }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" onFocus="{{ bookSearch.focus }}" onDoubleClick="{{ bookSearch.dbl }}" onKeyDown="{{ bookSearch.onKey }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ bookSearch.count }}</span>
                 <sc-if value="{{ bookSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ bookSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ bookSearch.open }}" hint-placeholder-val="{{ false }}">
                   <div data-colmenu="1" style="{{ bookSearch.menuStyle }}">
+                    <sc-for list="{{ bookSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
                     <sc-for list="{{ bookSearch.values }}" as="v" hint-placeholder-count="6">
                       <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                     </sc-for>
@@ -591,11 +601,21 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
               </div>
               <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" onKeyDown="{{ propSearch.onKey }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" onFocus="{{ propSearch.focus }}" onDoubleClick="{{ propSearch.dbl }}" onKeyDown="{{ propSearch.onKey }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ propSearch.count }}</span>
                 <sc-if value="{{ propSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ propSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ propSearch.open }}" hint-placeholder-val="{{ false }}">
                   <div data-colmenu="1" style="{{ propSearch.menuStyle }}">
+                    <sc-for list="{{ propSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
                     <sc-for list="{{ propSearch.values }}" as="v" hint-placeholder-count="6">
                       <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                     </sc-for>
@@ -663,11 +683,21 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 
               <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:12px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" onKeyDown="{{ trendSearch.onKey }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" onFocus="{{ trendSearch.focus }}" onDoubleClick="{{ trendSearch.dbl }}" onKeyDown="{{ trendSearch.onKey }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trendSearch.count }}</span>
                 <sc-if value="{{ trendSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trendSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ trendSearch.open }}" hint-placeholder-val="{{ false }}">
                   <div data-colmenu="1" style="{{ trendSearch.menuStyle }}">
+                    <sc-for list="{{ trendSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
                     <sc-for list="{{ trendSearch.values }}" as="v" hint-placeholder-count="6">
                       <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                     </sc-for>
@@ -739,11 +769,21 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
               <sc-if value="{{ p.teamTrend.open }}" hint-placeholder-val="{{ true }}">
               <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                 <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                <input value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onFocus="{{ teamSearch.focus }}" onDoubleClick="{{ teamSearch.dbl }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ teamSearch.count }}</span>
                 <sc-if value="{{ teamSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ teamSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                 <sc-if value="{{ teamSearch.open }}" hint-placeholder-val="{{ false }}">
                   <div data-colmenu="1" style="{{ teamSearch.menuStyle }}">
+                    <sc-for list="{{ teamSearch.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
                     <sc-for list="{{ teamSearch.values }}" as="v" hint-placeholder-count="6">
                       <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                     </sc-for>
@@ -1533,11 +1573,21 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                   <sc-if value="{{ p.pfTrend.open }}" hint-placeholder-val="{{ true }}">
                   <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                    <input value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" onKeyDown="{{ profSearch.onKey }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                    <input value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" onFocus="{{ profSearch.focus }}" onDoubleClick="{{ profSearch.dbl }}" onKeyDown="{{ profSearch.onKey }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ profSearch.count }}</span>
                     <sc-if value="{{ profSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ profSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                     <sc-if value="{{ profSearch.open }}" hint-placeholder-val="{{ false }}">
                       <div data-colmenu="1" style="{{ profSearch.menuStyle }}">
+                        <sc-for list="{{ profSearch.groups }}" as="gp" hint-placeholder-count="3">
+                          <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                          <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                              <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                                <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                              </sc-for>
+                            </div>
+                          </sc-if>
+                        </sc-for>
                         <sc-for list="{{ profSearch.values }}" as="v" hint-placeholder-count="6">
                           <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                         </sc-for>
@@ -1581,11 +1631,21 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
                   <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
                     <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                    <input value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" onKeyDown="{{ h2hSearch.onKey }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+                    <input value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" onFocus="{{ h2hSearch.focus }}" onDoubleClick="{{ h2hSearch.dbl }}" onKeyDown="{{ h2hSearch.onKey }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ h2hSearch.count }}</span>
                     <sc-if value="{{ h2hSearch.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ h2hSearch.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
                     <sc-if value="{{ h2hSearch.open }}" hint-placeholder-val="{{ false }}">
                       <div data-colmenu="1" style="{{ h2hSearch.menuStyle }}">
+                        <sc-for list="{{ h2hSearch.groups }}" as="gp" hint-placeholder-count="3">
+                          <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                          <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                              <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                                <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                              </sc-for>
+                            </div>
+                          </sc-if>
+                        </sc-for>
                         <sc-for list="{{ h2hSearch.values }}" as="v" hint-placeholder-count="6">
                           <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                         </sc-for>
@@ -1991,7 +2051,7 @@ class Component extends DCLogic {
       this.setState(x => {
         const tables = Object.assign({}, x.tables);
         openTables.forEach(k => { tables[k] = Object.assign({}, tables[k], { open: null }); });
-        return { openCol: null, alertKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, tables };
+        return { openCol: null, alertKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
       });
     };
     document.addEventListener('mousedown', this._outside, true);
@@ -2423,8 +2483,18 @@ class Component extends DCLogic {
       const m = list => list.filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0));
       const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState({ searchOpen: null }); } }));
       const scope = H.label.replace(/^VS /, 'vs ').replace('ALL TEAMS', 'all teams');
-      const picks = !qv ? [] : (opts.picks || []).filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv))
-        .map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { if (x.pick) x.pick(); if (x.pick) setQ(''); else setQ(x.label); this.setState({ searchOpen: null }); } }));
+      const groupsIn = opts.groups || [];
+      const flat = (opts.picks || []).concat(groupsIn.reduce((a, gp) => a.concat(gp.items.map(x => Object.assign({}, x, { count: x.count || gp.label }))), []));
+      const close = { searchOpen: null, searchBrowse: false, searchGroup: null };
+      const take = x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { if (x.pick) { x.pick(); setQ(''); } else setQ(x.label); this.setState(close); } });
+      const picks = !qv ? [] : flat.filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv)).map(take);
+      // a double click into the box: the ways to search, one group open at a time
+      const browse = st.searchOpen === key && !!st.searchBrowse && !qv;
+      const groups = !browse ? [] : groupsIn.filter(gp => gp.items.length).map(gp => { const open = st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
+        value: gp.value || (gp.items.length + (gp.items.length === 1 ? ' option' : ' options')), items: open ? gp.items.map(take) : [],
+        toggle: () => this.setState(x => ({ searchGroup: x.searchGroup === gp.label ? null : gp.label })),
+        style: 'display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border:none;border-top:1px solid var(--grid);background:transparent;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;color:var(--lead)',
+        valueStyle: 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;color:var(--reversed)' }; });
       // the words in a widget's own rows: what the box offers as you type, when the widget names nothing itself
       const wordsOf = (rows, of, countOf) => { const by = {}; rows.forEach(r => { const w = of(r); if (!w) return; if (!by[w]) by[w] = { label: w, n: 0 }; by[w].n++; }); return Object.values(by).sort((a, b) => a.label.localeCompare(b.label)).map(x => ({ label: x.label, count: countOf ? countOf(x.n) : x.n + (x.n === 1 ? ' row' : ' rows') })); };
       // a sub-filter in the column-header format: the title with the value, a dot when it is
@@ -2454,15 +2524,20 @@ class Component extends DCLogic {
       ];
       const tsN = table ? Object.keys(tstate(table).f).filter(k => tstate(table).f[k]).length : 0;
       return {
-        q, on: e => { setQ(e.target.value); this.setState({ searchOpen: key }); },
+        // the box reads what stands picked when it is at rest, and empties to type into on a click
+        q: st.searchOpen === key ? q : (q || opts.display || ''),
+        on: e => { setQ(e.target.value); this.setState({ searchOpen: key, searchBrowse: false }); },
+        focus: () => { if (st.searchOpen !== key) this.setState({ searchOpen: key, searchBrowse: false, searchGroup: null }); },
+        dbl: () => this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }),
+        groups,
         onKey: e => {
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length) picks[0].pick(); else this.setState({ searchOpen: null }); }
-          else if (e.key === 'Escape') { e.preventDefault(); this.setState({ searchOpen: null }); }
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length) picks[0].pick(); else this.setState(close); }
+          else if (e.key === 'Escape') { e.preventDefault(); this.setState(close); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
         count: opts.count || '', scope, subs, active: !!qv || histActive || tsN > 0,
         // the picks beneath the box, as it is typed: Enter takes the first, a pick clears the box
-        open: !!qv && st.searchOpen === key && picks.length > 0, values: picks,
+        open: st.searchOpen === key && (picks.length > 0 || groups.length > 0), values: picks,
         menuStyle: 'position:absolute;top:36px;left:20px;z-index:41;width:280px;max-width:calc(100% - 20px);max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
         clear: () => { setQ(''); if (table) tset(table, { f: {}, q: '', mq: '', sort: null, open: null }); H.reset(); },
       };
@@ -2477,10 +2552,13 @@ class Component extends DCLogic {
     const sideOf = (o, r) => { const c = o.consensus || {}; return { spread: c.spreadHome == null ? null : (r.home ? c.spreadHome : -c.spreadHome), total: c.total != null ? c.total : null, ml: r.home ? c.mlHome : c.mlAway, n: c.n || 0, closing: !!o.closing }; };
     const oddsNeedFor = (rows, rec) => rows.filter(r => sport === 'NBA' ? !!r.date : r.week != null).map(r => ({ key: oddsKeyFor(r, rec), at: oddsAtFor(r, rec) }));
     this._oddsNeed = [];
-    const logPicks = rows => { rows = rows || []; const n = f => rows.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
-      return Array.from(new Set(rows.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: 'OPPONENT · ' + cnt(n(r => r.opp === o)) }))
-        .concat([['W', r => r.result === 'W'], ['L', r => r.result === 'L'], ['home', r => r.home], ['away', r => !r.home], ['playoff', r => r.postseason]].filter(([, f]) => n(f)).map(([w, f]) => ({ label: w, count: 'RESULT · ' + cnt(n(f)) })))
-        .concat(rows.map(r => ({ label: gameLabelOf(r), count: 'GAME · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') }))); };
+    const logGroups = rows => { rows = rows || []; const n = f => rows.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
+      return [
+        { label: 'OPPONENT', items: Array.from(new Set(rows.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: 'OPPONENT · ' + cnt(n(r => r.opp === o)) })) },
+        { label: 'RESULT', items: [['W', r => r.result === 'W'], ['L', r => r.result === 'L'], ['home', r => r.home], ['away', r => !r.home], ['playoff', r => r.postseason]].filter(([, f]) => n(f)).map(([w, f]) => ({ label: w, count: 'RESULT · ' + cnt(n(f)) })) },
+        { label: 'SEASON', items: Array.from(new Set(rows.map(r => r.season).filter(Boolean))).sort().map(y => ({ label: String(y), count: 'SEASON · ' + cnt(n(r => r.season === y)) })) },
+        { label: 'GAME', items: rows.map(r => ({ label: gameLabelOf(r), count: 'GAME · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') })) }
+      ]; };
     const sq = k => String((st.searchQ || {})[k] || '').trim().toLowerCase();
     const logText = r => (r.opp || '') + ' ' + gameLabelOf(r) + ' ' + (r.result ? 'result ' + r.result : '') + ' ' + (r.home ? 'home vs' : 'away at') + (r.pf != null ? ' ' + r.pf + '-' + r.pa : '') + (r.postseason ? ' playoff' : '');
     const wordsMatch = (text, q) => { text = String(text || '').toLowerCase(); const toks = text.split(/\s+/);
@@ -2515,7 +2593,7 @@ class Component extends DCLogic {
     const liveRow = gameOn && liveV != null && !tRowsAll.some(x => x.date === todayKey) ? { date: todayKey, when: tonightWhen, opp: oppAbbr0, home: !!pp.home, v: liveV, result: g.state === 'final' ? ((pp.home ? g.hs > g.as : g.as > g.hs) ? 'W' : 'L') : '', season: histCur, live: true } : null;
     const scoped = histScope(tRowsAll, pp.team).concat(liveRow ? [liveRow] : []);
     const trendFell = false;
-    const tRows = scoped;
+    const tRows = st.trendSeason ? scoped.filter(x => x.season === st.trendSeason) : scoped;
     const oppAbbr = oppAbbr0;
     const vsRows = tRows, useVs = !!oppAbbr;
     const logs = tRows.map(r => r.v);
@@ -2625,7 +2703,7 @@ class Component extends DCLogic {
     // the words of a row: every column's value, so the box finds anything the table shows
     const rowText = getters => r => Object.keys(getters).map(k => { try { const v = getters[k](r); return v == null ? '' : String(v); } catch (e) { return ''; } }).join(' ');
     // the picks the box offers: each column's distinct values, with the column and a count
-    const colPicks = (rows, getters, cols) => cols.reduce((acc, [k, label]) => acc.concat(tdistinct(rows, getters[k]).filter(v => v.label != null && v.label !== '' && v.label !== '—').map(v => ({ label: String(v.label), count: label + ' · ' + v.count + (v.count === 1 ? ' row' : ' rows') }))), []);
+    const colGroups = (rows, getters, cols) => cols.map(([k, label]) => ({ label, items: tdistinct(rows, getters[k]).filter(v => v.label != null && v.label !== '' && v.label !== '—').map(v => ({ label: String(v.label), count: label + ' · ' + v.count + (v.count === 1 ? ' row' : ' rows') })) }));
     const tapply = (table, rows, getters, text) => {
       const ts = tstate(table);
       const mv = (text, f) => f == null || f === '' ? true : (String(f).indexOf('~') === 0 ? String(text == null ? '' : text).toLowerCase().indexOf(String(f).slice(1).toLowerCase()) >= 0 : String(text) === String(f));
@@ -3808,7 +3886,7 @@ class Component extends DCLogic {
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       bookLiveOn, bookHistOn, bookHistHead, bookHistCols, bookHistRows, bookHistNote, bookHist: histMenuFor('books', g.homeAbbr),
       bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search anything on the table · type to filter, pick from the list',
-        picks: colPicks(bookSides, bookGet, [['book', 'BOOK'], ['team', 'TEAM'], ['spread', 'SPREAD'], ['ml', 'MONEYLINE'], ['total', 'TOTAL']]), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
+        groups: colGroups(bookSides, bookGet, [['book', 'BOOK'], ['team', 'TEAM'], ['spread', 'SPREAD'], ['ml', 'MONEYLINE'], ['total', 'TOTAL']]), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
       bookRows: bookShown.map(r => {
         const b = r.b;
         const cons = r.side === 'home' ? g.line : (g.line != null ? -g.line : null);
@@ -3915,7 +3993,7 @@ class Component extends DCLogic {
       momentumWindow: sport === 'NBA' ? '-6 min' : '-12 plays',
       teamHist: histMenuFor('team', teamAbbr), totalHist: histMenuFor('total', g.homeAbbr),
       teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search games · club, week, W or L, home or away', count: tRowsC.length + ' games',
-        picks: logPicks(tRowsCAll) }); })(),
+        groups: logGroups(tRowsCAll) }); })(),
 
 
 paceRows: (() => {
@@ -3953,8 +4031,8 @@ paceRows: (() => {
       // the season the logs are read for: the one in play by default, or any the feed holds —
       // the same season everywhere, one menu per placement
       profHist: histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), h2hHist: histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null),
-      profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', picks: logPicks(profHistRows) }),
-      h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', picks: logPicks(profHistRows) }),
+      profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', groups: logGroups(profHistRows) }),
+      h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', groups: logGroups(profHistRows) }),
       // the player to read: a menu over every rated player on the two clubs, the box a filter
       trendPlayerCol: (() => {
         const on = !!st.trendMenuOpen;
@@ -4006,10 +4084,15 @@ paceRows: (() => {
       }),
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
-      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (liveRow ? ', tonight live' : '') + (trendSpan ? ' · ' + trendSpan : '') + (trendLoading ? ' · reading earlier seasons…' : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
+      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (liveRow && !(st.trendSeason && st.trendSeason !== histCur) ? ', tonight live' : '') + (st.trendSeason ? ' · ' + histSeasonLabel(st.trendSeason) + ' only' : trendSpan ? ' · ' + trendSpan : '') + (trendLoading ? ' · reading earlier seasons…' : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
       trendHist: histMenuFor('trend', pp.team, tRowsAll),
-      trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players',
-        picks: trendMatches.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : ''), pick: () => this.pickTrend(p) })) }); })(),
+      trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players', display: pp.name || '',
+        groups: [
+          { label: 'NAME', items: trendPool.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : ''), pick: () => this.pickTrend(p) })) },
+          { label: 'TEAM', items: Array.from(new Set(trendPool.map(p => p.team))).sort().map(t => ({ label: t, count: 'TEAM · ' + trendPool.filter(p => p.team === t).length + ' players' })) },
+          { label: 'POSITION', items: Array.from(new Set(trendPool.map(p => p.pos).filter(Boolean))).sort().map(ps => ({ label: ps, count: 'POSITION · ' + trendPool.filter(p => p.pos === ps).length + ' players' })) },
+          { label: 'SEASON', value: st.trendSeason ? histSeasonLabel(st.trendSeason) : 'every season', items: [{ label: 'every season', count: 'SEASON', pick: () => this.setState({ trendSeason: null }) }].concat(trendSeasons.map(y => ({ label: histSeasonLabel(y), count: 'SEASON · ' + scoped.filter(x => x.season === y).length + ' games', pick: () => this.setState({ trendSeason: y }) }))) }
+        ] }); })(),
       hasPropLine: ppLine != null && logs.length > 0,
       trendPropMark: 'position:absolute;left:0;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) : 0).toFixed(1) + 'px;height:0;border-top:1px dotted var(--good);opacity:.9',
       trendPropLabel: 'position:absolute;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) + 2 : 0).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--good)',
@@ -4019,7 +4102,7 @@ paceRows: (() => {
       propsNote: (() => { if (!g.live) return 'props read on a real slate only'; if (!prS) return 'loading the props'; if (!prS.ok) return prS.refused ? 'the edge refused this origin' : 'the feed did not answer'; if (!prS.available) return prS.reason || 'no props posted for this game yet'; return ''; })(),
       // the lines a reader shops first: the yardage and volume markets, then the touchdown scorers
       propCols, propSearch: searchFor('props', histMenuFor('props', g.homeAbbr), { table: 'props', placeholder: 'search anything on the table · player, team, position, market, line',
-        picks: colPicks(propOrdered, propGet, [['who', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS'], ['market', 'MARKET'], ['line', 'LINE'], ['books', 'BOOKS'], ['hit', 'VS OPP']]), count: propShown.length + ' of ' + playerProps.length }),
+        groups: colGroups(propOrdered, propGet, [['who', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS'], ['market', 'MARKET'], ['line', 'LINE'], ['books', 'BOOKS'], ['hit', 'VS OPP']]), count: propShown.length + ' of ' + playerProps.length }),
       propHist: histMenuFor('props', g.homeAbbr),
       propTable: propShown.slice(0, propLimit).map(r => { const v = readVsLine(r); const c = r.consensus || {}; return {
         who: r.who, pos: propPosOf(r) || '—', team: propTeamOf(r) || '—', teamStyle: 'font-family:var(--kw);font-size:10.5px;flex:.5;color:' + (propTeamOf(r) === g.homeAbbr ? 'var(--brand)' : propTeamOf(r) ? 'var(--lead)' : 'var(--muted)'),
