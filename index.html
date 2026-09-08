@@ -757,7 +757,7 @@ section:has([data-colmenu] [data-colmenu]),div:has(> [data-colmenu] [data-colmen
                 <div style="position:absolute;left:0;bottom:-2px;font-family:var(--kw);font-size:9px;color:var(--faint)">0</div>
               </div>
               <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint);padding:8px 0 0 30px">
-                <span>-12 GAMES</span><span>LAST</span>
+                <span>{{ trendAxisLeft }}</span><span>LAST</span>
               </div>
             </sc-if>
             </section>
@@ -2874,7 +2874,7 @@ class Component extends DCLogic {
     const bookHistHead = 'PAST MEETINGS · ' + (bookOpp ? g.homeAbbr + ' VS ' + bookOpp : g.homeAbbr + ' · EVERY GAME') + ' · ' + histSeasonLabel(Number(bookRec && bookRec.season) || histEff).toUpperCase() + (bookRec && bookRec.fellBack ? ' (NO GAMES YET IN ' + histSeasonLabel(histEff).toUpperCase() + ')' : '') + (bookHistGame ? ' · ' + gameLabelOf(bookHistGame).toUpperCase() : bookMeetingsAll.length > 10 ? ' · THE LAST 10 OF ' + bookMeetingsAll.length : '');
     const bookHistNote = bookHistGame ? 'the consensus at tip, then each book' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side at tip · cover reads the final score against it";
     const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons'
-      : !tlog ? 'no game log yet' : tlog.state === 'ready' ? 'last ' + logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+      : !tlog ? 'no game log yet' : tlog.state === 'ready' ? logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
       : tlog.state === 'loading' ? 'loading…' : 'no game log yet';
     // the same pool as a props-style table: what he did, not what a book priced
     const logOf = p => { const l = (st.logs || {})[this.logKey(p.id)]; return l && l.state === 'ready' ? l.rows.map(r => r.v) : null; };
@@ -3268,7 +3268,7 @@ class Component extends DCLogic {
       const tipBox = (i, n) => 'position:absolute;bottom:126px;' + (i > n - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
         'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none';
       const logNote = (what) => !log ? 'no ' + what + ' yet'
-        : log.state === 'ready' ? 'last ' + logRows.length + ' games · ' + what + ' · ' + log.season + ' season' + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+        : log.state === 'ready' ? logRows.length + ' games · ' + log.season + ' season' + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (st.logSeason ? ' · history' : '')
         : log.state === 'loading' ? 'loading…'
         : 'no ' + what + ' yet';
       if (isP) {
@@ -4142,6 +4142,7 @@ paceRows: (() => {
           tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (d >= 0 ? ACC : RED)
         };
       }),
+      trendAxisLeft: (logs.length + (logs.length === 1 ? ' GAME' : ' GAMES') + ' VS ' + (oppAbbr || '—') + (trendSpan ? ' · ' + trendSpan : '')).toUpperCase(),
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
       trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (liveRow && tRows.indexOf(liveRow) >= 0 ? ', tonight live' : '') + (trendSeasonPicks.length ? ' · ' + trendSeasonPicks.join(', ') + ' only' : trendSpan ? ' · ' + trendSpan : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
