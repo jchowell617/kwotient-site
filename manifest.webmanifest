@@ -1,0 +1,21 @@
+{
+  "name": "Kwotient",
+  "short_name": "Kwotient",
+  "description": "Live NBA and NFL analysis on the Kwotient record.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#03050a",
+  "theme_color": "#03050a",
+  "icons": [
+    {
+      "src": "assets/kwotient-mark-dark-256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/kwotient-mark-dark-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
