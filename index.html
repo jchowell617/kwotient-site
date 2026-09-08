@@ -137,13 +137,14 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 /* a wide table scrolls sideways inside its own frame on a phone; on a wider screen the frame
    is open, so a column menu can hang below it. On a phone the menu becomes a sheet at the
    bottom of the screen instead of being cut off by the scrolling frame. */
-@media (min-width:700px){[data-scroll=x]>div{min-width:0!important}[data-scroll=x]{overflow:visible}}
-@media (max-width:699px){[data-scroll=x]{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+@media (min-width:700px) and (min-height:521px){[data-scroll=x]>div{min-width:0!important}[data-scroll=x]{overflow:visible}}
+@media (max-width:699px), (max-height:520px){[data-scroll=x]{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
   [data-scroll=x] [data-colmenu][style*="absolute"]{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;z-index:80!important}}
 /* a widget with an open menu — a search list or a column menu — rises above the widgets after it,
    so the list is never cut off by the next card; the hover transform makes each card its own layer */
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
-@media (max-width:767px){
+/* a phone on its side is a phone: the stacked, scrolling layout, not the desk's columns */
+@media (max-width:767px), (max-height:520px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
   [data-shell=wintitle]{display:none!important}
   [data-shell=clock]{display:none!important}
@@ -209,7 +210,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
     </sc-if>
     <div data-shell="body" style="flex:1;display:flex;min-height:0;align-items:stretch">
 
-      <aside data-shell="side" style="width:214px;flex:none;background:var(--rail);border-right:1px solid var(--grid);display:flex;flex-direction:column;min-height:0">
+      <aside data-shell="side" style="width:214px;flex:none;background:var(--rail);border-right:1px solid var(--grid);display:flex;flex-direction:column;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
         <div style="padding:14px 12px 10px;display:flex;gap:3px;background:var(--surface);margin:12px 10px 0;border-radius:8px;padding:3px;border:1px solid var(--grid)">
           <button onClick="{{ setNFL }}" style-hover="transform:translateY(-2px)" style="{{ nflBtn }}">NFL</button>
           <button onClick="{{ setNBA }}" style-hover="transform:translateY(-2px)" style="{{ nbaBtn }}">NBA</button>
