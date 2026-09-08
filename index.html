@@ -2380,6 +2380,15 @@ class Component extends DCLogic {
     // back from the background: a fresh read at once rather than waiting out a throttled timer
     this._esc = e => { if (e.key === 'Escape' && this.state.contactOpen) this.setState({ contactOpen: false }); };
     document.addEventListener('keydown', this._esc);
+    // Enter closes a search: the phone's keyboard goes away with it, rather than waiting for a
+    // tap on the page. The widget's own Enter handling runs first; the blur follows it.
+    this._enterBlur = e => {
+      if (e.key !== 'Enter' && e.key !== 'Return' && e.keyCode !== 13) return;
+      const el = e.target;
+      if (!el || el.tagName !== 'INPUT') return;          // a comment box keeps Enter for its lines
+      setTimeout(() => { try { el.blur(); } catch (x) {} }, 0);
+    };
+    document.addEventListener('keydown', this._enterBlur, true);
     this._visible = () => { if (document.visibilityState === 'visible' && this.state.kq === 'ready') { this.pollLive(); this.loadStandings(); } };
     document.addEventListener('visibilitychange', this._visible);
     // a beat a second, for the clock and the cohort countdowns
@@ -2427,7 +2436,7 @@ class Component extends DCLogic {
     this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
     list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
   }
-  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); } catch (e) {} }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
   connectRecord() {
