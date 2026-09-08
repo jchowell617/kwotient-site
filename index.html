@@ -1329,7 +1329,9 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">live reads and the narrative for every game on the {{ sport }} slate, then signings, trades, rumors and roster news from the record{{ buzzLiveNote }}</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
-                <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ buzzCount }}</span>
+                <sc-for list="{{ buzzChips }}" as="p" hint-placeholder-count="4">
+                  <button onClick="{{ p.pick }}" style="{{ p.style }}">{{ p.label }}</button>
+                </sc-for>
                 <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
               </div>
             </div>
@@ -1350,10 +1352,25 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ voiceNote }}</span>
             </div>
 
-            <div style="display:flex;gap:6px;flex-wrap:wrap">
-              <sc-for list="{{ buzzChips }}" as="bc" hint-placeholder-count="6">
-                <button onClick="{{ bc.pick }}" style="{{ bc.style }}">{{ bc.label }}<span style="color:var(--muted)">{{ bc.count }}</span></button>
-              </sc-for>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div style="{{ buzzKindCol.cellStyle }}">
+                <button data-colmenu="1" onClick="{{ buzzKindCol.click }}" style="{{ buzzKindCol.labelStyle }}">{{ buzzKindCol.label }}<span style="font-size:7px">{{ buzzKindCol.arrow }}</span><span style="{{ buzzKindCol.dotStyle }}"></span></button>
+                <sc-if value="{{ buzzKindCol.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" style="{{ buzzKindCol.menuStyle }}">
+                    <form onSubmit="{{ buzzKindCol.onKey }}" style="margin:0"><input value="{{ buzzKindCol.q }}" onChange="{{ buzzKindCol.onQ }}" onKeyDown="{{ buzzKindCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                      <button onClick="{{ buzzKindCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                    </div>
+                    <sc-for list="{{ buzzKindCol.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <span style="flex:1"></span>
+              <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+              <input value="{{ buzzQ }}" onChange="{{ onBuzzQ }}" placeholder="search the buzz · commas for several" style="width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+              <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ buzzCountNote }}</span>
               <sc-if value="{{ buzzFilterOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ buzzClear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
             </div>
 
@@ -2257,11 +2274,11 @@ class Component extends DCLogic {
       try { if (e.target && e.target.closest && e.target.closest('[data-colmenu]')) return; } catch (x) {}
       const st = this.state;
       const openTables = Object.keys(st.tables || {}).filter(k => st.tables[k] && st.tables[k].open);
-      if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen) return;
+      if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.buzzKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen) return;
       this.setState(x => {
         const tables = Object.assign({}, x.tables);
         openTables.forEach(k => { tables[k] = Object.assign({}, tables[k], { open: null }); });
-        return { openCol: null, alertKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
+        return { openCol: null, alertKindOpen: false, buzzKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
       });
     };
     document.addEventListener('mousedown', this._outside, true);
@@ -3950,7 +3967,9 @@ class Component extends DCLogic {
     })();
     const buzzAll = liveBuzz.concat((S ? S.wire(sport) : []).slice(0, 60).map(w => ({ kind: w.kind, tone: w.tone, t: S.day(w.date), who: w.who || '—', head: w.head, body: w.body, src: w.src })));
     const buzzShut = st.shut || {};
-    const buzzItems = buzzAll.filter(b => buzzKind === 'ALL' || b.kind === buzzKind).map(b => {
+    const buzzQ = String(st.buzzQ || '').trim().toLowerCase();
+    const buzzKindOk = b => buzzKind === 'ALL' ? true : buzzKind === 'RECORD' ? (b.kind !== 'LIVE' && b.kind !== 'STORY') : String(buzzKind).indexOf('~') === 0 ? String(b.kind).toLowerCase().indexOf(String(buzzKind).slice(1).toLowerCase()) >= 0 : b.kind === buzzKind;
+    const buzzItems = buzzAll.filter(b => buzzKindOk(b) && (!buzzQ || matchQ((b.who || '') + ' ' + (b.head || '') + ' ' + (b.body || '') + ' ' + (b.kind || ''), buzzQ))).map(b => {
       const c = b.tone === 1 ? ACC : b.tone === 2 ? 'var(--lead)' : b.tone === 0 ? RED : 'var(--second)';
       const bk = 'bz' + buzzAll.indexOf(b);
       return {
@@ -3964,13 +3983,31 @@ class Component extends DCLogic {
         unconfirmed: b.kind === 'RUMOR'
       };
     });
-    const buzzChips = BUZZ_KINDS.map(k => ({
-      label: k,
-      count: String(k === 'ALL' ? buzzAll.length : buzzAll.filter(b => b.kind === k).length),
-      pick: () => this.setState({ buzzKind: k }),
-      style: 'display:flex;align-items:center;gap:7px;padding:6px 12px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:10px;letter-spacing:.08em;background:transparent;border:1px solid ' +
+    const buzzChips = ['ALL', 'LIVE', 'STORY', 'RECORD'].map(k => ({
+      label: k, pick: () => this.setState({ buzzKind: k, buzzKindOpen: false, buzzKindQ: '' }),
+      style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid ' +
         (buzzKind === k ? BLUE : 'var(--axis)') + ';color:' + (buzzKind === k ? BLUE : 'var(--second)')
     }));
+    const buzzKindCol = (() => {
+      const kinds = Array.from(new Set(buzzAll.map(b => b.kind))).sort();
+      const cur = buzzKind && ['ALL', 'LIVE', 'STORY', 'RECORD'].indexOf(buzzKind) < 0 ? buzzKind : null, on = st.buzzKindOpen === true;
+      const qv = on ? String(st.buzzKindQ || '').trim().toLowerCase() : '';
+      const openMenu = () => this.setState(x => ({ buzzKindOpen: !x.buzzKindOpen, buzzKindQ: '' }));
+      return {
+        label: 'KIND', arrow: '', hasMenu: true, open: on,
+        cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
+        menuStyle: 'position:absolute;top:19px;left:0;z-index:40;width:214px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
+        labelStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;cursor:pointer;background:transparent;border:none;padding:0;display:flex;align-items:center;gap:4px;white-space:nowrap;color:' + (cur ? 'var(--reversed)' : 'var(--collabel)'),
+        dotStyle: 'width:5px;height:5px;border-radius:50%;background:' + BLUE + ';flex:none;display:' + (cur ? 'block' : 'none'),
+        click: openMenu, toggle: openMenu,
+        q: on ? (st.buzzKindQ || '') : '',
+        onQ: e => { const t = e.target.value; this.setState({ buzzKindQ: t, buzzKind: t.trim() ? '~' + t.trim() : 'ALL' }); },
+        onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); this.setState({ buzzKindOpen: false }); } },
+        clear: () => this.setState({ buzzKind: 'ALL', buzzKindOpen: false, buzzKindQ: '' }),
+        values: kinds.filter(k => !qv || k.toLowerCase().indexOf(qv) >= 0).map(k => ({ label: k, count: String(buzzAll.filter(b => b.kind === k).length), pick: () => this.setState({ buzzKind: k, buzzKindOpen: false, buzzKindQ: '' }),
+          style: 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + (cur === k ? 'var(--nested)' : 'transparent') + ';color:' + (cur === k ? BLUE : 'var(--lead)') }))
+      };
+    })();
 
     // ---------- team trend & team props: the club's own results, from the edge ----------
     // the last twelve results of the selected side from the licensed team log; no team-props
@@ -4754,8 +4791,9 @@ paceRows: (() => {
       onAlertQ: e => this.setState({ alertQ: e.target.value }),
       alertFilterOn: !!((st.alertQ || '').trim()) || (st.phase || 'ALL') !== 'ALL' || (st.alertKind || 'ALL') !== 'ALL',
       alertClear: () => this.setState({ alertQ: '', phase: 'ALL', alertKind: 'ALL', alertKindOpen: false, alertKindQ: '' }),
-      buzzFilterOn: buzzKind !== 'ALL',
-      buzzClear: () => this.setState({ buzzKind: 'ALL' }),
+      buzzFilterOn: buzzKind !== 'ALL' || !!buzzQ,
+      buzzClear: () => this.setState({ buzzKind: 'ALL', buzzQ: '', buzzKindOpen: false, buzzKindQ: '' }),
+      buzzKindCol, buzzQ: st.buzzQ || '', onBuzzQ: e => this.setState({ buzzQ: e.target.value }), buzzCountNote: buzzItems.length + ' of ' + buzzAll.length,
       alertCountNote: (() => { const n = feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).length; return n + ' of ' + feed.length; })(),
       alerts: feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).map(a => {
         const c = a.tone === 1 ? ACC : a.tone === 2 ? 'var(--lead)' : a.tone === 0 ? RED : 'var(--second)';
