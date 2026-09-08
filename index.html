@@ -4489,7 +4489,7 @@ class Component extends DCLogic {
 paceRows: (() => {
         // both sides' lines summed from the live box score; without a box there is nothing to
         // sum, and the rows say so rather than carrying a number
-        if (!boxOn || !S) return (sport === 'NBA' ? ['Points', 'eFG%', 'FT rate'] : ['Pass yds', 'Rush yds', 'Turnovers']).map(k => ({
+        if (!boxOn || !S) return (S && S.teamStatKeys ? S.teamStatKeys(sport) : (sport === 'NBA' ? ['Points', 'eFG%', 'FT rate'] : ['Pass yds', 'Rush yds', 'Turnovers'])).map(k => ({
           k, av: '—', hv: '—', abar: 'height:100%;width:0%;background:var(--lead)', hbar: 'height:100%;width:0%;background:' + BLUE }));
         const a = S.teamLine(sport, box.away), h = S.teamLine(sport, box.home);
         return a.map((row, i) => {

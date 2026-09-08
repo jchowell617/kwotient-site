@@ -688,19 +688,47 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
   /* the stat a position is read on, from one box line */
   function boxStat(sport, row, pos) { var v = STAT[lg(sport)](row, pos); return v == null ? null : Number(v); }
   /* a side's line summed from its players — nothing here is a model, it is addition */
+  /* a side's team line, summed from its players' box lines — nothing here is a model, it is
+     addition. v drives the bar, text is what the row says. */
+  var TEAM_STAT_KEYS = {
+    nba: ['Points', 'Field goals', '3-pointers', 'Free throws', 'eFG%', 'Rebounds', 'Assists', 'Steals', 'Blocks', 'Turnovers', 'Fouls'],
+    nfl: ['Total yards', 'Passing', 'Rushing', 'Yards per play', 'Touchdowns', 'Turnovers', 'Takeaways', 'Sacks', 'Tackles for loss', 'Field goals']
+  };
+  function teamStatKeys(sport) { return TEAM_STAT_KEYS[lg(sport)].slice(); }
   function teamLine(sport, rows) {
     var L = lg(sport); rows = rows || [];
     var sum = function (k) { return rows.reduce(function (a, r) { return a + (Number(r[k]) || 0); }, 0); };
+    var pct = function (m, a) { return a ? (m / a * 100).toFixed(1) + '%' : '—'; };
     if (L === 'nba') {
-      var fgm = sum('fgm'), fga = sum('fga'), fg3m = sum('fg3m'), fta = sum('fta');
+      var fgm = sum('fgm'), fga = sum('fga'), fg3m = sum('fg3m'), fg3a = sum('fg3a'), ftm = sum('ftm'), fta = sum('fta');
+      var oreb = sum('oreb'), dreb = sum('dreb'), reb = sum('reb') || oreb + dreb;
       return [{ k: 'Points', v: sum('pts'), text: String(sum('pts')) },
+              { k: 'Field goals', v: fga ? fgm / fga * 100 : 0, text: fgm + '-' + fga + ' · ' + pct(fgm, fga) },
+              { k: '3-pointers', v: fg3a ? fg3m / fg3a * 100 : 0, text: fg3m + '-' + fg3a + ' · ' + pct(fg3m, fg3a) },
+              { k: 'Free throws', v: fta ? ftm / fta * 100 : 0, text: ftm + '-' + fta + ' · ' + pct(ftm, fta) },
               { k: 'eFG%', v: fga ? (fgm + 0.5 * fg3m) / fga * 100 : 0, text: fga ? ((fgm + 0.5 * fg3m) / fga * 100).toFixed(1) + '%' : '—' },
-              { k: 'FT rate', v: fga ? fta / fga * 100 : 0, text: fga ? (fta / fga).toFixed(3) : '—' }];
+              { k: 'Rebounds', v: reb, text: reb + (oreb || dreb ? ' · ' + oreb + ' off / ' + dreb + ' def' : '') },
+              { k: 'Assists', v: sum('ast'), text: String(sum('ast')) },
+              { k: 'Steals', v: sum('stl'), text: String(sum('stl')) },
+              { k: 'Blocks', v: sum('blk'), text: String(sum('blk')) },
+              { k: 'Turnovers', v: sum('tov'), text: String(sum('tov')) },
+              { k: 'Fouls', v: sum('pf'), text: String(sum('pf')) }];
     }
-    var to = sum('pass_int') + sum('fum_lost');
-    return [{ k: 'Pass yds', v: sum('pass_yds'), text: String(sum('pass_yds')) },
-            { k: 'Rush yds', v: sum('rush_yds'), text: String(sum('rush_yds')) },
-            { k: 'Turnovers', v: to, text: String(to) }];
+    var passYds = sum('pass_yds'), rushYds = sum('rush_yds'), cmp = sum('pass_cmp'), att = sum('pass_att'), car = sum('rush_att'), sk = sum('sacks');
+    var plays = att + car + sum('sack_yds') * 0; /* the plays run: drop-backs and carries */
+    var td = sum('pass_td') + sum('rush_td') + sum('int_td') + sum('fum_td') + sum('kr_td') + sum('pr_td');
+    var to = sum('pass_int') + sum('fum_lost'), take = sum('int') + sum('fum_rec');
+    var fgm2 = sum('fgm'), fga2 = sum('fga');
+    return [{ k: 'Total yards', v: passYds + rushYds, text: String(passYds + rushYds) },
+            { k: 'Passing', v: passYds, text: passYds + ' yds · ' + cmp + '/' + att },
+            { k: 'Rushing', v: rushYds, text: rushYds + ' yds · ' + car + ' car' },
+            { k: 'Yards per play', v: plays ? (passYds + rushYds) / plays : 0, text: plays ? ((passYds + rushYds) / plays).toFixed(1) : '—' },
+            { k: 'Touchdowns', v: td, text: String(td) },
+            { k: 'Turnovers', v: to, text: to + (to ? ' · ' + sum('pass_int') + ' INT, ' + sum('fum_lost') + ' fum' : '') },
+            { k: 'Takeaways', v: take, text: String(take) },
+            { k: 'Sacks', v: sk, text: String(sk) },
+            { k: 'Tackles for loss', v: sum('tfl'), text: String(sum('tfl')) },
+            { k: 'Field goals', v: fga2 ? fgm2 / fga2 * 100 : 0, text: fga2 ? fgm2 + '/' + fga2 : '—' }];
   }
   /* the top line on a side, for a caption */
   function topLine(sport, rows, pos) {
@@ -725,7 +753,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     players: players, clubs: clubs, clubK: clubK, cohorts: cohorts, cohortsFor: cohortsFor, cohortRecord: cohortRecord,
     programme: function () { var d = kq().cohorts.doc(); return d ? d.programme : null; },
     wire: wire, slate: slate, slateGame: slateGame, odds: odds, oddsAt: odds, marketFor: marketFor, withMarket: withMarket, upcoming: upcoming, props: props, standings: standings, seasons: seasons, seasonRow: seasonRow, gamelog: gamelog, teamlog: teamlog, story: story,
-    boxscore: boxscore, boxStat: boxStat, teamLine: teamLine, topLine: topLine,
+    boxscore: boxscore, boxStat: boxStat, teamLine: teamLine, teamStatKeys: teamStatKeys, topLine: topLine,
     winProb: winProb, remaining: remaining, LEAGUE: LEAGUE, age: AGE, day: day, M: M, pct: pct, get sources() { return kq().sources; }
   };
   root.KQ_COURTSIDE_SOURCE = SRC;
