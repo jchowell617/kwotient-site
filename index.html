@@ -2472,8 +2472,13 @@ class Component extends DCLogic {
     // the live widget regards the matchup: the player's games against tonight's opponent when
     // the log holds two or more, every game otherwise, and the reader can switch
     const tRowsAll = tlog && tlog.rows ? tlog.rows : [];
-    const oppAbbr = histOppOf(pp.team) || null;
-    const tRows = histScope(tRowsAll, pp.team);
+    // tonight's opponent by default; when the log holds no meeting with them, every game
+    // stands in and the note says so — an empty chart tells the reader nothing
+    const oppAbbr0 = histOppOf(pp.team) || null;
+    const scoped = histScope(tRowsAll, pp.team);
+    const trendFell = hf.opp === 'opp' && !hf.game && tRowsAll.length > 0 && scoped.length === 0;
+    const tRows = trendFell ? tRowsAll : scoped;
+    const oppAbbr = trendFell ? null : oppAbbr0;
     const vsRows = tRows, useVs = !!oppAbbr;
     const logs = tRows.map(r => r.v);
     const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
@@ -3364,15 +3369,18 @@ class Component extends DCLogic {
     const teamAbbr = teamSide === 'home' ? g.homeAbbr : g.awayAbbr;
     const tLog = (st.logs || {})[this.logKey('c:' + teamAbbr)] || null;
     const tRowsCAll = tLog && tLog.rows ? tLog.rows : [];
-    const teamOppAbbr = histOppOf(teamAbbr) || null;
-    const tRowsC = histScope(tRowsCAll, teamAbbr);
+    const teamOppAbbr0 = histOppOf(teamAbbr) || null;
+    const teamScoped = histScope(tRowsCAll, teamAbbr);
+    const teamFell = hf.opp === 'opp' && !hf.game && tRowsCAll.length > 0 && teamScoped.length === 0;
+    const tRowsC = teamFell ? tRowsCAll : teamScoped;
+    const teamOppAbbr = teamFell ? null : teamOppAbbr0;
     const teamVsRows = tRowsC, teamUseVs = !!teamOppAbbr;
     const tMargins = tRowsC.map(r => r.margin);
     const tMx = Math.max.apply(null, tMargins.map(Math.abs).concat([1]));
     const tAvg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
     const tRoll = tMargins.map((_, i) => tAvg(tMargins.slice(Math.max(0, i - 2), i + 1)));
     const tWins = tMargins.filter(v => v > 0).length;
-    const teamLogNote = !tLog ? 'team log not requested' : tLog.state === 'ready' ? tLog.season + ' season' + (tLog.fellBack ? ' (no games yet in ' + tLog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
+    const teamLogNote = !tLog ? 'team log not requested' : tLog.state === 'ready' ? (teamFell ? 'no game against ' + teamOppAbbr0 + ' in this log · every game · ' : teamOppAbbr ? tRowsC.length + ' games against ' + teamOppAbbr + ' · ' : '') + tLog.season + ' season' + (tLog.fellBack ? ' (no games yet in ' + tLog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
       : tLog.state === 'loading' ? 'loading the team log…' : 'team log unavailable — ' + (tLog.reason || 'the feed did not answer');
 
     const teamTrendBars = tMargins.map((v, i) => {
@@ -3903,7 +3911,7 @@ paceRows: (() => {
       }),
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
-      trendGames: (oppAbbr ? logs.length + ' games against ' + oppAbbr : 'every game, ' + logs.length) + (hf.game ? ', one meeting' : '') + ' · ' + histSeasonLabel(histEff) + ' against the season average',
+      trendGames: (trendFell ? 'no game against ' + oppAbbr0 + ' in this log · every game, ' + logs.length : oppAbbr ? logs.length + ' games against ' + oppAbbr : 'every game, ' + logs.length) + (hf.game ? ', one meeting' : '') + ' · ' + histSeasonLabel(histEff) + ' against the season average',
       trendHist: histMenuFor('trend', pp.team),
       hasPropLine: ppLine != null && logs.length > 0,
       trendPropMark: 'position:absolute;left:0;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) : 0).toFixed(1) + 'px;height:0;border-top:1px dotted var(--good);opacity:.9',
