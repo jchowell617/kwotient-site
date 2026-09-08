@@ -4826,20 +4826,24 @@ paceRows: (() => {
         // both sides' lines summed from the live box score; without a box there is nothing to
         // sum, and the rows say so rather than carrying a number
         const tag = home => 'font-family:var(--kw);font-size:9px;letter-spacing:.1em;width:34px;flex:none;color:' + (home ? BLUE : 'var(--lead)');
-        if (!boxOn || !S) return (S && S.teamStatKeys ? S.teamStatKeys(sport) : (sport === 'NBA' ? ['Points', 'eFG%', 'FT rate'] : ['Pass yds', 'Rush yds', 'Turnovers'])).map(k => ({
+        const STANDARD = sport === 'NBA'
+          ? ['Points', 'Field goals', '3-pointers', 'Free throws', 'Rebounds', 'Assists', 'Turnovers']
+          : ['Points', 'Total yards', 'Passing', 'Rushing', 'Turnovers', 'Sacks'];
+        if (!boxOn || !S) return STANDARD.map(k => ({
           k: String(k).toUpperCase(),
           sides: [{ team: g.awayAbbr, tag: tag(false), v: '—', bar: 'height:100%;width:0%;background:var(--lead)' },
                   { team: g.homeAbbr, tag: tag(true), v: '—', bar: 'height:100%;width:0%;background:' + BLUE }] }));
+        const keep = new Set(STANDARD);
         const a = S.teamLine(sport, box.away), h = S.teamLine(sport, box.home);
         // the scoreboard is the score; the summed player lines miss safeties and two-point plays
         [[a, g.as], [h, g.hs]].forEach(([side, sc]) => { const p = side.find(r => r.k === 'Points'); if (p && sc != null && sc !== '') { p.v = Number(sc) || 0; p.text = String(sc); } });
-        return a.map((row, i) => {
-          const mx = Math.max(row.v, h[i].v, 1);
+        return a.map((row, i) => ({ row, h: h[i] })).filter(x => keep.has(x.row.k)).map(({ row, h: hr }) => {
+          const mx = Math.max(row.v, hr.v, 1);
           return { k: String(row.k).toUpperCase(),
             sides: [{ team: g.awayAbbr, tag: tag(false), v: row.text,
                       bar: 'height:100%;width:' + Math.round(row.v / mx * 100) + '%;background:var(--lead);opacity:.8' },
-                    { team: g.homeAbbr, tag: tag(true), v: h[i].text,
-                      bar: 'height:100%;width:' + Math.round(h[i].v / mx * 100) + '%;background:' + BLUE + ';opacity:.9' }] };
+                    { team: g.homeAbbr, tag: tag(true), v: hr.text,
+                      bar: 'height:100%;width:' + Math.round(hr.v / mx * 100) + '%;background:' + BLUE + ';opacity:.9' }] };
         });
       })(),
       // the game's leaders, each with the line a box score would print for him
