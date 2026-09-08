@@ -2416,7 +2416,8 @@ class Component extends DCLogic {
       this.loadBox();
       this.loadProps();
       if (!this._standingsAt || Date.now() - this._standingsAt > 15 * 60000) { this._standingsAt = Date.now(); this.loadStandings(); }
-      setTimeout(() => this.ensureTrendLog(), 0);
+      // with nothing on the slate there is no game to read logs for; the placeholder is not asked
+      if ((r.games || []).length || upcoming) setTimeout(() => this.ensureTrendLog(), 0);
       this._liveT = setTimeout(() => this.pollLive(), r.ok ? Math.max(8000, r.beat || 60000) : 60000);
     });
   }
