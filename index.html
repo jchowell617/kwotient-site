@@ -150,6 +150,17 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 /* a widget with an open menu — a search list or a column menu — rises above the widgets after it,
    so the list is never cut off by the next card; the hover transform makes each card its own layer */
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
+/* A phone on its side keeps the desk's three columns, but the document still does the
+   scrolling, so the browser can shrink its own bars there too. The menu and the rail stay
+   pinned beside the widgets rather than stretching down the whole page. */
+@media (max-height:520px){
+  [data-theme]{height:auto!important;min-height:100dvh;overflow:visible!important}
+  [data-theme] > div{overflow:visible!important;min-height:0!important}
+  [data-shell=chrome]{position:sticky!important;top:0;z-index:210}
+  [data-shell=body]{overflow:visible!important;align-items:flex-start!important}
+  [data-shell=main]{overflow:visible!important}
+  [data-shell=side],[data-shell=rail]{position:sticky!important;top:38px;max-height:calc(100dvh - 38px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+}
 @media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
   [data-shell=wintitle]{display:none!important}
