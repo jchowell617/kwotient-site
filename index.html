@@ -1936,7 +1936,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Alerts</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
-                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">pregame, in-game and settled — edge threshold {{ threshold }} pts</span>
+                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">pregame, in-game and settled — edge threshold {{ threshold }} pts{{ buzzLiveNote }}</span>
               </div>
               <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
                 <sc-for list="{{ phaseFilters }}" as="p" hint-placeholder-count="4">
@@ -1944,6 +1944,21 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-for>
                 <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
               </div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">AUDIENCE</span>
+              <sc-for list="{{ audienceChips }}" as="vc" hint-placeholder-count="2">
+                <button onClick="{{ vc.pick }}" style="{{ vc.style }}">{{ vc.label }}</button>
+              </sc-for>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">TONE</span>
+              <sc-for list="{{ toneChips }}" as="vc" hint-placeholder-count="2">
+                <button onClick="{{ vc.pick }}" style="{{ vc.style }}">{{ vc.label }}</button>
+              </sc-for>
+            </div>
+            <span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ voiceNote }}</span>
             </div>
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <div style="{{ alertKindCol.cellStyle }}">
@@ -3876,10 +3891,11 @@ class Component extends DCLogic {
         if (recent.length >= 2 && Math.abs(recent[recent.length - 1][1] - recent[0][1]) >= 1) items.push({ phase: on ? 'LIVE' : 'PRE', kind: 'STEAM', t: when, game: x.homeAbbr, tone: 2, real: true,
           text: x.homeAbbr + ' ' + sgn(recent[0][1]) + ' to ' + sgn(recent[recent.length - 1][1]) + ' in the last thirty minutes.' });
       });
-      const sto = (st.stories || {})[g.id];
-      if (sto && sto.items.length) sto.items.forEach(x => items.push({ phase: x.phase === 'live' ? 'LIVE' : x.phase === 'pregame' ? 'PRE' : 'POST', kind: 'STORY', t: S ? S.age(x.at) : '', game: g.homeAbbr, tone: 2, text: x.text }));
-      else if (sto && sto.pending) items.push({ phase: 'PRE', kind: 'STORY', t: S ? S.age(sto.at) : '', game: g.homeAbbr, tone: 3, text: 'The narrative feed has not written the ' + sto.phase + ' piece for this game yet.' });
-      else if (sto && sto.reason) items.push({ phase: 'PRE', kind: 'STORY', t: '', game: g.homeAbbr, tone: 0, text: 'The narrative feed did not answer: ' + sto.reason });
+      slate.forEach(x => {
+        const sto = (st.stories || {})[x.id]; if (!sto) return;
+        if (sto.items && sto.items.length) sto.items.forEach(it => items.push({ phase: it.phase === 'live' ? 'LIVE' : it.phase === 'pregame' ? 'PRE' : 'POST', kind: 'STORY', t: S ? S.age(it.at) : '', game: x.homeAbbr, tone: 2, real: true, text: (x.id === g.id ? '' : x.awayAbbr + ' @ ' + x.homeAbbr + ' — ') + it.text }));
+        else if (x.id === g.id && sto.pending) items.push({ phase: 'PRE', kind: 'STORY', t: S ? S.age(sto.at) : '', game: x.homeAbbr, tone: 3, text: 'No ' + sto.phase + ' piece for this game yet.' });
+      });
       return items;
     };
     // the captured injury report for the two clubs' rated players — the record's, on any slate
