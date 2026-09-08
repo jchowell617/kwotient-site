@@ -1018,7 +1018,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
                 <section onClick="{{ g.select }}" style-hover="transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,.34);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px;cursor:pointer;display:flex;flex-direction:column;gap:12px">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
-                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--critical);display:inline-flex;align-items:center;gap:5px"><span style="width:6px;height:6px;border-radius:50%;background:var(--critical);display:block;flex:none;animation:pulseDot 1.6s ease-in-out infinite"></span>{{ g.clock }}</span>
+                    <span style="{{ g.clockStyle }}"><span style="{{ g.dotStyle }}"></span>{{ g.clock }}</span>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ g.lineLabel }}</span>
                   </div>
                   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
@@ -2648,6 +2648,7 @@ class Component extends DCLogic {
     const liveOn = !!(st.liveSlate && st.liveSlate.length);
     const slate = liveOn ? st.liveSlate : SLATES[sport];
     const slateSim = !liveOn;
+    const anyOn = !slateSim && (st.liveSlate || []).some(x => x.state === 'in_progress');
     const sl = i => slate[Math.min(i, slate.length - 1)];
     const KWC = S ? S.cohorts(sport) : [];
     const g = slate.find(x => x.id === st.activeId) || slate[0];
@@ -4228,7 +4229,7 @@ class Component extends DCLogic {
       navItems: NAV.map(([k, label]) => ({
         label, badge: badges[k], badgeColor: k === 'live' ? 'var(--critical)' : 'var(--muted)',
         // the live badge breathes like the header's dot; the counts sit still
-        badgeStyle: 'font-family:var(--kw);font-size:9.5px;color:' + (k === 'live' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--muted)'),
+        badgeStyle: 'font-family:var(--kw);font-size:9.5px;color:' + (k === 'live' ? 'var(--critical)' + (anyOn ? ';animation:pulseDot 1.6s ease-in-out infinite' : '') : 'var(--muted)'),
         style: navBtn(st.tab === k), go: () => this.setState({ tab: k })
       })),
       // the phone's bottom tab bar: the same sections, short names, the cohorts first
@@ -4409,6 +4410,9 @@ class Component extends DCLogic {
         return {
           awayAbbr: x.awayAbbr, homeAbbr: x.homeAbbr, awayScore: x.as, homeScore: x.hs,
           clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? 'Q' + x.per + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
+          // the dot breathes only while the game is on; before and after it sits still and muted
+          clockStyle: 'font-family:var(--kw);font-size:9.5px;display:inline-flex;align-items:center;gap:5px;transition:none;color:' + (x.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
+          dotStyle: 'width:6px;height:6px;border-radius:50%;display:block;flex:none;transition:none;background:' + (x.state === 'in_progress' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--axis)'),
           lineLabel: x.market ? x.homeAbbr + ' ' + (x.line > 0 ? '+' : '') + Number(x.line).toFixed(1) + (x.mktTotal != null ? ' · O/U ' + x.mktTotal : '') + ' · market'
                                : x.homeAbbr + ' ' + (x.fair > 0 ? '+' : '') + x.fair.toFixed(1) + ' · model line',
           probLabel: p.toFixed(1) + '%',
