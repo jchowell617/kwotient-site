@@ -322,6 +322,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <span style="font-size:23px;font-weight:600;flex:1">{{ awayName }}</span>
                     <span style="font-family:var(--kw);font-size:29px;font-weight:700">{{ awayScore }}</span>
                   </div>
+                  <span style="font-family:var(--kw);font-size:10px;letter-spacing:.16em;color:var(--muted);margin:-2px 0">AT</span>
                   <div style="display:flex;align-items:baseline;gap:12px">
                     <span style="font-size:23px;font-weight:600;flex:1">{{ homeName }}</span>
                     <span style="font-family:var(--kw);font-size:29px;font-weight:700">{{ homeScore }}</span>
@@ -4557,7 +4558,7 @@ class Component extends DCLogic {
       heroState: !g.live ? '● LIVE' : g.state === 'in_progress' ? '● LIVE' : g.state === 'final' ? 'FINAL' : 'UPCOMING',
       // the folded hero: the state, both clubs, and the clock with the date and time
       heroShut: !!(st.shut || {}).hero,
-      heroTeams: g.state === 'in_progress' || g.state === 'final' ? g.away + ' ' + (g.as == null ? 0 : g.as) + ' — ' + g.home + ' ' + (g.hs == null ? 0 : g.hs) : g.away + ' — ' + g.home,
+      heroTeams: g.state === 'in_progress' || g.state === 'final' ? g.away + ' ' + (g.as == null ? 0 : g.as) + ' at ' + g.home + ' ' + (g.hs == null ? 0 : g.hs) : g.away + ' at ' + g.home,
       heroWhen: g.state === 'in_progress' ? 'Q' + g.per + ' ' + (g.clock || '') : g.state === 'final' ? 'FINAL' : (() => { try { return g.start ? new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(g.start)).replace(/, (\d+:\d+ [AP]M)$/, ' · $1') + ' ET' : (g.status || ''); } catch (e) { return g.status || ''; } })(),
       heroStateStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:' + (!g.live || g.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
       possession: boxOn && S ? (() => { const a = S.topLine(sport, box.away), h = S.topLine(sport, box.home); return [a ? g.awayAbbr + ' ' + a.n + ' ' + a.v : null, h ? g.homeAbbr + ' ' + h.n + ' ' + h.v : null].filter(Boolean).join(' · ') + (g.poss ? ' · ' + g.poss : ''); })() : g.poss,
