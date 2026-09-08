@@ -302,9 +302,11 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <sc-if value="{{ hasSlate }}" hint-placeholder-val="{{ true }}">
 
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:linear-gradient(180deg,var(--divider),var(--surface));padding:17px 19px">
+              <sc-if value="{{ p.hero.open }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end">
                 <div style="display:flex;flex-direction:column;gap:8px;min-width:200px">
                   <div style="display:flex;align-items:center;gap:9px">
+                    <button data-chev="1" onClick="{{ p.hero.toggle }}" style="{{ p.hero.btn }}">{{ p.hero.chevron }}</button>
                     <span style="{{ heroStateStyle }}">{{ heroState }}</span>
                   </div>
                   <div style="display:flex;align-items:baseline;gap:12px">
@@ -346,6 +348,15 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </div>
               </div>
+            </sc-if>
+              <sc-if value="{{ heroShut }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+                <button data-chev="1" onClick="{{ p.hero.toggle }}" style="{{ p.hero.btn }}">{{ p.hero.chevron }}</button>
+                <span style="{{ heroStateStyle }}">{{ heroState }}</span>
+                <span style="font-size:14.5px;font-weight:600">{{ heroTeams }}</span>
+                <span style="font-family:var(--kw);font-size:11px;color:var(--second);white-space:nowrap">{{ heroWhen }}</span>
+              </div>
+              </sc-if>
             </section>
 
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
@@ -4189,7 +4200,7 @@ class Component extends DCLogic {
 
     // per-widget collapse; purely display, no grouping or reordering
     const shut = st.shut || {};
-    const PANELS = ['pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
+    const PANELS = ['hero', 'pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
     const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews'];
     const DIR_PANELS = ['dirSearch', 'dirTable'];
     const BUZZ_PANELS = ['bz0', 'bz1', 'bz2', 'bz3', 'bz4', 'bz5', 'bz6', 'bz7'];
@@ -4479,6 +4490,10 @@ class Component extends DCLogic {
       venue: g.venue, awayName: g.away, homeName: g.home, awayAbbr: g.awayAbbr, homeAbbr: g.homeAbbr,
       awayScore: g.live && g.state === 'scheduled' ? '—' : g.as, homeScore: g.live && g.state === 'scheduled' ? '—' : g.hs,
       heroState: !g.live ? '● LIVE' : g.state === 'in_progress' ? '● LIVE' : g.state === 'final' ? 'FINAL' : 'UPCOMING',
+      // the folded hero: the state, both clubs, and the clock with the date and time
+      heroShut: !!(st.shut || {}).hero,
+      heroTeams: g.state === 'in_progress' || g.state === 'final' ? g.away + ' ' + (g.as == null ? 0 : g.as) + ' — ' + g.home + ' ' + (g.hs == null ? 0 : g.hs) : g.away + ' — ' + g.home,
+      heroWhen: g.state === 'in_progress' ? 'Q' + g.per + ' ' + (g.clock || '') : g.state === 'final' ? 'FINAL' : (() => { try { return g.start ? new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(g.start)).replace(/, (\d+:\d+ [AP]M)$/, ' · $1') + ' ET' : (g.status || ''); } catch (e) { return g.status || ''; } })(),
       heroStateStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:' + (!g.live || g.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
       possession: boxOn && S ? (() => { const a = S.topLine(sport, box.away), h = S.topLine(sport, box.home); return [a ? g.awayAbbr + ' ' + a.n + ' ' + a.v : null, h ? g.homeAbbr + ' ' + h.n + ' ' + h.v : null].filter(Boolean).join(' · ') + (g.poss ? ' · ' + g.poss : ''); })() : g.poss,
       clock: g.live ? (g.state === 'final' ? 'FINAL' : g.state === 'in_progress' ? 'Q' + g.per + ' ' + (g.clock || '') : (g.status || 'scheduled')) : 'Q' + g.per + ' ' + Math.floor(g.sec / 60) + ':' + String(g.sec % 60).padStart(2, '0'),
