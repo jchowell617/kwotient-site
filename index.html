@@ -2465,16 +2465,21 @@ class Component extends DCLogic {
       const el = e.target;
       if (!el || el.tagName !== 'INPUT') return;
       try { if (!window.matchMedia('(max-width:767px), (max-height:520px)').matches) return; } catch (x) { return; }
+      // the lift scrolls the page itself, and that scroll must not read as the reader pushing
+      // the keyboard away — it is held quiet until the box has settled
+      this._lifting = Date.now() + 900;
       const lift = () => {
         try {
           const doc = document.scrollingElement || document.documentElement;
           const target = Math.max(0, doc.scrollTop + el.getBoundingClientRect().top - 58);
           if (Math.abs(target - doc.scrollTop) > 10) window.scrollTo(0, target);
+          this._fieldY = (document.scrollingElement || document.documentElement).scrollTop;
         } catch (x) {}
       };
-      setTimeout(lift, 120);
+      lift();
+      setTimeout(lift, 140);
       setTimeout(lift, 420);   // again once the keyboard has finished coming up
-      setTimeout(() => { this._fieldY = (document.scrollingElement || document.documentElement).scrollTop; }, 500);
+      setTimeout(() => { this._lifting = 0; this._fieldY = (document.scrollingElement || document.documentElement).scrollTop; }, 900);
     };
     document.addEventListener('focusin', this._liftField);
     // The keyboard should never be a trap. Scrolling the page away from the box puts it down,
@@ -2485,6 +2490,7 @@ class Component extends DCLogic {
       const el = document.activeElement;
       if (!el || el.tagName !== 'INPUT' || !this._phone()) return;
       const y = (document.scrollingElement || document.documentElement).scrollTop;
+      if (Date.now() < (this._lifting || 0)) { this._fieldY = y; return; }   // the lift's own scroll
       if (this._fieldY == null) { this._fieldY = y; return; }
       if (Math.abs(y - this._fieldY) > 60) this._dropKeys();
     };
@@ -2495,6 +2501,11 @@ class Component extends DCLogic {
       const t = e.target;
       if (t === el) return;
       if (t && t.closest && (t.closest('[data-colmenu]') || t.tagName === 'INPUT' || t.tagName === 'TEXTAREA')) return;
+      // a thumb that lands just beside the box is still aiming at the box
+      try {
+        const r = el.getBoundingClientRect();
+        if (e.clientX >= r.left - 14 && e.clientX <= r.right + 14 && e.clientY >= r.top - 14 && e.clientY <= r.bottom + 14) return;
+      } catch (x) {}
       this._dropKeys();
     };
     document.addEventListener('pointerdown', this._tapOut, true);
