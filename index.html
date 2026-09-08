@@ -1334,12 +1334,20 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
             </div>
 
+            <div style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none">STORY VOICE</span>
-              <sc-for list="{{ voiceChips }}" as="vc" hint-placeholder-count="4">
+              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">AUDIENCE</span>
+              <sc-for list="{{ audienceChips }}" as="vc" hint-placeholder-count="2">
                 <button onClick="{{ vc.pick }}" style="{{ vc.style }}">{{ vc.label }}</button>
               </sc-for>
-              <span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ voiceNote }}</span>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">TONE</span>
+              <sc-for list="{{ toneChips }}" as="vc" hint-placeholder-count="2">
+                <button onClick="{{ vc.pick }}" style="{{ vc.style }}">{{ vc.label }}</button>
+              </sc-for>
+            </div>
+            <span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ voiceNote }}</span>
             </div>
 
             <div style="display:flex;gap:6px;flex-wrap:wrap">
@@ -2353,12 +2361,16 @@ class Component extends DCLogic {
   loadStory() {
     const S = SRC(); const st = this.state;
     if (!S || !st.liveSlate || !st.liveSlate.length) return;
-    const voice = st.voice || 'BETTING';
-    const opts = { audience: voice === 'STATS' ? 'stats' : 'betting', tone: voice === 'HUMOR' ? 'humor' : 'editorial' };
+    const voice = (st.audience || 'BETTING') + '/' + (st.tone || 'EDITORIAL');
+    const opts = { audience: (st.audience || 'BETTING') === 'STATS' ? 'stats' : 'betting', tone: (st.tone || 'EDITORIAL') === 'HUMOR' ? 'humor' : 'editorial' };
     this._storyKeys = this._storyKeys || {};
     // the open game first, then the rest of the slate, so the buzz carries every game as it goes
     const active = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
     [active].concat(st.liveSlate.filter(x => x !== active)).forEach((g, i) => setTimeout(() => this.loadStoryFor(g, opts, voice), i * 120));
+  }
+  // the audience or the tone changes: every narrative on hand is dropped and read again in the new voice
+  setVoice(patch) {
+    this.setState(Object.assign({ stories: {}, storiesLoading: true }, patch), () => { this._storyKeys = {}; this.loadStory(); setTimeout(() => this.setState({ storiesLoading: false }), 4000); });
   }
   loadStoryFor(g, opts, voice) {
     const S = SRC(); if (!S || !g || !g.live) return;
@@ -4217,13 +4229,13 @@ class Component extends DCLogic {
         }),
       buzzItems, buzzChips,
       // StoryStats ships four voices for the same events, both leagues
-      voiceChips: ['BETTING', 'STATS', 'EDITORIAL', 'HUMOR'].map(v => ({
-        label: v,
-        pick: () => { this.setState({ voice: v }); setTimeout(() => this.loadStory(), 0); },
-        style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid ' +
-          ((st.voice || 'BETTING') === v ? HEX.brand : HEX.axis) + ';color:' + ((st.voice || 'BETTING') === v ? HEX.brand : HEX.second)
-      })),
-      voiceNote: 'requested in the ' + (st.voice || 'BETTING').toLowerCase() + ' voice on ingest',
+      // a pick re-reads every game's narrative in that audience and tone at once, and every
+      // later beat keeps reading in it
+      audienceChips: ['BETTING', 'STATS'].map(v => ({ label: v, pick: () => this.setVoice({ audience: v }),
+        style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid ' + ((st.audience || 'BETTING') === v ? HEX.brand : HEX.axis) + ';color:' + ((st.audience || 'BETTING') === v ? HEX.brand : HEX.second) })),
+      toneChips: ['EDITORIAL', 'HUMOR'].map(v => ({ label: v, pick: () => this.setVoice({ tone: v }),
+        style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid ' + ((st.tone || 'EDITORIAL') === v ? HEX.brand : HEX.axis) + ';color:' + ((st.tone || 'EDITORIAL') === v ? HEX.brand : HEX.second) })),
+      voiceNote: 'read for the ' + (st.audience || 'BETTING').toLowerCase() + ' audience in the ' + (st.tone || 'EDITORIAL').toLowerCase() + ' tone' + (st.storiesLoading ? ' · re-reading every game…' : ''),
       buzzCount: buzzItems.length + ' of ' + buzzAll.length,
       buzzLiveNote: liveOn && st.liveMeta && st.liveMeta.fetched && S ? ' · live · read ' + S.age(st.liveMeta.fetched) + ' ago' : '',
       isProfiles: st.tab === 'profiles',
