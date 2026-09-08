@@ -131,7 +131,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
 @media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
-  [data-shell=lights],[data-shell=wintitle]{display:none!important}
+  [data-shell=wintitle]{display:none!important}
   [data-shell=body]{flex-direction:column!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   [data-shell=side]{width:auto!important;border-right:0!important;border-bottom:1px solid var(--grid);flex:none!important}
   [data-shell=nav],[data-shell=health],[data-shell=spacer],[data-shell=cohortbtn]{display:none!important}
@@ -155,21 +155,16 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   <div style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;background:var(--ink);border:1px solid var(--axis);box-shadow:var(--shadow)">
 
     <div data-shell="chrome" style="height:38px;flex:none;display:flex;align-items:center;gap:14px;padding:0 14px;background:linear-gradient(180deg,var(--rail),var(--desk));border-bottom:1px solid var(--axis);box-shadow:inset 0 -1px 0 rgba(77,139,255,0.3)">
-      <div data-shell="lights" style="display:flex;gap:8px;align-items:center">
-        <span style="width:11px;height:11px;border-radius:50%;background:#e0685c;display:block"></span>
-        <span style="width:11px;height:11px;border-radius:50%;background:#dfae4a;display:block"></span>
-        <span style="width:11px;height:11px;border-radius:50%;background:#5cb45c;display:block"></span>
-      </div>
-      <div style="flex:1;display:flex;justify-content:center;align-items:center;gap:9px">
+      <div style="flex:1;display:flex;justify-content:flex-start;align-items:center;gap:12px;min-width:0">
         <button onClick="{{ goHome }}" title="Home — back to the live game, refreshed" aria-label="Kwotient — home" style="display:flex;align-items:center;gap:9px;padding:3px 6px;margin:0 -6px 0 0;border:0;border-radius:6px;background:transparent;color:inherit;font:inherit;cursor:pointer">
           <svg viewBox="0 0 100 100" width="18" height="18" aria-hidden="true" style="display:block;flex:none"><rect width="100" height="100" rx="22" fill="var(--reversed)"/><circle cx="60" cy="32" r="9.5" fill="var(--brand)"/><rect x="22" y="49" width="56" height="7" rx="3.5" fill="var(--ink)"/><rect x="22" y="65" width="30" height="7" rx="3.5" fill="var(--ink)"/></svg>
           <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Kwotient</span>
         </button>
-        <span data-shell="wintitle" style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ windowTitle }}</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;font-family:var(--kw);font-size:9.5px;color:var(--muted)">
         <button onClick="{{ openContact }}" style="{{ themeBtn }}">CONTACT</button>
         <button onClick="{{ toggleTheme }}" style="{{ themeBtn }}">{{ themeLabel }}</button>
+        <span data-shell="wintitle" style="font-family:var(--kw);font-size:9.5px;color:var(--muted);margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ windowTitle }}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;font-family:var(--kw);font-size:9.5px;color:var(--muted);flex:none">
         <span data-shell="clock" style="white-space:nowrap;color:var(--reversed)">{{ clockLabel }}</span>
         <span style="width:6px;height:6px;border-radius:50%;background:var(--brand);display:block;animation:pulseDot 1.6s ease-in-out infinite"></span>
       </div>
@@ -371,10 +366,12 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="display:flex;justify-content:space-between;align-items:baseline;padding:6px 0 4px;border-bottom:1px solid var(--grid)">
                       <span style="{{ sd.titleStyle }}">{{ sd.title }}</span><span style="font-family:var(--kw);font-size:16px;font-weight:700;color:var(--reversed)">{{ sd.score }}</span>
                     </div>
-<div data-scroll="x"><div style="min-width:420px">
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
-                      <sc-for list="{{ sd.cols }}" as="c" hint-placeholder-count="6">
-                        <div style="{{ c.cellStyle }}">
+<sc-for list="{{ sd.groups }}" as="gp" hint-placeholder-count="3">
+                      <div style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);margin:12px 0 2px">{{ gp.label }}</div>
+                      <div data-scroll="x"><div style="{{ gp.wrapStyle }}">
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                          <sc-for list="{{ gp.cols }}" as="c" hint-placeholder-count="6">
+                            <div style="{{ c.cellStyle }}">
                     <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
                     <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
                       <div data-colmenu="1" style="{{ c.menuStyle }}">
@@ -388,15 +385,16 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                     </sc-if>
                   </div>
-                
-                      </sc-for>
-                    </div>
-                    <sc-for list="{{ sd.rows }}" as="b" hint-placeholder-count="6">
-                      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px">
-                        <sc-for list="{{ b.cells }}" as="x" hint-placeholder-count="6">
-                          <span style="{{ x.style }}">{{ x.v }}</span>
+                          </sc-for>
+                        </div>
+                        <sc-for list="{{ gp.rows }}" as="b" hint-placeholder-count="6">
+                          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:6px 0;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px">
+                            <sc-for list="{{ b.cells }}" as="x" hint-placeholder-count="6">
+                              <span style="{{ x.style }}">{{ x.v }}</span>
+                            </sc-for>
+                          </div>
                         </sc-for>
-                      </div>
+                      </div></div>
                     </sc-for>
                     <sc-if value="{{ sd.empty }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:10px 0">{{ sd.empty }}</div></sc-if>
 </div></div>
@@ -3140,41 +3138,60 @@ class Component extends DCLogic {
     // the feed's box lines for the game in progress; one table state (sort, filters, search)
     // reads both sides, each side its own column
     const PBOX_PAGE = 12;
-    const pboxDefs = sport === 'NBA'
-      ? [['name', 'PLAYER', 'left', 1.5], ['pos', 'POS', 'left', .5], ['min', 'MIN', 'right', .5], ['pts', 'PTS', 'right', .5], ['reb', 'REB', 'right', .5], ['ast', 'AST', 'right', .5], ['pm', '+/-', 'right', .5], ['line', 'LINE', 'left', 1.7]]
-      : [['name', 'PLAYER', 'left', 1.5], ['pos', 'POS', 'left', .5], ['yds', 'YDS', 'right', .5], ['td', 'TD', 'right', .4], ['line', 'LINE', 'left', 2.4]];
     const n0 = v => v == null ? 0 : Number(v) || 0;
-    const nflLine = x => { const parts = [];
-      if (n0(x.pass_att)) parts.push(n0(x.pass_cmp) + '/' + n0(x.pass_att) + ', ' + n0(x.pass_yds) + ' yds' + (n0(x.pass_td) ? ', ' + n0(x.pass_td) + ' TD' : '') + (n0(x.pass_int) ? ', ' + n0(x.pass_int) + ' INT' : ''));
-      if (n0(x.rush_att)) parts.push(n0(x.rush_att) + ' car, ' + n0(x.rush_yds) + ' yds' + (n0(x.rush_td) ? ', ' + n0(x.rush_td) + ' TD' : ''));
-      if (n0(x.rec) || n0(x.tgt)) parts.push(n0(x.rec) + ' rec, ' + n0(x.rec_yds) + ' yds' + (n0(x.rec_td) ? ', ' + n0(x.rec_td) + ' TD' : ''));
-      if (n0(x.tkl)) parts.push(n0(x.tkl) + ' tkl' + (n0(x.sacks) ? ', ' + n0(x.sacks) + ' sack' : '') + (n0(x.int) ? ', ' + n0(x.int) + ' INT' : '') + (n0(x.pd) ? ', ' + n0(x.pd) + ' PD' : '') + (n0(x.tfl) ? ', ' + n0(x.tfl) + ' TFL' : ''));
-      if (n0(x.fga) || n0(x.xpm)) parts.push(n0(x.fgm) + '/' + n0(x.fga) + ' FG' + (n0(x.xpm) ? ', ' + n0(x.xpm) + ' XP' : ''));
-      if (n0(x.punts)) parts.push(n0(x.punts) + ' punts, ' + n0(x.punt_avg) + ' avg');
-      if (n0(x.kr) || n0(x.pr)) parts.push((n0(x.kr) ? n0(x.kr) + ' KR ' + n0(x.kr_yds) + ' yds' : '') + (n0(x.kr) && n0(x.pr) ? ', ' : '') + (n0(x.pr) ? n0(x.pr) + ' PR ' + n0(x.pr_yds) + ' yds' : ''));
-      return parts.join(' · ') || '—'; };
-    const nbaLine = x => n0(x.fgm) + '-' + n0(x.fga) + ' FG · ' + n0(x.fg3m) + '-' + n0(x.fg3a) + ' 3PT · ' + n0(x.ftm) + '-' + n0(x.fta) + ' FT · ' + n0(x.stl) + ' STL · ' + n0(x.blk) + ' BLK · ' + n0(x.tov) + ' TO';
-    const pboxGet = sport === 'NBA'
-      ? { name: x => x.n, pos: x => x.pos || null, min: x => x.min != null ? Math.round(x.min) : null, pts: x => n0(x.pts), reb: x => n0(x.reb), ast: x => n0(x.ast), pm: x => x.plus_minus != null ? Number(x.plus_minus) : null, line: x => nbaLine(x) }
-      : { name: x => x.n, pos: x => x.pos || null, yds: x => n0(x.pass_yds) + n0(x.rush_yds) + n0(x.rec_yds), td: x => n0(x.pass_td) + n0(x.rush_td) + n0(x.rec_td) + n0(x.int_td) + n0(x.fum_td) + n0(x.kr_td) + n0(x.pr_td), line: x => nflLine(x) };
-    const pboxMain = sport === 'NBA' ? pboxGet.pts : pboxGet.yds;
+    const f1 = v => v == null || !isFinite(Number(v)) ? null : Number(v).toFixed(1);
+    const nm = x => x.n, ps = x => x.pos || null;
+    // the categories a box score is read in: the NFL's by what a man did, the NBA's one table
+    const PBOX_CATS = sport === 'NBA' ? [
+      { key: 'all', label: 'PLAYERS', has: x => true, main: 'pts', minw: 760,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['pos', 'POS', 'left', .5], ['min', 'MIN', 'right', .5], ['pts', 'PTS', 'right', .5], ['fg', 'FG', 'right', .7], ['fg3', '3PT', 'right', .7], ['ft', 'FT', 'right', .7], ['oreb', 'OREB', 'right', .55], ['dreb', 'DREB', 'right', .55], ['reb', 'REB', 'right', .5], ['ast', 'AST', 'right', .5], ['stl', 'STL', 'right', .5], ['blk', 'BLK', 'right', .5], ['tov', 'TO', 'right', .5], ['pf', 'PF', 'right', .5], ['pm', '+/-', 'right', .55]],
+        get: { name: nm, pos: ps, min: x => x.min != null ? Math.round(x.min) : null, pts: x => n0(x.pts), fg: x => n0(x.fgm) + '-' + n0(x.fga), fg3: x => n0(x.fg3m) + '-' + n0(x.fg3a), ft: x => n0(x.ftm) + '-' + n0(x.fta), oreb: x => n0(x.oreb), dreb: x => n0(x.dreb), reb: x => n0(x.reb), ast: x => n0(x.ast), stl: x => n0(x.stl), blk: x => n0(x.blk), tov: x => n0(x.tov), pf: x => n0(x.pf), pm: x => x.plus_minus != null ? Number(x.plus_minus) : null } }
+    ] : [
+      { key: 'pass', label: 'PASSING', has: x => n0(x.pass_att) > 0, main: 'yds', minw: 520,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['cmp', 'C/ATT', 'right', .8], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['int', 'INT', 'right', .5], ['sk', 'SACKED', 'right', .7], ['rtg', 'RTG', 'right', .6]],
+        get: { name: nm, cmp: x => n0(x.pass_cmp) + '/' + n0(x.pass_att), yds: x => n0(x.pass_yds), avg: x => x.pass_ypa != null ? f1(x.pass_ypa) : (n0(x.pass_att) ? f1(n0(x.pass_yds) / n0(x.pass_att)) : null), td: x => n0(x.pass_td), int: x => n0(x.pass_int), sk: x => x.sacked != null ? n0(x.sacked) : null, rtg: x => f1(x.qb_rating) } },
+      { key: 'rush', label: 'RUSHING', has: x => n0(x.rush_att) > 0, main: 'yds', minw: 460,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['car', 'CAR', 'right', .5], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['lng', 'LNG', 'right', .5]],
+        get: { name: nm, car: x => n0(x.rush_att), yds: x => n0(x.rush_yds), avg: x => x.rush_ypc != null ? f1(x.rush_ypc) : (n0(x.rush_att) ? f1(n0(x.rush_yds) / n0(x.rush_att)) : null), td: x => n0(x.rush_td), lng: x => x.rush_long != null ? n0(x.rush_long) : null } },
+      { key: 'rec', label: 'RECEIVING', has: x => n0(x.tgt) > 0 || n0(x.rec) > 0, main: 'yds', minw: 500,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['tgt', 'TGT', 'right', .5], ['rec', 'REC', 'right', .5], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['td', 'TD', 'right', .5], ['lng', 'LNG', 'right', .5]],
+        get: { name: nm, tgt: x => n0(x.tgt), rec: x => n0(x.rec), yds: x => n0(x.rec_yds), avg: x => x.rec_ypr != null ? f1(x.rec_ypr) : (n0(x.rec) ? f1(n0(x.rec_yds) / n0(x.rec)) : null), td: x => n0(x.rec_td), lng: x => x.rec_long != null ? n0(x.rec_long) : null } },
+      { key: 'def', label: 'DEFENSE', has: x => n0(x.tkl) > 0 || n0(x.solo) > 0 || n0(x.sacks) > 0 || n0(x.int) > 0 || n0(x.pd) > 0 || n0(x.tfl) > 0 || n0(x.qbh) > 0 || n0(x.fum_rec) > 0, main: 'tkl', minw: 560,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['tkl', 'TKL', 'right', .5], ['solo', 'SOLO', 'right', .55], ['tfl', 'TFL', 'right', .5], ['sack', 'SACK', 'right', .55], ['qbh', 'QBH', 'right', .5], ['int', 'INT', 'right', .5], ['pd', 'PD', 'right', .5], ['fr', 'FR', 'right', .5]],
+        get: { name: nm, tkl: x => n0(x.tkl), solo: x => n0(x.solo), tfl: x => n0(x.tfl), sack: x => n0(x.sacks), qbh: x => n0(x.qbh), int: x => n0(x.int), pd: x => n0(x.pd), fr: x => n0(x.fum_rec) } },
+      { key: 'kick', label: 'KICKING', has: x => n0(x.fga) > 0 || n0(x.xpm) > 0, main: 'pts', minw: 400,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['fg', 'FG', 'right', .6], ['lng', 'LNG', 'right', .5], ['xp', 'XP', 'right', .5], ['pts', 'PTS', 'right', .5]],
+        get: { name: nm, fg: x => n0(x.fgm) + '/' + n0(x.fga), lng: x => x.fg_long != null ? n0(x.fg_long) : null, xp: x => n0(x.xpm), pts: x => n0(x.fgm) * 3 + n0(x.xpm) } },
+      { key: 'punt', label: 'PUNTING', has: x => n0(x.punts) > 0, main: 'punts', minw: 420,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['punts', 'PUNTS', 'right', .6], ['yds', 'YDS', 'right', .6], ['avg', 'AVG', 'right', .6], ['lng', 'LNG', 'right', .5], ['in20', 'IN 20', 'right', .6]],
+        get: { name: nm, punts: x => n0(x.punts), yds: x => n0(x.punt_yds), avg: x => f1(x.punt_avg), lng: x => x.punt_long != null ? n0(x.punt_long) : null, in20: x => n0(x.punt_in20) } },
+      { key: 'ret', label: 'RETURNS', has: x => n0(x.kr) > 0 || n0(x.pr) > 0, main: 'kryds', minw: 500,
+        cols: [['name', 'PLAYER', 'left', 1.8], ['kr', 'KR', 'right', .5], ['kryds', 'KR YDS', 'right', .7], ['krtd', 'KR TD', 'right', .6], ['pr', 'PR', 'right', .5], ['pryds', 'PR YDS', 'right', .7], ['prtd', 'PR TD', 'right', .6]],
+        get: { name: nm, kr: x => n0(x.kr), kryds: x => n0(x.kr_yds), krtd: x => n0(x.kr_td), pr: x => n0(x.pr), pryds: x => n0(x.pr_yds), prtd: x => n0(x.pr_td) } }
+    ];
     const pboxAllRows = boxOn ? [].concat(box.away.map(x => Object.assign({ team: g.awayAbbr, side: 'away' }, x)), box.home.map(x => Object.assign({ team: g.homeAbbr, side: 'home' }, x))) : [];
-    const pboxGetT = Object.assign({ team: x => x.team }, pboxGet);
+    // the search box reads the whole box: name, club and position, and its picks are column filters on those
+    const pboxGetT = { name: nm, team: x => x.team, pos: ps };
     TABLES.pbox = { rows: pboxAllRows, get: pboxGetT };
     const pboxLimit = tstate('pbox').limit || PBOX_PAGE;
-    const pboxShownAll = tapply('pbox', pboxAllRows.slice().sort((a, b) => pboxMain(b) - pboxMain(a)), pboxGetT, rowText(pboxGetT));
-    const pboxCols = pboxDefs.map(([k, label, align, flex]) => tcol('pbox', k, label, null, align, flex));
-    const pboxSearchCols = [['team', 'TEAM']].concat(pboxDefs.map(([k, label]) => [k, label]));
-    const pboxCell = (x, [k, , align, flex]) => { const v = pboxGetT[k](x); const txt = v == null ? '—' : k === 'pm' ? (v > 0 ? '+' : '') + v : String(v);
-      return { v: txt, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : k === 'line' ? 'color:var(--second);font-size:10px' : k === 'pts' || k === 'yds' ? 'font-weight:700;color:var(--lead)' : 'color:var(--second)') }; };
+    const pboxShownAll = tapply('pbox', pboxAllRows, pboxGetT, rowText(pboxGetT));
+    const pboxSearchCols = [['name', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS']];
+    const cellOf = (v, [k, , align, flex]) => ({ v: v == null || v === '' ? '—' : k === 'pm' ? (v > 0 ? '+' : '') + v : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:' + align + ';' + (k === 'name' ? 'color:var(--reversed)' : 'color:var(--second)') });
+    PBOX_CATS.forEach(cat => { TABLES['pbox:' + cat.key] = { rows: pboxAllRows.filter(cat.has), get: cat.get }; });
     const pboxSides = [['away', g.awayAbbr, g.away, g.as], ['home', g.homeAbbr, g.home, g.hs]].map(([side, abbr, name, score], i) => {
-      const rows = pboxShownAll.filter(x => x.side === side);
+      const mine = pboxShownAll.filter(x => x.side === side);
+      const groups = PBOX_CATS.map(cat => {
+        const tk = 'pbox:' + cat.key;
+        const rows = tapply(tk, mine.filter(cat.has).sort((a, b) => (Number(cat.get[cat.main](b)) || 0) - (Number(cat.get[cat.main](a)) || 0)), cat.get, rowText(cat.get));
+        const cols = cat.cols.map(([k, label, align, flex]) => tcol(tk, k, label, null, align, flex));
+        return { key: cat.key, label: cat.label, wrapStyle: 'min-width:' + cat.minw + 'px', total: rows.length,
+          cols: i === 0 ? cols : cols.map(c => Object.assign({}, c, { open: false })),
+          rows: rows.slice(0, pboxLimit).map(x => ({ cells: cat.cols.map(col => cellOf(cat.get[col[0]](x), col)) })) };
+      }).filter(gp => gp.total > 0);
       return { title: abbr + ' · ' + (side === 'away' ? 'AWAY' : 'HOME'), titleStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.14em;color:' + (side === 'home' ? 'var(--brand)' : 'var(--collabel)'), score: String(score == null ? 0 : score),
-        cols: i === 0 ? pboxCols : pboxCols.map(c => Object.assign({}, c, { open: false })),
-        rows: rows.slice(0, pboxLimit).map(x => ({ cells: pboxDefs.map(d => pboxCell(x, d)) })),
-        empty: !boxOn ? (g.state === 'scheduled' || !g.live ? 'the box score fills once the game is in progress' : 'no box score yet') : !rows.length ? 'no ' + abbr + ' line matches' : '' };
+        groups, empty: !boxOn ? (g.state === 'scheduled' || !g.live ? 'the box score fills once the game is in progress' : 'no box score yet') : !mine.length ? 'no ' + abbr + ' line matches' : '' };
     });
-    const pboxPerSide = Math.max.apply(null, [0].concat(pboxSides.map((sd, i) => pboxShownAll.filter(x => x.side === (i === 0 ? 'away' : 'home')).length)));
+    const pboxPerSide = Math.max.apply(null, [0].concat(pboxSides.map(sd => Math.max.apply(null, [0].concat(sd.groups.map(gp => gp.total))))));
     const pboxCaption = !g.live ? 'players\' lines from the feed once a game is on' : g.state === 'in_progress' ? (g.status || 'in progress') + ' · ' + pboxAllRows.length + ' players' : g.state === 'final' ? 'final · ' + pboxAllRows.length + ' players' : 'kickoff ' + (g.status || '') + ' · the box score fills once the game is in progress';
     const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons'
       : !tlog ? 'no game log yet' : tlog.state === 'ready' ? logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '')
@@ -4412,10 +4429,10 @@ class Component extends DCLogic {
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       pboxSides, pboxCaption,
-      pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: 'search the box score · player, team, position, line', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols.filter(([k]) => k === 'team' || k === 'pos' || k === 'name')) }),
+      pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: 'search the box score · player, team, position', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols) }),
       pboxHasMore: pboxPerSide > pboxLimit, pboxMoreLabel: 'Show ' + Math.min(PBOX_PAGE, pboxPerSide - pboxLimit) + ' more', pboxAllLabel: 'Show all ' + pboxPerSide,
       pboxShowMore: () => tset('pbox', { limit: pboxLimit + PBOX_PAGE }), pboxShowAll: () => tset('pbox', { limit: pboxPerSide }), pboxShowLess: () => tset('pbox', { limit: PBOX_PAGE }), pboxCanCollapse: pboxLimit > PBOX_PAGE,
-      pboxPageNote: boxOn ? 'showing ' + Math.min(pboxLimit, pboxPerSide) + ' of ' + pboxPerSide + ' a side' : '',
+      pboxPageNote: boxOn ? 'up to ' + Math.min(pboxLimit, pboxPerSide) + ' a category · ' + pboxAllRows.length + ' players' : '',
       bookLiveOn, bookHistOn, bookHistHead, bookHistCols, bookHistRows, bookHistNote, bookHist: histMenuFor('books', g.homeAbbr),
       bookCols, bookSearch: searchFor('books', histMenuFor('books', g.homeAbbr), { table: 'books', placeholder: 'search anything on the table · type to filter, pick from the list',
         cols: BOOK_SEARCH_COLS, groups: colGroups(bookSides, bookGet, BOOK_SEARCH_COLS), count: bookHistOn ? bookHistRows.length + ' meetings' : bookShown.length + ' of ' + bookSides.length }),
@@ -4534,6 +4551,8 @@ paceRows: (() => {
         if (!boxOn || !S) return (S && S.teamStatKeys ? S.teamStatKeys(sport) : (sport === 'NBA' ? ['Points', 'eFG%', 'FT rate'] : ['Pass yds', 'Rush yds', 'Turnovers'])).map(k => ({
           k, av: '—', hv: '—', abar: 'height:100%;width:0%;background:var(--lead)', hbar: 'height:100%;width:0%;background:' + BLUE }));
         const a = S.teamLine(sport, box.away), h = S.teamLine(sport, box.home);
+        // the scoreboard is the score; the summed player lines miss safeties and two-point plays
+        [[a, g.as], [h, g.hs]].forEach(([side, sc]) => { const p = side.find(r => r.k === 'Points'); if (p && sc != null && sc !== '') { p.v = Number(sc) || 0; p.text = String(sc); } });
         return a.map((row, i) => {
           const mx = Math.max(row.v, h[i].v, 1);
           return { k: row.k, av: row.text, hv: h[i].text,
