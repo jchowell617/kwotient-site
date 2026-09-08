@@ -2679,6 +2679,15 @@ class Component extends DCLogic {
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
   }
+  // a bar's reveal box, kept inside the card: it shifts continuously from the left edge at the
+  // first bar to the right edge at the last, and wraps rather than running off a narrow screen
+  tipBoxAt(i, n) {
+    const pct = n <= 1 ? 50 : (i / (n - 1)) * 100;
+    return 'position:absolute;bottom:126px;left:50%;transform:translateX(-' + pct.toFixed(2) + '%);' +
+      'width:max-content;max-width:min(230px,72vw);white-space:normal;overflow-wrap:anywhere;text-align:left;' +
+      'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;' +
+      'box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none';
+  }
   // where the pointer is, whether it is a mouse or a finger
   ptX(e) {
     if (e && e.touches && e.touches.length) return e.touches[0].clientX;
@@ -3838,8 +3847,7 @@ class Component extends DCLogic {
       const log = (st.logs || {})[this.logKey(st.profileId)] || null;
       const logRows = log && log.rows ? log.rows : [];
       const av = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
-      const tipBox = (i, n) => 'position:absolute;bottom:126px;' + (i > n - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
-        'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none';
+      const tipBox = (i, n) => this.tipBoxAt(i, n);
       const logNote = (what) => !log ? 'no ' + what + ' yet'
         : log.state === 'ready' ? logRows.length + ' games · ' + log.season + ' season' + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '')
         : log.state === 'loading' ? 'loading…'
@@ -4241,8 +4249,7 @@ class Component extends DCLogic {
         on: () => this.setState({ tTrendHover: i }),
         off: () => this.setState({ tTrendHover: null }),
         hovered: on,
-        tipStyle: 'position:absolute;bottom:126px;' + (i > tMargins.length - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
-          'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none',
+        tipStyle: this.tipBoxAt(i, tMargins.length),
         tipMain: (v > 0 ? '+' : '') + v + ' · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + r.pf + '-' + r.pa,
         tipSub: (r.when || r.date) + ' · ' + (r.live && !r.result ? (v > 0 ? 'up by ' : v < 0 ? 'down by ' : 'level, ') : v > 0 ? 'won by ' : v < 0 ? 'lost by ' : 'tied at ') + Math.abs(v),
         tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (v > 0 ? ACC : RED)
@@ -4715,7 +4722,7 @@ class Component extends DCLogic {
       hoverLine: 'position:absolute;top:0;bottom:0;width:1px;background:var(--brand);opacity:.45;left:' + hx + '%',
       hoverRingH: 'position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--brand);left:' + hx + '%;top:' + hyH + '%;transform:translate(-50%,-50%)',
       hoverRingA: 'position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--lead);left:' + hx + '%;top:' + hyA + '%;transform:translate(-50%,-50%)',
-      tipStyle: 'position:absolute;left:' + hx + '%;top:' + tipTop.toFixed(2) + '%;transform:translate(' + (hx > 65 ? '-105%' : hx < 12 ? '-2%' : '-50%') + ',' + (tipBelow ? '8%' : '-108%') + ');background:var(--rail);border:1px solid var(--brand);border-radius:8px;padding:8px 11px;white-space:nowrap;box-shadow:0 6px 18px rgba(0,0,0,.5)',
+      tipStyle: 'position:absolute;left:' + hx + '%;top:' + tipTop.toFixed(2) + '%;transform:translate(' + (hx > 65 ? '-105%' : hx < 12 ? '-2%' : '-50%') + ',' + (tipBelow ? '8%' : '-108%') + ');background:var(--rail);border:1px solid var(--brand);border-radius:8px;padding:8px 11px;width:max-content;max-width:min(220px,68vw);white-space:normal;overflow-wrap:anywhere;box-shadow:0 6px 18px rgba(0,0,0,.5)',
       tipHome: hv.toFixed(1) + '%',
       tipAway: (100 - hv).toFixed(1) + '%',
       tipTime: hi === null ? '' : (() => {
@@ -4838,8 +4845,7 @@ paceRows: (() => {
           on: () => this.setState({ trendHover: i }),
           off: () => this.setState({ trendHover: null }),
           hovered: on,
-          tipStyle: 'position:absolute;bottom:126px;' + (i > logs.length - 4 ? 'right:0;' : i < 3 ? 'left:0;' : 'left:50%;transform:translateX(-50%);') +
-            'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:7px 9px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:7;pointer-events:none',
+          tipStyle: this.tipBoxAt(i, logs.length),
           tipMain: (big ? v : v.toFixed(1)) + ' ' + String(trendUnit).toLowerCase() + ' · ' + (tRows[i].home ? 'vs ' : 'at ') + tRows[i].opp,
           tipSub: (tRows[i].when || tRows[i].date) + ' · ' + (tRows[i].result || '') + ' · ' + (d >= 0 ? '+' : '') + d.toFixed(1) + ' vs season average',
           tipSubStyle: 'font-family:var(--kw);font-size:9px;margin-top:3px;color:' + (d >= 0 ? ACC : RED)
