@@ -3274,8 +3274,8 @@ class Component extends DCLogic {
       if (isP) {
         const pl = roster.find(x => x.name === key) || roster[0];
         const pb = playerBundle(pl);
-        const pScoped = histScope(logRows, pl.team), pFell = hf.opp === 'opp' && !hf.game && logRows.length > 0 && pScoped.length === 0;
-        const pRows = filtOn('profile') ? logRows.filter(r => rowMatch(r, 'profile')) : (pFell ? logRows : pScoped), pOpp = pFell || filtOn('profile') ? null : histOppOf(pl.team);
+        const pFell = false;
+        const pRows = logRows.filter(r => rowMatch(r, 'profile')), pOpp = null;
         profHistAbbr = pl.team; profHistRows = logRows;
         const vals = pRows.map(r => r.v);
         const season = av(logRows.map(r => r.v)), l10 = av(vals.slice(-10));
@@ -3301,7 +3301,7 @@ class Component extends DCLogic {
             const cells = L.filter(([k]) => sr.stats[k] != null).map(([k, label, scale]) => ({ k: label, v: fmt(sr.stats[k], scale) }));
             return cells.length ? [{ k: 'SEASON', v: (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : String(dirSeason)) }, { k: 'CLUB', v: sr.team || '—' }].concat(cells) : pb.stats;
           })(),
-          barsNote: logNote('game log') + (pFell ? ' · no game against ' + histOppOf(pl.team) + ' in this log · every game' : pOpp ? ' · ' + pRows.length + ' against ' + pOpp : '') + (hf.game ? ' · one meeting' : '') + (vals.length ? ' · ' + unit + ' against his ' + season.toFixed(1) + ' average' : ''),
+          barsNote: logNote('game log') + (filtOn('profile') ? ' · ' + pRows.length + ' match the search' : '') + (vals.length ? ' · ' + unit + ' against his ' + season.toFixed(1) + ' average' : ''),
           axisMax: mx.toFixed(0), axisLine: vals.length ? season.toFixed(1) : '—',
           lineMark: 'position:absolute;left:0;right:0;bottom:' + ((vals.length ? season / mx : 0) * 118).toFixed(1) + 'px;height:0;border-top:1px dashed var(--brand);opacity:.6',
           lineLabel: 'position:absolute;left:0;width:26px;bottom:' + ((vals.length ? season / mx : 0) * 118 - 5).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
@@ -3325,7 +3325,7 @@ class Component extends DCLogic {
             if (!vals.length) return [];
             const u = unit.toUpperCase();
             const line = (playerProps.find(r => NK(r.who) === NK(pl.full || pl.n || pl.name) && String(r.label).toUpperCase() === u) || {}).consensus;
-            return [{ k: (pFell ? histLabel(pl.team).replace('VS ' + histOppOf(pl.team), 'ALL TEAMS') : histLabel(pl.team)) + ' · ' + u, v: av(vals).toFixed(1) + ' avg in ' + vals.length + (vals.length === 1 ? ' game' : ' games') + ' · high ' + Math.max.apply(null, vals) + (line && line.line != null ? ' · over ' + line.line + ' in ' + vals.filter(v => v > line.line).length + ' of ' + vals.length : '') }];
+            return [{ k: (filtOn('profile') ? 'SEARCH' : 'EVERY GAME') + ' · ' + histSeasonLabel(Number(log && log.season) || histEff) + ' · ' + u, v: av(vals).toFixed(1) + ' avg in ' + vals.length + (vals.length === 1 ? ' game' : ' games') + ' · high ' + Math.max.apply(null, vals) + (line && line.line != null ? ' · over ' + line.line + ' in ' + vals.filter(v => v > line.line).length + ' of ' + vals.length : '') }];
           })(),
           predHead: 'The record · ' + pl.team + (pl.end ? ' · through ' + pl.end : ''),
           propRows: playerProps.filter(r => NK(r.who) === NK(pl.full || pl.n || pl.name)).map(r => { const c = r.consensus || {}; return { k: 'TONIGHT · ' + String(r.label).toUpperCase() + ' LINE', v: (c.line != null ? c.line : '—') + ' · ' + oddsFmtP(c.over) + ' / ' + oddsFmtP(c.under) + ' · ' + (c.n || 0) + ' books' }; }),
@@ -3345,8 +3345,8 @@ class Component extends DCLogic {
       } else {
         const cl = clubs.find(x => x.abbr === key) || clubs[0];
         const cb = clubBundle(cl);
-        const cScoped = histScope(logRows, cl.abbr), cFell = hf.opp === 'opp' && !hf.game && logRows.length > 0 && cScoped.length === 0;
-        const cRows = filtOn('profile') ? logRows.filter(r => rowMatch(r, 'profile')) : (cFell ? logRows : cScoped), cOpp = cFell || filtOn('profile') ? null : histOppOf(cl.abbr);
+        const cFell = false;
+        const cRows = logRows.filter(r => rowMatch(r, 'profile')), cOpp = null;
         profHistAbbr = cl.abbr; profHistRows = logRows;
         const margins = cRows.map(r => r.margin);
         const mx = Math.max.apply(null, margins.map(Math.abs).concat([1])) * 1.25;
@@ -3362,7 +3362,7 @@ class Component extends DCLogic {
             { k: 'LAST ' + (margins.length || 12), v: margins.length ? wins + '-' + (margins.length - wins) : '—' }
           ],
           stats: cb.stats,
-          barsNote: logNote('team log') + (cFell ? ' · no game against ' + histOppOf(cl.abbr) + ' in this log · every game' : cOpp ? ' · ' + cRows.length + ' against ' + cOpp : '') + (hf.game ? ' · one meeting' : '') + (margins.length ? ' · scoring margin' : ''),
+          barsNote: logNote('team log') + (filtOn('profile') ? ' · ' + cRows.length + ' match the search' : '') + (margins.length ? ' · scoring margin' : ''),
           axisMax: '+' + mx.toFixed(0), axisLine: '0',
           lineMark: 'position:absolute;left:0;right:0;bottom:59px;height:0;border-top:1px dashed var(--brand);opacity:.6',
           lineLabel: 'position:absolute;left:0;width:26px;bottom:54px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
@@ -3383,21 +3383,22 @@ class Component extends DCLogic {
           // head to head: the meetings inside the history scope, from the season log the profile
           // already holds, with the closing line the edge filed for each when it has one
           h2h: (() => {
-            const meetings = (cOpp ? logRows.filter(r => r.opp === cOpp) : logRows).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
+            const h2hOpp = histOppOf(cl.abbr) || null;
+            const meetings = (h2hOpp ? logRows.filter(r => r.opp === h2hOpp) : logRows).slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
             const shown = (filtOn('h2h') ? logRows.slice().sort((a, b) => String(b.date).localeCompare(String(a.date))).filter(r => rowMatch(r, 'h2h')) : hf.game ? meetings.filter(r => r.date === hf.game) : meetings).slice(0, 20);
             const wins = meetings.filter(r => r.result === 'W').length, losses = meetings.filter(r => r.result === 'L').length;
             this._oddsNeed = this._oddsNeed.concat(oddsNeedFor(shown.slice(0, 10), log));
             return {
               head: !log ? 'no season on record yet' : log.state === 'loading' ? 'loading…' : log.state === 'failed' ? 'no season on record yet'
-                : cl.abbr + ' ' + wins + '-' + losses + (cOpp ? ' against ' + cOpp : ' · every game') + ' in ' + histSeasonLabel(Number(log.season) || histEff) + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (cFell ? ' · no game against ' + histOppOf(cl.abbr) + ' yet' : '') + (meetings.length > 20 ? ' · the last 20' : ''),
+                : cl.abbr + ' ' + wins + '-' + losses + (h2hOpp ? ' against ' + h2hOpp : ' · every game') + ' in ' + histSeasonLabel(Number(log.season) || histEff) + (log.fellBack ? ' (no games yet in ' + log.asked + ')' : '') + (meetings.length > 20 ? ' · the last 20' : ''),
               rows: shown.map(r => { const o = oddsGameFor(r, cl.abbr, log), sd = o ? sideOf(o, r) : null, state = oddsStateFor(r, log); return { when: gameLabelOf(r), where: r.home ? 'vs ' + r.opp : 'at ' + r.opp, score: (r.pf != null ? r.pf : '—') + '–' + (r.pa != null ? r.pa : '—'), result: r.result || '—',
                 line: sd ? cl.abbr + ' ' + sgn(sd.spread) + ' · O/U ' + (sd.total != null ? sd.total : '—') : (state === 'loading' || state === 'none' ? '…' : 'no line on file'),
                 resultStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (r.result === 'W' ? ACC : r.result === 'L' ? RED : 'var(--second)') }; }),
-              empty: log && log.state === 'ready' && !meetings.length ? 'no meeting with ' + (cOpp || 'anyone') + ' in that season' : '',
+              empty: log && log.state === 'ready' && !meetings.length ? 'no meeting with ' + (h2hOpp || 'anyone') + ' in that season' : '',
               note: 'the line is the closing consensus where one is on file'
             };
           })(),
-          histRows: cRows.length ? [{ k: cFell ? histLabel(cl.abbr).replace('VS ' + histOppOf(cl.abbr), 'ALL TEAMS') : histLabel(cl.abbr), v: cRows.filter(r => r.margin > 0).length + '-' + cRows.filter(r => r.margin < 0).length + ' · avg margin ' + (av(margins) >= 0 ? '+' : '') + av(margins).toFixed(1) + (cRows.some(r => r.pf != null) ? ' · avg total ' + av(cRows.filter(r => r.pf != null).map(r => r.pf + r.pa)).toFixed(1) : '') }] : [],
+          histRows: cRows.length ? [{ k: (filtOn('profile') ? 'SEARCH' : 'EVERY GAME') + ' · ' + histSeasonLabel(Number(log && log.season) || histEff), v: cRows.filter(r => r.margin > 0).length + '-' + cRows.filter(r => r.margin < 0).length + ' · avg margin ' + (av(margins) >= 0 ? '+' : '') + av(margins).toFixed(1) + (cRows.some(r => r.pf != null) ? ' · avg total ' + av(cRows.filter(r => r.pf != null).map(r => r.pf + r.pa)).toFixed(1) : '') }] : [],
           predHead: tonight ? 'Tonight · ' + tonight.awayAbbr + ' @ ' + tonight.homeAbbr + (slateSim ? ' · simulated slate' : '') : 'No game on the slate',
           predRows: [
             { k: 'MODEL WIN PROB', v: wpp == null ? '—' : wpp.toFixed(1) + '%' },
