@@ -151,7 +151,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=clockshort]{display:inline!important}
   [data-shell=body]{flex-direction:column!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   [data-shell=side]{width:auto!important;border-right:0!important;border-bottom:1px solid var(--grid);flex:none!important}
-  [data-shell=nav],[data-shell=health],[data-shell=spacer],[data-shell=cohortbtn],[data-shell=modelbtn]{display:none!important}
+  [data-shell=nav],[data-shell=health],[data-shell=spacer],[data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{display:none!important}
   [data-shell=slate-head]{margin-top:0!important;border-top:0!important;padding:10px 12px 4px!important}
   [data-shell=slate]{flex-direction:row!important;overflow-x:auto!important;overflow-y:hidden!important;gap:8px!important;padding:0 10px 12px!important;scrollbar-width:none}
   [data-shell=slate]::-webkit-scrollbar{display:none}
@@ -177,7 +177,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <svg viewBox="0 0 100 100" width="18" height="18" aria-hidden="true" style="display:block;flex:none"><rect width="100" height="100" rx="22" fill="var(--reversed)"/><circle cx="60" cy="32" r="9.5" fill="var(--brand)"/><rect x="22" y="49" width="56" height="7" rx="3.5" fill="var(--ink)"/><rect x="22" y="65" width="30" height="7" rx="3.5" fill="var(--ink)"/></svg>
           <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Kwotient</span>
         </button>
-        <button onClick="{{ openContact }}" style="{{ themeBtn }}">CONTACT</button>
         <button onClick="{{ toggleTheme }}" style="{{ themeBtn }}">{{ themeLabel }}</button>
         <span data-shell="wintitle" style="font-family:var(--kw);font-size:9.5px;color:var(--muted);margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ windowTitle }}</span>
       </div>
@@ -237,6 +236,11 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <button onClick="{{ goModel }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ modelNavBtn }}">
             <span style="flex:1;text-align:left">Model</span>
             <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ modelBadge }}</span>
+          </button>
+        </div>
+        <div data-shell="contactbtn" style="padding:0 8px 10px">
+          <button onClick="{{ openContact }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ contactNavBtn }}">
+            <span style="flex:1;text-align:left">Contact Us</span>
           </button>
         </div>
 
@@ -4290,6 +4294,7 @@ class Component extends DCLogic {
       // the model sits last, after the cohorts, in the side nav and on the phone's bar alike
       goModel: () => this.setState({ tab: 'model' }),
       modelNavBtn: navBtn(st.tab === 'model'),
+      contactNavBtn: navBtn(!!st.contactOpen),
       modelBadge: badges.model,
       tabItems: NAV.concat([['cohorts', 'Cohorts'], ['model', 'Model']]).map(([k, label]) => {
         const active = st.tab === k;
@@ -4299,7 +4304,12 @@ class Component extends DCLogic {
           dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (active ? '1' : '0'),
           go: () => this.setState({ tab: k, profileId: k === 'profiles' ? st.profileId : null })
         };
-      }),
+      }).concat([{
+        short: 'Contact Us',
+        style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (st.contactOpen ? '700' : '500') + ';color:' + (st.contactOpen ? 'var(--reversed)' : 'var(--muted)'),
+        dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (st.contactOpen ? '1' : '0'),
+        go: () => this.setState({ contactOpen: true })
+      }]),
 
       p: panels,
       refSources: [
