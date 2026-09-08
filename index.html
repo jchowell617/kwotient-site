@@ -2026,7 +2026,7 @@ class Component extends DCLogic {
     }, rate);
     this.connectRecord();
   }
-  componentDidUpdate() { this.ensureOddsHist(); }
+  componentDidUpdate() { this.ensureOddsHist(); (this._logNeed || []).forEach(n => this.loadLog(n.id, n.ent, n.season)); }
   // the lines of past meetings: asked of the edge once per slate the history filter reaches,
   // held per date (NBA) or per week (NFL); the edge answers from its own closing-line file
   ensureOddsHist() {
@@ -2495,20 +2495,27 @@ class Component extends DCLogic {
     const pp = (ppSel && trendMatches.indexOf(ppSel) >= 0 ? ppSel : trendMatches[0]) || trendPool[0] ||
       { name: '—', pos: '', home: true, team: g.homeAbbr, k: null, ent: null, id: null, market: '' };
     const tlog = pp.id ? (st.logs || {})[this.logKey(pp.id)] || null : null;
-    // the live widget regards the matchup: the player's games against tonight's opponent when
-    // the log holds two or more, every game otherwise, and the reader can switch
-    const tRowsAll = tlog && tlog.rows ? tlog.rows : [];
-    // tonight's opponent by default; when the log holds no meeting with them, every game
-    // stands in and the note says so — an empty chart tells the reader nothing
+    // the live tab regards the live game: the player's games against tonight's opponent, and
+    // only those — read across the last three seasons' logs, which load as the player is picked
+    const TREND_SEASONS = 3;
+    const trendSeasons = [0, 1, 2].slice(0, TREND_SEASONS).map(n => histCur - n);
+    const trendLogs = pp.id ? trendSeasons.map(y => ({ y, rec: (st.logs || {})[pp.id + '@' + y] || null })) : [];
+    this._logNeed = pp.id && pp.ent ? trendLogs.filter(x => !x.rec).map(x => ({ id: pp.id, ent: pp.ent, season: x.y })) : [];
+    const trendLoading = trendLogs.some(x => x.rec && x.rec.state === 'loading');
+    const tRowsAll = (() => { const seen = {}; const out = []; trendLogs.forEach(x => { if (!x.rec || !x.rec.rows) return; x.rec.rows.forEach(row => { if (seen[row.date]) return; seen[row.date] = true; out.push(Object.assign({}, row, { season: Number(x.rec.season) || x.y })); }); }); return out.sort((a, b) => String(a.date).localeCompare(String(b.date))); })();
     const oppAbbr0 = histOppOf(pp.team) || null;
     const scoped = histScope(tRowsAll, pp.team);
-    const trendFell = hf.opp === 'opp' && !hf.game && tRowsAll.length > 0 && scoped.length === 0;
-    const tRows = trendFell ? tRowsAll : scoped;
-    const oppAbbr = trendFell ? null : oppAbbr0;
+    const trendFell = false;
+    const tRows = scoped;
+    const oppAbbr = oppAbbr0;
     const vsRows = tRows, useVs = !!oppAbbr;
     const logs = tRows.map(r => r.v);
     const avg = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0;
-    const season = avg(logs), l5 = avg(logs.slice(-5)), l10 = avg(logs.slice(-10));
+    // the reference is the season in play (or the one standing in for it), every game
+    const refLog = trendLogs.map(x => x.rec).find(rec => rec && rec.rows && rec.rows.length) || null;
+    const seasonAllRows = refLog ? refLog.rows : [], refSeason = refLog ? (Number(refLog.season) || histEff) : histEff;
+    const season = avg(seasonAllRows.map(r => r.v)) || avg(logs), l5 = avg(logs.slice(-5)), l10 = avg(logs.slice(-10));
+    const trendSpan = (() => { const ys = Array.from(new Set(tRows.map(r => r.season).filter(Boolean))).sort(); return !ys.length ? '' : ys.length === 1 ? histSeasonLabel(ys[0]) : histSeasonLabel(ys[0]) + ' to ' + histSeasonLabel(ys[ys.length - 1]); })();
     const big = season > 12;
     const tMax = Math.max.apply(null, logs.concat([season || 1])) * 1.18;
     const hits = logs.filter(v => v > season).length;
@@ -2720,7 +2727,7 @@ class Component extends DCLogic {
     const bookHistHead = 'PAST MEETINGS · ' + (bookOpp ? g.homeAbbr + ' VS ' + bookOpp : g.homeAbbr + ' · EVERY GAME') + ' · ' + histSeasonLabel(Number(bookRec && bookRec.season) || histEff).toUpperCase() + (bookRec && bookRec.fellBack ? ' (NO GAMES YET IN ' + histSeasonLabel(histEff).toUpperCase() + ')' : '') + (bookHistGame ? ' · ' + gameLabelOf(bookHistGame).toUpperCase() : bookMeetingsAll.length > 10 ? ' · THE LAST 10 OF ' + bookMeetingsAll.length : '');
     const bookHistNote = (bookHistGame ? 'the consensus row is what the edge filed at tip; the book rows are the lines the provider still holds for the game' : 'tap a meeting for its books · the spread is ' + g.homeAbbr + "'s side of the closing consensus the edge filed at tip · cover reads the final score against it")
       + ' · the edge files a closing line for every game it watches from 8 Sep 2026, so earlier meetings show none';
-    const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game ' + (oppAbbr ? 'against ' + oppAbbr : '') + (hf.game ? ' on that date' : '') + ' in this log — widen the history filter'
+    const trendNote = !S ? 'connecting to the record' : !pp.id ? 'no rated players on the record for these clubs' : (tRowsAll.length && !tRows.length) ? 'no game against ' + (oppAbbr || 'tonight\'s opponent') + ' in the last ' + TREND_SEASONS + ' seasons' + (trendLoading ? ' · still reading the earlier seasons' : '')
       : !tlog ? 'log not requested' : tlog.state === 'ready' ? 'last ' + logs.length + ' games · ' + tlog.season + ' season' + (tlog.fellBack ? ' (no games yet in ' + tlog.asked + ')' : '') + (st.logSeason ? ' · history' : '')
       : tlog.state === 'loading' ? 'loading the game log…' : 'game log unavailable — ' + (tlog.reason || 'the feed did not answer');
     // the same pool as a props-style table: what he did, not what a book priced
@@ -3979,7 +3986,7 @@ paceRows: (() => {
       }),
       trendAvgPath: logs.length > 1 ? this.path(roll, 100, 118, 0, tMax) : '',
       trendPropNote: ppLine != null ? ' · market line ' + ppLine + ' across ' + ppProp.consensus.n + ' books' : '',
-      trendGames: (trendFell ? 'no game against ' + oppAbbr0 + ' in this log · every game, ' + logs.length : oppAbbr ? logs.length + ' games against ' + oppAbbr : 'every game, ' + logs.length) + (hf.game ? ', one meeting' : '') + ' · ' + histSeasonLabel(histEff) + ' against the season average',
+      trendGames: (oppAbbr ? logs.length + (logs.length === 1 ? ' game' : ' games') + ' against ' + oppAbbr : 'every game, ' + logs.length) + (trendSpan ? ' · ' + trendSpan : '') + (trendLoading ? ' · reading earlier seasons…' : '') + ' against the ' + histSeasonLabel(refSeason) + ' season average',
       trendHist: histMenuFor('trend', pp.team, tRowsAll),
       trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players',
         picks: trendMatches.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : ''), pick: () => this.pickTrend(p) })) }); })(),
