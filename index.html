@@ -805,23 +805,38 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ mtotalOpen }}</span>
                 </div>
               <sc-if value="{{ p.mtotal.open }}" hint-placeholder-val="{{ true }}">
-                <div style="display:flex;align-items:baseline;gap:10px">
-                  <span style="font-family:var(--kw);font-size:31px;font-weight:700">{{ mtotalBig }}</span>
-                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ mtotalPrices }}</span>
-                </div>
-                <div style="{{ mtotalPaceStyle }};margin:8px 0 10px">{{ mtotalPace }}</div>
-                <div style="height:4px;border-radius:2px;background:var(--grid);overflow:hidden"><div style="{{ mtotalBar }}"></div></div>
-                <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:6px"><span>points scored against the total</span><span>{{ mtotalBarNote }}</span></div>
-                <sc-if value="{{ hasTeamTotals }}" hint-placeholder-val="{{ false }}">
-                  <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--grid);display:flex;flex-direction:column;gap:6px">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--collabel)">TEAM TOTALS</span>
-                    
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;align-items:start">
+
+                  <div style="display:flex;flex-direction:column;gap:7px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);border-bottom:1px solid var(--grid);padding-bottom:4px">MARKET TOTAL</span>
+                    <span style="font-family:var(--kw);font-size:31px;font-weight:700;line-height:1">{{ mtotalBig }}</span>
+                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ mtotalPrices }}</span>
+                  </div>
+
+                  <div style="display:flex;flex-direction:column;gap:7px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);border-bottom:1px solid var(--grid);padding-bottom:4px">PACE</span>
+                    <div style="{{ mtotalPaceStyle }}">{{ mtotalPace }}</div>
+                    <div style="height:4px;border-radius:2px;background:var(--grid);overflow:hidden;margin-top:2px"><div style="{{ mtotalBar }}"></div></div>
+                    <div style="display:flex;justify-content:space-between;gap:8px;font-family:var(--kw);font-size:9px;color:var(--muted)"><span>points against the total</span><span style="white-space:nowrap">{{ mtotalBarNote }}</span></div>
+                  </div>
+
+                  <sc-if value="{{ hasTeamTotals }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:7px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);border-bottom:1px solid var(--grid);padding-bottom:4px">TEAM TOTALS</span>
                     <sc-for list="{{ teamTotalRows }}" as="r" hint-placeholder-count="2">
-                      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-family:var(--kw);font-size:10.5px"><span style="color:var(--lead)">{{ r.team }}</span><span style="font-weight:700">{{ r.line }}</span><span style="color:var(--second)">{{ r.prices }}</span><span style="color:var(--faint)">{{ r.books }}</span></div>
-                      <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);padding-left:2px">{{ r.history }}</div>
+                      <div style="display:flex;flex-direction:column;gap:2px">
+                        <div style="display:flex;align-items:baseline;gap:8px;font-family:var(--kw);font-size:10.5px">
+                          <span style="color:var(--lead);width:34px;flex:none">{{ r.team }}</span>
+                          <span style="font-weight:700;flex:none">{{ r.line }}</span>
+                          <span style="color:var(--second);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right">{{ r.prices }}</span>
+                        </div>
+                        <span style="font-family:var(--kw);font-size:9px;color:var(--faint)">{{ r.history }}</span>
+                      </div>
                     </sc-for>
                   </div>
-                </sc-if>
+                  </sc-if>
+
+                </div>
               </sc-if>
               </section>
               </sc-if>
@@ -5020,7 +5035,7 @@ paceRows: (() => {
         const hline = !rowsAll.length ? 'no season log yet' : !rows.length ? 'no game ' + (oppOf ? 'against ' + oppOf : '') + ' in this log' : (c.line != null
           ? 'scored ' + (pts.reduce((a, b) => a + b, 0) / pts.length).toFixed(1) + ' a game in ' + rows.length + (oppOf ? ' against ' + oppOf : '') + ' · over ' + c.line + ' in ' + pts.filter(v => v > c.line).length + ' of ' + rows.length
           : 'scored ' + (pts.reduce((a, b) => a + b, 0) / pts.length).toFixed(1) + ' a game in ' + rows.length);
-        return { team: r.who, line: c.line != null ? String(c.line) : '—', prices: 'over ' + oddsFmtP(c.over) + ' · under ' + oddsFmtP(c.under), books: (c.n || 0) + ' books', history: hline };
+        return { team: abbr || r.who, line: c.line != null ? String(c.line) : '—', prices: 'over ' + oddsFmtP(c.over) + ' · under ' + oddsFmtP(c.under), books: (c.n || 0) + ' books', history: hline };
       }),
       trendLineMark: 'position:absolute;left:0;right:0;bottom:' + ((logs.length ? season / tMax : 0) * 118).toFixed(1) + 'px;height:0;border-top:1px dashed var(--brand);opacity:.6',
       trendLineLabel: 'position:absolute;left:0;width:26px;text-align:left;bottom:' + ((logs.length ? season / tMax : 0) * 118 - 5).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
