@@ -155,7 +155,12 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=wintitle]{display:none!important}
   [data-shell=chrome]{flex-wrap:wrap!important;row-gap:2px!important}
   [data-shell=clock]{font-size:9px!important}
-  [data-shell=body]{flex-direction:column!important;overflow-y:auto!important;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  /* On a phone the page itself scrolls, not a frame inside it. A browser only shrinks its own
+     bars for the document's scroll, so a nested scroller leaves the address bar at full height
+     the whole way down. The shell grows with its content and the window does the scrolling. */
+  [data-theme]{height:auto!important;min-height:100dvh;overflow:visible!important}
+  [data-theme] > div{overflow:visible!important;min-height:0!important}
+  [data-shell=body]{flex-direction:column!important;overflow:visible!important;overscroll-behavior:auto!important;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
   [data-shell=side]{width:auto!important;border-right:0!important;border-bottom:1px solid var(--grid);flex:none!important}
   [data-shell=nav],[data-shell=health],[data-shell=spacer],[data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{display:none!important}
   [data-shell=slate-head]{margin-top:0!important;border-top:0!important;padding:10px 12px 4px!important}
