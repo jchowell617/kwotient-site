@@ -825,20 +825,20 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">summed lines</span>
                 </div>
               <sc-if value="{{ p.total.open }}" hint-placeholder-val="{{ true }}">
-                <div style="display:flex;flex-direction:column;gap:10px">
-                  <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;letter-spacing:.12em">
-                    <span style="color:var(--lead)">{{ awayAbbr }}</span><span style="color:var(--brand)">{{ homeAbbr }}</span>
-                  </div>
+                <div style="display:flex;flex-direction:column;gap:13px">
                   <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ paceNote }}</span>
                   <sc-for list="{{ paceRows }}" as="r" hint-placeholder-count="3">
-                    <div style="display:flex;flex-direction:column;gap:5px">
-                      <div style="display:flex;justify-content:space-between;align-items:baseline;font-family:var(--kw);font-size:9.5px">
-                        <span>{{ r.av }}</span><span style="color:var(--muted)">{{ r.k }}</span><span>{{ r.hv }}</span>
-                      </div>
-                      <div style="display:flex;gap:4px;height:3px">
-                        <div style="flex:1;background:var(--grid);border-radius:2px;overflow:hidden;display:flex;justify-content:flex-end"><div style="{{ r.abar }}"></div></div>
-                        <div style="flex:1;background:var(--grid);border-radius:2px;overflow:hidden"><div style="{{ r.hbar }}"></div></div>
-                      </div>
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                      <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);border-bottom:1px solid var(--grid);padding-bottom:4px">{{ r.k }}</span>
+                      <sc-for list="{{ r.sides }}" as="p" hint-placeholder-count="2">
+                        <div style="display:flex;flex-direction:column;gap:3px">
+                          <div style="display:flex;align-items:baseline;gap:8px">
+                            <span style="{{ p.tag }}">{{ p.team }}</span>
+                            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ p.v }}</span>
+                          </div>
+                          <div style="height:3px;background:var(--grid);border-radius:2px;overflow:hidden"><div style="{{ p.bar }}"></div></div>
+                        </div>
+                      </sc-for>
                     </div>
                   </sc-for>
                 </div>
@@ -4825,16 +4825,21 @@ class Component extends DCLogic {
 paceRows: (() => {
         // both sides' lines summed from the live box score; without a box there is nothing to
         // sum, and the rows say so rather than carrying a number
+        const tag = home => 'font-family:var(--kw);font-size:9px;letter-spacing:.1em;width:34px;flex:none;color:' + (home ? BLUE : 'var(--lead)');
         if (!boxOn || !S) return (S && S.teamStatKeys ? S.teamStatKeys(sport) : (sport === 'NBA' ? ['Points', 'eFG%', 'FT rate'] : ['Pass yds', 'Rush yds', 'Turnovers'])).map(k => ({
-          k, av: '—', hv: '—', abar: 'height:100%;width:0%;background:var(--lead)', hbar: 'height:100%;width:0%;background:' + BLUE }));
+          k: String(k).toUpperCase(),
+          sides: [{ team: g.awayAbbr, tag: tag(false), v: '—', bar: 'height:100%;width:0%;background:var(--lead)' },
+                  { team: g.homeAbbr, tag: tag(true), v: '—', bar: 'height:100%;width:0%;background:' + BLUE }] }));
         const a = S.teamLine(sport, box.away), h = S.teamLine(sport, box.home);
         // the scoreboard is the score; the summed player lines miss safeties and two-point plays
         [[a, g.as], [h, g.hs]].forEach(([side, sc]) => { const p = side.find(r => r.k === 'Points'); if (p && sc != null && sc !== '') { p.v = Number(sc) || 0; p.text = String(sc); } });
         return a.map((row, i) => {
           const mx = Math.max(row.v, h[i].v, 1);
-          return { k: row.k, av: row.text, hv: h[i].text,
-            abar: 'height:100%;width:' + Math.round(row.v / mx * 100) + '%;background:var(--lead);opacity:.8',
-            hbar: 'height:100%;width:' + Math.round(h[i].v / mx * 100) + '%;background:' + BLUE + ';opacity:.9' };
+          return { k: String(row.k).toUpperCase(),
+            sides: [{ team: g.awayAbbr, tag: tag(false), v: row.text,
+                      bar: 'height:100%;width:' + Math.round(row.v / mx * 100) + '%;background:var(--lead);opacity:.8' },
+                    { team: g.homeAbbr, tag: tag(true), v: h[i].text,
+                      bar: 'height:100%;width:' + Math.round(h[i].v / mx * 100) + '%;background:' + BLUE + ';opacity:.9' }] };
         });
       })(),
       // the game's leaders, each with the line a box score would print for him
