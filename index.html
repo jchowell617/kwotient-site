@@ -637,7 +637,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </section>
               </sc-if>
 
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="grid-column:1/-1;transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px">
                 <button data-chev="1" onClick="{{ p.teamTrend.toggle }}" style="{{ p.teamTrend.btn }}">{{ p.teamTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
@@ -698,7 +698,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             </sc-if>
             </section>
 
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="grid-column:1/-1;transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:13px">
                 <button data-chev="1" onClick="{{ p.playerTrend.toggle }}" style="{{ p.playerTrend.btn }}">{{ p.playerTrend.chevron }}</button>
                 <div style="display:flex;flex-direction:column;gap:3px">
@@ -839,6 +839,30 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         <div style="flex:1;background:var(--grid);border-radius:2px;overflow:hidden;display:flex;justify-content:flex-end"><div style="{{ r.abar }}"></div></div>
                         <div style="flex:1;background:var(--grid);border-radius:2px;overflow:hidden"><div style="{{ r.hbar }}"></div></div>
                       </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </section>
+
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;min-width:0">
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px">
+                <button data-chev="1" onClick="{{ p.pstats.toggle }}" style="{{ p.pstats.btn }}">{{ p.pstats.chevron }}</button><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;min-width:0;margin-left:8px"><span style="font-size:12.5px;font-weight:600">Player Stats</span></div>
+                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">who leads it</span>
+              </div>
+              <sc-if value="{{ p.pstats.open }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex;flex-direction:column;gap:13px">
+                  <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ leaderNote }}</span>
+                  <sc-for list="{{ leaderRows }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                      <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel);border-bottom:1px solid var(--grid);padding-bottom:4px">{{ r.k }}</span>
+                      <sc-for list="{{ r.sides }}" as="p" hint-placeholder-count="2">
+                        <div style="display:flex;align-items:baseline;gap:8px">
+                          <span style="{{ p.tag }}">{{ p.team }}</span>
+                          <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;color:var(--reversed)">{{ p.who }}</span>
+                          <span style="font-family:var(--kw);font-size:10px;color:var(--second);white-space:nowrap">{{ p.line }}</span>
+                        </div>
+                      </sc-for>
                     </div>
                   </sc-for>
                 </div>
@@ -4295,7 +4319,7 @@ class Component extends DCLogic {
 
     // per-widget collapse; purely display, no grouping or reordering
     const shut = st.shut || {};
-    const PANELS = ['hero', 'pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
+    const PANELS = ['hero', 'pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'pstats', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
     const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews'];
     const DIR_PANELS = ['dirSearch', 'dirTable'];
     const BUZZ_PANELS = ['bz0', 'bz1', 'bz2', 'bz3', 'bz4', 'bz5', 'bz6', 'bz7'];
@@ -4812,6 +4836,33 @@ paceRows: (() => {
             abar: 'height:100%;width:' + Math.round(row.v / mx * 100) + '%;background:var(--lead);opacity:.8',
             hbar: 'height:100%;width:' + Math.round(h[i].v / mx * 100) + '%;background:' + BLUE + ';opacity:.9' };
         });
+      })(),
+      // the game's leaders, each with the line a box score would print for him
+      ...(() => {
+        const n = v => v == null ? 0 : Number(v) || 0;
+        const f1 = v => Number.isInteger(v) ? String(v) : Number(v).toFixed(1);
+        const CATS = sport === 'NBA' ? [
+          { k: 'POINTS', by: r => n(r.pts), line: r => n(r.pts) + ' PTS · ' + n(r.fgm) + '-' + n(r.fga) + ' FG · ' + Math.round(n(r.min)) + ' MIN' },
+          { k: 'REBOUNDS', by: r => n(r.reb) || n(r.oreb) + n(r.dreb), line: r => (n(r.reb) || n(r.oreb) + n(r.dreb)) + ' REB · ' + n(r.oreb) + ' OFF · ' + n(r.dreb) + ' DEF' },
+          { k: 'ASSISTS', by: r => n(r.ast), line: r => n(r.ast) + ' AST · ' + n(r.tov) + ' TO · ' + n(r.pts) + ' PTS' },
+          { k: '3-POINTERS', by: r => n(r.fg3m), line: r => n(r.fg3m) + '-' + n(r.fg3a) + ' 3PT · ' + n(r.pts) + ' PTS' }
+        ] : [
+          { k: 'PASSING', by: r => n(r.pass_yds), line: r => n(r.pass_cmp) + '/' + n(r.pass_att) + ' · ' + n(r.pass_yds) + ' YDS · ' + n(r.pass_td) + ' TD · ' + n(r.pass_int) + ' INT' },
+          { k: 'RUSHING', by: r => n(r.rush_yds), line: r => n(r.rush_att) + ' CAR · ' + n(r.rush_yds) + ' YDS · ' + n(r.rush_td) + ' TD' },
+          { k: 'RECEIVING', by: r => n(r.rec_yds), line: r => n(r.rec) + ' REC · ' + n(r.rec_yds) + ' YDS · ' + n(r.rec_td) + ' TD' },
+          { k: 'DEFENSE', by: r => n(r.tkl) + n(r.sacks) * 2, line: r => n(r.tkl) + ' TKL · ' + f1(n(r.sacks)) + ' SACK · ' + n(r.int) + ' INT' }
+        ];
+        const lead = (rows, by) => { let b = null; (rows || []).forEach(r => { const v = by(r); if (v > 0 && (!b || v > b.v)) b = { r, v }; }); return b; };
+        const tag = home => 'font-family:var(--kw);font-size:9px;letter-spacing:.1em;width:34px;flex:none;color:' + (home ? BLUE : 'var(--lead)');
+        const rows = !boxOn ? [] : CATS.map(cat => {
+          const a = lead(box.away, cat.by), h = lead(box.home, cat.by);
+          if (!a && !h) return null;
+          const side = (best, abbr, home) => best ? [{ team: abbr, tag: tag(home), who: best.r.n, line: cat.line(best.r) }] : [];
+          return { k: cat.k, sides: side(a, g.awayAbbr, false).concat(side(h, g.homeAbbr, true)) };
+        }).filter(Boolean);
+        return { leaderRows: rows,
+                 leaderNote: boxOn ? (rows.length ? 'the leader on each side' : 'no player has a line yet')
+                                   : 'the leaders fill once the game is in progress' };
       })(),
       paceNote: boxOn ? 'summed from the live box score' : 'no box score until the game is in progress',
 
