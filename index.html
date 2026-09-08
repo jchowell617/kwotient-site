@@ -153,7 +153,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 @media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
   [data-shell=wintitle]{display:none!important}
-  [data-shell=chrome]{flex-wrap:wrap!important;row-gap:2px!important}
+  /* the header rides along at the top while the document scrolls beneath it */
+  [data-shell=chrome]{flex-wrap:wrap!important;row-gap:2px!important;position:sticky!important;top:0;z-index:210}
   [data-shell=clock]{font-size:9px!important}
   /* On a phone the page itself scrolls, not a frame inside it. A browser only shrinks its own
      bars for the document's scroll, so a nested scroller leaves the address bar at full height
