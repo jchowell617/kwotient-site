@@ -2481,17 +2481,8 @@ class Component extends DCLogic {
           : (!ids.length && String(st.activeId).indexOf('live:') === 0 ? SLATES[sport][0].id : st.activeId);
         return { liveSlate: games, liveMeta: Object.assign({}, r, { upcoming: !!upcoming }), odds: o, series, activeId };
       });
-      // nothing for this league today: open on the other one if it has a slate, once. Only a
-      // clean, definitive answer counts — a refused, stale or failed read is not an empty day,
-      // and switching on one would drop a reader onto the wrong league on a refresh.
-      const emptyForReal = r.ok && !r.stale && !r.refused && !(r.games || []).length && o && o.ok && !market.length;
-      if (emptyForReal && !this._autoSport) {
-        this._autoSport = true;
-        const other = sport === 'NBA' ? 'NFL' : 'NBA';
-        Promise.all([S.slate(other), S.odds(other).catch(() => null)]).then(([r2, o2]) => {
-          if (this.state.sport === sport && ((r2.games || []).length || (o2 && o2.ok && o2.games.length))) this.switchSport(other);
-        });
-      }
+      // the page never changes league on its own: it opens on the NFL and stays there until a
+      // reader picks the other one. An empty day shows an empty board, honestly.
       this.loadStory();
       this.loadBox();
       this.loadProps();
@@ -2689,7 +2680,9 @@ class Component extends DCLogic {
   }
   goHome() {
     clearTimeout(this._liveT);
+    // the logo is the front door: the NFL scoreboard, whatever league or tab the reader was on
     const sport = 'NFL';
+    this._autoSport = true;
     this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
     this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'board', cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {}, dirSeason: null, trendId: null,
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
@@ -2740,6 +2733,8 @@ class Component extends DCLogic {
     const liveOn = !!(st.liveSlate && st.liveSlate.length);
     const slate = liveOn ? st.liveSlate : SLATES[sport];
     const slateSim = !liveOn;
+    // nothing has been heard from the edge yet: the page is asking, not reporting an empty day
+    const waiting = slateSim && !st.liveMeta;
     const anyOn = !slateSim && (st.liveSlate || []).some(x => x.state === 'in_progress');
     const sl = i => slate[Math.min(i, slate.length - 1)];
     const KWC = S ? S.cohorts(sport) : [];
@@ -4270,10 +4265,10 @@ class Component extends DCLogic {
     return {
       sport,
       clockLabel: (() => { const d = new Date(); try { return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d) + ' · ' + new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(d); } catch (e) { return d.toLocaleString(); } })(),
-      noSlate: slateSim, hasSlate: !slateSim,
-      noSlateHead: st.liveMeta && st.liveMeta.ok === false ? 'The live edge did not answer' : 'No ' + sport + ' games on the slate today',
-      noSlateNote: st.liveMeta && st.liveMeta.ok === false ? 'Nothing stands in for it. The slate, the market and the box scores return when the edge answers.' : (sport === 'NBA' ? 'The 2026-27 season opens in October. The slate fills the day the schedule and the lines post, and every widget reads that game.' : 'The slate fills the day the schedule and the lines post, and every widget reads that game.') + ' The Players & clubs, Buzz and Cohorts tabs read the record in the meantime.',
-      noSlateShort: 'no ' + sport + ' games on the slate today',
+      noSlate: slateSim, hasSlate: !slateSim, slateWaiting: waiting,
+      noSlateHead: waiting ? 'Reading the ' + sport + ' slate' : st.liveMeta && st.liveMeta.ok === false ? 'The live edge did not answer' : 'No ' + sport + ' games on the slate today',
+      noSlateNote: waiting ? 'One moment — the edge is answering.' : st.liveMeta && st.liveMeta.ok === false ? 'Nothing stands in for it. The slate, the market and the box scores return when the edge answers.' : (sport === 'NBA' ? 'The 2026-27 season opens in October. The slate fills the day the schedule and the lines post, and every widget reads that game.' : 'The slate fills the day the schedule and the lines post, and every widget reads that game.') + ' The Players & clubs, Buzz and Cohorts tabs read the record in the meantime.',
+      noSlateShort: waiting ? 'reading the slate…' : 'no ' + sport + ' games on the slate today',
       windowTitle: sport + ' · ' + (slateSim ? 'no games on the slate' : slate.length + (st.liveMeta && st.liveMeta.upcoming ? ' upcoming' : ' on the slate')),
       theme: st.theme || 'dark',
       themeLabel: (st.theme || 'dark') === 'dark' ? 'LIGHT' : 'DARK',
