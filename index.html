@@ -451,6 +451,36 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             </sc-if>
             </section>
 
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:16px 18px">
+              <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mFactors.toggle }}" style="{{ p.mFactors.btn }}">{{ p.mFactors.chevron }}</button><span style="font-size:13.5px;font-weight:600">Model Breakdown · {{ awayAbbr }} @ {{ homeAbbr }}</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
+                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ factorsCaption }}</span>
+              </div>
+              <sc-if value="{{ p.mFactors.open }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:11px">
+                <sc-for list="{{ factors }}" as="f" hint-placeholder-count="6">
+                  <div style="display:grid;grid-template-columns:158px 1fr 54px;gap:14px;align-items:center">
+                    <span style="font-size:12.5px">{{ f.k }}</span>
+                    <div style="position:relative;height:16px;background:var(--divider);border-radius:3px">
+                      <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--axis)"></div>
+                      <div style="{{ f.bar }}"></div>
+                    </div>
+                    <span style="{{ f.valStyle }}">{{ f.v }}</span>
+                  </div>
+                </sc-for>
+                <sc-if value="{{ factorsEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second)">{{ factorsEmpty }}</div></sc-if>
+                <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;padding-top:10px;border-top:1px solid var(--grid)">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel)">AGAINST THE MARKET</span>
+                    <span style="font-family:var(--kw);font-size:10.5px;color:var(--lead)">{{ railMarketLine }}</span>
+                    <span style="font-family:var(--kw);font-size:10.5px;color:var(--lead)">{{ railMarketProb }}</span>
+                    <span style="font-family:var(--kw);font-size:10px;color:var(--second)">{{ heroEdge }}</span>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+            </section>
+
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
@@ -975,27 +1005,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <sc-if value="{{ isModel }}" hint-placeholder-val="{{ false }}">
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">Model</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:16px 18px">
-              <div style="display:flex;flex-direction:column;gap:3px;margin-bottom:16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mFactors.toggle }}" style="{{ p.mFactors.btn }}">{{ p.mFactors.chevron }}</button><span style="font-size:13.5px;font-weight:600">Model vs. Market · {{ awayAbbr }} @ {{ homeAbbr }}</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--brand);border:1px solid var(--axis)">MODEL</span></div>
-                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">the model's parts, in win-probability points</span>
-              </div>
-              <sc-if value="{{ p.mFactors.open }}" hint-placeholder-val="{{ true }}">
-              <div style="display:flex;flex-direction:column;gap:11px">
-                <sc-for list="{{ factors }}" as="f" hint-placeholder-count="6">
-                  <div style="display:grid;grid-template-columns:158px 1fr 54px;gap:14px;align-items:center">
-                    <span style="font-size:12.5px">{{ f.k }}</span>
-                    <div style="position:relative;height:16px;background:var(--divider);border-radius:3px">
-                      <div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--axis)"></div>
-                      <div style="{{ f.bar }}"></div>
-                    </div>
-                    <span style="{{ f.valStyle }}">{{ f.v }}</span>
-                  </div>
-                </sc-for>
-              </div>
-            </sc-if>
-            </section>
-
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
@@ -3951,7 +3960,7 @@ class Component extends DCLogic {
 
     // per-widget collapse; purely display, no grouping or reordering
     const shut = st.shut || {};
-    const PANELS = ['pbox', 'wp', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
+    const PANELS = ['pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
     const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews'];
     const DIR_PANELS = ['dirSearch', 'dirTable'];
     const BUZZ_PANELS = ['bz0', 'bz1', 'bz2', 'bz3', 'bz4', 'bz5', 'bz6', 'bz7'];
@@ -3961,7 +3970,7 @@ class Component extends DCLogic {
       toggle: () => this.setState(s => ({ shut: Object.assign({}, s.shut, { [k]: !(s.shut || {})[k] }) })),
       btn: 'background:transparent;border:none;cursor:pointer;padding:0 2px;font-size:11px;line-height:1;color:var(--brand);flex:none'
     });
-    const TAB_PANELS = { board: ['boardCards'], model: ['mFactors', 'mDrift', 'mRef'], alerts: ['alertsList'], cohorts: ['cohortBody'] };
+    const TAB_PANELS = { board: ['boardCards'], model: ['mDrift', 'mRef'], alerts: ['alertsList'], cohorts: ['cohortBody'] };
     const panels = PANELS.concat(PROFILE_PANELS).concat(DIR_PANELS).concat(BUZZ_PANELS).concat(TAB_PANELS.board, TAB_PANELS.model, TAB_PANELS.alerts, TAB_PANELS.cohorts).reduce((a, k) => (a[k] = panel(k), a), {});
     // one expand / collapse tool at the top of every tab, over the panels that tab shows
     const tabKeys = st.tab === 'live' ? PANELS : st.tab === 'profiles' ? (st.profileId ? PROFILE_PANELS : DIR_PANELS) : st.tab === 'buzz' ? BUZZ_PANELS : (TAB_PANELS[st.tab] || []);
@@ -4531,7 +4540,9 @@ paceRows: (() => {
       trendLineMark: 'position:absolute;left:0;right:0;bottom:' + ((logs.length ? season / tMax : 0) * 118).toFixed(1) + 'px;height:0;border-top:1px dashed var(--brand);opacity:.6',
       trendLineLabel: 'position:absolute;left:0;width:26px;text-align:left;bottom:' + ((logs.length ? season / tMax : 0) * 118 - 5).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
       modelEdge: (Math.abs(wp - mk)).toFixed(1) + '-pt',
-      factors: (g.live && g.model ? [['Club card gap', g.model.priorPoints - (g.homeK != null ? LEAGUE_EDGE[sport] : 0)], ['Home edge', g.homeK != null ? LEAGUE_EDGE[sport] : 0], ['Score margin', g.model.margin], ['Game left', g.model.f * 4 - 2]] : FACTORS[sport]).map(([k, v]) => ({
+      factorsCaption: g.live && g.model ? 'the model\'s parts for this game, in points · club cards from the record, the score from the feed' : 'the model\'s parts fill once a game is on the slate',
+      factorsEmpty: g.live && g.model ? '' : 'no live game to read yet',
+      factors: (g.live && g.model ? [['Club card gap', g.model.priorPoints - (g.homeK != null ? LEAGUE_EDGE[sport] : 0)], ['Home edge', g.homeK != null ? LEAGUE_EDGE[sport] : 0], ['Score margin', g.model.margin], ['Game left', g.model.f * 4 - 2]] : []).map(([k, v]) => ({
         k, v: (v > 0 ? '+' : '') + v.toFixed(1),
         valStyle: 'font-family:var(--kw);font-size:11.5px;text-align:right;color:' + (v > 0 ? ACC : RED),
         bar: 'position:absolute;top:3px;bottom:3px;border-radius:2px;background:' + (v > 0 ? ACC : RED) + ';' + (v > 0 ? 'left:50%;width:' + (Math.abs(v) / 4) * 48 + '%' : 'right:50%;width:' + (Math.abs(v) / 4) * 48 + '%')
