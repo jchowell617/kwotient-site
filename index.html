@@ -1219,7 +1219,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
               <div style="display:flex;flex-direction:column;gap:5px">
                 <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
-                  <span style="font-size:15px;font-weight:600">Cohorts · The Record</span>
+                  <span style="font-size:15px;font-weight:600">Cohorts · The Kwotient Record</span>
                   <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--on-brand);background:var(--brand)">PROPRIETARY</span>
                 </div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">a population is frozen, projections are filed before the outcome, and the settlement grades them against a declared baseline — click a cohort for its charts</span>
@@ -1580,7 +1580,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <div style="display:flex;align-items:center;gap:10px">
                     <button data-chev="1" onClick="{{ p.dirSearch.toggle }}" style="{{ p.dirSearch.btn }}">{{ p.dirSearch.chevron }}</button>
                     <span style="font-family:var(--kw);font-size:13px;color:var(--muted)">⌕</span>
-                    <input value="{{ dirQ }}" onChange="{{ onDirQ }}" placeholder="name, club, position, or rating — 84, 80+, &gt;70, 60-75 · commas for several" style="flex:1;padding:10px 12px;border-radius:8px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:12px">
+                    <input value="{{ dirQ }}" onChange="{{ onDirQ }}" placeholder="name, club, position, or rating — 84, 80+, &gt;70, 60-75 · commas for several" style="flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:12px">
                     <button onClick="{{ clearQ }}" style="padding:9px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:10px;background:transparent;border:1px solid var(--axis);color:var(--second)" style-hover="border-color:var(--second);color:var(--reversed)">CLEAR</button>
                   </div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin-top:-4px">rating is model-derived from season stats, not a feed field</span>
@@ -1613,6 +1613,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <sc-if value="{{ isClubs }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--kw);font-size:9px;color:var(--second);flex:none">· {{ standingsNote }}</span></sc-if>
                   </div>
                   <sc-if value="{{ hasSeasonNote }}" hint-placeholder-val="{{ false }}"><div style="padding:8px 14px;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:9px;color:var(--second)">{{ seasonNoteDir }}</div></sc-if>
+                  <div data-scroll="x"><div style="min-width:{{ dirMinW }}">
                   <div style="display:grid;grid-template-columns:{{ dirGrid }};gap:6px;padding:10px 16px;border-bottom:1px solid var(--grid);align-items:center;background:var(--nested);border-radius:11px 11px 0 0;position:relative;z-index:5">
                     <button data-chev="1" onClick="{{ p.dirTable.toggle }}" style="{{ p.dirTable.btn }}">{{ p.dirTable.chevron }}</button>
                     <span></span>
@@ -1706,6 +1707,9 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </sc-for>
                     </div>
                   </sc-for>
+                  </sc-if>
+                  </div></div>
+                  <sc-if value="{{ p.dirTable.open }}" hint-placeholder-val="{{ true }}">
 
                   <div style="display:flex;gap:1px;background:var(--grid);border-radius:0 0 11px 11px;overflow:hidden">
                     <sc-if value="{{ dirMore }}" hint-placeholder-val="{{ false }}">
@@ -4552,13 +4556,13 @@ class Component extends DCLogic {
         const active = st.tab === k;
         return {
           short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'Model' })[k] || label,
-          style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--reversed)' : 'var(--muted)'),
+          style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--brand)' : 'var(--muted)'),
           dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (active ? '1' : '0'),
           go: () => this.goTab(k, { profileId: k === 'profiles' ? st.profileId : null })
         };
       }).concat([{
         short: 'Contact Us',
-        style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (st.contactOpen ? '700' : '500') + ';color:' + (st.contactOpen ? 'var(--reversed)' : 'var(--muted)'),
+        style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (st.contactOpen ? '700' : '500') + ';color:' + (st.contactOpen ? 'var(--brand)' : 'var(--muted)'),
         dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (st.contactOpen ? '1' : '0'),
         go: () => this.setState({ contactOpen: true })
       }]),
@@ -5257,6 +5261,7 @@ paceRows: (() => {
       hasSeasonNote: !!dirSeason,
       colsStand: isPlayers ? [] : [col('record', 'REC', distinct(recOf), 'left'), col('conf', 'CONF', distinct(confPlOf), 'left'), col('div', 'DIV PL', distinct(divPlOf), 'left')],
       dirGrid: isPlayers ? '18px 24px minmax(88px,1.8fr) 44px 38px 64px minmax(56px,1fr) 36px' : '18px 24px minmax(88px,1.6fr) 40px 62px 54px 72px 62px 64px minmax(48px,1fr) 36px',
+      dirMinW: isPlayers ? '470px' : '690px',
       standingsNote: !isPlayers ? (seasonNote ? 'table ' + seasonNote : '') : '',
       sections, activeFilters,
       hasFilters: activeFilters.length > 0,
