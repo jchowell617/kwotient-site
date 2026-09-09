@@ -47,6 +47,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
+<script>window.KQ_HISTORY_SRC = "./kq-history.js?v=682bc07260";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -1247,6 +1248,62 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               </sc-if>
             </section>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;flex-direction:column;gap:4px">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">History · The Kwotient Record</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
+              <span style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.5">everything the record captured and everything Kwotient said, dated the day it happened: the daily captures, the model's reading of every game, the cohorts' freezes and filings, the transactions and the proofs · {{ histNote }}</span>
+            </div>
+            <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+              <input value="{{ histBox.q }}" onChange="{{ histBox.on }}" onFocus="{{ histBox.focus }}" onClick="{{ histBox.click }}" onDoubleClick="{{ histBox.dbl }}" onKeyDown="{{ histBox.onKey }}" placeholder="{{ histBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+              <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ histBox.count }}</span>
+              <sc-for list="{{ histBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+              <sc-if value="{{ histBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ histBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+              <sc-if value="{{ histBox.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ histBox.onKey }}" style="{{ histBox.menuStyle }}">
+    <sc-if value="{{ histBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ histBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ histBox.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ histBox.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+            </div>
+            <sc-if value="{{ histLoading }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10.5px;color:var(--second);padding:6px 0">reading the record…</div></sc-if>
+            <sc-if value="{{ histEmpty }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10.5px;color:var(--second);padding:6px 0">nothing on the record matches that</div></sc-if>
+            <div style="display:flex;flex-direction:column;gap:1px;background:var(--grid);border:1px solid var(--grid);border-radius:12px;overflow:hidden">
+              <sc-for list="{{ histRows }}" as="h" hint-placeholder-count="6">
+                <div style="display:flex;gap:10px;align-items:flex-start;padding:10px 14px;background:var(--surface)">
+                  <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none;width:76px;padding-top:2px">{{ h.day }}</span>
+                  <span style="{{ h.kindStyle }}">{{ h.kind }}</span>
+                  <div style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1">
+                    <span style="font-size:12px;font-weight:500;line-height:1.35">{{ h.title }}</span>
+                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.45;overflow-wrap:anywhere">{{ h.detail }}</span>
+                    <span style="font-family:var(--kw);font-size:8.5px;color:var(--faint);overflow-wrap:anywhere">{{ h.path }}</span>
+                  </div>
+                  <span style="font-family:var(--kw);font-size:8.5px;color:var(--muted);flex:none">{{ h.lg }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ histMore }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden">
+                <button onClick="{{ histShowMore }}" style="flex:1;padding:13px;border:none;background:var(--nested);color:var(--lead);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em;cursor:pointer">{{ histMoreLabel }}</button>
+                <button onClick="{{ histShowAll }}" style="flex:1;padding:13px;border:none;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em;cursor:pointer">Show all</button>
+              </div>
+            </sc-if>
           </div>
         </sc-if>
 
@@ -2507,7 +2564,7 @@ const matchQ = (text, q) => {
 const PILL_A = 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ';
 const NAV = [
   ['board', 'Scoreboard'], ['live', 'Live game'], ['alerts', 'Alerts'], ['buzz', "Buzz"],
-  ['profiles', 'Players & clubs']
+  ['profiles', 'Players & clubs'], ['history', 'History']
 ];
 
 const mix = (c, pct) => 'color-mix(in srgb, ' + c + ' ' + pct + '%, transparent)';
@@ -2933,7 +2990,7 @@ class Component extends DCLogic {
     return { searchF: {}, searchQ: {}, searchOpen: null, tables: {}, colF: {}, openCol: null,
              propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
              histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
-             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null,
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, histQ: '', histKind: null, histLg: null, histClub: null, histMonth: null, histLimit: 40,
              railEdgesAll: false, dirLimit: 12,
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
@@ -3033,8 +3090,34 @@ class Component extends DCLogic {
     } catch (e) {} };
     go(); requestAnimationFrame(go); setTimeout(go, 80);
   }
+  // the index filtered by the History tab's box: its typed words against the entry's text with every
+  // club's city and nickname, and its picked kind, league, club and month
+  _histShown(H) {
+    const st = this.state; const q = String(st.histQ || '').trim().toLowerCase();
+    const NAMES = Object.assign({}, this._clubNames && this._clubNames.NFL, this._clubNames && this._clubNames.NBA);
+    const names = e => (e.c || []).map(c => NAMES[c] || '').join(' ');
+    return H.entries.filter(e => (!st.histKind || e.k === st.histKind) && (!st.histLg || e.lg === st.histLg) && (!st.histClub || (e.c || []).indexOf(st.histClub) >= 0) && (!st.histMonth || e.d.slice(0, 7) === st.histMonth)
+      && (!q || matchQ(e.d + ' ' + e.k + ' ' + e.lg + ' ' + e.t + ' ' + e.s + ' ' + (e.c || []).join(' ') + ' ' + names(e) + ' ' + e.p, q)));
+  }
+  _histRow(e) {
+    const S = SRC();
+    const tone = { reading: 'var(--brand)', cohort: '#e2b53f', capture: 'var(--lead)', transaction: 'var(--second)', post: 'var(--second)', rumor: 'var(--second)', proof: '#3ddc84' }[e.k] || 'var(--second)';
+    return { day: S ? S.day(e.d) : e.d, kind: e.k.toUpperCase(), title: e.t, detail: e.s, path: e.p, lg: e.lg,
+             kindStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;flex:none;color:' + tone + ';border:1px solid ' + mix(tone, 34) + ';margin-top:1px' };
+  }
+  // the history index is its own script, read the first time the tab opens
+  loadHistory() {
+    if (window.KQ_HISTORY || this._histLoading) return;
+    const src = window.KQ_HISTORY_SRC || './kq-history.js';
+    this._histLoading = true; this.setState({ histLoading: true });
+    const sc = document.createElement('script'); sc.src = src; sc.async = true;
+    sc.onload = () => { this._histLoading = false; this.setState({ histLoading: false, histTick: (this.state.histTick || 0) + 1 }); };
+    sc.onerror = () => { this._histLoading = false; this.setState({ histLoading: false, histFailed: true }); };
+    document.head.appendChild(sc);
+  }
   goTab(tab, extra) {
     this.tick();
+    if (tab === 'history') this.loadHistory();
     // a section opens clean: its filters and menus reset with it
     this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}), () => this.toTop());
     this.toTop();
@@ -3097,6 +3180,7 @@ class Component extends DCLogic {
       ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
       : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
     // a text with the city and nickname of every club code it names, so a keyword finds the line
+    this._clubNames = this._clubNames || {}; this._clubNames[sport] = CLUB_NAMES;
     const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
     const S = st.kq === 'ready' ? SRC() : null;
     // the slate is the edge's when it answers with games; the seeded one, and labeled so, otherwise
@@ -4801,7 +4885,7 @@ class Component extends DCLogic {
       tabItems: NAV.concat([['cohorts', 'Cohorts'], ['model', 'Model']]).map(([k, label]) => {
         const active = st.tab === k;
         return {
-          short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'Model' })[k] || label,
+          short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', history: 'History', model: 'Model' })[k] || label,
           style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--brand)' : 'var(--muted)'),
           dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (active ? '1' : '0'),
           go: () => this.goTab(k, { profileId: k === 'profiles' ? st.profileId : null })
@@ -4871,6 +4955,9 @@ class Component extends DCLogic {
       showModelNow: () => this.setState({ modelView: 'now' }),
       isBuzz: st.tab === 'buzz',
       isCohorts: st.tab === 'cohorts',
+      isHistory: st.tab === 'history',
+      histNote: (() => { const H = window.KQ_HISTORY; return H ? H.n.toLocaleString() + ' entries over ' + H.days + ' capture days · built ' + (S ? S.day(H.built) : H.built) : (st.histFailed ? 'the index did not load' : ''); })(),
+      histLoading: !!st.histLoading,
       goCohorts: () => this.goTab('cohorts'),
       goHome: () => this.goHome(),
       tabKey: st.tab,
@@ -4974,6 +5061,26 @@ class Component extends DCLogic {
 
       games: gameCards,
       boardGames,
+      // the History tab: the index filtered by what is typed and picked, newest first
+      histRows: (() => { const H = window.KQ_HISTORY; if (!H) return []; return this._histShown(H).slice(0, st.histLimit || 40).map(e => this._histRow(e)); })(),
+      histEmpty: (() => { const H = window.KQ_HISTORY; return !!H && st.tab === 'history' && this._histShown(H).length === 0; })(),
+      histMore: (() => { const H = window.KQ_HISTORY; return !!H && this._histShown(H).length > (st.histLimit || 40); })(),
+      histMoreLabel: (() => { const H = window.KQ_HISTORY; const n = H ? this._histShown(H).length - (st.histLimit || 40) : 0; return 'Show ' + Math.min(40, n) + ' more'; })(),
+      histShowMore: () => this.setState({ histLimit: (st.histLimit || 40) + 40 }),
+      histShowAll: () => this.setState({ histLimit: 100000 }),
+      histBox: (() => {
+        const H = window.KQ_HISTORY; const all = H ? H.entries : [];
+        const G = { KIND: 'histKind', LEAGUE: 'histLg', CLUB: 'histClub', MONTH: 'histMonth' };
+        const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
+          add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, histLimit: 40 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ histKind: null, histLg: null, histClub: null, histMonth: null }) };
+        const n = f => all.filter(f).length, cnt = k => k + (k === 1 ? ' entry' : ' entries');
+        const kinds = Array.from(new Set(all.map(e => e.k))).sort().map(k => ({ label: k, count: 'KIND · ' + cnt(n(e => e.k === k)) }));
+        const lgs = Array.from(new Set(all.map(e => e.lg).filter(Boolean))).sort().map(l => ({ label: l, count: 'LEAGUE · ' + cnt(n(e => e.lg === l)) }));
+        const clubs = Array.from(new Set(all.reduce((a, e) => a.concat(e.c || []), []).filter(c => CLUB_NAMES[c]))).sort().map(c => ({ label: c, count: CLUB_NAMES[c] + ' · ' + cnt(n(e => (e.c || []).indexOf(c) >= 0)) }));
+        const months = Array.from(new Set(all.map(e => e.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(e => e.d.slice(0, 7) === m)) }));
+        return searchFor('history', histMenuFor('history', g.homeAbbr), { q: st.histQ || '', setQ: v => this.setState({ histQ: v, histLimit: 40 }), params: P, groups: [{ label: 'KIND', items: kinds }, { label: 'LEAGUE', items: lgs }, { label: 'CLUB', items: clubs }, { label: 'MONTH', items: months }],
+          placeholder: 'search the record · a club, a player, a cohort, a day, a kind · commas for several', count: H ? this._histShown(H).length + ' of ' + all.length : '' });
+      })(),
       boardBox: (() => {
         const G = { CLUB: 'boardClub', STATUS: 'boardStatus', DAY: 'boardDay' };
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
