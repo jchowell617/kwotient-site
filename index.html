@@ -3507,11 +3507,12 @@ class Component extends DCLogic {
     };
     const tdistinct = (rows, fn) => { const m = {}; rows.forEach(r => { const v = fn(r); if (v == null || v === '') return; m[v] = (m[v] || 0) + 1; }); return Object.keys(m).sort().map(v => ({ label: v, value: v, count: m[v] })); };
     // the words of a row: every column's value, so the box finds anything the table shows
-    const rowText = getters => r => Object.keys(getters).map(k => { try { const v = getters[k](r); return v == null ? '' : String(v); } catch (e) { return ''; } }).join(' ');
+    // a table row is found by the city or nickname of any club its columns name, as well as the code
+    const rowText = getters => r => withClubNames(Object.keys(getters).map(k => { try { const v = getters[k](r); return v == null ? '' : String(v); } catch (e) { return ''; } }).join(' '));
     // the picks the box offers: each column's distinct values, with the column and a count
     const BOOK_SEARCH_COLS = [['book', 'BOOK'], ['team', 'TEAM'], ['spread', 'SPREAD'], ['ml', 'MONEYLINE'], ['total', 'TOTAL']];
     const PROP_SEARCH_COLS = [['who', 'PLAYER'], ['team', 'TEAM'], ['pos', 'POS'], ['market', 'MARKET'], ['line', 'LINE'], ['books', 'BOOKS'], ['hit', 'VS OPP']];
-    const colGroups = (rows, getters, cols) => cols.map(([k, label]) => ({ label, items: tdistinct(rows, getters[k]).filter(v => v.label != null && v.label !== '' && v.label !== '—').map(v => ({ label: String(v.label), count: label + ' · ' + v.count + (v.count === 1 ? ' row' : ' rows') })) }));
+    const colGroups = (rows, getters, cols) => cols.map(([k, label]) => ({ label, items: tdistinct(rows, getters[k]).filter(v => v.label != null && v.label !== '' && v.label !== '—').map(v => ({ label: String(v.label), count: (CLUB_NAMES[String(v.label)] ? CLUB_NAMES[String(v.label)] + ' · ' : label + ' · ') + v.count + (v.count === 1 ? ' row' : ' rows') })) }));
     const tapply = (table, rows, getters, text) => {
       const ts = tstate(table);
       const mv1 = (text, f) => f == null || f === '' ? true : (String(f).indexOf('~') === 0 ? String(text == null ? '' : text).toLowerCase().indexOf(String(f).slice(1).toLowerCase()) >= 0 : String(text) === String(f));
