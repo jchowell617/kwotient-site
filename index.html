@@ -3946,6 +3946,8 @@ class Component extends DCLogic {
     const CLUB_NAMES = sport === 'NBA'
       ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
       : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
+    // a text with the city and nickname of every club code it names, so a keyword finds the line
+    const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
     const isPlayers = st.dir === 'players';
     const q = (st.dirQ || '').trim().toLowerCase();
     const sortBy = st.sortBy || 'rating';
@@ -4550,7 +4552,7 @@ class Component extends DCLogic {
     const buzzShut = st.shut || {};
     const buzzQ = String(st.buzzQ || '').trim().toLowerCase();
     const buzzKindOk = b => buzzKind === 'ALL' ? true : buzzKind === 'RECORD' ? (b.kind !== 'LIVE' && b.kind !== 'STORY' && b.kind !== 'SOCIAL') : String(buzzKind).indexOf('~') === 0 ? String(b.kind).toLowerCase().indexOf(String(buzzKind).slice(1).toLowerCase()) >= 0 : b.kind === buzzKind;
-    const buzzItems = buzzAll.filter(b => buzzKindOk(b) && (!st.buzzClub || (b.mono || monoOf(b.who)) === st.buzzClub) && (!buzzQ || matchQ((b.who || '') + ' ' + (b.head || '') + ' ' + (b.body || '') + ' ' + (b.kind || ''), buzzQ))).map(b => {
+    const buzzItems = buzzAll.filter(b => buzzKindOk(b) && (!st.buzzClub || (b.mono || monoOf(b.who)) === st.buzzClub) && (!buzzQ || matchQ(withClubNames((b.who || '') + ' ' + (b.mono || monoOf(b.who)) + ' ' + (b.head || '') + ' ' + (b.body || '')) + ' ' + (b.kind || ''), buzzQ))).map(b => {
       const c = b.tone === 1 ? ACC : b.tone === 2 ? 'var(--lead)' : b.tone === 0 ? RED : 'var(--second)';
       const bk = 'bz' + buzzAll.indexOf(b);
       return {
@@ -5566,8 +5568,8 @@ paceRows: (() => {
           placeholder: 'search stats — points, min, stl, rating…', count: '' });
       })(),
       buzzKindCol, buzzQ: st.buzzQ || '', onBuzzQ: e => this.setState({ buzzQ: e.target.value }), buzzCountNote: buzzItems.length + ' of ' + buzzAll.length,
-      alertCountNote: (() => { const n = feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).length; return n + ' of ' + feed.length; })(),
-      alerts: feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).map(a => {
+      alertCountNote: (() => { const n = feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(withClubNames(a.text + ' ' + a.game) + ' ' + a.kind + ' ' + a.phase, st.alertQ)).length; return n + ' of ' + feed.length; })(),
+      alerts: feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(withClubNames(a.text + ' ' + a.game) + ' ' + a.kind + ' ' + a.phase, st.alertQ)).map(a => {
         const c = a.tone === 1 ? ACC : a.tone === 2 ? 'var(--lead)' : a.tone === 0 ? RED : 'var(--second)';
         // BALLDONTLIE webhooks push scores, game starts and injury updates; the rest is polled
         const pushed = ['INJURY', 'FINAL', 'LINEUP'].indexOf(a.kind) >= 0;
