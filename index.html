@@ -3673,7 +3673,8 @@ class Component extends DCLogic {
         label: 'SEASON · ' + label(eff) + (chosen ? '' : ' · CURRENT'), arrow: '▾', open: on,
         cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
         menuStyle: 'position:absolute;top:22px;left:0;z-index:40;width:214px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
-        labelStyle: 'font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer;background:' + (chosen ? mix(BLUE, 14) : 'var(--nested)') + ';border:1px solid ' + (chosen ? BLUE : 'var(--axis)') + ';border-radius:100px;padding:7px 13px;display:flex;align-items:center;gap:7px;white-space:nowrap;color:' + (chosen ? BLUE : 'var(--reversed)'),
+        // the chip reads as a control, in the SEARCH pill's grammar: the brand outline at rest, filled when a past season is chosen
+        labelStyle: 'font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;cursor:pointer;background:' + (chosen ? BLUE : 'transparent') + ';border:1px solid ' + BLUE + ';border-radius:100px;padding:7px 14px;display:flex;align-items:center;gap:7px;white-space:nowrap;color:' + (chosen ? 'var(--on-brand)' : BLUE),
         dotStyle: 'display:none', click: openMenu, toggle: openMenu,
         q: on ? (st.logMenuQ || '') : '', onQ: e => this.setState({ logMenuQ: e.target.value }),
         onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); const hit = opts.find(o => (st.logMenuQ || '').trim() && o.label.toLowerCase().indexOf((st.logMenuQ || '').trim().toLowerCase()) >= 0); if (hit && e.key !== 'Escape') this.setLogSeason(hit.value); else this.setState({ logMenuOpen: null }); } },
