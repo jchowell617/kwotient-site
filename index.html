@@ -3320,10 +3320,10 @@ class Component extends DCLogic {
     this._oddsNeed = [];
     const logGroups = rows => { rows = (rows || []).filter(x => !x.live); const n = f => rows.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
       return [
-        { label: 'OPPONENT', items: Array.from(new Set(rows.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: 'OPPONENT · ' + cnt(n(r => r.opp === o)) })) },
+        { label: 'OPPONENT', items: Array.from(new Set(rows.map(r => r.opp).filter(Boolean))).sort().map(o => ({ label: o, count: (CLUB_NAMES[o] ? CLUB_NAMES[o] + ' · ' : 'OPPONENT · ') + cnt(n(r => r.opp === o)) })) },
         { label: 'RESULT', items: [['W', r => r.result === 'W'], ['L', r => r.result === 'L'], ['home', r => r.home], ['away', r => !r.home], ['playoff', r => r.postseason]].filter(([, f]) => n(f)).map(([w, f]) => ({ label: w, count: 'RESULT · ' + cnt(n(f)) })) },
         { label: 'SEASON', items: Array.from(new Set(rows.map(r => r.season).filter(Boolean))).sort().map(y => ({ label: String(y), count: 'SEASON · ' + cnt(n(r => r.season === y)) })) },
-        { label: 'GAME', items: rows.map(r => ({ label: gameLabelOf(r), count: 'GAME · ' + (r.home ? 'vs ' : 'at ') + r.opp + ' ' + (r.result || '') })) }
+        { label: 'GAME', items: rows.map(r => ({ label: gameLabelOf(r), count: 'GAME · ' + (r.home ? 'vs ' : 'at ') + r.opp + (CLUB_NAMES[r.opp] ? ' · ' + CLUB_NAMES[r.opp] : '') + ' ' + (r.result || '') })) }
       ]; };
     const sq = k => String((st.searchQ || {})[k] || '').trim().toLowerCase();
     const genParams = key => {
@@ -3345,7 +3345,8 @@ class Component extends DCLogic {
         && (!has('RESULT') || P.get('RESULT').some(v => v === 'W' ? row.result === 'W' : v === 'L' ? row.result === 'L' : v === 'home' ? !!row.home : v === 'away' ? !row.home : v === 'playoff' ? !!row.postseason : true))
         && (!has('SEASON') || P.get('SEASON').indexOf(String(row.season)) >= 0)
         && (!has('GAME') || P.get('GAME').indexOf(gameLabelOf(row)) >= 0); };
-    const logText = r => (r.opp || '') + ' ' + gameLabelOf(r) + ' ' + (r.result ? 'result ' + r.result : '') + ' ' + (r.home ? 'home vs' : 'away at') + (r.pf != null ? ' ' + r.pf + '-' + r.pa : '') + (r.postseason ? ' playoff' : '');
+    // a meeting is found by the opponent's city or nickname as well as its code
+    const logText = r => (r.opp || '') + ' ' + (CLUB_NAMES[r.opp] || '') + ' ' + gameLabelOf(r) + ' ' + (r.result ? 'result ' + r.result : '') + ' ' + (r.home ? 'home vs' : 'away at') + (r.pf != null ? ' ' + r.pf + '-' + r.pa : '') + (r.postseason ? ' playoff' : '');
     const wordsMatch = (text, q) => { text = String(text || '').toLowerCase(); const toks = text.split(/\s+/);
       const groups = String(q || '').toLowerCase().split(/[,;]/).map(t => t.trim()).filter(Boolean); if (!groups.length) return true;
       return groups.some(t => t.split(/\s+/).every(w => w.length === 1 ? toks.indexOf(w) >= 0 : text.indexOf(w) >= 0)); };
