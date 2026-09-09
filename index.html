@@ -2886,13 +2886,15 @@ class Component extends DCLogic {
   tick() {
     try {
       if (navigator.vibrate) { navigator.vibrate(6); return; }
-      let sw = this._tickSw;
-      if (!sw) {
-        sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1; sw.setAttribute('aria-hidden', 'true');
-        sw.style.cssText = 'position:fixed;left:-40px;top:-40px;width:1px;height:1px;opacity:0;pointer-events:none';
-        document.body.appendChild(sw); this._tickSw = sw;
+      // Safari answers a switch toggled through its label, not one toggled by script alone
+      let lab = this._tickLab;
+      if (!lab) {
+        lab = document.createElement('label'); lab.setAttribute('aria-hidden', 'true');
+        lab.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;z-index:-1';
+        const sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1;
+        lab.appendChild(sw); document.body.appendChild(lab); this._tickLab = lab;
       }
-      sw.click();
+      lab.click();
     } catch (e) {}
   }
   goTab(tab, extra) {
