@@ -207,7 +207,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
     <div data-shell="chrome" style="height:38px;flex:none;display:flex;align-items:center;gap:14px;padding:0 14px;background:linear-gradient(180deg,var(--rail),var(--desk));border-bottom:1px solid var(--axis);box-shadow:inset 0 -1px 0 rgba(77,139,255,0.3)">
       <div style="flex:1;display:flex;justify-content:flex-start;align-items:center;gap:12px;min-width:0">
-        <button onClick="{{ goHome }}" title="Home — back to the live game, refreshed" aria-label="Kwotient — home" style="display:flex;align-items:center;gap:9px;padding:3px 6px;margin:0 -6px 0 0;border:0;border-radius:6px;background:transparent;color:inherit;font:inherit;cursor:pointer">
+        <button data-tick="1" onClick="{{ goHome }}" title="Home — back to the live game, refreshed" aria-label="Kwotient — home" style="display:flex;align-items:center;gap:9px;padding:3px 6px;margin:0 -6px 0 0;border:0;border-radius:6px;background:transparent;color:inherit;font:inherit;cursor:pointer">
           <svg viewBox="0 0 100 100" width="18" height="18" aria-hidden="true" style="display:block;flex:none"><rect width="100" height="100" rx="22" fill="var(--reversed)"/><circle cx="60" cy="32" r="9.5" fill="var(--brand)"/><rect x="22" y="49" width="56" height="7" rx="3.5" fill="var(--ink)"/><rect x="22" y="65" width="30" height="7" rx="3.5" fill="var(--ink)"/></svg>
           <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Kwotient</span>
         </button>
@@ -245,14 +245,14 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
       <aside data-shell="side" style="width:214px;flex:none;background:var(--rail);border-right:1px solid var(--grid);display:flex;flex-direction:column;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
         <div style="padding:14px 12px 10px;display:flex;gap:3px;background:var(--surface);margin:12px 10px 0;border-radius:8px;padding:3px;border:1px solid var(--grid)">
-          <button onClick="{{ setNFL }}" style-hover="transform:translateY(-2px)" style="{{ nflBtn }}">NFL</button>
-          <button onClick="{{ setNBA }}" style-hover="transform:translateY(-2px)" style="{{ nbaBtn }}">NBA</button>
+          <button data-tick="1" onClick="{{ setNFL }}" style-hover="transform:translateY(-2px)" style="{{ nflBtn }}">NFL</button>
+          <button data-tick="1" onClick="{{ setNBA }}" style-hover="transform:translateY(-2px)" style="{{ nbaBtn }}">NBA</button>
         </div>
 
 
         <nav data-shell="nav" style="display:flex;flex-direction:column;gap:2px;padding:10px 8px 10px">
           <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
-            <button onClick="{{ n.go }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ n.style }}">
+            <button data-tick="1" onClick="{{ n.go }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ n.style }}">
               <span style="flex:1;text-align:left">{{ n.label }}</span>
               <span style="{{ n.badgeStyle }}">{{ n.badge }}</span>
             </button>
@@ -273,7 +273,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           </button>
         </div>
         <div data-shell="contactbtn" style="padding:0 8px 10px">
-          <button onClick="{{ openContact }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ contactNavBtn }}">
+          <button data-tick="1" onClick="{{ openContact }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ contactNavBtn }}">
             <span style="flex:1;text-align:left">Contact Us</span>
           </button>
         </div>
@@ -2182,7 +2182,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
       </main><nav data-shell="tabs" aria-label="Sections">
         <sc-for list="{{ tabItems }}" as="n" hint-placeholder-count="7">
-          <button onClick="{{ n.go }}" style="{{ n.style }}"><span style="{{ n.dot }}"></span>{{ n.short }}</button>
+          <button data-tick="1" onClick="{{ n.go }}" style="{{ n.style }}"><span style="{{ n.dot }}"></span>{{ n.short }}</button>
         </sc-for>
       </nav><aside data-shell="rail" style="width:284px;flex:none;border-left:1px solid var(--grid);background:var(--rail);display:flex;flex-direction:column;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain">
 
@@ -2444,6 +2444,7 @@ class Component extends DCLogic {
   }
 
   componentDidMount() {
+    try { this.armTicks(); } catch (e) {}
     try { window.__courtside = this; } catch (e) {}
     // a click anywhere outside an open column menu closes it
     this._outside = e => {
@@ -2562,7 +2563,7 @@ class Component extends DCLogic {
     }, rate);
     this.connectRecord();
   }
-  componentDidUpdate() { try { this.mountEmbeds(); } catch (e) {} this.ensureOddsHist(); (this._logNeed || []).forEach(n => this.loadLog(n.id, n.ent, n.season)); }
+  componentDidUpdate() { try { this.mountEmbeds(); } catch (e) {} try { this.armTicks(); } catch (e) {} this.ensureOddsHist(); (this._logNeed || []).forEach(n => this.loadLog(n.id, n.ent, n.season)); }
   // the lines of past meetings: asked of the edge once per slate the history filter reaches,
   // held per date (NBA) or per week (NFL); the edge answers from its own closing-line file
   ensureOddsHist() {
@@ -2883,20 +2884,20 @@ class Component extends DCLogic {
   // a soft tick under the thumb when a tab is pressed, the way the phone's own controls answer
   // a press: Android through the vibration API; the iPhone through a switch control, which
   // Safari answers with the Taptic engine when a gesture toggles it. Silent anywhere else.
-  tick() {
-    try {
-      if (navigator.vibrate) { navigator.vibrate(6); return; }
-      // Safari answers a switch toggled through its label, not one toggled by script alone
-      let lab = this._tickLab;
-      if (!lab) {
-        lab = document.createElement('label'); lab.setAttribute('aria-hidden', 'true');
-        lab.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;z-index:-1';
-        const sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1;
-        sw.addEventListener('focus', () => { try { sw.blur(); } catch (e) {} });
-        lab.appendChild(sw); document.body.appendChild(lab); this._tickLab = lab;
-      }
-      lab.click(); try { lab.firstChild.blur(); } catch (e) {}
-    } catch (e) {}
+  tick() { try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }
+  // the iPhone answers a switch control the thumb itself lands on with the Taptic engine — and
+  // since iOS 26.5 only that, never one toggled by script — so every tap target carries an
+  // invisible switch across its face. The tap toggles the switch (the tick) and the same click
+  // rises to the button's own handler; the switch is never focused and never reads to a screen reader.
+  armTicks() {
+    document.querySelectorAll('[data-tick]').forEach(host => {
+      if (host.querySelector(':scope > input[switch]')) return;
+      const sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1; sw.setAttribute('aria-hidden', 'true');
+      sw.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;margin:0;padding:0;opacity:0.001;border:0;cursor:pointer;z-index:1;-webkit-tap-highlight-color:transparent';
+      sw.addEventListener('focus', () => { try { sw.blur(); } catch (e) {} });
+      if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
+      host.appendChild(sw);
+    });
   }
   // the page returns to the top now, on the next frame and once more after Safari has settled,
   // so nothing that scrolls on its own in between — a focused control, a layout pass — keeps it down
