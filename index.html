@@ -1161,38 +1161,86 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </sc-if>
             </div>
-            <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted);flex:none">ARCHIVE</span>
-              <button onClick="{{ archiveToday }}" style="{{ archiveTodayStyle }}">Today</button>
-              <sc-for list="{{ archiveDays }}" as="d" hint-placeholder-count="6"><button onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.label }}<span style="margin-left:5px;color:var(--muted)">{{ d.n }}</span></button></sc-for>
-              <sc-if value="{{ archiveNone }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">past slates appear here as the record files them, one a day</span></sc-if>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <div style="{{ archiveCol.cellStyle }}">
+                <button data-colmenu="1" onClick="{{ archiveCol.click }}" style="{{ archiveCol.labelStyle }}">{{ archiveCol.label }}<span style="font-size:8px">{{ archiveCol.arrow }}</span></button>
+                <sc-if value="{{ archiveCol.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" style="{{ archiveCol.menuStyle }}">
+                    <sc-for list="{{ archiveCol.values }}" as="v" hint-placeholder-count="6"><button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button></sc-for>
+                  </div>
+                </sc-if>
+              </div>
+              <sc-if value="{{ archiveNone }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">past slates file here, one a day, from the first final score</span></sc-if>
             </div>
             <sc-if value="{{ archiveOn }}" hint-placeholder-val="{{ false }}">
               <div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ archiveNote }}</div>
               <sc-if value="{{ archiveLoading }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10.5px;color:var(--second);padding:6px 0">reading the record…</div></sc-if>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(296px,1fr));gap:13px">
-                <sc-for list="{{ archiveCards }}" as="a" hint-placeholder-count="4">
-                  <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
-                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--second)">{{ a.status }}</span><span style="{{ a.callStyle }}">{{ a.call }}</span></div>
-                    <div style="display:flex;flex-direction:column;gap:6px">
-                      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:700">{{ a.away }}</span><span style="{{ a.awayScoreStyle }}">{{ a.as }}</span></div>
-                      <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:15px;font-weight:700">{{ a.home }}</span><span style="{{ a.homeScoreStyle }}">{{ a.hs }}</span></div>
-                    </div>
-                    <div style="font-family:var(--kw);font-size:9.5px;color:var(--lead);line-height:1.5">{{ a.read }}</div>
-                    <sc-if value="{{ a.hasBox }}" hint-placeholder-val="{{ false }}">
-                      <button onClick="{{ a.toggleBox }}" style="align-self:flex-start;padding:5px 10px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ a.boxLabel }}</button>
-                      <sc-if value="{{ a.boxOpen }}" hint-placeholder-val="{{ false }}">
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-                          <sc-for list="{{ a.sides }}" as="sd" hint-placeholder-count="2">
-                            <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ sd.club }}</span>
-                              <sc-for list="{{ sd.rows }}" as="bx" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;font-family:var(--kw);font-size:9.5px;border-bottom:1px solid var(--divider);padding:3px 0"><span style="color:var(--reversed)">{{ bx.n }} <span style="color:var(--muted)">{{ bx.pos }}</span></span><span style="color:var(--second)">{{ bx.line }}</span></div></sc-for>
-                            </div>
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                <sc-if value="{{ archiveBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ archiveBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ archiveBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ archiveBox.boxKey }}" value="{{ archiveBox.q }}" onChange="{{ archiveBox.on }}" onFocus="{{ archiveBox.focus }}" onClick="{{ archiveBox.click }}" onDoubleClick="{{ archiveBox.dbl }}" onKeyDown="{{ archiveBox.onKey }}" placeholder="{{ archiveBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ archiveBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ archiveBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
+                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ archiveBox.count }}</span>
+                <sc-for list="{{ archiveBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ archiveBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ archiveBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                <sc-if value="{{ archiveBox.open }}" hint-placeholder-val="{{ false }}">
+                                <div data-colmenu="1" onKeyDown="{{ archiveBox.onKey }}" style="{{ archiveBox.menuStyle }}">
+                  <sc-if value="{{ archiveBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ archiveBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                                  <sc-for list="{{ archiveBox.groups }}" as="gp" hint-placeholder-count="3">
+                                    <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                                    <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                                      <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                                        <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                        </sc-for>
+                                      </div>
+                                    </sc-if>
+                                  </sc-for>
+                                  <sc-for list="{{ archiveBox.values }}" as="v" hint-placeholder-count="6">
+                                    <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                  </sc-for>
+                                </div>
+                              </sc-if>
+              </div>
+              <div style="border:1px solid var(--grid);border-radius:12px;background:var(--surface);overflow:hidden">
+              <div data-scroll="x"><div style="min-width:560px">
+                <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                  <sc-for list="{{ archiveCols }}" as="c" hint-placeholder-count="8">
+                    <div style="{{ c.cellStyle }}">
+                      <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                      <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                        <div data-colmenu="1" style="{{ c.menuStyle }}">
+                          <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:6px"></form>
+                          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                            <button onClick="{{ c.sortAsc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▲</button>
+                            <button onClick="{{ c.sortDesc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▼</button>
+                            <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                          </div>
+                          <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
                           </sc-for>
                         </div>
                       </sc-if>
-                    </sc-if>
-                  </section>
+                    </div>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ archiveRows }}" as="a" hint-placeholder-count="6">
+                  <div onClick="{{ a.toggle }}" style="display:flex;gap:6px;padding:9px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead);cursor:pointer">
+                    <span style="flex:1.3;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed);font-weight:600">{{ a.game }}</span><span style="flex:0.7;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed)">{{ a.final }}</span><span style="flex:0.7;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.prior }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ a.market }}</span><span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--brand)">{{ a.edge }}</span><span style="flex:.6;min-width:0;display:flex"><span style="{{ a.callStyle }}">{{ a.call }}</span></span>
+                  </div>
+                  <sc-if value="{{ a.open }}" hint-placeholder-val="{{ false }}">
+                    <div style="padding:8px 10px 12px;border-bottom:1px solid var(--divider);background:var(--nested)">
+                      <div style="font-family:var(--kw);font-size:9.5px;color:var(--lead);line-height:1.5;margin-bottom:8px">{{ a.read }}</div>
+                      <sc-if value="{{ a.loading }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">reading the record…</div></sc-if>
+                      <sc-if value="{{ a.noBox }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">no box score on the record for this game</div></sc-if>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                        <sc-for list="{{ a.sides }}" as="sd" hint-placeholder-count="2">
+                          <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ sd.club }}</span>
+                            <sc-for list="{{ sd.rows }}" as="bx" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;font-family:var(--kw);font-size:9.5px;border-bottom:1px solid var(--divider);padding:3px 0"><span style="color:var(--reversed)">{{ bx.n }} <span style="color:var(--muted)">{{ bx.pos }}</span></span><span style="color:var(--second)">{{ bx.line }}</span></div></sc-for>
+                          </div>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-if>
                 </sc-for>
+              </div></div>
               </div>
             </sc-if>
             <sc-if value="{{ p.boardCards.open }}" hint-placeholder-val="{{ true }}">
@@ -2346,6 +2394,30 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     </div>
                     <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ tlFrom }}</span><span><span style="color:var(--good)">▮ won</span> &nbsp;<span style="color:var(--critical)">▮ lost</span> &nbsp;<span style="color:var(--brand)">● model right</span> &nbsp;<span style="color:var(--muted)">● wrong</span></span><span>{{ tlTo }}</span></div>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">GAMES · the table</span><span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ tlCount }}</span></div>
+                    <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <sc-if value="{{ tlBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ tlBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ tlBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ tlBox.boxKey }}" value="{{ tlBox.q }}" onChange="{{ tlBox.on }}" onFocus="{{ tlBox.focus }}" onClick="{{ tlBox.click }}" onDoubleClick="{{ tlBox.dbl }}" onKeyDown="{{ tlBox.onKey }}" placeholder="{{ tlBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ tlBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ tlBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
+                      <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ tlBox.count }}</span>
+                      <sc-for list="{{ tlBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                      <sc-if value="{{ tlBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ tlBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                      <sc-if value="{{ tlBox.open }}" hint-placeholder-val="{{ false }}">
+                                      <div data-colmenu="1" onKeyDown="{{ tlBox.onKey }}" style="{{ tlBox.menuStyle }}">
+                        <sc-if value="{{ tlBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ tlBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                                        <sc-for list="{{ tlBox.groups }}" as="gp" hint-placeholder-count="3">
+                                          <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                                          <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                                            <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                                              <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                                                <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                              </sc-for>
+                                            </div>
+                                          </sc-if>
+                                        </sc-for>
+                                        <sc-for list="{{ tlBox.values }}" as="v" hint-placeholder-count="6">
+                                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                        </sc-for>
+                                      </div>
+                                    </sc-if>
+                    </div>
                     <div data-scroll="x"><div style="min-width:560px">
                       <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                         <sc-for list="{{ tlCols }}" as="c" hint-placeholder-count="8">
@@ -2368,9 +2440,23 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         </sc-for>
                       </div>
                       <sc-for list="{{ tlRows }}" as="r" hint-placeholder-count="6">
-                        <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
+                        <div onClick="{{ r.toggle }}" style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead);cursor:pointer">
                           <span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--second)">{{ r.day }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed);font-weight:600">{{ r.opp }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.where }}</span><span style="flex:0.7;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.score }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.margin }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.prior }}</span><span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--brand)">{{ r.edge }}</span><span style="flex:.6;min-width:0;display:flex"><span style="{{ r.callStyle }}">{{ r.call }}</span></span>
                         </div>
+                        <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="padding:8px 10px 12px;border-bottom:1px solid var(--divider);background:var(--nested)">
+                            <div style="font-family:var(--kw);font-size:9.5px;color:var(--lead);line-height:1.5;margin-bottom:8px">{{ r.read }}</div>
+                            <sc-if value="{{ r.loading }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">reading the record…</div></sc-if>
+                            <sc-if value="{{ r.noBox }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">no box score on the record for this game</div></sc-if>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                              <sc-for list="{{ r.sides }}" as="sd" hint-placeholder-count="2">
+                                <div style="display:flex;flex-direction:column;gap:4px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ sd.club }}</span>
+                                  <sc-for list="{{ sd.rows }}" as="bx" hint-placeholder-count="6"><div style="display:flex;flex-direction:column;font-family:var(--kw);font-size:9.5px;border-bottom:1px solid var(--divider);padding:3px 0"><span style="color:var(--reversed)">{{ bx.n }} <span style="color:var(--muted)">{{ bx.pos }}</span></span><span style="color:var(--second)">{{ bx.line }}</span></div></sc-for>
+                                </div>
+                              </sc-for>
+                            </div>
+                          </div>
+                        </sc-if>
                       </sc-for>
                     </div></div>
                     <sc-if value="{{ tlMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden"><button onClick="{{ tlShowMore }}" style="flex:1;padding:10px;border:none;background:var(--nested);color:var(--lead);font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer">{{ tlMoreLabel }}</button><button onClick="{{ tlShowAll }}" style="flex:1;padding:10px;border:none;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer">Show all</button></div></sc-if>
@@ -3127,7 +3213,7 @@ class Component extends DCLogic {
     return { searchF: {}, searchQ: {}, searchOpen: null, searchShow: null, tables: {}, colF: {}, openCol: null,
              propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
              histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
-             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, archiveDay: null, archiveBox: null, tlLimit: 10, trQ: '', trLg: null, trClub: null, trVerdict: null, trMonth: null, trLimit: 10, trCumHover: null, trDotHover: null, tlHover: null,
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, archiveDay: null, archiveOpen: null, archiveMenuOpen: false, tlLimit: 10, tlOpen: null, trQ: '', trLg: null, trClub: null, trVerdict: null, trMonth: null, trLimit: 10, trCumHover: null, trDotHover: null, tlHover: null,
              railEdgesAll: false, dirLimit: 12,
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
@@ -5283,32 +5369,46 @@ class Component extends DCLogic {
             ], placeholder: 'search the calls · a club, a day, right or wrong · commas for several', count: R ? sorted.length + ' of ' + all.length : '' })
         };
       })(),
-      // ---------- the scoreboard's archive ----------
+      // ---------- the scoreboard's archive: a picker of past days, and the day as a searchable table ----------
       ...(() => {
         const R = window.KQ_RECORD_CALLS || null; const lgl = String(sport).toLowerCase();
         const days = R && R.summary.days && R.summary.days[lgl] ? R.summary.days[lgl].slice().reverse() : [];
         const today = new Date().toISOString().slice(0, 10);
-        const past = days.filter(d => d.d < today).slice(0, 12);
-        const chip = on => 'padding:5px 10px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:' + (on ? BLUE : 'transparent') + ';border:1px solid ' + (on ? BLUE : 'var(--axis)') + ';color:' + (on ? 'var(--on-brand)' : 'var(--second)');
+        const past = days.filter(d => d.d < today);
         const key = st.archiveDay ? lgl + ':' + st.archiveDay : null; const doc = key ? (st.recDays || {})[key] : null;
-        const on = !!st.archiveDay;
+        const on = !!st.archiveDay, menuOn = !!st.archiveMenuOpen;
+        const rowStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:transparent;color:var(--lead)';
+        const onRow = rowStyle.replace('background:transparent;color:var(--lead)', 'background:var(--nested);color:' + BLUE);
+        const pickDay = d => { this.setState({ archiveDay: d, archiveMenuOpen: false, archiveOpen: null }); if (d) this.loadDay(lgl, d); };
         const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
-        const lineOf = (r, L) => L === 'nba' ? [r.pts != null ? r.pts + ' pts' : null, r.reb != null ? r.reb + ' reb' : null, r.ast != null ? r.ast + ' ast' : null, r.min != null ? Math.round(r.min) + ' min' : null].filter(Boolean).join(' · ')
+        const lineOf = (r, Lg) => Lg === 'nba' ? [r.pts != null ? r.pts + ' pts' : null, r.reb != null ? r.reb + ' reb' : null, r.ast != null ? r.ast + ' ast' : null, r.min != null ? Math.round(r.min) + ' min' : null].filter(Boolean).join(' · ')
           : [r.pass_yds != null ? r.pass_yds + ' pass yds' + (r.pass_td ? ', ' + r.pass_td + ' td' : '') : null, r.rush_yds != null ? r.rush_yds + ' rush yds' : null, r.rec_yds != null ? (r.rec != null ? r.rec + ' rec, ' : '') + r.rec_yds + ' yds' : null, r.tkl != null ? r.tkl + ' tkl' : null, r.sacks ? r.sacks + ' sk' : null, r.int ? r.int + ' int' : null].filter(Boolean).join(' · ');
-        const cards = doc && doc.games ? doc.games.map(gm => { const f = gm.first || gm.latest || {}, l = gm.latest || f, r = l.result; const fin = !!r;
-          const call = !fin ? 'OPEN' : r.modelRight == null ? 'NO CALL' : r.modelRight ? 'RIGHT' : 'WRONG'; const tone = call === 'RIGHT' ? 'var(--good)' : call === 'WRONG' ? 'var(--critical)' : 'var(--second)';
-          const open = st.archiveBox === gm.gameId;
-          return { status: (fin ? 'FINAL' : (f.status || 'scheduled').toUpperCase()) + ' · ' + (S ? S.day(doc.day) : doc.day), away: gm.awayName || gm.away, home: gm.homeName || gm.home, as: fin ? String(r.as) : '—', hs: fin ? String(r.hs) : '—',
-            awayScoreStyle: 'font-family:var(--kw);font-size:20px;font-weight:700;color:' + (fin && r.winner === gm.away ? 'var(--reversed)' : 'var(--muted)'), homeScoreStyle: 'font-family:var(--kw);font-size:20px;font-weight:700;color:' + (fin && r.winner === gm.home ? 'var(--reversed)' : 'var(--muted)'),
-            call, callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;color:' + tone + ';border:1px solid ' + mix(tone, 34),
-            read: 'model prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') + (fin && r.coveredMarket != null ? (r.coveredMarket ? ' · covered' : ' · did not cover') : ''),
-            hasBox: !!gm.box, boxOpen: open, boxLabel: open ? 'HIDE BOX SCORE' : 'BOX SCORE', toggleBox: () => this.setState({ archiveBox: open ? null : gm.gameId }),
-            sides: gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(r => ({ n: r.n, pos: r.pos || '', line: lineOf(r, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(r => ({ n: r.n, pos: r.pos || '', line: lineOf(r, lgl) })) }] : [] }; }) : [];
+        this._boxLine = lineOf;
+        const games = doc && doc.games ? doc.games : [];
+        const verdictOf = gm => { const r = gm.latest && gm.latest.result; return !r ? 'open' : r.modelRight == null ? 'no call' : r.modelRight ? 'right' : 'wrong'; };
+        const get = { game: gm => gm.away + ' @ ' + gm.home, final: gm => gm.latest && gm.latest.result ? gm.latest.result.as + '-' + gm.latest.result.hs : null, prior: gm => (gm.first || {}).prior, line: gm => (gm.first || {}).line, edge: gm => (gm.first || {}).edge == null ? null : Math.abs(gm.first.edge), call: verdictOf, club: gm => gm.away + ' ' + gm.home };
+        const ARCH_COLS = [['game', 'GAME'], ['final', 'FINAL'], ['call', 'CALL']];
+        TABLES.archive = { rows: games, get };
+        const rows = tapply('archive', games, get, r => withClubNames(rowText(get)(r)));
+        const readOf = (gm) => { const f = gm.first || {}; const r = gm.latest && gm.latest.result; return 'model prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '') + (f.books ? ' · ' + f.books + ' books' : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') + (r && r.coveredMarket != null ? (r.coveredMarket ? ' · covered' : ' · did not cover') : ''); };
+        const tone = v => v === 'right' ? 'var(--good)' : v === 'wrong' ? 'var(--critical)' : 'var(--second)';
         return {
-          archiveDays: past.map(d => ({ label: S ? S.day(d.d) : d.d, n: d.n + (d.done ? ' · ' + d.done + ' final' : ''), style: chip(st.archiveDay === d.d), pick: () => { this.setState({ archiveDay: d.d, archiveBox: null }); this.loadDay(lgl, d.d); } })),
-          archiveToday: () => this.setState({ archiveDay: null, archiveBox: null }), archiveTodayStyle: chip(!on), archiveNone: !!R && past.length === 0, archiveOn: on,
-          archiveLoading: on && (!doc || doc.loading), archiveNote: on ? (doc && doc.games ? sport + ' · ' + (S ? S.day(doc.day) : doc.day) + ' · ' + doc.games.length + ' games as the record filed them · readings taken ' + (doc.filedAt ? (S ? S.day(doc.filedAt) : doc.filedAt) : '') : (doc && doc.missing ? 'that day is not on the record' : '')) : '',
-          archiveCards: cards
+          archiveCol: { label: 'ARCHIVE · ' + (on ? (S ? S.day(st.archiveDay) : st.archiveDay) : 'TODAY'), arrow: '▾', open: menuOn,
+            cellStyle: 'position:relative;display:flex;align-items:center;gap:4px;min-width:0',
+            menuStyle: 'position:absolute;top:34px;left:0;z-index:40;width:250px;max-height:320px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
+            labelStyle: 'font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;cursor:pointer;background:' + (on ? BLUE : 'transparent') + ';border:1px solid ' + BLUE + ';border-radius:100px;padding:7px 14px;display:flex;align-items:center;gap:7px;white-space:nowrap;color:' + (on ? 'var(--on-brand)' : BLUE),
+            click: () => this.setState(x => ({ archiveMenuOpen: !x.archiveMenuOpen })),
+            values: [{ label: 'Today · the live slate', count: '', style: on ? rowStyle : onRow, pick: () => pickDay(null) }].concat(past.map(d => ({ label: S ? S.day(d.d) : d.d, count: d.n + (d.done ? ' · ' + d.done + ' final' : ''), style: st.archiveDay === d.d ? onRow : rowStyle, pick: () => pickDay(d.d) }))) },
+          archiveNone: !!R && past.length === 0, archiveOn: on,
+          archiveLoading: on && (!doc || doc.loading),
+          archiveNote: on ? (doc && doc.games ? sport + ' · ' + (S ? S.day(doc.day) : doc.day) + ' · ' + doc.games.length + ' games as the record filed them · a tap on a game opens its box score' : (doc && doc.missing ? 'that day is not on the record' : '')) : '',
+          archiveBox: searchFor('archive', histMenuFor('archive', g.homeAbbr), { table: 'archive', cols: ARCH_COLS, placeholder: 'search the day · a club, a matchup, right or wrong', count: rows.length + ' of ' + games.length, groups: colGroups(games, get, ARCH_COLS) }),
+          archiveCols: [tcol('archive', 'game', 'GAME', null, 'left', 1.3), tcol('archive', 'final', 'FINAL', null, 'left', .7), tcol('archive', 'prior', 'PRIOR', null, 'left', .7), tcol('archive', 'line', 'MARKET', null, 'left', .8), tcol('archive', 'edge', 'EDGE', null, 'left', .9), tcol('archive', 'call', 'CALL', null, 'left', .6)],
+          archiveRows: rows.map(gm => { const f = gm.first || {}, r = gm.latest && gm.latest.result; const v = verdictOf(gm); const open = st.archiveOpen === gm.gameId;
+            return { game: gm.away + ' @ ' + gm.home, final: r ? r.as + '-' + r.hs : (f.status || 'scheduled'), prior: f.prior == null ? '—' : f.prior + '% ' + gm.home, market: f.line == null ? '—' : gm.home + ' ' + sgnP(f.line), edge: f.edgeOn ? Math.abs(f.edge).toFixed(1) + ' on ' + f.edgeOn : 'no edge',
+              call: v.toUpperCase(), callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + tone(v) + ';border:1px solid ' + mix(tone(v), 34),
+              toggle: () => this.setState({ archiveOpen: open ? null : gm.gameId }), open, read: readOf(gm), loading: false, noBox: open && !gm.box,
+              sides: open && gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(x => ({ n: x.n, pos: x.pos || '', line: lineOf(x, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(x => ({ n: x.n, pos: x.pos || '', line: lineOf(x, lgl) })) }] : [] }; })
         };
       })(),
       // ---------- a profile's timeline ----------
@@ -5344,10 +5444,21 @@ class Component extends DCLogic {
             TABLES.tlgames = { rows: played, get };
             const rows = tapply('tlgames', played, get, rowText(get));
             const lim = st.tlLimit || 10;
+            const lgl = String(sport).toLowerCase(); const TL_COLS = [['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['call', 'CALL']];
+            const lineOf = this._boxLine;
+            // a tap on a game reads that day from the record and opens the game's box score
+            const openKey = st.tlOpen || null;
+            const gameOf = x => { const doc = (st.recDays || {})[lgl + ':' + x.d]; if (!doc || !doc.games) return { loading: !!(doc && doc.loading), game: null }; const me = clubAbbr; const gm = doc.games.find(gg => (gg.home === me && gg.away === x.opp) || (gg.away === me && gg.home === x.opp)); return { loading: false, game: gm || null }; };
+            const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
             return {
+              tlBox: searchFor('tlgames', histMenuFor('tlgames', g.homeAbbr), { table: 'tlgames', cols: TL_COLS, placeholder: 'search the games · an opponent, home or away, won or lost, right or wrong', count: rows.length + ' of ' + played.length, groups: colGroups(played, get, TL_COLS) }),
               tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', 'SCORE', null, 'left', .7), tcol('tlgames', 'margin', 'MARGIN', null, 'left', .6), tcol('tlgames', 'prior', 'PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'CALL', null, 'left', .6)],
-              tlRows: rows.slice(0, lim).map(x => ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: x.pf == null ? '—' : x.pf + '-' + x.pa, margin: x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin, prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
-                call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34) })),
+              tlRows: rows.slice(0, lim).map(x => { const k = x.d + '|' + x.opp; const open = openKey === k; const got = open ? gameOf(x) : { loading: false, game: null }; const gm = got.game; const f = gm ? (gm.first || {}) : null; return ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: x.pf == null ? '—' : x.pf + '-' + x.pa, margin: x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin, prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
+                call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34),
+                toggle: () => { if (!open) this.loadDay(lgl, x.d); this.setState({ tlOpen: open ? null : k }); }, open, loading: open && got.loading,
+                read: gm ? 'model prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') : (open && !got.loading ? 'the record holds no reading of this game' : ''),
+                noBox: open && !got.loading && !!gm && !gm.box,
+                sides: open && gm && gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }] : [] }); }),
               tlCount: rows.length + ' of ' + played.length + (played.length === 1 ? ' game' : ' games'), tlMore: rows.length > lim, tlMoreLabel: 'Show ' + Math.min(20, rows.length - lim) + ' more',
               tlShowMore: () => this.setState({ tlLimit: lim + 20 }), tlShowAll: () => this.setState({ tlLimit: 100000 })
             };
