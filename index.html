@@ -1141,10 +1141,35 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">{{ sport }} scoreboard · {{ gameCount }} games</span></div>
               <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">click a card to open the live dashboard</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
             </div>
+            <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+              <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+              <input value="{{ boardBox.q }}" onChange="{{ boardBox.on }}" onFocus="{{ boardBox.focus }}" onClick="{{ boardBox.click }}" onDoubleClick="{{ boardBox.dbl }}" onKeyDown="{{ boardBox.onKey }}" placeholder="{{ boardBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+              <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ boardBox.count }}</span>
+              <sc-for list="{{ boardBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+              <sc-if value="{{ boardBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ boardBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+              <sc-if value="{{ boardBox.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ boardBox.onKey }}" style="{{ boardBox.menuStyle }}">
+    <sc-if value="{{ boardBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ boardBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ boardBox.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ boardBox.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+            </div>
             <sc-if value="{{ p.boardCards.open }}" hint-placeholder-val="{{ true }}">
               <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10.5px;color:var(--second);padding:6px 0 10px">{{ noSlateNote }}</div></sc-if>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(296px,1fr));gap:13px">
-              <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
+              <sc-for list="{{ boardGames }}" as="g" hint-placeholder-count="4">
                 <section onClick="{{ g.select }}" style-hover="transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,.34);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px;cursor:pointer;display:flex;flex-direction:column;gap:12px">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
                     <span style="{{ g.clockStyle }}"><span style="{{ g.dotStyle }}"></span>{{ g.clock }}</span>
@@ -2908,7 +2933,7 @@ class Component extends DCLogic {
     return { searchF: {}, searchQ: {}, searchOpen: null, tables: {}, colF: {}, openCol: null,
              propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
              histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
-             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '',
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null,
              railEdgesAll: false, dirLimit: 12,
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
@@ -4674,6 +4699,43 @@ class Component extends DCLogic {
       return { txt: (pos ? '+' : '') + v.toFixed(1) + (unit || ''), style: 'font-family:var(--kw);font-size:10px;padding:3px 7px;border-radius:5px;background:' + (pos ? 'rgba(46,207,133,0.16)' : 'rgba(255,91,106,0.16)') + ';color:' + (pos ? ACC : RED) };
     };
 
+    const gameCards = slateSim ? [] : slate.map(x => {
+      const xs = st.series[x.id];
+      const p = xs.hist[xs.hist.length - 1];
+      const rising = p >= xs.hist[xs.hist.length - 8];
+      const active = x.id === st.activeId;
+      return {
+        awayAbbr: x.awayAbbr, homeAbbr: x.homeAbbr, awayScore: x.as, homeScore: x.hs,
+        clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? 'Q' + x.per + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
+        // the dot breathes only while the game is on; before and after it sits still and muted
+        clockStyle: 'font-family:var(--kw);font-size:9.5px;display:inline-flex;align-items:center;gap:5px;transition:none;color:' + (x.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
+        dotStyle: 'width:6px;height:6px;border-radius:50%;display:block;flex:none;transition:none;background:' + (x.state === 'in_progress' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--axis)'),
+        lineLabel: x.market ? x.homeAbbr + ' ' + (x.line > 0 ? '+' : '') + Number(x.line).toFixed(1) + (x.mktTotal != null ? ' · O/U ' + x.mktTotal : '') + ' · market'
+                             : x.homeAbbr + ' ' + (x.fair > 0 ? '+' : '') + x.fair.toFixed(1) + ' · model line',
+        probLabel: p.toFixed(1) + '%',
+        awayProbLabel: (100 - p).toFixed(1) + '%',
+        mktLabel: x.market && x.mktProb != null ? ' · mkt ' + x.mktProb.toFixed(0) + '%' : '',
+        mktMini: x.market ? sgn(x.line) + (x.mktTotal != null ? ' · ' + x.mktTotal : '') : '',
+        spark: this.path(xs.hist.slice(-40), 48, 16, 0, 100),
+        sparkAway: this.path(xs.hist.slice(-40).map(v => 100 - v), 48, 16, 0, 100),
+        bigSpark: this.path(xs.hist.slice(-70), 140, 54, 0, 100),
+        bigSparkAway: this.path(xs.hist.slice(-70).map(v => 100 - v), 140, 54, 0, 100),
+        sparkColor: rising ? ACC : RED,
+        probBar: 'height:100%;width:' + p.toFixed(1) + '%;background:' + (rising ? ACC : RED) + ';transition:width .5s ease',
+        rowStyle: 'padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent'),
+        select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }, () => this.toTop()); this.toTop(); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
+      };
+    });
+    // the scoreboard's box: the slate's cards filtered by what is typed and picked — a club, a day,
+    // whether the game is scheduled, live or final; a matchup picked from the list opens it
+    const stateWord = x => x.state === 'final' ? 'final' : x.state === 'in_progress' ? 'live' : 'scheduled';
+    const dayOf = x => { const m = String(x.status || '').match(/^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\b/); return m ? m[1] : (x.state === 'scheduled' ? 'today' : stateWord(x)); };
+    const DAY_FULL = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday', Sat: 'Saturday', Sun: 'Sunday' };
+    const boardQ = String(st.boardQ || '').trim().toLowerCase();
+    const boardOK = x => (!st.boardClub || x.awayAbbr === st.boardClub || x.homeAbbr === st.boardClub) && (!st.boardStatus || stateWord(x) === st.boardStatus) && (!st.boardDay || dayOf(x) === st.boardDay)
+      && (!boardQ || matchQ(withClubNames(x.awayAbbr + ' ' + x.homeAbbr + ' ' + (x.status || '') + ' ' + stateWord(x) + ' ' + dayOf(x) + ' ' + (DAY_FULL[dayOf(x)] || '')), boardQ));
+    const boardGames = slateSim ? [] : gameCards.filter((c, i) => boardOK(slate[i]));
+
     return {
       sport,
       clockLabel: (() => { const d = new Date(); try { return new Intl.DateTimeFormat('en-US', { weekday: 'short', month: 'short', day: 'numeric' }).format(d) + ' · ' + new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }).format(d); } catch (e) { return d.toLocaleString(); } })(),
@@ -4910,33 +4972,21 @@ class Component extends DCLogic {
       isProfiles: st.tab === 'profiles',
       isAlerts: st.tab === 'alerts',
 
-      games: slateSim ? [] : slate.map(x => {
-        const xs = st.series[x.id];
-        const p = xs.hist[xs.hist.length - 1];
-        const rising = p >= xs.hist[xs.hist.length - 8];
-        const active = x.id === st.activeId;
-        return {
-          awayAbbr: x.awayAbbr, homeAbbr: x.homeAbbr, awayScore: x.as, homeScore: x.hs,
-          clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? 'Q' + x.per + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
-          // the dot breathes only while the game is on; before and after it sits still and muted
-          clockStyle: 'font-family:var(--kw);font-size:9.5px;display:inline-flex;align-items:center;gap:5px;transition:none;color:' + (x.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
-          dotStyle: 'width:6px;height:6px;border-radius:50%;display:block;flex:none;transition:none;background:' + (x.state === 'in_progress' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--axis)'),
-          lineLabel: x.market ? x.homeAbbr + ' ' + (x.line > 0 ? '+' : '') + Number(x.line).toFixed(1) + (x.mktTotal != null ? ' · O/U ' + x.mktTotal : '') + ' · market'
-                               : x.homeAbbr + ' ' + (x.fair > 0 ? '+' : '') + x.fair.toFixed(1) + ' · model line',
-          probLabel: p.toFixed(1) + '%',
-          awayProbLabel: (100 - p).toFixed(1) + '%',
-          mktLabel: x.market && x.mktProb != null ? ' · mkt ' + x.mktProb.toFixed(0) + '%' : '',
-          mktMini: x.market ? sgn(x.line) + (x.mktTotal != null ? ' · ' + x.mktTotal : '') : '',
-          spark: this.path(xs.hist.slice(-40), 48, 16, 0, 100),
-          sparkAway: this.path(xs.hist.slice(-40).map(v => 100 - v), 48, 16, 0, 100),
-          bigSpark: this.path(xs.hist.slice(-70), 140, 54, 0, 100),
-          bigSparkAway: this.path(xs.hist.slice(-70).map(v => 100 - v), 140, 54, 0, 100),
-          sparkColor: rising ? ACC : RED,
-          probBar: 'height:100%;width:' + p.toFixed(1) + '%;background:' + (rising ? ACC : RED) + ';transition:width .5s ease',
-          rowStyle: 'padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent'),
-          select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }, () => this.toTop()); this.toTop(); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
-        };
-      }),
+      games: gameCards,
+      boardGames,
+      boardBox: (() => {
+        const G = { CLUB: 'boardClub', STATUS: 'boardStatus', DAY: 'boardDay' };
+        const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
+          add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ boardClub: null, boardStatus: null, boardDay: null }) };
+        const live = slateSim ? [] : slate;
+        const n = f => live.filter(f).length, cnt = k => k + (k === 1 ? ' game' : ' games');
+        const clubs = Array.from(new Set(live.reduce((a, x) => a.concat([x.awayAbbr, x.homeAbbr]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.awayAbbr === c || x.homeAbbr === c)) }));
+        const statuses = ['live', 'scheduled', 'final'].map(w => ({ label: w, count: 'STATUS · ' + cnt(n(x => stateWord(x) === w)) })).filter(o => !/· 0 games$/.test(o.count));
+        const days = Array.from(new Set(live.map(dayOf))).map(d => ({ label: d, count: 'DAY · ' + cnt(n(x => dayOf(x) === d)) }));
+        const picks = live.map((x, i) => ({ label: x.awayAbbr + ' @ ' + x.homeAbbr, count: (CLUB_NAMES[x.awayAbbr] || x.awayAbbr) + ' at ' + (CLUB_NAMES[x.homeAbbr] || x.homeAbbr) + ' · ' + (x.status || stateWord(x)), pick: () => gameCards[i].select() }));
+        return searchFor('board', histMenuFor('board', g.homeAbbr), { q: st.boardQ || '', setQ: v => this.setState({ boardQ: v }), params: P, groups: [{ label: 'CLUB', items: clubs }, { label: 'STATUS', items: statuses }, { label: 'DAY', items: days }], picks,
+          placeholder: 'search the slate · a club, a day, live or final · commas for several', count: boardGames.length + ' of ' + live.length });
+      })(),
 
       venue: g.venue, awayName: g.away, homeName: g.home, awayAbbr: g.awayAbbr, homeAbbr: g.homeAbbr,
       awayScore: g.live && g.state === 'scheduled' ? '—' : g.as, homeScore: g.live && g.state === 'scheduled' ? '—' : g.hs,
