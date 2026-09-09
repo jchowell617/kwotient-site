@@ -2880,7 +2880,23 @@ class Component extends DCLogic {
     if (e && e.changedTouches && e.changedTouches.length) return e.changedTouches[0].clientX;
     return e ? e.clientX : 0;
   }
+  // a soft tick under the thumb when a tab is pressed, the way the phone's own controls answer
+  // a press: Android through the vibration API; the iPhone through a switch control, which
+  // Safari answers with the Taptic engine when a gesture toggles it. Silent anywhere else.
+  tick() {
+    try {
+      if (navigator.vibrate) { navigator.vibrate(6); return; }
+      let sw = this._tickSw;
+      if (!sw) {
+        sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1; sw.setAttribute('aria-hidden', 'true');
+        sw.style.cssText = 'position:fixed;left:-40px;top:-40px;width:1px;height:1px;opacity:0;pointer-events:none';
+        document.body.appendChild(sw); this._tickSw = sw;
+      }
+      sw.click();
+    } catch (e) {}
+  }
   goTab(tab, extra) {
+    this.tick();
     // a section opens clean: its filters and menus reset with it
     this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}));
     setTimeout(() => {
@@ -2891,6 +2907,7 @@ class Component extends DCLogic {
     }, 0);
   }
   goHome() {
+    this.tick();
     clearTimeout(this._liveT);
     // the logo is the front door: the NFL scoreboard, whatever league or tab the reader was on
     const sport = 'NFL';
@@ -2904,6 +2921,7 @@ class Component extends DCLogic {
   // a league tab is a fresh page, the way a sports site regenerates when you cross leagues:
   // every read is dropped and asked for again, whether or not the league changed
   switchSport(sport) {
+    this.tick();
     clearTimeout(this._liveT);
     this._boxAt = 0; this._boxKey = null; this._standingsAt = 0;
     // a league the reader chose stays chosen, even with nothing on its slate; only the first
@@ -4619,7 +4637,7 @@ class Component extends DCLogic {
         short: 'Contact Us',
         style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (st.contactOpen ? '700' : '500') + ';color:' + (st.contactOpen ? 'var(--brand)' : 'var(--muted)'),
         dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (st.contactOpen ? '1' : '0'),
-        go: () => this.setState({ contactOpen: true })
+        go: () => { this.tick(); this.setState({ contactOpen: true }); }
       }]),
 
       p: panels,
