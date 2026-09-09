@@ -2361,6 +2361,35 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <sc-if value="{{ tlHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ tlHoverLine }}"></div><div style="{{ tlTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ tlTipHead }}</div><div>{{ tlTipBody }}</div></div></div></sc-if>
                     </div>
                     <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ tlFrom }}</span><span><span style="color:var(--good)">▮ won</span> &nbsp;<span style="color:var(--critical)">▮ lost</span> &nbsp;<span style="color:var(--brand)">● model right</span> &nbsp;<span style="color:var(--muted)">● wrong</span></span><span>{{ tlTo }}</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">GAMES · the table</span><span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ tlCount }}</span></div>
+                    <div data-scroll="x"><div style="min-width:560px">
+                      <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                        <sc-for list="{{ tlCols }}" as="c" hint-placeholder-count="8">
+                          <div style="{{ c.cellStyle }}">
+                            <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                            <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                              <div data-colmenu="1" style="{{ c.menuStyle }}">
+                                <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:6px"></form>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                                  <button onClick="{{ c.sortAsc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▲</button>
+                                  <button onClick="{{ c.sortDesc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▼</button>
+                                  <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                                </div>
+                                <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                                  <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <sc-for list="{{ tlRows }}" as="r" hint-placeholder-count="6">
+                        <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
+                          <span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--second)">{{ r.day }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed);font-weight:600">{{ r.opp }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.where }}</span><span style="flex:0.7;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.score }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.margin }}</span><span style="flex:0.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.prior }}</span><span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--brand)">{{ r.edge }}</span><span style="flex:.6;min-width:0;display:flex"><span style="{{ r.callStyle }}">{{ r.call }}</span></span>
+                        </div>
+                      </sc-for>
+                    </div></div>
+                    <sc-if value="{{ tlMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden"><button onClick="{{ tlShowMore }}" style="flex:1;padding:10px;border:none;background:var(--nested);color:var(--lead);font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer">{{ tlMoreLabel }}</button><button onClick="{{ tlShowAll }}" style="flex:1;padding:10px;border:none;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10px;letter-spacing:.1em;cursor:pointer">Show all</button></div></sc-if>
                   </sc-if>
                   <sc-if value="{{ tlHasInjuries }}" hint-placeholder-val="{{ false }}">
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">INJURY REPORT · designation by day, as the record saw it</span>
@@ -3115,7 +3144,7 @@ class Component extends DCLogic {
     return { searchF: {}, searchQ: {}, searchOpen: null, tables: {}, colF: {}, openCol: null,
              propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
              histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
-             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, archiveDay: null, archiveBox: null, trQ: '', trLg: null, trClub: null, trVerdict: null, trMonth: null, trLimit: 10, trCumHover: null, trDotHover: null, tlHover: null,
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, archiveDay: null, archiveBox: null, tlLimit: 10, trQ: '', trLg: null, trClub: null, trVerdict: null, trMonth: null, trLimit: 10, trCumHover: null, trDotHover: null, tlHover: null,
              railEdgesAll: false, dirLimit: 12,
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
@@ -5320,6 +5349,20 @@ class Component extends DCLogic {
           tlTip: hg ? TIPSTYLE + ';top:6px;' + (hi / Math.max(1, nB - 1) > 0.55 ? 'right:calc(' + (100 - (hi * step + step / 2) / 3).toFixed(1) + '% + 8px)' : 'left:calc(' + ((hi * step + step / 2) / 3).toFixed(1) + '% + 8px)') : '',
           tlTipHead: hg ? (hg.home ? 'vs ' : 'at ') + hg.opp + ' · ' + (S ? S.day(hg.d) : hg.d) : '', tlTipBody: hg ? (hg.margin > 0 ? 'won ' : hg.margin < 0 ? 'lost ' : 'tied ') + hg.pf + '-' + hg.pa + ' · model ' + (hg.prior == null ? '—' : hg.prior + '%') + (hg.on ? ' · ' + Math.abs(hg.edge).toFixed(1) + ' pts on ' + hg.on : '') + (hg.right == null ? '' : hg.right ? ' · right' : ' · wrong') : '',
           tlFrom: played.length ? (S ? S.day(played[0].d) : played[0].d) : '', tlTo: played.length ? (S ? S.day(played[played.length - 1].d) : played[played.length - 1].d) : '',
+          // the games as a table beneath the bars: sortable and filterable from the headers, like every built table
+          ...(() => {
+            const get = { d: x => x.d, opp: x => x.opp, where: x => x.home ? 'home' : 'away', result: x => x.margin == null ? null : (x.margin > 0 ? 'won' : x.margin < 0 ? 'lost' : 'tied'), score: x => x.pf == null ? null : x.pf + '-' + x.pa, margin: x => x.margin, prior: x => x.prior, edge: x => x.edge == null ? null : Math.abs(x.edge), call: x => x.right == null ? 'open' : x.right ? 'right' : 'wrong' };
+            TABLES.tlgames = { rows: played, get };
+            const rows = tapply('tlgames', played, get, rowText(get));
+            const lim = st.tlLimit || 10;
+            return {
+              tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', 'SCORE', null, 'left', .7), tcol('tlgames', 'margin', 'MARGIN', null, 'left', .6), tcol('tlgames', 'prior', 'PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'CALL', null, 'left', .6)],
+              tlRows: rows.slice(0, lim).map(x => ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: x.pf == null ? '—' : x.pf + '-' + x.pa, margin: x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin, prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
+                call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34) })),
+              tlCount: rows.length + ' of ' + played.length + (played.length === 1 ? ' game' : ' games'), tlMore: rows.length > lim, tlMoreLabel: 'Show ' + Math.min(20, rows.length - lim) + ' more',
+              tlShowMore: () => this.setState({ tlLimit: lim + 20 }), tlShowAll: () => this.setState({ tlLimit: 100000 })
+            };
+          })(),
           tlHasInjuries: injList.length > 0, tlBands: bands, tlInjFrom: injFrom ? (S ? S.day(injFrom) : injFrom) : '', tlInjTo: S ? S.day(injTo) : injTo,
           tlInjRows: injList.slice().reverse().slice(0, 8).map(c => ({ day: S ? S.day(c[0]) : c[0], status: c[1] || 'cleared', note: c[2] || '', style: 'flex:none;width:92px;color:' + (c[1] ? toneOf(c[1]) : 'var(--good)') })),
           tlHasMoves: moves.length > 0, tlMoves: moves.map(w => ({ day: S ? S.day(w.date) : w.date, text: w.head || w.body || '' }))
