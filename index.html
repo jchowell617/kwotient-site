@@ -2892,21 +2892,26 @@ class Component extends DCLogic {
         lab = document.createElement('label'); lab.setAttribute('aria-hidden', 'true');
         lab.style.cssText = 'position:fixed;left:0;bottom:0;width:1px;height:1px;opacity:0;overflow:hidden;pointer-events:none;z-index:-1';
         const sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1;
+        sw.addEventListener('focus', () => { try { sw.blur(); } catch (e) {} });
         lab.appendChild(sw); document.body.appendChild(lab); this._tickLab = lab;
       }
-      lab.click();
+      lab.click(); try { lab.firstChild.blur(); } catch (e) {}
     } catch (e) {}
+  }
+  // the page returns to the top now, on the next frame and once more after Safari has settled,
+  // so nothing that scrolls on its own in between — a focused control, a layout pass — keeps it down
+  toTop() {
+    const go = () => { try {
+      window.scrollTo(0, 0);
+      ['main', 'body', 'rail'].forEach(k => { const el = document.querySelector('[data-shell=' + k + ']'); if (el) el.scrollTop = 0; });
+    } catch (e) {} };
+    go(); requestAnimationFrame(go); setTimeout(go, 80);
   }
   goTab(tab, extra) {
     this.tick();
     // a section opens clean: its filters and menus reset with it
-    this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}));
-    setTimeout(() => {
-      try {
-        window.scrollTo(0, 0);
-        ['main', 'body', 'rail'].forEach(k => { const el = document.querySelector('[data-shell=' + k + ']'); if (el) el.scrollTop = 0; });
-      } catch (e) {}
-    }, 0);
+    this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}), () => this.toTop());
+    this.toTop();
   }
   goHome() {
     this.tick();
@@ -2918,7 +2923,7 @@ class Component extends DCLogic {
     this.setState({ searchF: {}, searchQ: {}, searchOpen: null, tab: 'board', cohortSel: null, sport, activeId: SLATES[sport][0].id, series: this.seed(sport), liveSlate: [], liveMeta: null, logs: {}, oddsHist: {}, stories: {}, box: {}, props: {}, odds: null, standings: {}, dirSeason: null, trendId: null,
       buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, dir: 'players', propIdx: 0, trendQ: '', hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, tTrendHover: null, bucketHover: null });
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
-    try { window.scrollTo(0, 0); const m = document.querySelector('[data-shell=main]'); if (m) m.scrollTop = 0; } catch (e) {}
+    this.toTop();
   }
   // a league tab is a fresh page, the way a sports site regenerates when you cross leagues:
   // every read is dropped and asked for again, whether or not the league changed
@@ -2934,7 +2939,7 @@ class Component extends DCLogic {
     // the poll loads the trend logs and the props itself once the real slate is in hand, so
     // nothing is asked for the placeholder slate
     setTimeout(() => { this.pollLive(); this.loadStandings(); }, 0);
-    try { window.scrollTo(0, 0); const m = document.querySelector('[data-shell=main]'); if (m) m.scrollTop = 0; } catch (e) {}
+    this.toTop();
   }
 
 
