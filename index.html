@@ -4465,6 +4465,9 @@ class Component extends DCLogic {
         };
       } else {
         const cl = clubs.find(x => x.abbr === key) || clubs[0];
+        const commAll = clubs.map(c => c.committed).filter(v => v != null && isFinite(v)).sort((a, b) => a - b);
+        const clubMedian = commAll.length ? commAll[Math.floor(commAll.length / 2)] : null;
+        const clubGap = cl.committed != null && clubMedian != null ? clubMedian - cl.committed : null;
         const cb = clubBundle(cl);
         // the roster is a table like the others: every column sorts and filters, the box searches them all
         const rosterAll = profPast ? seasonRosterOf(cl.abbr, profSeason) : cb.rosterOf;
@@ -4547,9 +4550,13 @@ class Component extends DCLogic {
           })(),
           histRows: cRows.length ? [{ k: (filtOn('profile') ? 'SEARCH' : 'EVERY GAME') + ' · ' + histSeasonLabel(Number(log && log.season) || histEff), v: cRows.filter(r => r.margin > 0).length + '-' + cRows.filter(r => r.margin < 0).length + ' · avg margin ' + (av(margins) >= 0 ? '+' : '') + av(margins).toFixed(1) + (cRows.some(r => r.pf != null) ? ' · avg total ' + av(cRows.filter(r => r.pf != null).map(r => r.pf + r.pa)).toFixed(1) : '') }] : [],
           predHead: tonight ? 'Tonight · ' + tonight.awayAbbr + ' @ ' + tonight.homeAbbr + '' : 'No game on the slate',
+          // a club reads the way a player does: its committed payroll against its comparables — the
+          // league's other clubs, taken at their median — and the gap as a word
           predRows: [
+            { k: 'MARKET VALUE, COMPARABLES', v: clubMedian == null ? 'no band' : S.M(clubMedian) + ' committed · league median' },
+            { k: 'COMMITTED NOW', v: S.M(cl.committed) },
+            { k: 'KWOTIENT SCORE', v: cl.rank ? '#' + cl.rank + ' of ' + (cl.of || clubs.length) + ' clubs' : '—' },
             { k: 'MODEL WIN PROB', v: wpp == null ? '—' : wpp.toFixed(1) + '%' },
-            { k: 'COMMITTED', v: S.M(cl.committed) },
             { k: 'STANDING', v: cl.standing || '—' }
           ].concat((() => {
             // tonight's market for this club, when it is in the open game and the market is posted
@@ -4563,9 +4570,9 @@ class Component extends DCLogic {
               { k: 'TONIGHT · TEAM TOTAL', v: tt && tt.consensus && tt.consensus.line != null ? tt.consensus.line + ' · over ' + oddsFmtP(tt.consensus.over) + ' / under ' + oddsFmtP(tt.consensus.under) : 'not posted' }
             ];
           })()),
-          edge: cl.rank ? '#' + cl.rank : '—',
-          edgeStyle: 'font-family:var(--kw);font-size:26px;font-weight:700;color:' + (cl.k == null ? 'var(--muted)' : gradeColor(cl.k)),
-          edgeNote: 'of ' + (cl.of || clubs.length) + ' clubs on the Kwotient Score',
+          edge: clubGap == null ? '—' : S.M(Math.abs(clubGap)) + (clubGap > 0 ? ' under' : ' over'),
+          edgeStyle: 'font-family:var(--kw);font-size:26px;font-weight:700;color:' + (clubGap == null ? 'var(--muted)' : clubGap > 0 ? ACC : RED),
+          edgeNote: clubGap == null ? 'no payroll on file to compare' : clubGap > 0 ? 'committed less than its comparables' : 'committed more than its comparables',
           factors: cb.factors,
           // the card: today's engine and roster rows with the season's table beneath them; a
           // past season is its table alone, ranked among that season's clubs
