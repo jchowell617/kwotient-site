@@ -1236,96 +1236,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <sc-if value="{{ isModel }}" hint-placeholder-val="{{ false }}">
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">Model</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.track.toggle }}" style="{{ p.track.btn }}">{{ p.track.chevron }}</button><span style="font-size:13.5px;font-weight:600">Track Record · The Model's Scoreboard</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
-              <sc-if value="{{ p.track.open }}" hint-placeholder-val="{{ true }}">
-              <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.5">every call the model made, filed before kickoff and graded when the game is over — the prior, its fair line against the market, the result, and whether the side it took came in · {{ trNote }}</div>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px">
-                <sc-for list="{{ trTiles }}" as="t" hint-placeholder-count="5">
-                  <div style="background:var(--nested);border:1px solid var(--grid);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ t.k }}</span><span style="{{ t.vStyle }}">{{ t.v }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ t.sub }}</span></div>
-                </sc-for>
-              </div>
-              <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
-                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">NET RECORD OVER TIME · right minus wrong, settled calls in order</span>
-                  <div data-chart="1" onMouseMove="{{ trCumMove }}" onMouseLeave="{{ trCumOff }}" onTouchStart="{{ trCumTouchStart }}" onTouchMove="{{ trCumTouchMove }}" onClick="{{ trCumTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
-                    <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                      <line x1="0" y1="{{ trZeroY }}" x2="600" y2="{{ trZeroY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
-                      <path d="{{ trCumArea }}" fill="var(--brand)" fill-opacity="0.12"></path>
-                      <path d="{{ trCumPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                    </svg>
-                    <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }}</span><span>net {{ trCumNow }} · latest</span></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · how often the side the model liked won, by how sure it was</span>
-                  <div style="position:relative;height:120px">
-                    <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                      <line x1="0" y1="100" x2="300" y2="100" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                      <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5">
-                        <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="2" fill="var(--brand)" fill-opacity="0.75"></rect>
-                        <line x1="{{ b.x }}" y1="{{ b.py }}" x2="{{ b.x2 }}" y2="{{ b.py }}" stroke="var(--reversed)" stroke-width="1.5" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"></line>
-                      </sc-for>
-                    </svg>
-                    <div style="position:absolute;inset:0;display:flex;pointer-events:none">
-                      <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-family:var(--kw);font-size:8.5px;color:var(--second);padding-bottom:2px"><span style="color:var(--reversed)">{{ b.actual }}</span><span>{{ b.label }}</span><span style="color:var(--muted)">{{ b.n }}</span></div></sc-for>
-                    </div>
-                  </div>
-                  <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">bar · how often it won &nbsp; dash · how sure it said it was &nbsp; under · calls in the band</div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">EDGE AGAINST THE MARKET · points claimed, and the cover margin that followed</span>
-                  <div data-chart="1" onMouseMove="{{ trDotMove }}" onMouseLeave="{{ trDotOff }}" onTouchStart="{{ trDotTouchStart }}" onTouchMove="{{ trDotTouchMove }}" onClick="{{ trDotTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
-                    <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                      <line x1="0" y1="60" x2="300" y2="60" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
-                    </svg>
-                    <sc-for list="{{ trDots }}" as="d" hint-placeholder-count="8"><div style="{{ d.style }}"></div></sc-for>
-                    <sc-if value="{{ trDotHoverOn }}" hint-placeholder-val="{{ false }}"><div style="{{ trDotTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trDotTipHead }}</div><div>{{ trDotTipBody }}</div></div></sc-if>
-                  </div>
-                  <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>0 pts of edge</span><span><span style="color:var(--good)">● covered</span> &nbsp;<span style="color:var(--critical)">● did not</span></span><span>{{ trDotMax }} pts</span></div>
-                </div>
-              </div>
-              </sc-if>
-              <sc-if value="{{ trNoneSettled }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:8px 0;border-top:1px solid var(--grid)">no call has settled yet — the charts open with the first final score; every call below is on the record now, before kickoff</div></sc-if>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--grid)">
-                <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-                <input value="{{ trBox.q }}" onChange="{{ trBox.on }}" onFocus="{{ trBox.focus }}" onClick="{{ trBox.click }}" onDoubleClick="{{ trBox.dbl }}" onKeyDown="{{ trBox.onKey }}" placeholder="{{ trBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
-                <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trBox.count }}</span>
-                <sc-for list="{{ trBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
-                <sc-if value="{{ trBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
-                <sc-if value="{{ trBox.open }}" hint-placeholder-val="{{ false }}">
-                  <div data-colmenu="1" onKeyDown="{{ trBox.onKey }}" style="{{ trBox.menuStyle }}">
-    <sc-if value="{{ trBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ trBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
-                    <sc-for list="{{ trBox.groups }}" as="gp" hint-placeholder-count="3">
-                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
-                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
-                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
-                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
-                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                          </sc-for>
-                        </div>
-                      </sc-if>
-                    </sc-for>
-                    <sc-for list="{{ trBox.values }}" as="v" hint-placeholder-count="6">
-                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                    </sc-for>
-                  </div>
-                </sc-if>
-              </div>
-              <div data-scroll="x"><div style="min-width:560px">
-                <div style="display:grid;grid-template-columns:70px minmax(90px,1.4fr) 54px 64px 64px 78px 70px 62px;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)"><span>DATE</span><span>GAME</span><span>PRIOR</span><span>FAIR</span><span>MARKET</span><span>EDGE</span><span>FINAL</span><span>CALL</span></div>
-                <sc-for list="{{ trRows }}" as="r" hint-placeholder-count="8">
-                  <div style="display:grid;grid-template-columns:70px minmax(90px,1.4fr) 54px 64px 64px 78px 70px 62px;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
-                    <span style="color:var(--second)">{{ r.day }}</span><span style="color:var(--reversed);font-weight:600">{{ r.game }}</span><span>{{ r.prior }}</span><span>{{ r.fair }}</span><span>{{ r.market }}</span><span style="color:var(--brand)">{{ r.edge }}</span><span>{{ r.final }}</span><span style="{{ r.callStyle }}">{{ r.call }}</span>
-                  </div>
-                </sc-for>
-              </div></div>
-              <sc-if value="{{ trMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden"><button onClick="{{ trShowMore }}" style="flex:1;padding:11px;border:none;background:var(--nested);color:var(--lead);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em;cursor:pointer">{{ trMoreLabel }}</button><button onClick="{{ trShowAll }}" style="flex:1;padding:11px;border:none;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em;cursor:pointer">Show all</button></div></sc-if>
-              </sc-if>
-            </section>
-
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
@@ -1346,6 +1256,96 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </sc-if>
               </section>
             </div>
+              <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="grid-column:1/-1;transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.track.toggle }}" style="{{ p.track.btn }}">{{ p.track.chevron }}</button><span style="font-size:13.5px;font-weight:600">Track Record · The Model's Scoreboard</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
+                <sc-if value="{{ p.track.open }}" hint-placeholder-val="{{ true }}">
+                <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.5">every call the model made, filed before kickoff and graded when the game is over — the prior, its fair line against the market, the result, and whether the side it took came in · {{ trNote }}</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px">
+                  <sc-for list="{{ trTiles }}" as="t" hint-placeholder-count="5">
+                    <div style="background:var(--nested);border:1px solid var(--grid);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ t.k }}</span><span style="{{ t.vStyle }}">{{ t.v }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ t.sub }}</span></div>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">NET RECORD OVER TIME · right minus wrong, settled calls in order</span>
+                    <div data-chart="1" onMouseMove="{{ trCumMove }}" onMouseLeave="{{ trCumOff }}" onTouchStart="{{ trCumTouchStart }}" onTouchMove="{{ trCumTouchMove }}" onClick="{{ trCumTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
+                      <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="{{ trZeroY }}" x2="600" y2="{{ trZeroY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                        <path d="{{ trCumArea }}" fill="var(--brand)" fill-opacity="0.12"></path>
+                        <path d="{{ trCumPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                      </svg>
+                      <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }}</span><span>net {{ trCumNow }} · latest</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · how often the side the model liked won, by how sure it was</span>
+                    <div style="position:relative;height:120px">
+                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="100" x2="300" y2="100" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                        <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5">
+                          <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="2" fill="var(--brand)" fill-opacity="0.75"></rect>
+                          <line x1="{{ b.x }}" y1="{{ b.py }}" x2="{{ b.x2 }}" y2="{{ b.py }}" stroke="var(--reversed)" stroke-width="1.5" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"></line>
+                        </sc-for>
+                      </svg>
+                      <div style="position:absolute;inset:0;display:flex;pointer-events:none">
+                        <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-family:var(--kw);font-size:8.5px;color:var(--second);padding-bottom:2px"><span style="color:var(--reversed)">{{ b.actual }}</span><span>{{ b.label }}</span><span style="color:var(--muted)">{{ b.n }}</span></div></sc-for>
+                      </div>
+                    </div>
+                    <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">bar · how often it won &nbsp; dash · how sure it said it was &nbsp; under · calls in the band</div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">EDGE AGAINST THE MARKET · points claimed, and the cover margin that followed</span>
+                    <div data-chart="1" onMouseMove="{{ trDotMove }}" onMouseLeave="{{ trDotOff }}" onTouchStart="{{ trDotTouchStart }}" onTouchMove="{{ trDotTouchMove }}" onClick="{{ trDotTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
+                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="60" x2="300" y2="60" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                      </svg>
+                      <sc-for list="{{ trDots }}" as="d" hint-placeholder-count="8"><div style="{{ d.style }}"></div></sc-for>
+                      <sc-if value="{{ trDotHoverOn }}" hint-placeholder-val="{{ false }}"><div style="{{ trDotTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trDotTipHead }}</div><div>{{ trDotTipBody }}</div></div></sc-if>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>0 pts of edge</span><span><span style="color:var(--good)">● covered</span> &nbsp;<span style="color:var(--critical)">● did not</span></span><span>{{ trDotMax }} pts</span></div>
+                  </div>
+                </div>
+                </sc-if>
+                <sc-if value="{{ trNoneSettled }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:8px 0;border-top:1px solid var(--grid)">no call has settled yet — the charts open with the first final score; every call below is on the record now, before kickoff</div></sc-if>
+                <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--grid)">
+                  <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
+                  <input value="{{ trBox.q }}" onChange="{{ trBox.on }}" onFocus="{{ trBox.focus }}" onClick="{{ trBox.click }}" onDoubleClick="{{ trBox.dbl }}" onKeyDown="{{ trBox.onKey }}" placeholder="{{ trBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+                  <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trBox.count }}</span>
+                  <sc-for list="{{ trBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                  <sc-if value="{{ trBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ trBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                  <sc-if value="{{ trBox.open }}" hint-placeholder-val="{{ false }}">
+                    <div data-colmenu="1" onKeyDown="{{ trBox.onKey }}" style="{{ trBox.menuStyle }}">
+      <sc-if value="{{ trBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ trBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                      <sc-for list="{{ trBox.groups }}" as="gp" hint-placeholder-count="3">
+                        <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                        <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                            <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </sc-for>
+                      <sc-for list="{{ trBox.values }}" as="v" hint-placeholder-count="6">
+                        <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+                <div data-scroll="x"><div style="min-width:560px">
+                  <div style="display:grid;grid-template-columns:70px minmax(90px,1.4fr) 54px 64px 64px 78px 70px 62px;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)"><span>DATE</span><span>GAME</span><span>PRIOR</span><span>FAIR</span><span>MARKET</span><span>EDGE</span><span>FINAL</span><span>CALL</span></div>
+                  <sc-for list="{{ trRows }}" as="r" hint-placeholder-count="8">
+                    <div style="display:grid;grid-template-columns:70px minmax(90px,1.4fr) 54px 64px 64px 78px 70px 62px;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
+                      <span style="color:var(--second)">{{ r.day }}</span><span style="color:var(--reversed);font-weight:600">{{ r.game }}</span><span>{{ r.prior }}</span><span>{{ r.fair }}</span><span>{{ r.market }}</span><span style="color:var(--brand)">{{ r.edge }}</span><span>{{ r.final }}</span><span style="{{ r.callStyle }}">{{ r.call }}</span>
+                    </div>
+                  </sc-for>
+                </div></div>
+                <sc-if value="{{ trMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden"><button onClick="{{ trShowMore }}" style="flex:1;padding:11px;border:none;background:var(--nested);color:var(--lead);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em;cursor:pointer">{{ trMoreLabel }}</button><button onClick="{{ trShowAll }}" style="flex:1;padding:11px;border:none;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em;cursor:pointer">Show all</button></div></sc-if>
+                </sc-if>
+              </section>
+
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mRef.toggle }}" style="{{ p.mRef.btn }}">{{ p.mRef.chevron }}</button><span style="font-size:13.5px;font-weight:600">Glossary &amp; Sources</span></div>
               <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">where every number on these screens comes from, and what the words mean · not official league data · not betting advice</span>
@@ -3096,7 +3096,7 @@ class Component extends DCLogic {
     return { searchF: {}, searchQ: {}, searchOpen: null, tables: {}, colF: {}, openCol: null,
              propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
              histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
-             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, archiveDay: null, archiveBox: null, trQ: '', trLg: null, trClub: null, trVerdict: null, trMonth: null, trLimit: 40, trCumHover: null, trDotHover: null, tlHover: null,
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '', boardQ: '', boardClub: null, boardStatus: null, boardDay: null, archiveDay: null, archiveBox: null, trQ: '', trLg: null, trClub: null, trVerdict: null, trMonth: null, trLimit: 10, trCumHover: null, trDotHover: null, tlHover: null,
              railEdgesAll: false, dirLimit: 12,
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
@@ -5179,7 +5179,7 @@ class Component extends DCLogic {
         const pct = (n, d) => d ? Math.round((n / d) * 100) + '%' : '—';
         const G = { LEAGUE: 'trLg', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
-          add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 40 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trClub: null, trVerdict: null, trMonth: null }) };
+          add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trClub: null, trVerdict: null, trMonth: null }) };
         const verdictOf = c => c.right == null ? 'open' : c.right ? 'right' : 'wrong';
         const trQ = String(st.trQ || '').trim().toLowerCase();
         const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
@@ -5230,9 +5230,9 @@ class Component extends DCLogic {
           trDotTouchStart: e => this.touchScrub(e, 'start', () => {}), trDotTouchMove: e => this.touchScrub(e, 'move', () => {}),
           trDotHoverOn: dh != null, trDotTip: dh ? TIPSTYLE + ';top:6px;' + ((dh.e / eMax) > 0.55 ? 'right:6px' : 'left:6px') : '',
           trDotTipHead: dh ? dh.c.away + ' @ ' + dh.c.home + ' · ' + (S ? S.day(dh.c.d) : dh.c.d) : '', trDotTipBody: dh ? dh.e.toFixed(1) + ' pts on ' + dh.c.on + ' · final ' + dh.c.as + '-' + dh.c.hs + ' · ' + (dh.c.covered ? 'covered by ' : 'missed by ') + Math.abs(dh.cm).toFixed(1) : '',
-          trRows: shown.slice(0, st.trLimit || 40).map(row), trMore: shown.length > (st.trLimit || 40), trMoreLabel: 'Show ' + Math.min(40, shown.length - (st.trLimit || 40)) + ' more',
-          trShowMore: () => this.setState({ trLimit: (st.trLimit || 40) + 40 }), trShowAll: () => this.setState({ trLimit: 100000 }),
-          trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 40 }), params: P,
+          trRows: shown.slice(0, st.trLimit || 10).map(row), trMore: shown.length > (st.trLimit || 10), trMoreLabel: 'Show ' + Math.min(20, shown.length - (st.trLimit || 10)) + ' more',
+          trShowMore: () => this.setState({ trLimit: (st.trLimit || 10) + 20 }), trShowAll: () => this.setState({ trLimit: 100000 }),
+          trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 10 }), params: P,
             groups: [
               { label: 'LEAGUE', items: ['NFL', 'NBA'].map(l => ({ label: l, count: 'LEAGUE · ' + cnt(n(c => c.lg === l)) })).filter(o => !/· 0 calls$/.test(o.count)) },
               { label: 'CLUB', items: Array.from(new Set(all.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
