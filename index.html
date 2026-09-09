@@ -301,7 +301,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <div data-shell="slate" style="flex:none;padding:0 8px 10px;display:flex;flex-direction:column;gap:3px">
           <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second);padding:4px 8px 8px;line-height:1.5">{{ noSlateShort }}</div></sc-if>
           <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
-            <div data-tick="1" onClick="{{ g.select }}" style="{{ g.rowStyle }}">
+            <div onClick="{{ g.select }}" style="{{ g.rowStyle }}">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
                 <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
                   <div style="display:flex;gap:8px;align-items:baseline">
@@ -2904,9 +2904,9 @@ class Component extends DCLogic {
   tick() { try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }
   // the iPhone answers a switch control the thumb itself lands on with the Taptic engine — and
   // since iOS 26.5 only that, never one toggled by script — so every tap target carries an
-  // invisible switch across its face. Only a plain card or a bar button carries one: a switch
-  // nested inside a widget's <button> is outside the content model, and iOS neither ticks it nor
-  // lets a scroll that starts on it through (found 9 Sep 2026). The tap toggles the switch (the tick) and the same click
+  // invisible switch across its face. Only the bottom bar and the header carry one, where nothing
+  // scrolls: a switch under a scrolling surface holds the gesture (found 9 Sep 2026), and one nested
+  // inside a widget's <button> neither ticks nor lets a scroll through. The tap toggles the switch (the tick) and the same click
   // rises to the button's own handler; the switch is never focused and never reads to a screen reader.
   armTicks() {
     document.querySelectorAll('[data-tick]').forEach(host => {
