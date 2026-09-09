@@ -173,6 +173,13 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=side],[data-shell=rail]{position:sticky!important;top:38px;max-height:calc(100dvh - 38px);overflow-y:auto;-webkit-overflow-scrolling:touch}
   /* the league switch holds the top of the side column while the slate scrolls beneath it */
   [data-shell=league]{position:sticky!important;top:0;z-index:5;margin:0!important;border-radius:0 0 8px 8px!important;border-top:0!important;box-shadow:0 4px 10px var(--rail)}
+  /* the menu sits tight so the slate shows beneath it on a short screen */
+  [data-shell=nav]{gap:1px!important;padding:5px 8px 3px!important}
+  [data-shell=nav] button,[data-shell=cohortbtn] button,[data-shell=modelbtn] button,[data-shell=contactbtn] button{padding:4px 10px!important;min-height:0!important}
+  [data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{padding:0 8px 3px!important}
+  [data-shell=slate-head]{padding-top:6px!important;margin-top:4px!important}
+  /* a column at the end of its own scroll hands the gesture to the page instead of holding it */
+  [data-shell=side],[data-shell=rail]{overscroll-behavior:auto!important}
 }
 @media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
@@ -254,14 +261,14 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
       <aside data-shell="side" style="width:214px;flex:none;background:var(--rail);border-right:1px solid var(--grid);display:flex;flex-direction:column;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
         <div data-shell="league" style="padding:14px 12px 10px;display:flex;gap:3px;background:var(--surface);margin:12px 10px 0;border-radius:8px;padding:3px;border:1px solid var(--grid)">
-          <button data-tick="1" onClick="{{ setNFL }}" style-hover="transform:translateY(-2px)" style="{{ nflBtn }}">NFL</button>
-          <button data-tick="1" onClick="{{ setNBA }}" style-hover="transform:translateY(-2px)" style="{{ nbaBtn }}">NBA</button>
+          <button onClick="{{ setNFL }}" style-hover="transform:translateY(-2px)" style="{{ nflBtn }}">NFL</button>
+          <button onClick="{{ setNBA }}" style-hover="transform:translateY(-2px)" style="{{ nbaBtn }}">NBA</button>
         </div>
 
 
         <nav data-shell="nav" style="display:flex;flex-direction:column;gap:2px;padding:10px 8px 10px">
           <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="6">
-            <button data-tick="1" onClick="{{ n.go }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ n.style }}">
+            <button onClick="{{ n.go }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ n.style }}">
               <span style="flex:1;text-align:left">{{ n.label }}</span>
               <span style="{{ n.badgeStyle }}">{{ n.badge }}</span>
             </button>
@@ -282,7 +289,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           </button>
         </div>
         <div data-shell="contactbtn" style="padding:0 8px 10px">
-          <button data-tick="1" onClick="{{ openContact }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ contactNavBtn }}">
+          <button onClick="{{ openContact }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ contactNavBtn }}">
             <span style="flex:1;text-align:left">Contact Us</span>
           </button>
         </div>
