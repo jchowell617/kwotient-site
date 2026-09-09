@@ -293,7 +293,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <div data-shell="slate" style="flex:none;padding:0 8px 10px;display:flex;flex-direction:column;gap:3px">
           <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second);padding:4px 8px 8px;line-height:1.5">{{ noSlateShort }}</div></sc-if>
           <sc-for list="{{ games }}" as="g" hint-placeholder-count="4">
-            <div onClick="{{ g.select }}" style="{{ g.rowStyle }}">
+            <div data-tick="1" onClick="{{ g.select }}" style="{{ g.rowStyle }}">
               <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
                 <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
                   <div style="display:flex;gap:8px;align-items:baseline">
@@ -1695,7 +1695,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
                     <div>
                       <sc-for list="{{ sec.rows }}" as="r" hint-placeholder-count="8">
-                        <div onClick="{{ r.open }}" style="display:grid;grid-template-columns:{{ dirGrid }};gap:6px;padding:9px 14px;border-bottom:1px solid var(--divider);align-items:center;cursor:pointer;transition:background .16s ease" style-hover="background:var(--nested)">
+                        <div data-tick="1" onClick="{{ r.open }}" style="display:grid;grid-template-columns:{{ dirGrid }};gap:6px;padding:9px 14px;border-bottom:1px solid var(--divider);align-items:center;cursor:pointer;transition:background .16s ease" style-hover="background:var(--nested)">
                           <span style="font-family:var(--kw);font-size:9px;color:var(--faint)">{{ r.pos }}</span>
                           <div style="width:24px;height:24px;border-radius:6px;background:var(--nested);border:1px solid var(--axis);display:flex;align-items:center;justify-content:center;font-family:var(--kw);font-size:8.5px;font-weight:700;color:var(--brand)">{{ r.mono }}</div>
                           <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
@@ -2896,10 +2896,12 @@ class Component extends DCLogic {
   tick() { try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }
   // the iPhone answers a switch control the thumb itself lands on with the Taptic engine — and
   // since iOS 26.5 only that, never one toggled by script — so every tap target carries an
-  // invisible switch across its face. The tap toggles the switch (the tick) and the same click
+  // invisible switch across its face: every button in every widget (a chevron, a chip, a row, a
+  // column menu), the slate's game cards and the directory's rows. A form's submit button is left
+  // alone, since a tap that lands on the switch would not submit the form. The tap toggles the switch (the tick) and the same click
   // rises to the button's own handler; the switch is never focused and never reads to a screen reader.
   armTicks() {
-    document.querySelectorAll('[data-tick]').forEach(host => {
+    document.querySelectorAll('[data-tick], button:not([type=submit]):not([data-notick])').forEach(host => {
       if (host.querySelector(':scope > input[switch]')) return;
       const sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1; sw.setAttribute('aria-hidden', 'true');
       sw.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;margin:0;padding:0;opacity:0.001;border:0;cursor:pointer;z-index:1;-webkit-tap-highlight-color:transparent';
