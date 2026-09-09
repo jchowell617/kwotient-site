@@ -1989,6 +1989,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
                 </section>
 
+                <sc-if value="{{ profile.hasRoster }}" hint-placeholder-val="{{ false }}">
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRoster.toggle }}" style="{{ p.pfRoster.btn }}">{{ p.pfRoster.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:14px 16px 12px;border-bottom:1px solid var(--grid);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
                       <div style="display:flex;flex-direction:column;gap:3px">
@@ -2361,7 +2362,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </sc-if>
                 </section>
 
-                <sc-if value="{{ profile.hasRoster }}" hint-placeholder-val="{{ false }}">
               </div>
             </sc-if>
           </div>
