@@ -1335,10 +1335,29 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </sc-if>
                 </div>
                 <div data-scroll="x"><div style="min-width:560px">
-                  <div style="display:grid;grid-template-columns:70px minmax(90px,1.4fr) 54px 64px 64px 78px 70px 62px;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)"><span>DATE</span><span>GAME</span><span>PRIOR</span><span>FAIR</span><span>MARKET</span><span>EDGE</span><span>FINAL</span><span>CALL</span></div>
+                  <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                    <sc-for list="{{ trCols }}" as="c" hint-placeholder-count="8">
+                      <div style="{{ c.cellStyle }}">
+                        <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                        <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                          <div data-colmenu="1" style="{{ c.menuStyle }}">
+                            <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:6px"></form>
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                              <button onClick="{{ c.sortAsc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▲</button>
+                              <button onClick="{{ c.sortDesc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▼</button>
+                              <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                            </div>
+                            <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                  </div>
                   <sc-for list="{{ trRows }}" as="r" hint-placeholder-count="8">
-                    <div style="display:grid;grid-template-columns:70px minmax(90px,1.4fr) 54px 64px 64px 78px 70px 62px;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
-                      <span style="color:var(--second)">{{ r.day }}</span><span style="color:var(--reversed);font-weight:600">{{ r.game }}</span><span>{{ r.prior }}</span><span>{{ r.fair }}</span><span>{{ r.market }}</span><span style="color:var(--brand)">{{ r.edge }}</span><span>{{ r.final }}</span><span style="{{ r.callStyle }}">{{ r.call }}</span>
+                    <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
+                      <span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--second)">{{ r.day }}</span><span style="flex:1.4;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed);font-weight:600">{{ r.game }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.prior }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.fair }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.market }}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--brand)">{{ r.edge }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.final }}</span><span style="flex:.7;min-width:0;display:flex"><span style="{{ r.callStyle }}">{{ r.call }}</span></span>
                     </div>
                   </sc-for>
                 </div></div>
@@ -5186,6 +5205,10 @@ class Component extends DCLogic {
           && (!trQ || matchQ(withClubNames(c.d + ' ' + c.lg + ' ' + c.away + ' @ ' + c.home + ' ' + c.status) + ' ' + verdictOf(c) + ' ' + (c.on || ''), trQ)));
         const n = f => all.filter(f).length, cnt = k => k + (k === 1 ? ' call' : ' calls');
         const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
+        // the table's columns: sortable and filterable from their headers, as every built table is
+        const trGet = { d: c => c.d, game: c => c.away + ' @ ' + c.home, prior: c => c.prior, fair: c => c.fair, line: c => c.line, edge: c => c.edge == null ? null : Math.abs(c.edge), final: c => c.margin, call: c => verdictOf(c) };
+        TABLES.track = { rows: shown, get: trGet };
+        const sorted = tapply('track', shown, trGet, rowText(trGet));
         const row = c => ({ day: S ? S.day(c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
           edge: c.edge == null || !c.on ? 'no edge' : Math.abs(c.edge).toFixed(1) + ' on ' + c.on, final: c.margin == null ? (c.status || 'scheduled') : c.as + '-' + c.hs,
           call: c.right == null ? 'OPEN' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
@@ -5230,7 +5253,8 @@ class Component extends DCLogic {
           trDotTouchStart: e => this.touchScrub(e, 'start', () => {}), trDotTouchMove: e => this.touchScrub(e, 'move', () => {}),
           trDotHoverOn: dh != null, trDotTip: dh ? TIPSTYLE + ';top:6px;' + ((dh.e / eMax) > 0.55 ? 'right:6px' : 'left:6px') : '',
           trDotTipHead: dh ? dh.c.away + ' @ ' + dh.c.home + ' · ' + (S ? S.day(dh.c.d) : dh.c.d) : '', trDotTipBody: dh ? dh.e.toFixed(1) + ' pts on ' + dh.c.on + ' · final ' + dh.c.as + '-' + dh.c.hs + ' · ' + (dh.c.covered ? 'covered by ' : 'missed by ') + Math.abs(dh.cm).toFixed(1) : '',
-          trRows: shown.slice(0, st.trLimit || 10).map(row), trMore: shown.length > (st.trLimit || 10), trMoreLabel: 'Show ' + Math.min(20, shown.length - (st.trLimit || 10)) + ' more',
+          trRows: sorted.slice(0, st.trLimit || 10).map(row), trMore: sorted.length > (st.trLimit || 10), trMoreLabel: 'Show ' + Math.min(20, sorted.length - (st.trLimit || 10)) + ' more',
+          trCols: [tcol('track', 'd', 'DATE', null, 'left', .9), tcol('track', 'game', 'GAME', null, 'left', 1.4), tcol('track', 'prior', 'PRIOR', null, 'left', .8), tcol('track', 'fair', 'FAIR', null, 'left', .8), tcol('track', 'line', 'MARKET', null, 'left', .8), tcol('track', 'edge', 'EDGE', null, 'left', 1), tcol('track', 'final', 'FINAL', null, 'left', .8), tcol('track', 'call', 'CALL', null, 'left', .7)],
           trShowMore: () => this.setState({ trLimit: (st.trLimit || 10) + 20 }), trShowAll: () => this.setState({ trLimit: 100000 }),
           trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 10 }), params: P,
             groups: [
@@ -5238,7 +5262,7 @@ class Component extends DCLogic {
               { label: 'CLUB', items: Array.from(new Set(all.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
               { label: 'VERDICT', items: ['right', 'wrong', 'open'].map(v => ({ label: v, count: 'VERDICT · ' + cnt(n(c => verdictOf(c) === v)) })).filter(o => !/· 0 calls$/.test(o.count)) },
               { label: 'MONTH', items: Array.from(new Set(all.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
-            ], placeholder: 'search the calls · a club, a day, right or wrong · commas for several', count: R ? shown.length + ' of ' + all.length : '' })
+            ], placeholder: 'search the calls · a club, a day, right or wrong · commas for several', count: R ? sorted.length + ' of ' + all.length : '' })
         };
       })(),
       // ---------- the scoreboard's archive ----------
