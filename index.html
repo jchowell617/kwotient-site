@@ -82,7 +82,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=7a480af19d"></script>
+<script src="./kq-bundle.js?v=4732751ae8"></script>
 <script src="./kq-seasons.js?v=4b102345e8"></script>
 <style>
 :root{
@@ -1543,7 +1543,28 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <span style="flex:1"></span>
               <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-              <input value="{{ buzzQ }}" onChange="{{ onBuzzQ }}" placeholder="search the buzz · commas for several" style="width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+                <input value="{{ buzzBox.q }}" onChange="{{ buzzBox.on }}" onFocus="{{ buzzBox.focus }}" onClick="{{ buzzBox.click }}" onDoubleClick="{{ buzzBox.dbl }}" onKeyDown="{{ buzzBox.onKey }}" placeholder="{{ buzzBox.placeholder }}" style="flex:1;min-width:0;width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+                <sc-for list="{{ buzzBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ buzzBox.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ buzzBox.onKey }}" style="{{ buzzBox.menuStyle }}">
+    <sc-if value="{{ buzzBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ buzzBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ buzzBox.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ buzzBox.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
               <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ buzzCountNote }}</span>
               <sc-if value="{{ buzzFilterOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ buzzClear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
             </div>
@@ -1594,11 +1615,30 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div data-page="" style="display:flex;flex-direction:column;gap:13px">
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:12px">
-                  <div style="display:flex;align-items:center;gap:10px">
+                  <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                     <button data-chev="1" onClick="{{ p.dirSearch.toggle }}" style="{{ p.dirSearch.btn }}">{{ p.dirSearch.chevron }}</button>
                     <span style="font-family:var(--kw);font-size:13px;color:var(--muted)">⌕</span>
-                    <input value="{{ dirQ }}" onChange="{{ onDirQ }}" placeholder="name, club, position, or rating — 84, 80+, &gt;70, 60-75 · commas for several" style="flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:12px">
+                    <input value="{{ dirBox.q }}" onChange="{{ dirBox.on }}" onFocus="{{ dirBox.focus }}" onClick="{{ dirBox.click }}" onDoubleClick="{{ dirBox.dbl }}" onKeyDown="{{ dirBox.onKey }}" placeholder="{{ dirBox.placeholder }}" style="flex:1;min-width:0;padding:10px 12px;border-radius:8px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:12px">
+                    <sc-for list="{{ dirBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                     <button onClick="{{ clearQ }}" style="padding:9px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:10px;background:transparent;border:1px solid var(--axis);color:var(--second)" style-hover="border-color:var(--second);color:var(--reversed)">CLEAR</button>
+                    <sc-if value="{{ dirBox.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ dirBox.onKey }}" style="{{ dirBox.menuStyle }}">
+    <sc-if value="{{ dirBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ dirBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ dirBox.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ dirBox.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
                   </div>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin-top:-4px">rating is model-derived from season stats, not a feed field</span>
                   <sc-if value="{{ p.dirSearch.open }}" hint-placeholder-val="{{ true }}">
@@ -1910,7 +1950,28 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         <button onClick="{{ sc.pick }}" style="{{ sc.style }}">{{ sc.label }}</button>
                       </sc-for>
                     </div>
-                    <input value="{{ profile.explorer.query }}" onChange="{{ onStatQ }}" placeholder="search stats — points, min, stl, rating…" style="width:100%;padding:9px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+                    <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                      <input value="{{ statBox.q }}" onChange="{{ statBox.on }}" onFocus="{{ statBox.focus }}" onClick="{{ statBox.click }}" onDoubleClick="{{ statBox.dbl }}" onKeyDown="{{ statBox.onKey }}" placeholder="{{ statBox.placeholder }}" style="flex:1;min-width:0;padding:9px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+                      <sc-for list="{{ statBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                      <sc-if value="{{ statBox.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ statBox.onKey }}" style="{{ statBox.menuStyle }}">
+    <sc-if value="{{ statBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ statBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ statBox.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ statBox.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+                    </div>
                   </div></div></div>
                   <sc-if value="{{ p.pfExplorer.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:flex;align-items:center;gap:16px;padding:16px 17px;border-bottom:1px solid var(--grid);background:var(--nested);flex-wrap:wrap">
@@ -2172,7 +2233,28 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <span style="flex:1"></span>
               <span style="font-family:var(--kw);font-size:12px;color:var(--muted);flex:none">&#8981;</span>
-              <input value="{{ alertQ }}" onChange="{{ onAlertQ }}" placeholder="search the alerts · commas for several" style="width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" />
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+                <input value="{{ alertBox.q }}" onChange="{{ alertBox.on }}" onFocus="{{ alertBox.focus }}" onClick="{{ alertBox.click }}" onDoubleClick="{{ alertBox.dbl }}" onKeyDown="{{ alertBox.onKey }}" placeholder="{{ alertBox.placeholder }}" style="flex:1;min-width:0;width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px">
+                <sc-for list="{{ alertBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                <sc-if value="{{ alertBox.open }}" hint-placeholder-val="{{ false }}">
+                  <div data-colmenu="1" onKeyDown="{{ alertBox.onKey }}" style="{{ alertBox.menuStyle }}">
+    <sc-if value="{{ alertBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ alertBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                    <sc-for list="{{ alertBox.groups }}" as="gp" hint-placeholder-count="3">
+                      <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                      <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                        <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                          <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                            <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                          </sc-for>
+                        </div>
+                      </sc-if>
+                    </sc-for>
+                    <sc-for list="{{ alertBox.values }}" as="v" hint-placeholder-count="6">
+                      <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
               <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ alertCountNote }}</span>
               <sc-if value="{{ alertFilterOn }}" hint-placeholder-val="{{ false }}"><button onClick="{{ alertClear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
             </div>
@@ -2832,7 +2914,7 @@ class Component extends DCLogic {
     return { searchF: {}, searchQ: {}, searchOpen: null, tables: {}, colF: {}, openCol: null,
              propF: {}, propOpenCol: null, propSort: null, propDir: 'asc',
              histMenu: null, histSub: null, histQ: '', trendMenuOpen: false, buzzKindOpen: false,
-             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '',
+             logMenuOpen: null, logMenuQ: '', mktSel: [], mktQ: '', buzzQ: '', dirQ: '', trendQ: '', buzzClub: null, alertClub: null, statPick: '', statQ: '',
              railEdgesAll: false, dirLimit: 12,
              hoverIdx: null, momHover: null, lineHover: null, trendHover: null,
              pTrendHover: null, tTrendHover: null, bucketHover: null };
@@ -3163,7 +3245,7 @@ class Component extends DCLogic {
       const onStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:var(--nested);color:' + BLUE;
       const take = x => { const on = !x.pick && x.group && P.has(x.group, x.label); return { label: x.label, count: x.count || '', style: on ? onStyle : rowStyle,
         pick: () => { if (x.pick) { x.pick(); setQ(''); this.setState(close); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); if (!st.searchBrowse) this.setState(close); } } }; };
-      const picks = !qv ? [] : flat.filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv)).map(take);
+      const picks = !qv ? [] : flat.filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv)).slice(0, 60).map(take);
       // a double click into the box: the ways to search, one group open at a time
       const browse = st.searchOpen === key && !!st.searchBrowse;
       const groups = !browse ? [] : groupsIn.filter(gp => gp.items.length).map(gp => { const open = st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
@@ -3665,7 +3747,7 @@ class Component extends DCLogic {
     };
     const cardOverallOf = ent => ent.k == null ? 0 : ent.k;
     const explorerFor = (ent, cohort) => {
-      const q = (st.statQ || '').trim().toLowerCase();
+      const q = (st.statQ || st.statPick || '').trim().toLowerCase();
       const members = cohort.length ? cohort : [ent];
       const mine = cardOverallOf(ent);
       const standing = ent.pr ? { rank: ent.pr, n: ent.pn } : ent.rank ? { rank: ent.rank, n: ent.of || members.length } : rankIn(members.map(m => cardOverallOf(m)), mine, true);
@@ -3693,7 +3775,7 @@ class Component extends DCLogic {
       }
       const shown = q ? rows.filter(r => r.k.toLowerCase().indexOf(q) >= 0) : rows;
       return {
-        rows: shown,
+        rows: shown, allKeys: rows.map(r => r.k),
         count: shown.length + ' of ' + rows.length,
         season: seasonLabel(),
         query: st.statQ || '',
@@ -4468,7 +4550,7 @@ class Component extends DCLogic {
     const buzzShut = st.shut || {};
     const buzzQ = String(st.buzzQ || '').trim().toLowerCase();
     const buzzKindOk = b => buzzKind === 'ALL' ? true : buzzKind === 'RECORD' ? (b.kind !== 'LIVE' && b.kind !== 'STORY' && b.kind !== 'SOCIAL') : String(buzzKind).indexOf('~') === 0 ? String(b.kind).toLowerCase().indexOf(String(buzzKind).slice(1).toLowerCase()) >= 0 : b.kind === buzzKind;
-    const buzzItems = buzzAll.filter(b => buzzKindOk(b) && (!buzzQ || matchQ((b.who || '') + ' ' + (b.head || '') + ' ' + (b.body || '') + ' ' + (b.kind || ''), buzzQ))).map(b => {
+    const buzzItems = buzzAll.filter(b => buzzKindOk(b) && (!st.buzzClub || (b.mono || monoOf(b.who)) === st.buzzClub) && (!buzzQ || matchQ((b.who || '') + ' ' + (b.head || '') + ' ' + (b.body || '') + ' ' + (b.kind || ''), buzzQ))).map(b => {
       const c = b.tone === 1 ? ACC : b.tone === 2 ? 'var(--lead)' : b.tone === 0 ? RED : 'var(--second)';
       const bk = 'bz' + buzzAll.indexOf(b);
       return {
@@ -5373,7 +5455,25 @@ paceRows: (() => {
       clearAll: () => this.setState({ colF: {}, dirQ: '', dirLimit: 12, openCol: null }),
       dirQ: st.dirQ || '',
       onDirQ: e => this.setState({ dirQ: e.target.value, dirLimit: 12 }),
-      clearQ: () => this.setState({ dirQ: '', dirLimit: 12 }),
+      clearQ: () => this.setState({ dirQ: '', dirLimit: 12, colF: {}, searchOpen: null }),
+      // the directory's box: a click lists clubs, positions and rating bands; typing lists the names too;
+      // a pick from a group becomes a column filter and a tag, a name opens the profile
+      dirBox: (() => {
+        const G = { CLUB: 'team', POSITION: 'pos', FAMILY: 'fam', RATING: 'rating', CONFERENCE: 'conf', DIVISION: 'div' };
+        const Fv = colF, setF = n => this.setState({ colF: n, dirLimit: 12 });
+        const P = { list: Object.keys(G).filter(k => Fv[G[k]] != null && Fv[G[k]] !== '').map(k => ({ group: k, value: Fv[G[k]], label: String(Fv[G[k]]).indexOf('~') === 0 ? 'contains ' + String(Fv[G[k]]).slice(1) : String(Fv[G[k]]) })),
+          has: (k, v) => !!G[k] && String(Fv[G[k]]) === String(v), add: (k, v) => { if (G[k]) setF(Object.assign({}, Fv, { [G[k]]: v })); },
+          remove: k => { const n = Object.assign({}, Fv); delete n[G[k]]; setF(n); }, clear: () => setF({}) };
+        const one = isPlayers ? ' player' : ' club', many = isPlayers ? ' players' : ' clubs';
+        const cnt = (label, n) => label + ' · ' + n + (n === 1 ? one : many);
+        const grp = (label, fn) => ({ label, items: tdistinct(universe, fn).filter(v => v.label && v.label !== '—').map(v => ({ label: String(v.label), count: cnt(label, v.count) })) });
+        const groups = [grp('CLUB', teamOf)]
+          .concat(isPlayers ? [useFamilies ? grp('FAMILY', x => famOf(posOf(x))) : grp('POSITION', posOf)] : [grp('CONFERENCE', x => x.conf || ''), grp('DIVISION', x => x.div || '')])
+          .concat([{ label: 'RATING', items: RATING_BANDS.map(b => ({ label: b[0], count: cnt('RATING', universe.filter(x => { const r = ratingOf(x); return r >= b[1] && r <= b[2]; }).length) })) }]);
+        const picks = universe.map(x => ({ label: nameOf(x), count: isPlayers ? (x.pos + ' · ' + x.team) : x.abbr, pick: () => this.openProfile((isPlayers ? 'p:' : 'c:') + (isPlayers ? x.name : x.abbr), x) }));
+        return searchFor('dir', histMenuFor('dir', g.homeAbbr), { q: st.dirQ || '', setQ: v => this.setState({ dirQ: v, dirLimit: 12 }), params: P, groups, picks,
+          placeholder: 'name, club, position, or rating — 84, 80+, >70, 60-75 · commas for several', count: '' });
+      })(),
       dirCount: sorted.length.toLocaleString() + ' of ' + universe.length.toLocaleString() + ' · showing ' + shown.length,
       dirMore: sorted.length > limit,
       moreLabel: 'Show ' + Math.min(DIR_PAGE, sorted.length - limit) + ' more',
@@ -5427,13 +5527,47 @@ paceRows: (() => {
       })(),
       alertQ: st.alertQ || '',
       onAlertQ: e => this.setState({ alertQ: e.target.value }),
-      alertFilterOn: !!((st.alertQ || '').trim()) || (st.phase || 'ALL') !== 'ALL' || (st.alertKind || 'ALL') !== 'ALL',
-      alertClear: () => this.setState({ alertQ: '', phase: 'ALL', alertKind: 'ALL', alertKindOpen: false, alertKindQ: '' }),
-      buzzFilterOn: buzzKind !== 'ALL' || !!buzzQ,
-      buzzClear: () => this.setState({ buzzKind: 'ALL', buzzQ: '', buzzKindOpen: false, buzzKindQ: '' }),
+      alertFilterOn: !!((st.alertQ || '').trim()) || (st.phase || 'ALL') !== 'ALL' || (st.alertKind || 'ALL') !== 'ALL' || !!st.alertClub,
+      alertClear: () => this.setState({ alertQ: '', phase: 'ALL', alertKind: 'ALL', alertClub: null, alertKindOpen: false, alertKindQ: '', searchOpen: null }),
+      buzzFilterOn: buzzKind !== 'ALL' || !!buzzQ || !!st.buzzClub,
+      buzzClear: () => this.setState({ buzzKind: 'ALL', buzzQ: '', buzzClub: null, buzzKindOpen: false, buzzKindQ: '', searchOpen: null }),
+      // every search box works the way the matchup box does: a click lists what can be searched,
+      // typing filters the list, Enter takes the first, a pick becomes a tag beside the box
+      buzzBox: (() => {
+        const isClub = m => /^[A-Z]{2,3}$/.test(m) && !!CLUB_NAMES[m];
+        const P = { list: [].concat(buzzKind !== 'ALL' && ['LIVE', 'STORY', 'RECORD'].concat(BUZZ_KINDS).indexOf(buzzKind) >= 0 ? [{ group: 'KIND', value: buzzKind, label: buzzKind }] : [], st.buzzClub ? [{ group: 'CLUB', value: st.buzzClub, label: st.buzzClub }] : []),
+          has: (g, v) => g === 'KIND' ? buzzKind === v : g === 'CLUB' ? st.buzzClub === v : false,
+          add: (g, v) => { if (g === 'KIND') this.setState({ buzzKind: v, buzzKindOpen: false, buzzKindQ: '' }); else if (g === 'CLUB') this.setState({ buzzClub: v }); },
+          remove: g => { if (g === 'KIND') this.setState({ buzzKind: 'ALL' }); else if (g === 'CLUB') this.setState({ buzzClub: null }); },
+          clear: () => this.setState({ buzzKind: 'ALL', buzzClub: null }) };
+        const kinds = Array.from(new Set(buzzAll.map(b => b.kind))).sort().map(k => ({ label: k, count: 'KIND · ' + buzzAll.filter(b => b.kind === k).length }));
+        const clubs = tdistinct(buzzAll, b => b.mono || monoOf(b.who)).filter(v => isClub(v.label)).map(v => ({ label: v.label, count: 'CLUB · ' + v.count + (v.count === 1 ? ' post' : ' posts') }));
+        return searchFor('buzz', histMenuFor('buzz', g.homeAbbr), { q: st.buzzQ || '', setQ: v => this.setState({ buzzQ: v }), params: P, groups: [{ label: 'KIND', items: kinds }, { label: 'CLUB', items: clubs }],
+          placeholder: 'search the buzz · a club, a kind, a name · commas for several', count: '' });
+      })(),
+      alertBox: (() => {
+        const ak = st.alertKind || 'ALL', ph = st.phase || 'ALL';
+        const P = { list: [].concat(ak !== 'ALL' ? [{ group: 'KIND', value: ak, label: String(ak).indexOf('~') === 0 ? 'contains ' + String(ak).slice(1) : ak }] : [], ph !== 'ALL' ? [{ group: 'PHASE', value: ph, label: ph }] : [], st.alertClub ? [{ group: 'CLUB', value: st.alertClub, label: st.alertClub }] : []),
+          has: (g, v) => g === 'KIND' ? ak === v : g === 'PHASE' ? ph === v : g === 'CLUB' ? st.alertClub === v : false,
+          add: (g, v) => { if (g === 'KIND') this.setState({ alertKind: v, alertKindOpen: false, alertKindQ: '' }); else if (g === 'PHASE') this.setState({ phase: v }); else if (g === 'CLUB') this.setState({ alertClub: v }); },
+          remove: g => { if (g === 'KIND') this.setState({ alertKind: 'ALL', alertKindQ: '' }); else if (g === 'PHASE') this.setState({ phase: 'ALL' }); else if (g === 'CLUB') this.setState({ alertClub: null }); },
+          clear: () => this.setState({ alertKind: 'ALL', alertKindQ: '', phase: 'ALL', alertClub: null }) };
+        const kinds = Array.from(new Set(feed.map(a => a.kind))).sort().map(k => ({ label: k, count: 'KIND · ' + feed.filter(a => a.kind === k).length }));
+        const phases = ['PRE', 'LIVE', 'POST'].map(p => ({ label: p, count: 'PHASE · ' + feed.filter(a => a.phase === p).length })).filter(p => !/· 0$/.test(p.count));
+        const clubs = tdistinct(feed, a => a.game).map(v => ({ label: v.label, count: 'CLUB · ' + v.count + (v.count === 1 ? ' alert' : ' alerts') }));
+        return searchFor('alerts', histMenuFor('alerts', g.homeAbbr), { q: st.alertQ || '', setQ: v => this.setState({ alertQ: v }), params: P, groups: [{ label: 'KIND', items: kinds }, { label: 'PHASE', items: phases }, { label: 'CLUB', items: clubs }],
+          placeholder: 'search the alerts · a club, a kind, a phase · commas for several', count: '' });
+      })(),
+      statBox: (() => {
+        const keys = profile && profile.explorer && profile.explorer.allKeys ? profile.explorer.allKeys : [];
+        const P = { list: st.statPick ? [{ group: 'STAT', value: st.statPick, label: st.statPick }] : [], has: (g, v) => st.statPick === v,
+          add: (g, v) => this.setState({ statPick: v }), remove: () => this.setState({ statPick: '' }), clear: () => this.setState({ statPick: '' }) };
+        return searchFor('stat', histMenuFor('stat', g.homeAbbr), { q: st.statQ || '', setQ: v => this.setState({ statQ: v }), params: P, groups: [{ label: 'STAT', items: keys.map(k => ({ label: k, count: 'STAT' })) }],
+          placeholder: 'search stats — points, min, stl, rating…', count: '' });
+      })(),
       buzzKindCol, buzzQ: st.buzzQ || '', onBuzzQ: e => this.setState({ buzzQ: e.target.value }), buzzCountNote: buzzItems.length + ' of ' + buzzAll.length,
-      alertCountNote: (() => { const n = feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).length; return n + ' of ' + feed.length; })(),
-      alerts: feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).map(a => {
+      alertCountNote: (() => { const n = feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).length; return n + ' of ' + feed.length; })(),
+      alerts: feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(a.text + ' ' + a.game + ' ' + a.kind, st.alertQ)).map(a => {
         const c = a.tone === 1 ? ACC : a.tone === 2 ? 'var(--lead)' : a.tone === 0 ? RED : 'var(--second)';
         // BALLDONTLIE webhooks push scores, game starts and injury updates; the rest is polled
         const pushed = ['INJURY', 'FINAL', 'LINEUP'].indexOf(a.kind) >= 0;
