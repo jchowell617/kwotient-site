@@ -152,7 +152,7 @@ html{-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
    bottom of the screen instead of being cut off by the scrolling frame. */
 @media (min-width:700px){[data-scroll=x]>div{min-width:0!important}[data-scroll=x]{overflow:visible}}
 @media (max-width:699px){[data-scroll=x]{overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
-  [data-scroll=x] [data-colmenu][style*="absolute"]{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(64px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;z-index:80!important}}
+  [data-scroll=x] [data-colmenu][style*="absolute"]{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(80px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;z-index:80!important}}
 /* a widget with an open menu — a search list or a column menu — rises above the widgets after it,
    so the list is never cut off by the next card; the hover transform makes each card its own layer */
 section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="absolute"]),div:has(> div > [data-colmenu][style*="absolute"]){position:relative;z-index:60}
@@ -188,7 +188,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
      the whole way down. The shell grows with its content and the window does the scrolling. */
   [data-theme]{height:auto!important;min-height:100dvh;overflow:visible!important}
   [data-theme] > div{overflow:visible!important;min-height:0!important}
-  [data-shell=body]{flex-direction:column!important;overflow:visible!important;overscroll-behavior:auto!important;padding-bottom:calc(72px + env(safe-area-inset-bottom))}
+  [data-shell=body]{flex-direction:column!important;overflow:visible!important;overscroll-behavior:auto!important;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
   [data-shell=side]{width:auto!important;border-right:0!important;border-bottom:1px solid var(--grid);flex:none!important}
   [data-shell=nav],[data-shell=health],[data-shell=spacer],[data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{display:none!important}
   [data-shell=slate-head]{margin-top:0!important;border-top:0!important;padding:10px 12px 4px!important}
@@ -196,8 +196,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=slate]::-webkit-scrollbar{display:none}
   [data-shell=slate]>div{flex:none!important;width:160px}
   [data-shell=main]{overflow:visible!important;flex:none!important;padding:12px 12px 18px!important}
-  [data-shell=rail]{width:auto!important;border-left:0!important;border-top:1px solid var(--grid);overflow:visible!important;flex:none!important;padding-bottom:calc(74px + env(safe-area-inset-bottom))}
-  [data-shell=tabs]{position:fixed;left:0;right:0;bottom:0;z-index:200;display:flex;background:color-mix(in srgb,var(--desk) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--grid);padding:4px 4px calc(6px + env(safe-area-inset-bottom))}
+  [data-shell=rail]{width:auto!important;border-left:0!important;border-top:1px solid var(--grid);overflow:visible!important;flex:none!important;padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+  [data-shell=tabs]{position:fixed;left:0;right:0;bottom:0;z-index:200;display:flex;background:color-mix(in srgb,var(--desk) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--grid);padding:6px 4px calc(20px + env(safe-area-inset-bottom))}
   /* the alerts screen IS the feed; the rail under it would show the same items twice */
   [data-tab=alerts] [data-shell=rail]{display:none!important}
   /* a chevron is an eleven-pixel glyph on a desktop; on a phone it is a thumb's target */
