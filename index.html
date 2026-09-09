@@ -4407,7 +4407,7 @@ class Component extends DCLogic {
           ]; })() : [
             { k: 'KWOTIENT', v: pl.k == null ? '—' : String(pl.k) },
             { k: 'AT ' + labelOf(pl.pos), v: pl.pr ? pl.pr + ' of ' + pl.pn : 'unrated' },
-            { k: 'PAID VS BAND', v: pl.surplus == null ? '—' : (pl.surplus > 0 ? '+' : '') + S.M(pl.surplus) }
+            { k: 'PAID VS BAND', v: pl.surplus == null ? '—' : S.M(Math.abs(pl.surplus)) + (pl.surplus > 0 ? ' under' : ' over') }
           ],
           // a past season's line from the record, when the directory has been asked for one
           stats: (() => {
