@@ -171,10 +171,15 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=body]{overflow:visible!important;align-items:flex-start!important}
   [data-shell=main]{overflow:visible!important}
   [data-shell=side],[data-shell=rail]{position:sticky!important;top:38px;max-height:calc(100dvh - 38px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+  /* the league switch holds the top of the side column while the slate scrolls beneath it */
+  [data-shell=league]{position:sticky!important;top:0;z-index:5;margin:0!important;border-radius:0 0 8px 8px!important;border-top:0!important;box-shadow:0 4px 10px var(--rail)}
 }
 @media (max-width:767px){
   [data-shell=chrome]{height:auto!important;min-height:44px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px!important;gap:10px!important}
   [data-shell=wintitle]{display:none!important}
+  /* the league switch rides in the header, which stays put while the page scrolls; the side column's copy steps aside */
+  [data-shell=league-bar]{display:flex!important}
+  [data-shell=league]{display:none!important}
   /* the header rides along at the top while the document scrolls beneath it */
   [data-shell=chrome]{flex-wrap:wrap!important;row-gap:2px!important;position:sticky!important;top:0;z-index:210}
   [data-shell=clock]{font-size:9px!important}
@@ -218,6 +223,10 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <span data-shell="clock" style="white-space:nowrap;color:var(--reversed)">{{ clockLabel }}</span>
         <span style="width:6px;height:6px;border-radius:50%;background:var(--brand);display:block;animation:pulseDot 1.6s ease-in-out infinite"></span>
       </div>
+      <div data-shell="league-bar" style="display:none;flex-basis:100%;gap:3px;background:var(--surface);border-radius:8px;padding:3px;border:1px solid var(--grid);margin-top:4px">
+        <button data-tick="1" onClick="{{ setNFL }}" style="{{ nflBtn }}">NFL</button>
+        <button data-tick="1" onClick="{{ setNBA }}" style="{{ nbaBtn }}">NBA</button>
+      </div>
     </div>
 
     <sc-if value="{{ contactOpen }}" hint-placeholder-val="{{ false }}">
@@ -244,7 +253,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
     <div data-shell="body" style="flex:1;display:flex;min-height:0;align-items:stretch">
 
       <aside data-shell="side" style="width:214px;flex:none;background:var(--rail);border-right:1px solid var(--grid);display:flex;flex-direction:column;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch">
-        <div style="padding:14px 12px 10px;display:flex;gap:3px;background:var(--surface);margin:12px 10px 0;border-radius:8px;padding:3px;border:1px solid var(--grid)">
+        <div data-shell="league" style="padding:14px 12px 10px;display:flex;gap:3px;background:var(--surface);margin:12px 10px 0;border-radius:8px;padding:3px;border:1px solid var(--grid)">
           <button data-tick="1" onClick="{{ setNFL }}" style-hover="transform:translateY(-2px)" style="{{ nflBtn }}">NFL</button>
           <button data-tick="1" onClick="{{ setNBA }}" style-hover="transform:translateY(-2px)" style="{{ nbaBtn }}">NBA</button>
         </div>
