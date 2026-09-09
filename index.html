@@ -4400,7 +4400,7 @@ class Component extends DCLogic {
     const embedFeed = (S ? S.embeds(sport) : []).slice(0, SOCIAL_SHOWN).map(e => {
       const pv = PROVIDER[e.provider] || [e.provider, '·'];
       return { kind: 'SOCIAL', tone: 2, at: e.date, t: S ? S.day(e.date) : e.date, who: pv[0], mono: pv[1],
-               head: e.note || ('A post on ' + pv[0]), body: '', src: pv[0] + ' · ' + e.url,
+               head: e.note || ('A post on ' + pv[0]), body: '', src: pv[0] + (e.by ? ' · ' + e.by : ''),
                embedSpec: JSON.stringify({ provider: e.provider, url: e.url, uri: e.uri || null, cid: e.cid || null, id: e.id || null }) };
     });
     const buzzKind = st.buzzKind || 'ALL';
