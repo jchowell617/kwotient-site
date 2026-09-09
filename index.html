@@ -3071,6 +3071,13 @@ class Component extends DCLogic {
 
   renderVals() {
     const st = this.state, sport = st.sport;
+    // every club by its full name, so a ledger's city or nickname resolves even for a club the
+    // season data has not filed yet; a word two clubs share (New, Los Angeles) resolves nothing
+    const CLUB_NAMES = sport === 'NBA'
+      ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
+      : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
+    // a text with the city and nickname of every club code it names, so a keyword finds the line
+    const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
     const S = st.kq === 'ready' ? SRC() : null;
     // the slate is the edge's when it answers with games; the seeded one, and labeled so, otherwise
     const liveOn = !!(st.liveSlate && st.liveSlate.length);
@@ -3347,7 +3354,7 @@ class Component extends DCLogic {
 
     const tq = (st.trendQ || '').trim().toLowerCase();
     const trendP = genParams('trend');
-    const trendMatches = trendPool.filter(p => (!trendP.get('TEAM').length || trendP.get('TEAM').indexOf(p.team) >= 0) && (!trendP.get('POSITION').length || trendP.get('POSITION').indexOf(p.pos) >= 0) && (!tq || matchQ(p.name + ' ' + (p.full || '') + ' ' + p.pos + ' ' + p.team, tq)));
+    const trendMatches = trendPool.filter(p => (!trendP.get('TEAM').length || trendP.get('TEAM').indexOf(p.team) >= 0) && (!trendP.get('POSITION').length || trendP.get('POSITION').indexOf(p.pos) >= 0) && (!tq || matchQ(p.name + ' ' + (p.full || '') + ' ' + p.pos + ' ' + p.team + ' ' + (CLUB_NAMES[p.team] || ''), tq)));
     const ppSel = trendPool.find(p => p.id === st.trendId) || null;
     const pp = (ppSel && trendMatches.indexOf(ppSel) >= 0 ? ppSel : trendMatches[0]) || trendPool[0] ||
       { name: '—', pos: '', home: true, team: g.homeAbbr, k: null, ent: null, id: null, market: '' };
@@ -3941,13 +3948,6 @@ class Component extends DCLogic {
     const clubRaw = cl => ({ stats: clubBundle(cl).stats });
 
     const mono = s => s.replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(x => x[0]).join('').slice(0, 2).toUpperCase();
-    // every club by its full name, so a ledger's city or nickname resolves even for a club the
-    // season data has not filed yet; a word two clubs share (New, Los Angeles) resolves nothing
-    const CLUB_NAMES = sport === 'NBA'
-      ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
-      : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
-    // a text with the city and nickname of every club code it names, so a keyword finds the line
-    const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
     const isPlayers = st.dir === 'players';
     const q = (st.dirQ || '').trim().toLowerCase();
     const sortBy = st.sortBy || 'rating';
@@ -5296,8 +5296,8 @@ paceRows: (() => {
       trendHist: histMenuFor('trend', pp.team, tRowsAll),
       trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players', display: pp.name || '', params: trendP,
         groups: [
-          { label: 'NAME', items: trendPool.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : ''), pick: () => this.pickTrend(p) })) },
-          { label: 'TEAM', items: Array.from(new Set(trendPool.map(p => p.team))).sort().map(t => ({ label: t, count: 'TEAM · ' + trendPool.filter(p => p.team === t).length + ' players' })) },
+          { label: 'NAME', items: trendPool.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : '') + (CLUB_NAMES[p.team] ? ' · ' + CLUB_NAMES[p.team] : ''), pick: () => this.pickTrend(p) })) },
+          { label: 'TEAM', items: Array.from(new Set(trendPool.map(p => p.team))).sort().map(t => ({ label: t, count: (CLUB_NAMES[t] ? CLUB_NAMES[t] + ' · ' : 'TEAM · ') + trendPool.filter(p => p.team === t).length + ' players' })) },
           { label: 'POSITION', items: Array.from(new Set(trendPool.map(p => p.pos).filter(Boolean))).sort().map(ps => ({ label: ps, count: 'POSITION · ' + trendPool.filter(p => p.pos === ps).length + ' players' })) },
           { label: 'SEASON', items: trendSeasons.map(y => ({ label: histSeasonLabel(y), count: 'SEASON · ' + scoped.filter(x => x.season === y).length + ' games' })) }
         ] }); })(),
