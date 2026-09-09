@@ -4847,7 +4847,7 @@ class Component extends DCLogic {
           sparkColor: rising ? ACC : RED,
           probBar: 'height:100%;width:' + p.toFixed(1) + '%;background:' + (rising ? ACC : RED) + ';transition:width .5s ease',
           rowStyle: 'padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent'),
-          select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
+          select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }, () => this.toTop()); this.toTop(); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
         };
       }),
 
@@ -4949,7 +4949,7 @@ class Component extends DCLogic {
             lines: 'mkt ' + x.homeAbbr + ' ' + sgn(x.line) + ' · model ' + sgn(x.fair),
             probs: x.mktProb != null && x.wp != null ? 'mkt ' + Number(x.mktProb).toFixed(0) + '% · model ' + Number(x.wp).toFixed(0) + '%' : '',
             style: 'appearance:none;width:100%;text-align:left;display:flex;flex-direction:column;gap:3px;padding:7px 8px;border-radius:7px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent') + ';color:inherit;font:inherit',
-            select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
+            select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }, () => this.toTop()); this.toTop(); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
           };
         });
         const withEdge = rows.filter(r => r.edgeStyle.indexOf(ACC) >= 0).length;
