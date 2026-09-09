@@ -4264,6 +4264,48 @@ class Component extends DCLogic {
     const HEX = (st.theme || 'dark') === 'dark'
       ? { brand: '#4d8bff', axis: '#2c3241', grid: '#1f232e', nested: '#171b25', second: '#98a3b3', lead: '#c9d1dc' }
       : { brand: '#1d5fd6', axis: '#b4c2d8', grid: '#d2dcec', nested: '#e2e9f4', second: '#5a6b82', lead: '#2c3a4e' };
+    // every alert line is written from its numbers in the reader's audience and tone, at render:
+    // a chip pick re-reads the whole feed at once, and the narratives follow when they arrive
+    const VOICE = ((st.audience || 'BETTING') === 'STATS' ? 's' : 'b') + ((st.tone || 'EDITORIAL') === 'HUMOR' ? 'h' : 'e');
+    const LINES = {
+      PRIOR: { be: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. Prior ' + f1(d.p) + '% ' + d.home + ' from the two club cards' + (d.homeK != null ? ' (' + d.homeK + ' v ' + d.awayK + ')' : '') + '.',
+               bh: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. The cards like ' + d.home + ' at ' + f1(d.p) + '% before anyone has laced up' + (d.homeK != null ? ' (' + d.homeK + ' v ' + d.awayK + ')' : '') + '.',
+               se: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. ' + d.home + ' ' + f1(d.p) + '% by club rating' + (d.homeK != null ? ', KQ ' + d.homeK + ' to ' + d.awayK : '') + '.',
+               sh: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. ' + (d.homeK != null ? 'KQ ' + d.homeK + ' meets KQ ' + d.awayK + '; the' : 'The') + ' math gives ' + d.home + ' ' + f1(d.p) + '% and a head start.' },
+      MODEL: { be: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — model has ' + d.home + ' at ' + f1(d.p) + '%; ' + d.poss + '.',
+               bh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — ' + d.home + ' ' + f1(d.p) + '%' + (d.poss ? ', ' + d.poss : '') + '; the number is doing the talking.',
+               se: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — win probability ' + d.home + ' ' + f1(d.p) + '%' + (d.poss ? '; ' + d.poss : '') + '.',
+               sh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — ' + d.home + ' ' + f1(d.p) + '% to win' + (d.poss ? ', and ' + d.poss + ', which helps' : '') + '.' },
+      FINAL: { be: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final.',
+               bh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final; the market can stop arguing.',
+               se: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final, a ' + Math.abs(d.hs - d.as) + '-point margin.',
+               sh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final, by ' + Math.abs(d.hs - d.as) + ', for the box score.' },
+      EDGE:  { be: d => 'Model ' + d.home + ' ' + sgn(d.fair) + ' against a market ' + sgn(d.line) + ' — ' + f1(Math.abs(d.gap)) + ' points on ' + (d.gap > 0 ? d.home : d.away) + ' across ' + d.n + ' books.',
+               bh: d => 'The books say ' + d.home + ' ' + sgn(d.line) + '; the model says ' + sgn(d.fair) + '. ' + f1(Math.abs(d.gap)) + ' points of daylight on ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books unconvinced.',
+               se: d => 'Projected margin ' + d.home + ' ' + sgn(d.fair) + ' against a posted ' + sgn(d.line) + ' — a ' + f1(Math.abs(d.gap)) + '-point gap toward ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books sampled.',
+               sh: d => 'Model margin ' + sgn(d.fair) + ', posted ' + sgn(d.line) + '; the ' + f1(Math.abs(d.gap)) + ' in between is where ' + (d.gap > 0 ? d.home : d.away) + '\'s numbers live. ' + d.n + ' books.' },
+      LINE:  { be: d => d.home + ' moved from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '.',
+               bh: d => d.home + ' went from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + ' — somebody bet with conviction.',
+               se: d => d.home + '\'s posted margin moved from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '.',
+               sh: d => d.home + '\'s number drifted from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '; the spreadsheet noticed.' },
+      STEAM: { be: d => d.home + ' ' + sgn(d.from) + ' to ' + sgn(d.to) + ' in the last thirty minutes.',
+               bh: d => d.home + ' ' + sgn(d.from) + ' to ' + sgn(d.to) + ' in thirty minutes — that is steam, not a breeze.',
+               se: d => d.home + '\'s posted margin changed ' + f1(Math.abs(d.to - d.from)) + ' points in the last thirty minutes, ' + sgn(d.from) + ' to ' + sgn(d.to) + '.',
+               sh: d => f1(Math.abs(d.to - d.from)) + ' points of movement in thirty minutes on ' + d.home + ' (' + sgn(d.from) + ' to ' + sgn(d.to) + '); someone refreshed the model.' },
+      INJURY: { be: d => d.full + ' (' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ') — ' + d.inj + ', on the captured report.',
+                bh: d => d.full + ' (' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ') — ' + d.inj + ' on the captured report; price the doubt.',
+                se: d => d.full + ', ' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ' — ' + d.inj + ', per the captured report.',
+                sh: d => d.full + ' (' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ') is ' + d.inj + ', per the report; the depth chart is holding its breath.' },
+      MODELGAP: { be: d => 'Model has ' + d.home + ' at ' + f1(d.wp) + '%, market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of edge.' : 'Inside the 2-point threshold.'),
+                  bh: d => 'Model ' + d.home + ' ' + f1(d.wp) + '%, market ' + f1(d.mk) + '% — ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points the books have not caught up to.' : 'inside two points; nothing to bet on here.'),
+                  se: d => 'Win probability ' + d.home + ' ' + f1(d.wp) + '%; implied market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? 'Gap ' + f1(Math.abs(d.wp - d.mk)) + ' points.' : 'Gap under 2 points.'),
+                  sh: d => d.home + ' ' + f1(d.wp) + '% by the model, ' + f1(d.mk) + '% by the crowd; ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of disagreement.' : 'the two agree within 2 points, which is rare.') },
+      SWING: { be: d => d.side + ' have taken ' + f1(Math.abs(d.swing)) + ' points of win probability over the last ten ticks.',
+               bh: d => d.side + ' picked up ' + f1(Math.abs(d.swing)) + ' points of win probability in ten ticks; the live line is late.',
+               se: d => d.side + ' +' + f1(Math.abs(d.swing)) + ' win-probability points over the last ten ticks.',
+               sh: d => d.side + ' up ' + f1(Math.abs(d.swing)) + ' points in ten ticks — the chart is leaning.' }
+    };
+    const say = (kind, d) => (LINES[kind][VOICE] || LINES[kind].be)(d);
     const feedSim = [];   // nothing seeded stands in for a slate; an empty slate says so
 
     // on a real slate the feed is what the edge and the model actually said: one line per
@@ -4276,8 +4318,7 @@ class Component extends DCLogic {
         const fin = x.state === 'final', on = x.state === 'in_progress';
         items.push({ phase: fin ? 'POST' : on ? 'LIVE' : 'PRE', kind: fin ? 'FINAL' : on ? 'MODEL' : 'PRIOR', t: on && x.clock ? 'Q' + x.per + ' ' + x.clock : (S ? S.age(st.liveMeta && st.liveMeta.fetched) : ''),
           game: x.homeAbbr, tone: on ? 1 : 3,
-          text: x.awayAbbr + ' ' + x.as + ' @ ' + x.homeAbbr + ' ' + x.hs + (fin ? ' — final.' : on ? ' — model has ' + x.homeAbbr + ' at ' + p.toFixed(1) + '%; ' + (x.poss || '') + '.'
-            : ' — ' + (x.status || 'scheduled') + '. Prior ' + p.toFixed(1) + '% ' + x.homeAbbr + ' from the two club cards' + (x.homeK != null ? ' (' + x.homeK + ' v ' + x.awayK + ')' : '') + '.') });
+          text: say(fin ? 'FINAL' : on ? 'MODEL' : 'PRIOR', { away: x.awayAbbr, home: x.homeAbbr, as: x.as, hs: x.hs, p, poss: x.poss || '', status: x.status || 'scheduled', homeK: x.homeK, awayK: x.awayK }) });
       });
       // the market against the model, and the line against its open, on the real slate only
       slate.forEach(x => {
@@ -4285,14 +4326,14 @@ class Component extends DCLogic {
         const on = x.state === 'in_progress', when = S ? S.age(x.marketUpdated) : '';
         const gap = x.line - x.fair;
         if (Math.abs(gap) >= 2) items.push({ phase: on ? 'LIVE' : 'PRE', kind: 'EDGE', t: when, game: x.homeAbbr, tone: 1, real: true,
-          text: 'Model ' + x.homeAbbr + ' ' + sgn(x.fair) + ' against a market ' + sgn(x.line) + ' — ' + Math.abs(gap).toFixed(1) + ' points on ' + (gap > 0 ? x.homeAbbr : x.awayAbbr) + ' across ' + (x.marketN || 0) + ' books.' });
+          text: say('EDGE', { home: x.homeAbbr, away: x.awayAbbr, fair: x.fair, line: x.line, gap, n: x.marketN || 0 }) });
         const hs = (x.history || []).filter(h => h && h[1] != null);
         const openSp = x.opening && x.opening.spreadHome != null ? x.opening.spreadHome : (hs.length ? hs[0][1] : null);
         if (openSp != null && Math.abs(x.line - openSp) >= 1) items.push({ phase: on ? 'LIVE' : 'PRE', kind: 'LINE', t: when, game: x.homeAbbr, tone: 2, real: true,
-          text: x.homeAbbr + ' moved from ' + sgn(openSp) + ' to ' + sgn(x.line) + (x.opening && x.opening.spreadHome != null ? ' since the open' : ' since first seen') + '.' });
+          text: say('LINE', { home: x.homeAbbr, from: openSp, to: x.line, since: x.opening && x.opening.spreadHome != null ? 'since the open' : 'since first seen' }) });
         const recent = hs.filter(h => Date.now() - h[0] <= 1800000);
         if (recent.length >= 2 && Math.abs(recent[recent.length - 1][1] - recent[0][1]) >= 1) items.push({ phase: on ? 'LIVE' : 'PRE', kind: 'STEAM', t: when, game: x.homeAbbr, tone: 2, real: true,
-          text: x.homeAbbr + ' ' + sgn(recent[0][1]) + ' to ' + sgn(recent[recent.length - 1][1]) + ' in the last thirty minutes.' });
+          text: say('STEAM', { home: x.homeAbbr, from: recent[0][1], to: recent[recent.length - 1][1] }) });
       });
       slate.forEach(x => {
         const sto = (st.stories || {})[x.id]; if (!sto) return;
@@ -4304,7 +4345,7 @@ class Component extends DCLogic {
     // the captured injury report for the two clubs' rated players — the record's, on any slate
     const injuryItems = roster.filter(p => (p.team === g.homeAbbr || p.team === g.awayAbbr) && p.inj)
       .sort((a, b) => (b.k || 0) - (a.k || 0)).slice(0, 8)
-      .map(p => ({ phase: 'PRE', kind: 'INJURY', t: 'record', game: p.team, tone: 0, real: true, text: p.full + ' (' + p.pos + (p.k != null ? ', KQ ' + p.k : '') + ') — ' + p.inj + ', on the captured report.' }));
+      .map(p => ({ phase: 'PRE', kind: 'INJURY', t: 'record', game: p.team, tone: 0, real: true, text: say('INJURY', { full: p.full, pos: p.pos, k: p.k, inj: p.inj }) }));
     // the seeded feed's market-flavoured lines go with the market widgets
     const feed = (slateSim ? [] : liveFeed()).concat(injuryItems);
 
@@ -4315,11 +4356,9 @@ class Component extends DCLogic {
       const swing = wp - s.hist[s.hist.length - 11];
       const derived = [
         { phase: 'LIVE', kind: 'MODEL', t: 'now', game: g.homeAbbr, tone: Math.abs(wp - mk) >= 2 ? 1 : 3,
-          text: 'Model has ' + g.homeAbbr + ' at ' + wp.toFixed(1) + '%, market ' + mk.toFixed(1) + '%. ' +
-                (Math.abs(wp - mk) >= 2 ? Math.abs(wp - mk).toFixed(1) + ' points of edge.' : 'Inside the 2-point threshold.') },
+          text: say('MODELGAP', { home: g.homeAbbr, wp, mk }) },
         { phase: 'LIVE', kind: 'SWING', t: '0:0' + (2 + (st.tick % 7)), game: g.homeAbbr, tone: swing > 0 ? 2 : 0,
-          text: (swing > 0 ? g.homeAbbr : g.awayAbbr) + ' have taken ' + Math.abs(swing).toFixed(1) +
-                ' points of win probability over the last ten ticks.' }
+          text: say('SWING', { side: swing > 0 ? g.homeAbbr : g.awayAbbr, swing }) }
       ];
       return derived.concat(own).slice(0, 6).map(a => {
         const c = a.tone === 1 ? ACC : a.tone === 2 ? 'var(--lead)' : a.tone === 0 ? RED : 'var(--second)';
