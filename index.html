@@ -3941,6 +3941,11 @@ class Component extends DCLogic {
     const clubRaw = cl => ({ stats: clubBundle(cl).stats });
 
     const mono = s => s.replace(/[^A-Za-z ]/g, '').split(' ').filter(Boolean).map(x => x[0]).join('').slice(0, 2).toUpperCase();
+    // every club by its full name, so a ledger's city or nickname resolves even for a club the
+    // season data has not filed yet; a word two clubs share (New, Los Angeles) resolves nothing
+    const CLUB_NAMES = sport === 'NBA'
+      ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
+      : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
     const isPlayers = st.dir === 'players';
     const q = (st.dirQ || '').trim().toLowerCase();
     const sortBy = st.sortBy || 'rating';
@@ -4004,8 +4009,9 @@ class Component extends DCLogic {
       if (!passCol(x)) return false;
       if (!q) return true;
       if (ratingQuery) return ratingQuery(ratingOf(x));
-      const hay = isPlayers ? (x.full + ' ' + x.name + ' ' + x.team + ' ' + x.pos).toLowerCase()
-                            : (x.name + ' ' + x.abbr).toLowerCase();
+      // a keyword finds a row: the club's city and nickname as well as its code, and a player's position family
+      const hay = isPlayers ? (x.full + ' ' + x.name + ' ' + x.team + ' ' + (CLUB_NAMES[x.team] || '') + ' ' + x.pos + ' ' + famOf(x.pos)).toLowerCase()
+                            : (x.name + ' ' + x.abbr + ' ' + (CLUB_NAMES[x.abbr] || '') + ' ' + (x.conf || '') + ' ' + (x.div || '')).toLowerCase();
       return matchQ(hay, q);
     });
     const CMP = {
@@ -4532,11 +4538,6 @@ class Component extends DCLogic {
     const buzzAll = liveBuzz.concat(embedFeed).concat((S ? S.wire(sport) : []).slice(0, 60).map(w => ({ kind: w.kind, tone: w.tone, t: S.day(w.date), who: w.who || '—', head: w.head, body: w.body, src: w.src })));
     // the avatar reads the same for a club however a ledger named it — SEA for Seattle, the
     // Seahawks or SEA — a cohort by its number, and initials for a person or an outlet
-    // every club by its full name, so a ledger's city or nickname resolves even for a club the
-    // season data has not filed yet; a word two clubs share (New, Los Angeles) resolves nothing
-    const CLUB_NAMES = sport === 'NBA'
-      ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
-      : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
     const clubWord = {}; Object.keys(CLUB_NAMES).map(a => ({ abbr: a, name: CLUB_NAMES[a] })).concat(clubs).forEach(c => { const put = (w, a) => { const k = String(w || '').toUpperCase(); if (!k) return; clubWord[k] = clubWord[k] && clubWord[k] !== a ? '?' : a; };
       put(c.abbr, c.abbr); String(c.name || '').split(/\s+/).forEach(w => { if (w.length > 2) put(w, c.abbr); }); });
     const monoOf = who => {
@@ -5465,11 +5466,11 @@ paceRows: (() => {
           remove: k => { const n = Object.assign({}, Fv); delete n[G[k]]; setF(n); }, clear: () => setF({}) };
         const one = isPlayers ? ' player' : ' club', many = isPlayers ? ' players' : ' clubs';
         const cnt = (label, n) => label + ' · ' + n + (n === 1 ? one : many);
-        const grp = (label, fn) => ({ label, items: tdistinct(universe, fn).filter(v => v.label && v.label !== '—').map(v => ({ label: String(v.label), count: cnt(label, v.count) })) });
+        const grp = (label, fn) => ({ label, items: tdistinct(universe, fn).filter(v => v.label && v.label !== '—').map(v => ({ label: String(v.label), count: (label === 'CLUB' && CLUB_NAMES[v.label] ? CLUB_NAMES[v.label] + ' · ' : '') + cnt(label, v.count) })) });
         const groups = [grp('CLUB', teamOf)]
           .concat(isPlayers ? [useFamilies ? grp('FAMILY', x => famOf(posOf(x))) : grp('POSITION', posOf)] : [grp('CONFERENCE', x => x.conf || ''), grp('DIVISION', x => x.div || '')])
           .concat([{ label: 'RATING', items: RATING_BANDS.map(b => ({ label: b[0], count: cnt('RATING', universe.filter(x => { const r = ratingOf(x); return r >= b[1] && r <= b[2]; }).length) })) }]);
-        const picks = universe.map(x => ({ label: nameOf(x), count: isPlayers ? (x.pos + ' · ' + x.team) : x.abbr, pick: () => this.openProfile((isPlayers ? 'p:' : 'c:') + (isPlayers ? x.name : x.abbr), x) }));
+        const picks = universe.map(x => ({ label: nameOf(x), count: isPlayers ? (x.pos + ' · ' + x.team + (CLUB_NAMES[x.team] ? ' · ' + CLUB_NAMES[x.team] : '')) : (x.abbr + (CLUB_NAMES[x.abbr] ? ' · ' + CLUB_NAMES[x.abbr] : '')), pick: () => this.openProfile((isPlayers ? 'p:' : 'c:') + (isPlayers ? x.name : x.abbr), x) }));
         return searchFor('dir', histMenuFor('dir', g.homeAbbr), { q: st.dirQ || '', setQ: v => this.setState({ dirQ: v, dirLimit: 12 }), params: P, groups, picks,
           placeholder: 'name, club, position, or rating — 84, 80+, >70, 60-75 · commas for several', count: '' });
       })(),
@@ -5540,7 +5541,7 @@ paceRows: (() => {
           remove: g => { if (g === 'KIND') this.setState({ buzzKind: 'ALL' }); else if (g === 'CLUB') this.setState({ buzzClub: null }); },
           clear: () => this.setState({ buzzKind: 'ALL', buzzClub: null }) };
         const kinds = Array.from(new Set(buzzAll.map(b => b.kind))).sort().map(k => ({ label: k, count: 'KIND · ' + buzzAll.filter(b => b.kind === k).length }));
-        const clubs = tdistinct(buzzAll, b => b.mono || monoOf(b.who)).filter(v => isClub(v.label)).map(v => ({ label: v.label, count: 'CLUB · ' + v.count + (v.count === 1 ? ' post' : ' posts') }));
+        const clubs = tdistinct(buzzAll, b => b.mono || monoOf(b.who)).filter(v => isClub(v.label)).map(v => ({ label: v.label, count: CLUB_NAMES[v.label] + ' · ' + v.count + (v.count === 1 ? ' post' : ' posts') }));
         return searchFor('buzz', histMenuFor('buzz', g.homeAbbr), { q: st.buzzQ || '', setQ: v => this.setState({ buzzQ: v }), params: P, groups: [{ label: 'KIND', items: kinds }, { label: 'CLUB', items: clubs }],
           placeholder: 'search the buzz · a club, a kind, a name · commas for several', count: '' });
       })(),
@@ -5553,7 +5554,7 @@ paceRows: (() => {
           clear: () => this.setState({ alertKind: 'ALL', alertKindQ: '', phase: 'ALL', alertClub: null }) };
         const kinds = Array.from(new Set(feed.map(a => a.kind))).sort().map(k => ({ label: k, count: 'KIND · ' + feed.filter(a => a.kind === k).length }));
         const phases = ['PRE', 'LIVE', 'POST'].map(p => ({ label: p, count: 'PHASE · ' + feed.filter(a => a.phase === p).length })).filter(p => !/· 0$/.test(p.count));
-        const clubs = tdistinct(feed, a => a.game).map(v => ({ label: v.label, count: 'CLUB · ' + v.count + (v.count === 1 ? ' alert' : ' alerts') }));
+        const clubs = tdistinct(feed, a => a.game).map(v => ({ label: v.label, count: (CLUB_NAMES[v.label] || 'CLUB') + ' · ' + v.count + (v.count === 1 ? ' alert' : ' alerts') }));
         return searchFor('alerts', histMenuFor('alerts', g.homeAbbr), { q: st.alertQ || '', setQ: v => this.setState({ alertQ: v }), params: P, groups: [{ label: 'KIND', items: kinds }, { label: 'PHASE', items: phases }, { label: 'CLUB', items: clubs }],
           placeholder: 'search the alerts · a club, a kind, a phase · commas for several', count: '' });
       })(),
