@@ -174,9 +174,10 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   /* the league switch holds the top of the side column while the slate scrolls beneath it */
   [data-shell=league]{position:sticky!important;top:0;z-index:5;margin:0!important;border-radius:0 0 8px 8px!important;border-top:0!important;box-shadow:0 4px 10px var(--rail)}
   /* the menu sits tight so the slate shows beneath it on a short screen */
-  [data-shell=nav]{gap:1px!important;padding:5px 8px 3px!important}
-  [data-shell=nav] button,[data-shell=cohortbtn] button,[data-shell=modelbtn] button,[data-shell=contactbtn] button{padding:4px 10px!important;min-height:0!important}
-  [data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{padding:0 8px 3px!important}
+  [data-shell=nav]{gap:0!important;padding:4px 8px 2px!important}
+  [data-shell=nav] button,[data-shell=cohortbtn] button,[data-shell=modelbtn] button,[data-shell=contactbtn] button{padding:3px 10px!important;min-height:0!important;line-height:1.25!important}
+  [data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{padding:0 8px 2px!important}
+  [data-shell=league] button{padding:4px!important}
   [data-shell=slate-head]{padding-top:6px!important;margin-top:4px!important}
   /* a column at the end of its own scroll hands the gesture to the page instead of holding it */
   [data-shell=side],[data-shell=rail]{overscroll-behavior:auto!important}
