@@ -4454,9 +4454,10 @@ class Component extends DCLogic {
             { k: 'PAID NOW', v: S.M(pl.paid) },
             { k: 'CONFIDENCE', v: pl.conf ? pl.conf[0] + '% · ' + pl.conf[1] + ' comparables' : '—' }
           ],
-          edge: pl.surplus == null ? '—' : (pl.surplus > 0 ? '+' : '') + S.M(pl.surplus),
+          // the gap is read as a word, not a sign: a minus reads as underpaid at a glance when it means the opposite
+          edge: pl.surplus == null ? '—' : S.M(Math.abs(pl.surplus)) + (pl.surplus > 0 ? ' under' : ' over'),
           edgeStyle: 'font-family:var(--kw);font-size:26px;font-weight:700;color:' + (pl.surplus == null ? 'var(--muted)' : pl.surplus > 0 ? ACC : RED),
-          edgeNote: pl.surplus == null ? 'no comparable band can be read' : pl.surplus > 0 ? 'paid under his comparables' : 'paid over his comparables',
+          edgeNote: pl.surplus == null ? 'no comparable band can be read' : pl.surplus > 0 ? 'paid less than his comparables' : 'paid more than his comparables',
           factors: pb.factors,
           card: profPast ? pb.seasonCardFor(st.logSeason) : pb.card,
           explorer: profPast ? explorerFromCard(explorerFor(pl, cohortOf(pl.grp)), pb.seasonCardFor(st.logSeason)) : explorerFor(pl, cohortOf(pl.grp)),
