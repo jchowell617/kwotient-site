@@ -1695,7 +1695,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
                     <div>
                       <sc-for list="{{ sec.rows }}" as="r" hint-placeholder-count="8">
-                        <div data-tick="1" onClick="{{ r.open }}" style="display:grid;grid-template-columns:{{ dirGrid }};gap:6px;padding:9px 14px;border-bottom:1px solid var(--divider);align-items:center;cursor:pointer;transition:background .16s ease" style-hover="background:var(--nested)">
+                        <div onClick="{{ r.open }}" style="display:grid;grid-template-columns:{{ dirGrid }};gap:6px;padding:9px 14px;border-bottom:1px solid var(--divider);align-items:center;cursor:pointer;transition:background .16s ease" style-hover="background:var(--nested)">
                           <span style="font-family:var(--kw);font-size:9px;color:var(--faint)">{{ r.pos }}</span>
                           <div style="width:24px;height:24px;border-radius:6px;background:var(--nested);border:1px solid var(--axis);display:flex;align-items:center;justify-content:center;font-family:var(--kw);font-size:8.5px;font-weight:700;color:var(--brand)">{{ r.mono }}</div>
                           <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
@@ -2896,16 +2896,21 @@ class Component extends DCLogic {
   tick() { try { if (navigator.vibrate) navigator.vibrate(6); } catch (e) {} }
   // the iPhone answers a switch control the thumb itself lands on with the Taptic engine — and
   // since iOS 26.5 only that, never one toggled by script — so every tap target carries an
-  // invisible switch across its face: every button in every widget (a chevron, a chip, a row, a
-  // column menu), the slate's game cards and the directory's rows. A form's submit button is left
-  // alone, since a tap that lands on the switch would not submit the form. The tap toggles the switch (the tick) and the same click
+  // invisible switch across its face. Only a plain card or a bar button carries one: a switch
+  // nested inside a widget's <button> is outside the content model, and iOS neither ticks it nor
+  // lets a scroll that starts on it through (found 9 Sep 2026). The tap toggles the switch (the tick) and the same click
   // rises to the button's own handler; the switch is never focused and never reads to a screen reader.
   armTicks() {
-    document.querySelectorAll('[data-tick], button:not([type=submit]):not([data-notick])').forEach(host => {
+    document.querySelectorAll('[data-tick]').forEach(host => {
       if (host.querySelector(':scope > input[switch]')) return;
       const sw = document.createElement('input'); sw.type = 'checkbox'; sw.setAttribute('switch', ''); sw.tabIndex = -1; sw.setAttribute('aria-hidden', 'true');
-      sw.style.cssText = 'position:absolute;left:0;top:0;width:100%;height:100%;margin:0;padding:0;opacity:0.001;border:0;cursor:pointer;z-index:1;-webkit-tap-highlight-color:transparent';
+      // a switch can be dragged, which would swallow a scroll that starts on it: pan-x and pan-y
+      // hand a drag to the page, so only a tap toggles the switch
+      sw.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;-webkit-appearance:switch;appearance:auto;opacity:0;cursor:inherit;z-index:1;touch-action:pan-x pan-y;-webkit-tap-highlight-color:transparent';
       sw.addEventListener('focus', () => { try { sw.blur(); } catch (e) {} });
+      // the switch's own click stops here and the host gets one of its own, so the app's handler
+      // runs once with the host as its target
+      sw.addEventListener('click', e => { e.stopPropagation(); try { host.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); } catch (x) {} });
       if (getComputedStyle(host).position === 'static') host.style.position = 'relative';
       host.appendChild(sw);
     });
