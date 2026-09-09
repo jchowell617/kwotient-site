@@ -1989,42 +1989,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
                 </section>
 
-                <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
-                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.timeline.toggle }}" style="{{ p.timeline.btn }}">{{ p.timeline.chevron }}</button><span style="font-size:13.5px;font-weight:600">Timeline</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
-                  <sc-if value="{{ p.timeline.open }}" hint-placeholder-val="{{ true }}">
-                  <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.5">{{ tlNote }}</div>
-                  <sc-if value="{{ tlHasGames }}" hint-placeholder-val="{{ false }}">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ tlGamesLabel }}</span>
-                    <div data-chart="1" onMouseMove="{{ tlMove }}" onMouseLeave="{{ tlOff }}" onTouchStart="{{ tlTouchStart }}" onTouchMove="{{ tlTouchMove }}" onClick="{{ tlTap }}" style="position:relative;height:110px;cursor:crosshair;touch-action:pan-y">
-                      <svg viewBox="0 0 300 110" preserveAspectRatio="none" style="width:100%;height:110px;display:block">
-                        <line x1="0" y1="55" x2="300" y2="55" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                        <sc-for list="{{ tlBars }}" as="b" hint-placeholder-count="8"><rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="1.5" fill="{{ b.fill }}" fill-opacity="{{ b.op }}"></rect></sc-for>
-                      </svg>
-                      <sc-for list="{{ tlMarks }}" as="m" hint-placeholder-count="8"><div style="{{ m.style }}"></div></sc-for>
-                      <sc-if value="{{ tlHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ tlHoverLine }}"></div><div style="{{ tlTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ tlTipHead }}</div><div>{{ tlTipBody }}</div></div></div></sc-if>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ tlFrom }}</span><span><span style="color:var(--good)">▮ won</span> &nbsp;<span style="color:var(--critical)">▮ lost</span> &nbsp;<span style="color:var(--brand)">● model right</span> &nbsp;<span style="color:var(--muted)">● wrong</span></span><span>{{ tlTo }}</span></div>
-                  </sc-if>
-                  <sc-if value="{{ tlHasInjuries }}" hint-placeholder-val="{{ false }}">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">INJURY REPORT · designation by day, as the record saw it</span>
-                    <div style="position:relative;height:18px;border-radius:5px;overflow:hidden;background:var(--nested);border:1px solid var(--grid)">
-                      <sc-for list="{{ tlBands }}" as="bd" hint-placeholder-count="4"><div style="{{ bd.style }}" title="{{ bd.title }}"></div></sc-for>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ tlInjFrom }}</span><span>{{ tlInjTo }}</span></div>
-                    <div style="display:flex;flex-direction:column;gap:1px;background:var(--grid);border:1px solid var(--grid);border-radius:9px;overflow:hidden">
-                      <sc-for list="{{ tlInjRows }}" as="ir" hint-placeholder-count="4"><div style="display:flex;gap:10px;padding:7px 10px;background:var(--surface);font-family:var(--kw);font-size:9.5px"><span style="color:var(--muted);flex:none;width:70px">{{ ir.day }}</span><span style="{{ ir.style }}">{{ ir.status }}</span><span style="color:var(--second);min-width:0;overflow-wrap:anywhere">{{ ir.note }}</span></div></sc-for>
-                    </div>
-                  </sc-if>
-                  <sc-if value="{{ tlHasMoves }}" hint-placeholder-val="{{ false }}">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CONTRACT AND ROSTER · from the daily captures</span>
-                    <div style="display:flex;flex-direction:column;gap:1px;background:var(--grid);border:1px solid var(--grid);border-radius:9px;overflow:hidden">
-                      <sc-for list="{{ tlMoves }}" as="mv" hint-placeholder-count="3"><div style="display:flex;gap:10px;padding:7px 10px;background:var(--surface);font-family:var(--kw);font-size:9.5px"><span style="color:var(--muted);flex:none;width:70px">{{ mv.day }}</span><span style="color:var(--lead);min-width:0;overflow-wrap:anywhere">{{ mv.text }}</span></div></sc-for>
-                    </div>
-                  </sc-if>
-                  </sc-if>
-                </section>
-
-                <sc-if value="{{ profile.hasRoster }}" hint-placeholder-val="{{ false }}">
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRoster.toggle }}" style="{{ p.pfRoster.btn }}">{{ p.pfRoster.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:14px 16px 12px;border-bottom:1px solid var(--grid);display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px">
                       <div style="display:flex;flex-direction:column;gap:3px">
@@ -2361,6 +2325,43 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </sc-for>
                 </sc-if>
                 </section>
+
+                <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.timeline.toggle }}" style="{{ p.timeline.btn }}">{{ p.timeline.chevron }}</button><span style="font-size:13.5px;font-weight:600">Timeline</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
+                  <sc-if value="{{ p.timeline.open }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.5">{{ tlNote }}</div>
+                  <sc-if value="{{ tlHasGames }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ tlGamesLabel }}</span>
+                    <div data-chart="1" onMouseMove="{{ tlMove }}" onMouseLeave="{{ tlOff }}" onTouchStart="{{ tlTouchStart }}" onTouchMove="{{ tlTouchMove }}" onClick="{{ tlTap }}" style="position:relative;height:110px;cursor:crosshair;touch-action:pan-y">
+                      <svg viewBox="0 0 300 110" preserveAspectRatio="none" style="width:100%;height:110px;display:block">
+                        <line x1="0" y1="55" x2="300" y2="55" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                        <sc-for list="{{ tlBars }}" as="b" hint-placeholder-count="8"><rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="1.5" fill="{{ b.fill }}" fill-opacity="{{ b.op }}"></rect></sc-for>
+                      </svg>
+                      <sc-for list="{{ tlMarks }}" as="m" hint-placeholder-count="8"><div style="{{ m.style }}"></div></sc-for>
+                      <sc-if value="{{ tlHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ tlHoverLine }}"></div><div style="{{ tlTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ tlTipHead }}</div><div>{{ tlTipBody }}</div></div></div></sc-if>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ tlFrom }}</span><span><span style="color:var(--good)">▮ won</span> &nbsp;<span style="color:var(--critical)">▮ lost</span> &nbsp;<span style="color:var(--brand)">● model right</span> &nbsp;<span style="color:var(--muted)">● wrong</span></span><span>{{ tlTo }}</span></div>
+                  </sc-if>
+                  <sc-if value="{{ tlHasInjuries }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">INJURY REPORT · designation by day, as the record saw it</span>
+                    <div style="position:relative;height:18px;border-radius:5px;overflow:hidden;background:var(--nested);border:1px solid var(--grid)">
+                      <sc-for list="{{ tlBands }}" as="bd" hint-placeholder-count="4"><div style="{{ bd.style }}" title="{{ bd.title }}"></div></sc-for>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ tlInjFrom }}</span><span>{{ tlInjTo }}</span></div>
+                    <div style="display:flex;flex-direction:column;gap:1px;background:var(--grid);border:1px solid var(--grid);border-radius:9px;overflow:hidden">
+                      <sc-for list="{{ tlInjRows }}" as="ir" hint-placeholder-count="4"><div style="display:flex;gap:10px;padding:7px 10px;background:var(--surface);font-family:var(--kw);font-size:9.5px"><span style="color:var(--muted);flex:none;width:70px">{{ ir.day }}</span><span style="{{ ir.style }}">{{ ir.status }}</span><span style="color:var(--second);min-width:0;overflow-wrap:anywhere">{{ ir.note }}</span></div></sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ tlHasMoves }}" hint-placeholder-val="{{ false }}">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CONTRACT AND ROSTER · from the daily captures</span>
+                    <div style="display:flex;flex-direction:column;gap:1px;background:var(--grid);border:1px solid var(--grid);border-radius:9px;overflow:hidden">
+                      <sc-for list="{{ tlMoves }}" as="mv" hint-placeholder-count="3"><div style="display:flex;gap:10px;padding:7px 10px;background:var(--surface);font-family:var(--kw);font-size:9.5px"><span style="color:var(--muted);flex:none;width:70px">{{ mv.day }}</span><span style="color:var(--lead);min-width:0;overflow-wrap:anywhere">{{ mv.text }}</span></div></sc-for>
+                    </div>
+                  </sc-if>
+                  </sc-if>
+                </section>
+
+                <sc-if value="{{ profile.hasRoster }}" hint-placeholder-val="{{ false }}">
               </div>
             </sc-if>
           </div>
