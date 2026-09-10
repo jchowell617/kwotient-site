@@ -419,7 +419,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
               </div>
               <sc-if value="{{ p.pbox.open }}" hint-placeholder-val="{{ true }}">
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                 <sc-if value="{{ pboxSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ pboxSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ pboxSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ pboxSearch.boxKey }}" value="{{ pboxSearch.q }}" onChange="{{ pboxSearch.on }}" onFocus="{{ pboxSearch.focus }}" onClick="{{ pboxSearch.click }}" onDoubleClick="{{ pboxSearch.dbl }}" onKeyDown="{{ pboxSearch.onKey }}" placeholder="{{ pboxSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ pboxSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ pboxSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ pboxSearch.count }}</span>
                 <sc-for list="{{ pboxSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -690,7 +690,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
               </div>
               <sc-if value="{{ p.teamTrend.open }}" hint-placeholder-val="{{ true }}">
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                 <sc-if value="{{ teamSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ teamSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ teamSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ teamSearch.boxKey }}" value="{{ teamSearch.q }}" onChange="{{ teamSearch.on }}" onFocus="{{ teamSearch.focus }}" onClick="{{ teamSearch.click }}" onDoubleClick="{{ teamSearch.dbl }}" onKeyDown="{{ teamSearch.onKey }}" placeholder="{{ teamSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ teamSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ teamSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ teamSearch.count }}</span>
                 <sc-for list="{{ teamSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -754,7 +754,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </div>
               <sc-if value="{{ p.playerTrend.open }}" hint-placeholder-val="{{ true }}">
 
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:12px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:12px">
                 <sc-if value="{{ trendSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ trendSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ trendSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ trendSearch.boxKey }}" value="{{ trendSearch.q }}" onChange="{{ trendSearch.on }}" onFocus="{{ trendSearch.focus }}" onClick="{{ trendSearch.click }}" onDoubleClick="{{ trendSearch.dbl }}" onKeyDown="{{ trendSearch.onKey }}" placeholder="{{ trendSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ trendSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ trendSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trendSearch.count }}</span>
                 <sc-for list="{{ trendSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -935,7 +935,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
                 <span style="font-family:var(--kw);font-size:10px;color:var(--reversed)">{{ marketHeader }}</span>
               </div>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                 <sc-if value="{{ bookSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ bookSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ bookSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ bookSearch.boxKey }}" value="{{ bookSearch.q }}" onChange="{{ bookSearch.on }}" onFocus="{{ bookSearch.focus }}" onClick="{{ bookSearch.click }}" onDoubleClick="{{ bookSearch.dbl }}" onKeyDown="{{ bookSearch.onKey }}" placeholder="{{ bookSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ bookSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ bookSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ bookSearch.count }}</span>
                 <sc-for list="{{ bookSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -1033,7 +1033,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 
 
               </div>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                 <sc-if value="{{ propSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ propSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ propSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ propSearch.boxKey }}" value="{{ propSearch.q }}" onChange="{{ propSearch.on }}" onFocus="{{ propSearch.focus }}" onClick="{{ propSearch.click }}" onDoubleClick="{{ propSearch.dbl }}" onKeyDown="{{ propSearch.onKey }}" placeholder="{{ propSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ propSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ propSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ propSearch.count }}</span>
                 <sc-for list="{{ propSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -1664,7 +1664,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
               </div>
               <span style="flex:1"></span>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;flex:1;min-width:160px">
                 <sc-if value="{{ buzzBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ buzzBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ buzzBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ buzzBox.boxKey }}" value="{{ buzzBox.q }}" onChange="{{ buzzBox.on }}" onFocus="{{ buzzBox.focus }}" onClick="{{ buzzBox.click }}" onDoubleClick="{{ buzzBox.dbl }}" onKeyDown="{{ buzzBox.onKey }}" placeholder="{{ buzzBox.placeholder }}" style="flex:1;min-width:0;width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ buzzBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ buzzBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <sc-for list="{{ buzzBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                 <sc-if value="{{ buzzBox.open }}" hint-placeholder-val="{{ false }}">
@@ -1971,7 +1971,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                     </div></div></div>
                   <sc-if value="{{ p.pfRoster.open }}" hint-placeholder-val="{{ true }}">
-                    <div style="padding:10px 16px 0"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                    <div style="padding:10px 16px 0"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                 <sc-if value="{{ rosterSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ rosterSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ rosterSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ rosterSearch.boxKey }}" value="{{ rosterSearch.q }}" onChange="{{ rosterSearch.on }}" onFocus="{{ rosterSearch.focus }}" onClick="{{ rosterSearch.click }}" onDoubleClick="{{ rosterSearch.dbl }}" onKeyDown="{{ rosterSearch.onKey }}" placeholder="{{ rosterSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ rosterSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ rosterSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ rosterSearch.count }}</span>
                 <sc-for list="{{ rosterSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -2131,7 +2131,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.barsNote }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfTrend.open }}" hint-placeholder-val="{{ true }}">
-                  <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                     <sc-if value="{{ profSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ profSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ profSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ profSearch.boxKey }}" value="{{ profSearch.q }}" onChange="{{ profSearch.on }}" onFocus="{{ profSearch.focus }}" onClick="{{ profSearch.click }}" onDoubleClick="{{ profSearch.dbl }}" onKeyDown="{{ profSearch.onKey }}" placeholder="{{ profSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ profSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ profSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ profSearch.count }}</span>
                 <sc-for list="{{ profSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -2190,7 +2190,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfH2H.toggle }}" style="{{ p.pfH2H.btn }}">{{ p.pfH2H.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Head-to-Head</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.h2h.head }}</span></div></div>
                   <sc-if value="{{ p.pfH2H.open }}" hint-placeholder-val="{{ true }}">
-                  <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                  <div style="margin-top:12px"><div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px">
                     <sc-if value="{{ h2hSearch.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ h2hSearch.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ h2hSearch.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ h2hSearch.boxKey }}" value="{{ h2hSearch.q }}" onChange="{{ h2hSearch.on }}" onFocus="{{ h2hSearch.focus }}" onClick="{{ h2hSearch.click }}" onDoubleClick="{{ h2hSearch.dbl }}" onKeyDown="{{ h2hSearch.onKey }}" placeholder="{{ h2hSearch.placeholder }}" style="flex:1;min-width:0;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px" /></sc-if><sc-if value="{{ h2hSearch.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ h2hSearch.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                     <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ h2hSearch.count }}</span>
                 <sc-for list="{{ h2hSearch.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -2458,7 +2458,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
               </div>
               <span style="flex:1"></span>
-              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex:1;min-width:160px">
+              <div data-colmenu="1" style="position:relative;display:flex;align-items:center;flex-wrap:wrap;gap:8px;flex:1;min-width:160px">
                 <sc-if value="{{ alertBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ alertBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ alertBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ alertBox.boxKey }}" value="{{ alertBox.q }}" onChange="{{ alertBox.on }}" onFocus="{{ alertBox.focus }}" onClick="{{ alertBox.click }}" onDoubleClick="{{ alertBox.dbl }}" onKeyDown="{{ alertBox.onKey }}" placeholder="{{ alertBox.placeholder }}" style="flex:1;min-width:0;width:220px;max-width:100%;padding:7px 10px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ alertBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ alertBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                 <sc-for list="{{ alertBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
                 <sc-if value="{{ alertBox.open }}" hint-placeholder-val="{{ false }}">
@@ -3530,8 +3530,11 @@ class Component extends DCLogic {
       const hit = x => textHit(x);
       const picks = !qv ? [] : (opts.picks || []).filter(hit).slice(0, 60).map(take);
       // a double click into the box: the ways to search, one group open at a time
-      // the directory shows whenever the box is open; what is typed filters the picks above it
-      const browse = st.searchOpen === key;
+      // the box shows on a press of its SEARCH control and stays, with its directory beneath it,
+      // until the × closes it: never folded away on its own — a tap away or Enter only puts the
+      // keyboard down, and what was typed stands as the search
+      const shown = st.searchShow === key || st.searchOpen === key || !!qv || P.list.length > 0;
+      const browse = shown;
       // with something typed, a group holds only its matches, says how many of its options
       // those are, opens on its own and drops out when nothing in it pertains
       // a group is narrowed by the text, or — with a name chosen — to what relates to it; a
@@ -3570,8 +3573,6 @@ class Component extends DCLogic {
         sub('game', 'GAME · ' + gameV.toUpperCase(), H.all.games, !!hf.game, () => setHist({ game: null }))
       ];
       const tsN = table ? Object.keys(tstate(table).f).filter(k => tstate(table).f[k]).length : 0;
-      // the box shows on a press of its SEARCH control, and stays while it holds a query or a pick
-      const shown = st.searchShow === key || st.searchOpen === key || !!qv || P.list.length > 0;
       return {
         boxKey: key, shown, hidden: !shown,
         openBox: () => { this._focusBox = key; this.setState({ searchShow: key, searchOpen: key, searchBrowse: true, searchGroup: null }); },
@@ -3585,14 +3586,16 @@ class Component extends DCLogic {
         dbl: () => this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }),
         groups, browse,
         onKey: e => {
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); const first = picks[0] || (groups.map(g => g.items[0]).filter(Boolean)[0]); if (qv && first) first.pick(); else this.setState(close); }
-          else if (e.key === 'Escape') { e.preventDefault(); this.setState(close); }
+          // Enter, like a tap away, takes what was typed as the search and folds the directory
+          // beneath it away: the directory is there to choose from, never a step that must be taken
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); try { const a = document.activeElement; if (a && a.tagName === 'INPUT' && a.blur) a.blur(); } catch (x) {} }
+          else if (e.key === 'Escape') { e.preventDefault(); setQ(''); this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
         count: opts.count || '', scope, subs, params, active: !!qv || histActive || tsN > 0 || P.list.length > 0,
         // the picks beneath the box, as it is typed: Enter takes the first, a pick clears the box
-        open: st.searchOpen === key && (picks.length > 0 || groups.length > 0), values: picks,
-        menuStyle: 'position:absolute;top:36px;left:20px;z-index:41;width:280px;max-width:calc(100% - 20px);max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
+        open: shown && (picks.length > 0 || groups.length > 0), values: picks,
+        menuStyle: 'position:relative;flex:0 0 100%;width:100%;max-width:100%;margin-top:2px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
         clear: () => { setQ(''); P.clear(); if (table) tset(table, { f: {}, q: '', mq: '', sort: null, open: null }); if (opts.onClear) opts.onClear(); H.reset(); this.setState(close); },
       };
     };
