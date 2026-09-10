@@ -3513,17 +3513,21 @@ class Component extends DCLogic {
       const P = opts.params || (table ? tableParams(table, opts.cols || []) : genParams(key));
       const tagStyle = 'display:flex;align-items:center;font-family:var(--kw);font-size:8.5px;letter-spacing:.08em;padding:4px 8px;border-radius:5px;border:1px solid ' + BLUE + ';background:transparent;color:' + BLUE + ';cursor:pointer;white-space:nowrap;flex:none';
       const params = P.list.map(p => ({ label: p.group + ' · ' + p.label, style: tagStyle, remove: () => P.remove(p.group, p.value) }));
-      const flat = (opts.picks || []).concat(groupsIn.reduce((a, gp) => a.concat(gp.items.map(x => Object.assign({}, x, { group: gp.label, count: x.count || gp.label }))), []));
       const close = { searchOpen: null, searchBrowse: false, searchGroup: null };
       const onStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:var(--nested);color:' + BLUE;
       const take = x => { const on = !x.pick && x.group && P.has(x.group, x.label); return { label: x.label, count: x.count || '', style: on ? onStyle : rowStyle,
         pick: () => { if (x.pick) { x.pick(); setQ(''); this.setState(keep); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); this.setState(keep); } } }; };
-      const picks = !qv ? [] : flat.filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv)).slice(0, 60).map(take);
+      // process of elimination: what is typed narrows everything the box offers — the picks
+      // above and every group of the directory beneath — to what pertains to it
+      const hit = x => !qv || wordsMatch(x.label + ' ' + (x.count || ''), qv);
+      const picks = !qv ? [] : (opts.picks || []).filter(hit).slice(0, 60).map(take);
       // a double click into the box: the ways to search, one group open at a time
       // the directory shows whenever the box is open; what is typed filters the picks above it
       const browse = st.searchOpen === key;
-      const groups = !browse ? [] : groupsIn.filter(gp => gp.items.length).map(gp => { const open = st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
-        value: gp.value || (gp.items.length + (gp.items.length === 1 ? ' option' : ' options')), items: open ? gp.items.map(x => take(Object.assign({}, x, { group: gp.label }))) : [],
+      // with something typed, a group holds only its matches, says how many of its options
+      // those are, opens on its own and drops out when nothing in it pertains
+      const groups = !browse ? [] : groupsIn.map(gp => ({ gp, hits: gp.items.filter(hit) })).filter(x => x.hits.length).map(({ gp, hits }) => { const open = qv ? true : st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
+        value: qv ? hits.length + ' of ' + gp.items.length : (gp.value || (gp.items.length + (gp.items.length === 1 ? ' option' : ' options'))), items: open ? hits.slice(0, 80).map(x => take(Object.assign({}, x, { group: gp.label }))) : [],
         toggle: () => this.setState(x => ({ searchGroup: x.searchGroup === gp.label ? null : gp.label })),
         style: 'display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border:none;border-top:1px solid var(--grid);background:transparent;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;color:var(--lead)',
         valueStyle: 'flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;color:var(--reversed)' }; });
@@ -3570,7 +3574,7 @@ class Component extends DCLogic {
         dbl: () => this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }),
         groups, browse,
         onKey: e => {
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length) picks[0].pick(); else this.setState(close); }
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); const first = picks[0] || (groups.map(g => g.items[0]).filter(Boolean)[0]); if (qv && first) first.pick(); else this.setState(close); }
           else if (e.key === 'Escape') { e.preventDefault(); this.setState(close); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
