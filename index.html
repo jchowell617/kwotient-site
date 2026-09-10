@@ -87,8 +87,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=f853e0a881"></script>
-<script src="./kq-seasons.js?v=1e866f6eff"></script>
+<script src="./kq-bundle.js?v=d3c40b5468"></script>
+<script src="./kq-seasons.js?v=aec0ddb41e"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -2051,16 +2051,43 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfStats.toggle }}" style="{{ p.pfStats.btn }}">{{ p.pfStats.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Season Stats</span></div></div></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfStats.toggle }}" style="{{ p.pfStats.btn }}">{{ p.pfStats.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12.5px;font-weight:600">Season Stats</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.seasonNote }}</span></div></div></div>
                   <sc-if value="{{ p.pfStats.open }}" hint-placeholder-val="{{ true }}">
-                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:10px;margin-top:13px">
-                    <sc-for list="{{ profile.stats }}" as="s" hint-placeholder-count="6">
-                      <div style="display:flex;flex-direction:column;gap:4px;padding:10px 11px;border:1px solid var(--grid);border-radius:8px;background:var(--nested)">
-                        <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ s.k }}</span>
-                        <span style="font-family:var(--kw);font-size:16px;font-weight:700">{{ s.v }}</span>
+                  <sc-if value="{{ profile.hasSeasonTable }}" hint-placeholder-val="{{ false }}">
+                    <div data-scroll="x" style="margin-top:12px"><div style="min-width:920px">
+                      <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                        <sc-for list="{{ profile.seasonCols }}" as="c" hint-placeholder-count="8">
+                          <div style="{{ c.cellStyle }}">
+                            <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                            <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                              <div data-colmenu="1" style="{{ c.menuStyle }}">
+                                <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:6px"></form>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                                  <button onClick="{{ c.sortAsc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▲</button>
+                                  <button onClick="{{ c.sortDesc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▼</button>
+                                  <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                                </div>
+                                <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                                  <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </sc-for>
                       </div>
-                    </sc-for>
-                  </div>
+                      <sc-for list="{{ profile.seasonRows }}" as="r" hint-placeholder-count="3">
+                        <div style="{{ r.style }}"><sc-for list="{{ r.cells }}" as="x" hint-placeholder-count="10"><span style="{{ x.style }}">{{ x.v }}</span></sc-for></div>
+                      </sc-for>
+                      <sc-if value="{{ profile.noSeasons }}" hint-placeholder-val="{{ false }}"><div style="padding:12px 10px;font-family:var(--kw);font-size:10px;color:var(--muted)">no season line on the record yet</div></sc-if>
+                    </div></div>
+                  </sc-if>
+                  <sc-if value="{{ profile.hasStatRows }}" hint-placeholder-val="{{ true }}">
+                    <div style="margin-top:10px">
+                      <sc-for list="{{ profile.stats }}" as="s" hint-placeholder-count="6">
+                        <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:8px 0;border-bottom:1px solid var(--divider);font-family:var(--kw)"><span style="font-size:9px;letter-spacing:.14em;color:var(--muted)">{{ s.k }}</span><span style="font-size:12px;font-weight:700;color:var(--reversed);text-align:right">{{ s.v }}</span></div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
                 </sc-if>
                 </section>
 
@@ -4527,6 +4554,42 @@ class Component extends DCLogic {
             { k: 'AT ' + labelOf(pl.pos), v: pl.pr ? pl.pr + ' of ' + pl.pn : 'unrated' },
             { k: 'PAID VS BAND', v: pl.surplus == null ? '—' : S.M(Math.abs(pl.surplus)) + (pl.surplus > 0 ? ' under' : ' over') }
           ],
+          hasSeasonTable: true, hasStatRows: false,
+          // every season on the record as a table — the season in play first, as played — with
+          // the line his position is read on; the columns sort and filter like any table
+          ...(() => {
+            const SR = S && S.seasonRows ? S.seasonRows(sport, pl.full || pl.name) : [];
+            const pos = String(pl.pos || '').toUpperCase();
+            const grp = sport === 'NBA' ? 'NBA' : pos === 'QB' ? 'QB' : /^(RB|FB|HB)$/.test(pos) ? 'RB' : /^(WR|TE)$/.test(pos) ? 'REC' : /^(K|PK|P)$/.test(pos) ? 'K' : 'DEF';
+            const raw = k => x => x.stats[k] != null ? x.stats[k] : null;
+            const per = (a, b) => x => x.stats[a] != null && x.stats[b] ? x.stats[a] / x.stats[b] : null;
+            const pct = k => x => x.stats[k] != null ? x.stats[k] * 100 : null;
+            const COLS = {
+              QB: [['g', 'G', raw('g')], ['cmp', 'CMP', raw('cmp')], ['att', 'ATT', raw('att')], ['pyd', 'PASS YDS', raw('pyd')], ['ypg', 'YDS/G', per('pyd', 'g')], ['ptd', 'TD', raw('ptd')], ['int', 'INT', raw('int')], ['sk', 'SACKED', raw('sk')], ['ryd', 'RUSH YDS', raw('ryd')], ['rtd', 'RUSH TD', raw('rtd')]],
+              RB: [['g', 'G', raw('g')], ['car', 'CAR', raw('car')], ['ryd', 'RUSH YDS', raw('ryd')], ['ypg', 'YDS/G', per('ryd', 'g')], ['ypc', 'YPC', per('ryd', 'car')], ['rtd', 'RUSH TD', raw('rtd')], ['rec', 'REC', raw('rec')], ['cyd', 'REC YDS', raw('cyd')], ['ctd', 'REC TD', raw('ctd')], ['fum', 'FUM', raw('fum')]],
+              REC: [['g', 'G', raw('g')], ['tgt', 'TGT', raw('tgt')], ['rec', 'REC', raw('rec')], ['cyd', 'REC YDS', raw('cyd')], ['ypg', 'YDS/G', per('cyd', 'g')], ['ypr', 'YPR', per('cyd', 'rec')], ['ctd', 'REC TD', raw('ctd')], ['car', 'CAR', raw('car')], ['ryd', 'RUSH YDS', raw('ryd')]],
+              K: [['g', 'G', raw('g')], ['fgm', 'FGM', raw('fgm')], ['fga', 'FGA', raw('fga')], ['fgpct', 'FG%', x => x.stats.fga ? (x.stats.fgm || 0) / x.stats.fga * 100 : null], ['xpm', 'XPM', raw('xpm')]],
+              DEF: [['g', 'G', raw('g')], ['tkl', 'TKL', raw('tkl')], ['tfl', 'TFL', raw('tfl')], ['dsk', 'SACKS', raw('dsk')], ['dint', 'INT', raw('dint')], ['pd', 'PD', raw('pd')], ['ff', 'FF', raw('ff')]],
+              NBA: [['gp', 'GP', raw('gp')], ['min', 'MIN', raw('min')], ['pts', 'PTS', raw('pts')], ['reb', 'REB', raw('reb')], ['ast', 'AST', raw('ast')], ['stl', 'STL', raw('stl')], ['blk', 'BLK', raw('blk')], ['tov', 'TOV', raw('tov')], ['fg3m', '3PM', raw('fg3m')], ['fg_pct', 'FG%', pct('fg_pct')], ['fg3_pct', '3P%', pct('fg3_pct')], ['ft_pct', 'FT%', pct('ft_pct')], ['ts_pct', 'TS%', pct('ts_pct')], ['usg_pct', 'USG%', pct('usg_pct')]]
+            };
+            const cols = COLS[grp];
+            const get = { season: x => x.season, team: x => x.team || null }; cols.forEach(([k, , f]) => { get[k] = f; });
+            TABLES.pseasons = { rows: SR, get };
+            const rows = tapply('pseasons', SR, get, x => x.season + ' ' + (x.team || '') + (x.inPlay ? ' in play' : ''));
+            const fmt = (v, k) => v == null ? '—' : (/pct|ypg|ypr|ypc/.test(k) || !Number.isInteger(v)) ? (Math.round(v * 10) / 10).toFixed(1) : String(v);
+            const cell = (flex, right) => 'flex:' + flex + ';min-width:0;text-align:' + (right ? 'right' : 'left') + ';white-space:nowrap;overflow:hidden;text-overflow:ellipsis';
+            const GRP = { QB: 'quarterback', RB: 'rushing', REC: 'receiving', K: 'kicking', DEF: 'defensive', NBA: 'per-game' };
+            return {
+              seasonCols: [tcol('pseasons', 'season', 'SEASON', null, 'left', 1.9), tcol('pseasons', 'team', 'CLUB', null, 'left', .7)].concat(cols.map(([k, label]) => tcol('pseasons', k, label, null, 'right', 1))),
+              seasonRows: rows.map(x => ({
+                style: 'display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)' + (x.inPlay ? ';background:var(--nested)' : ''),
+                cells: [{ v: (histSeasonLabel ? histSeasonLabel(x.season) : String(x.season)) + (x.inPlay ? ' · in play' : ''), style: cell(1.9, false) + ';color:var(--reversed);font-weight:600' }, { v: x.team || '—', style: cell(.7, false) + ';color:var(--second)' }]
+                  .concat(cols.map(([k, , f]) => ({ v: fmt(f(x), k), style: cell(1, true) })))
+              })),
+              noSeasons: !SR.length,
+              seasonNote: (SR.length ? SR.length + (SR.length === 1 ? ' season' : ' seasons') + ' on the record' : 'no season line on the record yet') + (SR.some(x => x.inPlay) ? ' · the season in play first, as played' : '') + ' · the ' + GRP[grp] + ' line'
+            };
+          })(),
           // a past season's line from the record, when the directory has been asked for one
           stats: (() => {
             const sr = profRowOf(pl);
@@ -4624,6 +4687,8 @@ class Component extends DCLogic {
             { k: 'RANK', v: cl.rank ? cl.rank + ' of ' + cl.of : '—' },
             { k: 'LAST ' + (margins.length || 12), v: margins.length ? wins + '-' + (margins.length - wins) : '—' }
           ],
+          hasSeasonTable: false, hasStatRows: true,
+          seasonNote: profPast ? profSeasonLabel + ' · from the standings on the record' : 'the season in play · record, place and payroll as they stand',
           stats: profPast ? (profBy[cl.abbr] ? [
             { k: 'SEASON', v: profSeasonLabel }, { k: 'RECORD', v: profBy[cl.abbr].record }, { k: 'PLACE', v: placeWords(profBy[cl.abbr]) },
             { k: 'HOME', v: profBy[cl.abbr].home || '—' }, { k: 'ROAD', v: profBy[cl.abbr].road || '—' }, { k: 'DIVISION', v: profBy[cl.abbr].divRec || '—' }, { k: 'CONFERENCE', v: profBy[cl.abbr].confRec || '—' },

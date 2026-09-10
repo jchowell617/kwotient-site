@@ -623,6 +623,10 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     var lgS = K && K.leagues ? K.leagues[L] : null;
     return { loaded: !!lgS, seasons: lgS ? lgS.seasons.slice() : [], players: lgS ? lgS.players : {} };
   }
+  function seasonRows(sport, name) {
+    var rows = seasons(sport).players[name] || [];
+    return rows.map(function (r) { return { season: r[0], team: r[1], gp: r[2], value: r[3], label: r[4], stats: r[5] || {}, inPlay: !!r[6] }; });
+  }
   function seasonRow(sport, name, season) {
     var rows = seasons(sport).players[name];
     if (!rows) return null;
@@ -781,6 +785,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
     programme: function () { var d = kq().cohorts.doc(); return d ? d.programme : null; },
     wire: wire, slate: slate, slateGame: slateGame, odds: odds, oddsAt: odds, marketFor: marketFor, withMarket: withMarket, upcoming: upcoming, props: props, standings: standings, seasons: seasons, seasonRow: seasonRow, gamelog: gamelog, teamlog: teamlog, story: story,
     embeds: embeds, boxscore: boxscore, boxStat: boxStat, teamLine: teamLine, teamStatKeys: teamStatKeys, topLine: topLine,
+    seasonRows: seasonRows,
     winProb: winProb, remaining: remaining, LEAGUE: LEAGUE, age: AGE, day: day, M: M, pct: pct, get sources() { return kq().sources; }
   };
   root.KQ_COURTSIDE_SOURCE = SRC;
