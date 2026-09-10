@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_RECORD_VER = "cc11923c2a";</script>
+<script>window.KQ_RECORD_VER = "947f583e1e";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=571180e1c4"></script>
+<script src="./kq-bundle.js?v=242631c2ae"></script>
 <script src="./kq-seasons.js?v=aec0ddb41e"></script>
 <style>
 :root{
@@ -4122,6 +4122,14 @@ class Component extends DCLogic {
           const rc = ratingCell(sk[1]);
           rows.push({ k: sk[0], v: sk[1] + 'th', rank: '—', rating: rc.rating, badge: rc.badge, fill: rc.fill, delta: 'skill pct', deltaStyle: muted, low: false });
         });
+      } else if ((ent.ts || []).length) {
+        // a club ranks on the standard set — offense, defense, the ball, special teams — each
+        // stat its value, its league rank and, on the 0-100 scale, where that rank sits
+        (ent.ts || []).forEach(([k, v, rank, of, group]) => {
+          const pct = of > 1 ? Math.round((1 - (rank - 1) / (of - 1)) * 100) : 100;
+          const rc = ratingCell(pct);
+          rows.push({ k, v: String(v), rank: rank + '/' + of, rating: rc.rating, badge: rc.badge, fill: rc.fill, delta: String(group || '').toLowerCase(), deltaStyle: muted, low: false, group });
+        });
       } else {
         [['Offense', 'off'], ['Defense', 'def'], ['Ball security', 'ball']].forEach(([k, f]) => {
           const v = ent[f];
@@ -4131,7 +4139,7 @@ class Component extends DCLogic {
           rows.push({ k, v: String(Math.round(v)), rank: rk.rank + '/' + rk.n, rating: rc.rating, badge: rc.badge, fill: rc.fill, delta: 'league pct', deltaStyle: muted, low: false });
         });
       }
-      const shown = q ? rows.filter(r => r.k.toLowerCase().indexOf(q) >= 0) : rows;
+      const shown = q ? rows.filter(r => r.k.toLowerCase().indexOf(q) >= 0 || String(r.group || '').toLowerCase().indexOf(q) >= 0) : rows;
       return {
         rows: shown, allKeys: rows.map(r => r.k),
         count: shown.length + ' of ' + rows.length,
@@ -5446,7 +5454,7 @@ class Component extends DCLogic {
         const prow = plog && plog.rows ? plog.rows : [];
         const unit = plog && plog.label ? plog.label : (sport === 'NBA' ? 'PTS' : 'STAT');
         const near = r => games.find(x => x.opp === r.opp && Math.abs(new Date(x.d) - new Date(r.date)) <= 1.6 * 86400000) || {};
-        const played = isClubP ? games.filter(x => x.margin != null) : prow.map(r => { const cg = near(r); return { d: r.date, opp: r.opp, home: !!r.home, v: r.v, res: r.result || '', margin: cg.margin != null ? cg.margin : (r.result === 'W' ? 1 : r.result === 'L' ? -1 : 0), pf: cg.pf, pa: cg.pa, prior: cg.prior, edge: cg.edge, on: cg.on, right: cg.right }; });
+        const played = isClubP ? games.filter(x => x.margin != null) : prow.map(r => { const cg = near(r); const rs = String(r.result || '').trim().toUpperCase(); const sc = rs.match(/(\d+)-(\d+)/); return { d: r.date, opp: r.opp, home: !!r.home, v: r.v, res: /^[WLT]/.test(rs) ? rs.charAt(0) : '', pfLog: sc ? Number(sc[1]) : null, paLog: sc ? Number(sc[2]) : null, margin: cg.margin != null ? cg.margin : (r.result === 'W' ? 1 : r.result === 'L' ? -1 : 0), pf: cg.pf != null ? cg.pf : (sc ? Number(sc[1]) : null), pa: cg.pa != null ? cg.pa : (sc ? Number(sc[2]) : null), prior: cg.prior, edge: cg.edge, on: cg.on, right: cg.right }; });
         const injList = T && pr && !isClubP && T.injuries[pr.name] ? T.injuries[pr.name] : [];
         const moves = pr ? (S ? S.wire(sport) : []).filter(w => (w.kind === 'SIGNING' || w.kind === 'RUMOR' || w.player) && ((pr.name && w.player === pr.name) || (isClubP && (w.who === clubAbbr || w.who === (CLUB_NAMES[clubAbbr] || '').split(' ').pop())))).slice(0, 12) : [];
         const nB = played.length, mMax = Math.max(7, ...played.map(x => Math.abs(x.margin)));
