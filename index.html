@@ -83,7 +83,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=84da429a66"></script>
+<script src="./kq-bundle.js?v=4ce61ba396"></script>
 <script src="./kq-seasons.js?v=752b4bde5c"></script>
 <style>
 :root{
@@ -4828,7 +4828,7 @@ class Component extends DCLogic {
     // every contract and injury change the daily captures saw, the researched posts and
     // the rumor ledger — dated the day the record first saw them, never a news crawl
     const BUZZ_KINDS = ['ALL', 'LIVE', 'SOCIAL', 'STORY', 'SIGNING', 'INJURY', 'RUMOR'];
-    const SOCIAL_SHOWN = 5;              /* the newest five the ledger holds for the league */
+    const SOCIAL_SHOWN = 10;             /* the newest ten the ledger holds for the league; the ledger is refreshed every three hours */
     // posts the record embeds. The platform draws each one inside the card and the author keeps
     // it; Kwotient carries only what names the post and its own note on why it is here.
     const PROVIDER = { x: ['X', 'X'], ig: ['Instagram', 'IG'] };
