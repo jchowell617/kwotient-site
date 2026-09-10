@@ -3018,9 +3018,10 @@ class Component extends DCLogic {
     if (!S || !st.liveSlate || !st.liveSlate.length) return;
     const g = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
     if (g.state !== 'in_progress' && g.state !== 'final') return;
-    // the poll and the trend loader both ask; one read a beat is enough
+    // the poll and the trend loader both ask; one read a beat is enough — and the beat is the
+    // live one, two seconds, so the box moves with the board rather than a poll behind it
     const bk = st.sport + ':' + g.id;
-    if (this._boxKey === bk && this._boxAt && Date.now() - this._boxAt < 4000) return;
+    if (this._boxKey === bk && this._boxAt && Date.now() - this._boxAt < 1500) return;
     this._boxKey = bk; this._boxAt = Date.now();
     S.boxscore(st.sport, g.gameId).then(b => this.setState(x => ({ box: Object.assign({}, x.box, { [g.id]: this.floorOf(st.sport, (x.box || {})[g.id], b) }) })));
   }
