@@ -3641,12 +3641,19 @@ class Component extends DCLogic {
     // tonight's game rides at the end while it is on or just done: the box line for the player,
     // the score for the club — until the provider's log carries the game itself
     const gameOn = !!(g.live && (g.state === 'in_progress' || g.state === 'final'));
-    const todayKey = (() => { const d = new Date(); const p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()); })();
+    // the game's own day, in Eastern time, which is how the edge dates every log row; the
+    // device's date would be tomorrow for a reader east of the Atlantic at kickoff
+    const todayKey = (() => {
+      if (g.start) { try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(g.start)); } catch (e) { /* fall through */ } }
+      const d = new Date(); const p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate());
+    })();
     const tonightWhen = 'tonight · ' + (g.state === 'final' ? 'final' : (g.status || 'in progress'));
     const liveBox = gameOn ? boxRow(pp) : null;
     const liveV = liveBox && S ? S.boxStat(sport, liveBox, pp.pos) : null;
-    const liveRow = gameOn && liveV != null && !tRowsAll.some(x => x.date === todayKey) ? { date: todayKey, when: tonightWhen, opp: oppAbbr0, home: !!pp.home, v: liveV, result: g.state === 'final' ? ((pp.home ? g.hs > g.as : g.as > g.hs) ? 'W' : 'L') : '', season: histCur, live: true } : null;
-    const scoped = histScope(tRowsAll, pp.team).concat(liveRow ? [liveRow] : []);
+    // while the game is on, tonight's row is the live one, read from the box on the live beat; the
+    // provider's own row for tonight, a quarter of an hour behind, steps aside until the game is done
+    const liveRow = gameOn && liveV != null ? { date: todayKey, when: tonightWhen, opp: oppAbbr0, home: !!pp.home, v: liveV, result: g.state === 'final' ? ((pp.home ? g.hs > g.as : g.as > g.hs) ? 'W' : 'L') : '', season: histCur, live: true } : null;
+    const scoped = histScope(gameOn ? tRowsAll.filter(x => x.date !== todayKey) : tRowsAll, pp.team).concat(liveRow ? [liveRow] : []);
     const trendFell = false;
     const trendSeasonPicks = trendP.get('SEASON');
     const tRows = trendSeasonPicks.length ? scoped.filter(x => trendSeasonPicks.indexOf(histSeasonLabel(x.season)) >= 0) : scoped;
@@ -4887,8 +4894,8 @@ class Component extends DCLogic {
     const tRowsCAll = (() => { const seen = {}; const out = []; teamLogs.forEach(x => { if (!x.rec || !x.rec.rows) return; x.rec.rows.forEach(row => { if (seen[row.date]) return; seen[row.date] = true; out.push(Object.assign({}, row, { season: Number(x.rec.season) || x.y })); }); }); return out.sort((a, b) => String(a.date).localeCompare(String(b.date))); })();
     const teamOppAbbr0 = histOppOf(teamAbbr) || null;
     const teamHome = teamAbbr === g.homeAbbr;
-    const teamLiveRow = gameOn && teamOppAbbr0 && !tRowsCAll.some(x => x.date === todayKey) ? (() => { const pf = teamHome ? g.hs : g.as, pa = teamHome ? g.as : g.hs; return { date: todayKey, when: tonightWhen, opp: teamOppAbbr0, home: teamHome, pf, pa, margin: pf - pa, result: g.state === 'final' ? (pf > pa ? 'W' : pf < pa ? 'L' : 'T') : '', season: histCur, live: true }; })() : null;
-    const teamScoped = histScope(tRowsCAll, teamAbbr).concat(teamLiveRow ? [teamLiveRow] : []);
+    const teamLiveRow = gameOn && teamOppAbbr0 ? (() => { const pf = teamHome ? g.hs : g.as, pa = teamHome ? g.as : g.hs; return { date: todayKey, when: tonightWhen, opp: teamOppAbbr0, home: teamHome, pf, pa, margin: pf - pa, result: g.state === 'final' ? (pf > pa ? 'W' : pf < pa ? 'L' : 'T') : '', season: histCur, live: true }; })() : null;
+    const teamScoped = histScope(gameOn ? tRowsCAll.filter(x => x.date !== todayKey) : tRowsCAll, teamAbbr).concat(teamLiveRow ? [teamLiveRow] : []);
     const teamFell = false;
     const tRowsC = filtOn('team') ? teamScoped.filter(r => rowMatch(r, 'team')) : teamScoped;
     const teamOppAbbr = teamOppAbbr0;
