@@ -781,7 +781,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:15px">
                 <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted);flex:none">MARKET</span>
                 <sc-for list="{{ marketTabs }}" as="mt" hint-placeholder-count="4">
-                  <button onClick="{{ mt.pick }}" style="{{ mt.style }}">{{ mt.name }}</button>
+                  <span style="{{ mt.style }}">{{ mt.name }}</span>
                 </sc-for>
               </div>
 
@@ -5749,8 +5749,9 @@ paceRows: (() => {
         };
       })(),
       marketTabs: [{
-        name: trendUnit || '—', pick: () => {},
-        style: 'padding:5px 10px;border-radius:6px;cursor:default;font-family:var(--kw);font-size:9.5px;border:1px solid ' + BLUE + ';background:' + mix(BLUE, 14) + ';color:' + BLUE
+        // the market the player is read on: a label, not a control — nothing here is pressed
+        name: trendUnit || '—',
+        style: 'font-family:var(--kw);font-size:9.5px;letter-spacing:.06em;color:var(--lead)'
       }],
       trendStats: [
         { k: 'LAST 5', v: logs.length ? fmt(l5) : '—', tone: l5 > season ? 1 : 0 },
