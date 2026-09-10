@@ -3889,7 +3889,7 @@ class Component extends DCLogic {
     const curSeasonKey = (() => { const now = new Date(); return sport === 'NBA' ? (now.getMonth() >= 9 ? now.getFullYear() : now.getFullYear() - 1) : (now.getMonth() >= 7 ? now.getFullYear() : now.getFullYear() - 1); })();
     const seasonNote = stand && stand.ok && stand.available ? stand.seasonLabel + ((stand.season != null && stand.season < curSeasonKey) || stand.previous ? ' · final' : stand.played ? ' · through today' : ' · not started') : '';
     // a place shared with other clubs — every club at 0-0 in September — reads as tied
-    const placeWords = sd => sd ? (sd.confRankTied ? 'T-' : '') + ord(sd.confRank) + ' in the ' + (sd.conf || '') + ' · ' + (sd.divRankTied ? 'T-' : '') + ord(sd.divRank) + ' in the ' + String(sd.div || '').replace(/^\w/, c => c.toUpperCase()).replace(/^(EAST|WEST|NORTH|SOUTH)$/i, m => m[0] + m.slice(1).toLowerCase()) + (sd.ranked === 'computed' ? ' (place by record and points)' : '') : '';
+    const placeWords = sd => sd ? (sd.confRankTied ? 'T-' : '') + ord(sd.confRank) + ' in the ' + (sd.conf || '') + ' · ' + (sd.divRankTied ? 'T-' : '') + ord(sd.divRank) + ' in the ' + String(sd.div || '').replace(/^\w/, c => c.toUpperCase()).replace(/^(EAST|WEST|NORTH|SOUTH)$/i, m => m[0] + m.slice(1).toLowerCase()) : '';
     // the props table: the yardage and volume lines first, the touchdown scorers last, then
     // whatever the reader filters, sorts or searches for
     // a player's club, from the record by name; the feed names the player and nothing else
@@ -4545,7 +4545,11 @@ class Component extends DCLogic {
         const roll = vals.map((_, i) => av(vals.slice(Math.max(0, i - 2), i + 1)));
         profile = {
           kind: 'PLAYER', mono: mono(pl.full), name: pl.full,
-          sub: (profRowOf(pl) ? profRowOf(pl).team + ' in ' + profSeasonLabel + ' · now ' + pl.team : pl.team) + ' · ' + pl.pos + (pl.num ? ' · #' + pl.num : '') + (pl.age ? ' · age ' + pl.age : '') + ' · ' + sport,
+          // the season in play rides on the card the way a club's record does: his games and
+          // his headline line as they stand, through today
+          sub: (profRowOf(pl) ? profRowOf(pl).team + ' in ' + profSeasonLabel + ' · now ' + pl.team : pl.team) + ' · ' + pl.pos + (pl.num ? ' · #' + pl.num : '') + (pl.age ? ' · age ' + pl.age : '') + ' · ' + sport
+            + (() => { if (profPast || !S || !S.seasonRows) return ''; const ip = S.seasonRows(sport, pl.full || pl.name).find(x => x.inPlay); if (!ip) return ' · ' + histSeasonLabel(histCur) + ' · no game yet';
+                       return ' · ' + histSeasonLabel(ip.season) + ' · ' + ip.gp + (ip.gp === 1 ? ' game' : ' games') + (ip.value != null ? ' · ' + ip.value + ' ' + String(ip.label || '').toLowerCase() : '') + ' · through today'; })(),
           headline: profPast ? (() => { const sr = profRowOf(pl); return [
             { k: profSeasonLabel + ' LINE', v: sr && sr.value != null ? sr.value + ' ' + (sr.label || '') : '—' },
             { k: 'GAMES', v: sr && sr.gp != null ? String(sr.gp) : '—' },
