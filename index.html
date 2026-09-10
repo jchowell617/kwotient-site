@@ -3507,18 +3507,17 @@ class Component extends DCLogic {
       const m = list => list.filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0));
       // the box stays open after a pick, with its directory, so another can be chosen from it
       const keep = { searchOpen: key, searchBrowse: true };
-      const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(x.label); this.setState(keep); } }));
+      const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(x.label); this.setState(close); } }));
       const scope = H.label.replace(/^VS /, 'vs ').replace('ALL TEAMS', 'all teams');
       const groupsIn = opts.groups || [];
       const P = opts.params || (table ? tableParams(table, opts.cols || []) : genParams(key));
       const tagStyle = 'display:flex;align-items:center;font-family:var(--kw);font-size:8.5px;letter-spacing:.08em;padding:4px 8px;border-radius:5px;border:1px solid ' + BLUE + ';background:transparent;color:' + BLUE + ';cursor:pointer;white-space:nowrap;flex:none';
       const params = P.list.map(p => ({ label: p.group + ' · ' + p.label, style: tagStyle, remove: () => P.remove(p.group, p.value) }));
-      const folded = !(st.searchShow === key || st.searchOpen === key) && !!qv;
-      if (folded) params.unshift({ label: 'SEARCH · ' + q.trim(), style: tagStyle, remove: () => setQ('') });
+
       const close = { searchOpen: null, searchBrowse: false, searchGroup: null };
       const onStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:var(--nested);color:' + BLUE;
       const take = x => { const on = !x.pick && x.group && P.has(x.group, x.label); return { label: x.label, count: x.count || '', style: on ? onStyle : rowStyle,
-        pick: () => { if (x.pick) { x.pick(); setQ(x.label); this.setState(keep); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); this.setState(keep); } } }; };
+        pick: () => { if (x.pick) { x.pick(); setQ(x.label); this.setState(close); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); this.setState(keep); } } }; };
       // process of elimination: what is typed narrows everything the box offers — the picks
       // above and every group of the directory beneath — to what pertains to it
       // when what stands in the box IS one of the directory's names — a player, a club — the
@@ -3535,10 +3534,11 @@ class Component extends DCLogic {
       // the box shows on a press of its SEARCH control and stays, with its directory beneath it,
       // until the × closes it: never folded away on its own — a tap away or Enter only puts the
       // keyboard down, and what was typed stands as the search
-      // Enter folds the box and its directory away with the search still standing: the SEARCH
-      // control then carries what was typed as a chip, to reopen with a press or clear with its ×
-      const shown = st.searchShow === key || st.searchOpen === key;
-      const browse = shown;
+      // a standard search box with a directory: the box is always in view; a tap into it drops
+      // the directory beneath it, what is typed narrows the directory, and Enter, a pick or a
+      // tap away closes the directory with the text left standing in the box
+      const shown = true;
+      const browse = st.searchOpen === key;
       // with something typed, a group holds only its matches, says how many of its options
       // those are, opens on its own and drops out when nothing in it pertains
       // a group is narrowed by the text, or — with a name chosen — to what relates to it; a
@@ -3580,7 +3580,7 @@ class Component extends DCLogic {
       return {
         boxKey: key, shown, hidden: !shown,
         openBox: () => { this._focusBox = key; this.setState({ searchShow: key, searchOpen: key, searchBrowse: true, searchGroup: null }); },
-        closeBox: () => { setQ(''); this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); },
+        closeBox: () => { setQ(''); this.setState(close); },
         // the box reads what stands picked when it is at rest, and empties to type into on a click
         q: st.searchOpen === key ? q : (q || opts.display || ''),
         on: e => { setQ(e.target.value); this.setState({ searchOpen: key, searchBrowse: true }); },
@@ -3592,14 +3592,14 @@ class Component extends DCLogic {
         onKey: e => {
           // Enter, like a tap away, takes what was typed as the search and folds the directory
           // beneath it away: the directory is there to choose from, never a step that must be taken
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); try { const a = document.activeElement; if (a && a.tagName === 'INPUT' && a.blur) a.blur(); } catch (x) {} this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); }
-          else if (e.key === 'Escape') { e.preventDefault(); setQ(''); this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); }
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); try { const a = document.activeElement; if (a && a.tagName === 'INPUT' && a.blur) a.blur(); } catch (x) {} this.setState(close); }
+          else if (e.key === 'Escape') { e.preventDefault(); this.setState(close); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
         count: opts.count || '', scope, subs, params, active: !!qv || histActive || tsN > 0 || P.list.length > 0,
         // the picks beneath the box, as it is typed: Enter takes the first, a pick clears the box
-        open: shown && (picks.length > 0 || groups.length > 0), values: picks,
-        menuStyle: 'position:relative;flex:0 0 100%;width:100%;max-width:100%;margin-top:2px;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
+        open: st.searchOpen === key && (picks.length > 0 || groups.length > 0), values: picks,
+        menuStyle: 'position:absolute;top:36px;left:0;z-index:41;width:100%;max-width:100%;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:7px;display:flex;flex-direction:column;gap:1px',
         clear: () => { setQ(''); P.clear(); if (table) tset(table, { f: {}, q: '', mq: '', sort: null, open: null }); if (opts.onClear) opts.onClear(); H.reset(); this.setState(close); },
       };
     };
