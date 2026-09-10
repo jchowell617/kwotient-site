@@ -2740,14 +2740,18 @@ class Component extends DCLogic {
         // probability path open with the whole game so far, not with the moment the page did
         const steps = (g.steps || []).slice(-100);
         const first = steps.length ? steps[0].wp : wp;
+        // every sample carries the clock it was read at, so a hover names the play's own
+        // moment rather than a moment guessed from where the sample sits
+        const at = x => x.per == null ? 'FINAL' : 'Q' + x.per + (x.clock ? ' ' + x.clock : '');
         const hist = Array.from({ length: 108 - steps.length }, () => first).concat(steps.map(x => x.wp));
-        const mom = Array.from({ length: 22 }, () => 0);
-        steps.forEach((x, i) => { if (i) mom.push(((x.hs - x.as) - (steps[i - 1].hs - steps[i - 1].as)) / 2); });
+        const when = Array.from({ length: 108 - steps.length }, () => '').concat(steps.map(at));
+        const mom = Array.from({ length: 22 }, () => 0), momWhen = Array.from({ length: 22 }, () => '');
+        steps.forEach((x, i) => { if (i) { mom.push(((x.hs - x.as) - (steps[i - 1].hs - steps[i - 1].as)) / 2); momWhen.push(at(x)); } });
         const last = steps[steps.length - 1];
         const mk = g.market && g.mktProb != null ? g.mktProb : wp, ln = g.market ? g.line : g.fair;
-        out[g.id] = { real: true, hist, mkt: Array.from({ length: 108 }, () => mk), fa: wp, ma: mk, d: 0,
+        out[g.id] = { real: true, hist, when, mkt: Array.from({ length: 108 }, () => mk), fa: wp, ma: mk, d: 0,
           line: Array.from({ length: 60 }, () => ln), fair: Array.from({ length: 60 }, () => g.fair),
-          mom: mom.slice(-22), margin: last ? last.hs - last.as : g.hs - g.as };
+          mom: mom.slice(-22), momWhen: momWhen.slice(-22), margin: last ? last.hs - last.as : g.hs - g.as };
         return;
       }
       // both walks are anchored to the fixture's own lines — the model series to the fair
@@ -2948,11 +2952,13 @@ class Component extends DCLogic {
           const read = [g.hs, g.as, g.per, g.clock, g.wp, g.market ? g.line : g.fair, g.market ? g.mktProb : null].join('|');
           if (prev.read === read) return;
           const margin = g.hs - g.as;
+          const at = g.state === 'final' ? 'FINAL' : 'Q' + g.per + (g.clock ? ' ' + g.clock : '');
           series[g.id] = Object.assign({}, prev, {
             read,
-            hist: prev.hist.slice(1).concat(g.wp), mkt: prev.mkt.slice(1).concat(g.market && g.mktProb != null ? g.mktProb : g.wp),
+            hist: prev.hist.slice(1).concat(g.wp), when: (prev.when || prev.hist.map(() => '')).slice(1).concat(at),
+            mkt: prev.mkt.slice(1).concat(g.market && g.mktProb != null ? g.mktProb : g.wp),
             line: prev.line.slice(1).concat(g.market ? g.line : g.fair), fair: prev.fair.slice(1).concat(g.fair),
-            mom: prev.mom.slice(1).concat((margin - (prev.margin == null ? margin : prev.margin)) / 2), margin
+            mom: prev.mom.slice(1).concat((margin - (prev.margin == null ? margin : prev.margin)) / 2), momWhen: (prev.momWhen || prev.mom.map(() => '')).slice(1).concat(at), margin
           });
         });
         const ids = games.map(g => g.id);
@@ -5574,7 +5580,10 @@ class Component extends DCLogic {
           const left = Math.max(0, qLen - (el - (per - 1) * qLen));
           return 'Q' + per + ' ' + Math.floor(left / 60) + ':' + String(Math.floor(left % 60)).padStart(2, '0');
         };
-        const build = (key, series, H, fmt, dom) => {
+        // a sample with its own clock is named by it; one from before the record opened is the
+        // kickoff; a seeded fixture's is placed along the game
+        const nameAt = (whens, i, frac) => whens ? (whens[i] || 'KICKOFF') : clockAt(frac);
+        const build = (key, series, H, fmt, dom, whens) => {
           const n = series[0].vals.length;
           const idx = st[key] === null || st[key] === undefined ? null : clamp(st[key], 0, n - 1);
           const all = series.reduce((a, sr) => a.concat(sr.vals), []);
@@ -5606,14 +5615,14 @@ class Component extends DCLogic {
             value: fmt(idx === null ? sr.vals[n - 1] : sr.vals[idx]),
             style: 'display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:11px;color:' + sr.color
           }));
-          out[key + 'Time'] = idx === null ? '' : clockAt(idx / (n - 1));
+          out[key + 'Time'] = idx === null ? '' : nameAt(whens, idx, idx / (n - 1));
           out[key + 'Tip'] = 'position:absolute;top:4px;' + (x > 58 ? 'right:' + (100 - x) + '%;margin-right:10px;' : 'left:' + x + '%;margin-left:10px;') +
             'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:8px 10px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:6';
           return out;
         };
         return Object.assign({},
           build('momHover', [{ label: 'Swing', vals: cum, color: 'var(--reversed)' }], 92,
-                v => (v > 0 ? '+' : '') + v.toFixed(1), [-momMax, momMax])
+                v => (v > 0 ? '+' : '') + v.toFixed(1), [-momMax, momMax], s.real ? (s.momWhen || null) : null)
         );
       })(),
       hovering: hi !== null,
@@ -5623,8 +5632,8 @@ class Component extends DCLogic {
       tipStyle: 'position:absolute;left:' + hx + '%;top:' + tipTop.toFixed(2) + '%;transform:translate(' + (hx > 65 ? '-105%' : hx < 12 ? '-2%' : '-50%') + ',' + (tipBelow ? '8%' : '-108%') + ');background:var(--rail);border:1px solid var(--brand);border-radius:8px;padding:8px 11px;width:max-content;max-width:min(220px,68vw);white-space:normal;overflow-wrap:anywhere;box-shadow:0 6px 18px rgba(0,0,0,.5)',
       tipHome: hv.toFixed(1) + '%',
       tipAway: (100 - hv).toFixed(1) + '%',
-      tipTime: hi === null ? '' : (() => {
-        // the series spans tip-off to now, so map the index onto elapsed game time
+      tipTime: hi === null ? '' : s.real && s.when ? (s.when[hi] || 'KICKOFF') : (() => {
+        // a seeded fixture's series spans tip-off to now, so map the index onto elapsed game time
         const qLen = (sport === 'NBA' ? 12 : 15) * 60;
         const elapsedNow = (g.per - 1) * qLen + (qLen - g.sec);
         const el = elapsedNow * (hi / (hn - 1));
