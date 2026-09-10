@@ -3507,7 +3507,7 @@ class Component extends DCLogic {
       const m = list => list.filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0));
       // the box stays open after a pick, with its directory, so another can be chosen from it
       const keep = { searchOpen: key, searchBrowse: true };
-      const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState(keep); } }));
+      const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(x.label); this.setState(keep); } }));
       const scope = H.label.replace(/^VS /, 'vs ').replace('ALL TEAMS', 'all teams');
       const groupsIn = opts.groups || [];
       const P = opts.params || (table ? tableParams(table, opts.cols || []) : genParams(key));
@@ -3516,17 +3516,28 @@ class Component extends DCLogic {
       const close = { searchOpen: null, searchBrowse: false, searchGroup: null };
       const onStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:var(--nested);color:' + BLUE;
       const take = x => { const on = !x.pick && x.group && P.has(x.group, x.label); return { label: x.label, count: x.count || '', style: on ? onStyle : rowStyle,
-        pick: () => { if (x.pick) { x.pick(); setQ(''); this.setState(keep); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); this.setState(keep); } } }; };
+        pick: () => { if (x.pick) { x.pick(); setQ(x.label); this.setState(keep); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); this.setState(keep); } } }; };
       // process of elimination: what is typed narrows everything the box offers — the picks
       // above and every group of the directory beneath — to what pertains to it
-      const hit = x => !qv || wordsMatch(x.label + ' ' + (x.count || ''), qv);
+      // when what stands in the box IS one of the directory's names — a player, a club — the
+      // other groups narrow to what relates to it (his club, his position), not to the text
+      const toks = x => (x.label + ' ' + (x.count || '')).toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length >= 2 && !/^\d+$/.test(w) && w !== 'kq');
+      const chosenOf = () => { if (!qv) return null; for (const gp of groupsIn) { const x = gp.items.find(i => i.label.toLowerCase() === qv); if (x) return { x, group: gp.label }; } const x = (opts.picks || []).find(i => i.label.toLowerCase() === qv); return x ? { x, group: null } : null; };
+      const chosen = chosenOf();
+      const ctxWords = chosen ? toks(chosen.x) : [];
+      const relates = x => ctxWords.length > 0 && toks(x).some(t => ctxWords.indexOf(t) >= 0);
+      const textHit = x => !qv || wordsMatch(x.label + ' ' + (x.count || ''), qv);
+      const hit = x => textHit(x);
       const picks = !qv ? [] : (opts.picks || []).filter(hit).slice(0, 60).map(take);
       // a double click into the box: the ways to search, one group open at a time
       // the directory shows whenever the box is open; what is typed filters the picks above it
       const browse = st.searchOpen === key;
       // with something typed, a group holds only its matches, says how many of its options
       // those are, opens on its own and drops out when nothing in it pertains
-      const groups = !browse ? [] : groupsIn.map(gp => ({ gp, hits: gp.items.filter(hit) })).filter(x => x.hits.length).map(({ gp, hits }) => { const open = qv ? true : st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
+      // a group is narrowed by the text, or — with a name chosen — to what relates to it; a
+      // group with nothing that relates (the seasons, say) stands whole, since all of it pertains
+      const groupHits = gp => { if (!qv) return gp.items; if (chosen && gp.label !== chosen.group) { const rel = gp.items.filter(x => textHit(x) || relates(x)); return rel.length ? rel : gp.items; } return gp.items.filter(hit); };
+      const groups = !browse ? [] : groupsIn.map(gp => ({ gp, hits: groupHits(gp) })).filter(x => x.hits.length).map(({ gp, hits }) => { const open = qv ? true : st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
         value: qv ? hits.length + ' of ' + gp.items.length : (gp.value || (gp.items.length + (gp.items.length === 1 ? ' option' : ' options'))), items: open ? hits.slice(0, 80).map(x => take(Object.assign({}, x, { group: gp.label }))) : [],
         toggle: () => this.setState(x => ({ searchGroup: x.searchGroup === gp.label ? null : gp.label })),
         style: 'display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;border:none;border-top:1px solid var(--grid);background:transparent;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;color:var(--lead)',
