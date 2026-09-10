@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=d3c40b5468"></script>
+<script src="./kq-bundle.js?v=571180e1c4"></script>
 <script src="./kq-seasons.js?v=aec0ddb41e"></script>
 <style>
 :root{
@@ -3888,7 +3888,8 @@ class Component extends DCLogic {
     const ord = n => n == null ? '—' : n + ((n % 100 >= 11 && n % 100 <= 13) ? 'th' : (['th', 'st', 'nd', 'rd'][n % 10] || 'th'));
     const curSeasonKey = (() => { const now = new Date(); return sport === 'NBA' ? (now.getMonth() >= 9 ? now.getFullYear() : now.getFullYear() - 1) : (now.getMonth() >= 7 ? now.getFullYear() : now.getFullYear() - 1); })();
     const seasonNote = stand && stand.ok && stand.available ? stand.seasonLabel + ((stand.season != null && stand.season < curSeasonKey) || stand.previous ? ' · final' : stand.played ? ' · through today' : ' · not started') : '';
-    const placeWords = sd => sd ? ord(sd.confRank) + ' in the ' + (sd.conf || '') + ' · ' + ord(sd.divRank) + ' in the ' + String(sd.div || '').replace(/^\w/, c => c.toUpperCase()).replace(/^(EAST|WEST|NORTH|SOUTH)$/i, m => m[0] + m.slice(1).toLowerCase()) + (sd.ranked === 'computed' ? ' (place by record and points)' : '') : '';
+    // a place shared with other clubs — every club at 0-0 in September — reads as tied
+    const placeWords = sd => sd ? (sd.confRankTied ? 'T-' : '') + ord(sd.confRank) + ' in the ' + (sd.conf || '') + ' · ' + (sd.divRankTied ? 'T-' : '') + ord(sd.divRank) + ' in the ' + String(sd.div || '').replace(/^\w/, c => c.toUpperCase()).replace(/^(EAST|WEST|NORTH|SOUTH)$/i, m => m[0] + m.slice(1).toLowerCase()) + (sd.ranked === 'computed' ? ' (place by record and points)' : '') : '';
     // the props table: the yardage and volume lines first, the touchdown scorers last, then
     // whatever the reader filters, sorts or searches for
     // a player's club, from the record by name; the feed names the player and nothing else
