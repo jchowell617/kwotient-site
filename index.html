@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=242631c2ae"></script>
+<script src="./kq-bundle.js?v=2b01622e49"></script>
 <script src="./kq-seasons.js?v=aec0ddb41e"></script>
 <style>
 :root{
@@ -4112,7 +4112,15 @@ class Component extends DCLogic {
       const sPct = clamp(mine, 2, 99);
       const muted = 'font-family:var(--kw);font-size:9.5px;text-align:right;color:var(--muted)';
       const rows = [];
-      if (ent.grp) {
+      if (ent.grp && (ent.ps || []).length) {
+        // a player ranks on the standard set for his position — each stat its value, his rank
+        // among the position's players and, on the 0-100 scale, where that rank sits
+        (ent.ps || []).forEach(([k, v, rank, of, group]) => {
+          const pct = of > 1 ? Math.round((1 - (rank - 1) / (of - 1)) * 100) : 100;
+          const rc = ratingCell(pct);
+          rows.push({ k, v: String(v), rank: rank + '/' + of, rating: rc.rating, badge: rc.badge, fill: rc.fill, delta: String(group || '').toLowerCase(), deltaStyle: muted, low: false, group });
+        });
+      } else if (ent.grp) {
         (ent.dims || []).forEach(d => {
           if (d.score == null) return;
           const rc = ratingCell(d.score);
@@ -5300,10 +5308,10 @@ class Component extends DCLogic {
           statusStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.12em;padding:4px 9px;border-radius:100px;flex:none;white-space:nowrap;color:' + sc + ';border:1px solid ' + mix(sc, 40),
           dateNote, dateShort: S.day(c.date),
           baseline: c.baseline + (c.baseValue ? ' (' + c.baseValue + ')' : '') + (c.scale ? ' · scale: ' + c.scale : ''),
-          verdict: settled ? (c.beat === null ? 'Settled — scorecard pending' : c.beat ? 'Beat baseline — ' + c.skill : 'Did not beat baseline — ' + c.skill)
+          verdict: settled ? (c.beat === null ? (c.scoreLine || 'Settled — scorecard pending') : c.beat ? 'Beat baseline — ' + c.skill : 'Did not beat baseline — ' + c.skill)
             : c.status === 'filed' ? 'Filed ' + S.day(c.filed) + (c.model ? ' · ' + c.model : '') + ' · pending settlement'
             : c.status === 'frozen' ? 'Frozen · projections not yet filed' : c.status === 'queued' ? 'Queued · not yet frozen' : c.status,
-          verdictStyle: 'font-family:var(--kw);font-size:11.5px;font-weight:700;color:' + (!settled ? 'var(--second)' : c.beat ? ACC : RED),
+          verdictStyle: 'font-family:var(--kw);font-size:11.5px;font-weight:700;color:' + (!settled ? 'var(--second)' : c.beat === null ? (c.scoreLine ? 'var(--lead)' : 'var(--second)') : c.beat ? ACC : RED),
           headline: c.headline + (c.sha ? ' · sha256 ' + c.sha.slice(0, 12) + '…' : ''),
           metrics: c.metrics.map(m => ({ label: m[0], value: m[1] })),
           memberUnit: c.memberUnit,
@@ -5313,7 +5321,7 @@ class Component extends DCLogic {
             : 'the population freezes on ' + (c.freezes || S.day(c.freezeDate)) + ' — nothing is listed before then',
           members: c.members.map(mb => ({
             subject: mb.subject, detail: mb.detail, baseline: mb.baseline, proj: mb.proj, actual: mb.actual, delta: mb.delta,
-            deltaStyle: 'font-family:var(--kw);font-size:11px;text-align:right;color:' + (mb.signed ? ACC : 'var(--faint)')
+            deltaStyle: 'font-family:var(--kw);font-size:11px;text-align:right;color:' + (mb.signed || mb.tone === 'good' ? ACC : mb.tone === 'bad' ? RED : 'var(--faint)')
           })),
           settled: settled && c.beat !== null, pending: !(settled && c.beat !== null),
           calibOn: false, skillOn: false, hist: [], compare: [], calibPath: '', skillPath: '', skillArea: '', skillColor: ACC, skillFill: mix(ACC, 12), skillEnd: settled ? 'SETTLED' : 'TODAY', calibError: '—',
