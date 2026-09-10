@@ -47,7 +47,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_RECORD_VER = "59658ef573";</script>
+<script>window.KQ_RECORD_VER = "dbcddb4ce5";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -83,8 +83,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=4732751ae8"></script>
-<script src="./kq-seasons.js?v=4b102345e8"></script>
+<script src="./kq-bundle.js?v=0a162bd095"></script>
+<script src="./kq-seasons.js?v=752b4bde5c"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -2306,13 +2306,13 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <svg viewBox="0 0 300 130" preserveAspectRatio="none" style="width:100%;height:130px;display:block;overflow:visible">
                         <defs><linearGradient id="cs-tl-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--brand)" stop-opacity="0.22"></stop><stop offset="100%" stop-color="var(--brand)" stop-opacity="0"></stop></linearGradient></defs>
                         <line x1="0" y1="10" x2="300" y2="10" stroke="var(--divider)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
-                        <line x1="0" y1="65" x2="300" y2="65" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                        <line x1="0" y1="120" x2="300" y2="120" stroke="var(--divider)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                        <line x1="0" y1="65" x2="300" y2="65" stroke="var(--divider)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                        <line x1="0" y1="{{ tlAxisY }}" x2="300" y2="{{ tlAxisY }}" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
                         <path d="{{ tlArea }}" fill="url(#cs-tl-fill)"></path>
                         <path d="{{ tlPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                       </svg>
                       <div style="position:absolute;left:0;top:8px;bottom:12px;width:30px;pointer-events:none;font-family:var(--kw);font-size:8.5px;color:var(--muted);text-align:right">
-                        <span style="position:absolute;right:0;top:0;transform:translateY(-50%)">{{ tlYTop }}</span><span style="position:absolute;right:0;top:50%;transform:translateY(-50%)">0</span><span style="position:absolute;right:0;bottom:0;transform:translateY(50%)">{{ tlYBot }}</span>
+                        <span style="position:absolute;right:0;top:0;transform:translateY(-50%)">{{ tlYTop }}</span><span style="position:absolute;right:0;top:50%;transform:translateY(-50%)">{{ tlYMid }}</span><span style="position:absolute;right:0;bottom:0;transform:translateY(50%)">{{ tlYBot }}</span>
                       </div>
                       <div style="position:absolute;left:34px;right:0;top:8px;height:130px;pointer-events:none">
                         <sc-for list="{{ tlDots }}" as="dt" hint-placeholder-count="8"><div style="{{ dt.style }}"></div></sc-for>
@@ -2374,7 +2374,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         </div>
                         <sc-if value="{{ r.open }}" hint-placeholder-val="{{ false }}">
                           <div style="padding:8px 10px 12px;border-bottom:1px solid var(--divider);background:var(--nested)">
-                            <div style="font-family:var(--kw);font-size:9.5px;color:var(--lead);line-height:1.5;margin-bottom:8px">{{ r.read }}</div>
+                            <div style="font-family:var(--kw);font-size:9.5px;color:var(--lead);line-height:1.5;margin-bottom:8px">{{ r.read }}</div><sc-if value="{{ r.mine }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--brand);font-weight:700;margin:-4px 0 8px">{{ r.mine }}</div></sc-if>
                             <sc-if value="{{ r.loading }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">reading the record…</div></sc-if>
                             <sc-if value="{{ r.noBox }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:9.5px;color:var(--second)">no box score on the record for this game</div></sc-if>
                             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
@@ -5303,7 +5303,13 @@ class Component extends DCLogic {
         const pr = profile || null; const isClubP = pr && pr.kind === 'CLUB'; const ent = pr ? (st.profileEnt || null) : null;
         const clubAbbr = pr ? (isClubP ? pr.mono : (ent && ent.team) || null) : null;
         const games = T && clubAbbr && T.clubs[clubAbbr] ? T.clubs[clubAbbr].filter(x => x.margin != null || x.status) : [];
-        const played = games.filter(x => x.margin != null);
+        // a player's timeline is his own: the games he played, from his log, each joined to the club's game on the record
+        // for the model's read of it; a club's is the club's games
+        const plog = !isClubP && pr && st.profileId ? (st.logs || {})[this.logKey(st.profileId)] : null;
+        const prow = plog && plog.rows ? plog.rows : [];
+        const unit = plog && plog.label ? plog.label : (sport === 'NBA' ? 'PTS' : 'STAT');
+        const near = r => games.find(x => x.opp === r.opp && Math.abs(new Date(x.d) - new Date(r.date)) <= 1.6 * 86400000) || {};
+        const played = isClubP ? games.filter(x => x.margin != null) : prow.map(r => { const cg = near(r); return { d: r.date, opp: r.opp, home: !!r.home, v: r.v, res: r.result || '', margin: cg.margin != null ? cg.margin : (r.result === 'W' ? 1 : r.result === 'L' ? -1 : 0), pf: cg.pf, pa: cg.pa, prior: cg.prior, edge: cg.edge, on: cg.on, right: cg.right }; });
         const injList = T && pr && !isClubP && T.injuries[pr.name] ? T.injuries[pr.name] : [];
         const moves = pr ? (S ? S.wire(sport) : []).filter(w => (w.kind === 'SIGNING' || w.kind === 'RUMOR' || w.player) && ((pr.name && w.player === pr.name) || (isClubP && (w.who === clubAbbr || w.who === (CLUB_NAMES[clubAbbr] || '').split(' ').pop())))).slice(0, 12) : [];
         const nB = played.length, mMax = Math.max(7, ...played.map(x => Math.abs(x.margin)));
@@ -5316,31 +5322,34 @@ class Component extends DCLogic {
         const bands = injList.map((c, i) => { const a = (new Date(c[0]) - new Date(injFrom)) / 86400000; const b = i + 1 < injList.length ? (new Date(injList[i + 1][0]) - new Date(injFrom)) / 86400000 : span; return { style: 'position:absolute;top:0;bottom:0;left:' + (a / span * 100).toFixed(2) + '%;width:' + Math.max(0.6, (b - a) / span * 100).toFixed(2) + '%;background:' + toneOf(c[1]), title: (S ? S.day(c[0]) : c[0]) + ' · ' + (c[1] || 'off the report') }; });
         return {
           tlNote: !pr ? '' : !T ? 'reading the record…' : (played.length || injList.length || moves.length) ? 'what the record holds on ' + pr.name + ', dated the day it was filed' : 'the record holds nothing dated on ' + pr.name + ' yet — games, injury designations and contract moves file here as the season goes',
-          tlHasGames: played.length > 0, tlNoGames: !!T && played.length === 0, tlGamesLabel: (isClubP ? 'SEASON' : (clubAbbr || '') + ' SEASON') + ' · net margin as the games are played, each game a dot',
-          // the line: net margin after each game, on a symmetric scale; the games sit on it as dots
+          tlHasGames: played.length > 0, tlNoGames: !!T && played.length === 0 && !(plog && plog.state === 'loading'), tlGamesLabel: isClubP ? 'SEASON · net margin as the games are played, each game a dot' : (unit + ' PER GAME · his season, each game a dot · ' + (clubAbbr || '') + ' result and the model\'s read'),
+          // the line: a club's net margin after each game on a symmetric scale; a player's stat per game from zero
           ...(() => {
             let net = 0; const cum = played.map(x => (net += x.margin));
-            const M = Math.max(7, ...cum.map(Math.abs));
-            const X = i => nB < 2 ? 150 : (i / (nB - 1)) * 300, Y = v => 65 - (v / M) * 55;
-            const path = nB ? 'M' + played.map((x, i) => X(i).toFixed(1) + ' ' + Y(cum[i]).toFixed(1)).join(' L') : '';
-            const dot = (x, i) => 'position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);left:' + (X(i) / 3).toFixed(2) + '%;top:' + (Y(cum[i]) / 130 * 100).toFixed(2) + '%;background:' + (x.margin > 0 ? 'var(--good)' : x.margin < 0 ? 'var(--critical)' : 'var(--second)') + ';box-shadow:0 0 0 2px var(--surface)' + (x.right ? ',0 0 0 4px var(--brand)' : '') + (i === hi ? ';width:12px;height:12px' : '');
+            const series = isClubP ? cum : played.map(x => x.v);
+            const M = isClubP ? Math.max(7, ...cum.map(Math.abs)) : Math.max(1, ...series);
+            const X = i => nB < 2 ? 150 : (i / (nB - 1)) * 300, Y = isClubP ? (v => 65 - (v / M) * 55) : (v => 120 - (v / M) * 110), axisY = isClubP ? 65 : 120;
+            const path = nB ? 'M' + played.map((x, i) => X(i).toFixed(1) + ' ' + Y(series[i]).toFixed(1)).join(' L') : '';
+            const won = x => isClubP ? x.margin > 0 : x.res === 'W', lost = x => isClubP ? x.margin < 0 : x.res === 'L';
+            const dot = (x, i) => 'position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);left:' + (X(i) / 3).toFixed(2) + '%;top:' + (Y(series[i]) / 130 * 100).toFixed(2) + '%;background:' + (won(x) ? 'var(--good)' : lost(x) ? 'var(--critical)' : 'var(--second)') + ';box-shadow:0 0 0 2px var(--surface)' + (x.right ? ',0 0 0 4px var(--brand)' : '') + (i === hi ? ';width:12px;height:12px' : '');
+            const avg = nB ? series.reduce((t, v) => t + v, 0) / nB : 0;
             return {
-              tlPath: nB === 1 ? 'M0 ' + Y(cum[0]).toFixed(1) + ' L300 ' + Y(cum[0]).toFixed(1) : path,
-              tlArea: nB ? (nB === 1 ? 'M0 ' + Y(cum[0]).toFixed(1) + ' L300 ' + Y(cum[0]).toFixed(1) : path) + ' L300 65 L0 65 Z' : '',
-              tlYTop: '+' + M, tlYBot: '−' + M,
+              tlPath: nB === 1 ? 'M0 ' + Y(series[0]).toFixed(1) + ' L300 ' + Y(series[0]).toFixed(1) : path,
+              tlArea: nB ? (nB === 1 ? 'M0 ' + Y(series[0]).toFixed(1) + ' L300 ' + Y(series[0]).toFixed(1) : path) + ' L300 ' + axisY + ' L0 ' + axisY + ' Z' : '',
+              tlAxisY: axisY, tlYTop: isClubP ? '+' + M : String(Math.round(M)), tlYMid: isClubP ? '0' : String(Math.round(M / 2)), tlYBot: isClubP ? '−' + M : '0',
               tlDots: played.map((x, i) => ({ style: dot(x, i) })),
-              tlEndLabel: nB ? (net > 0 ? '+' : '') + net + ' net' : '', tlEndStyle: nB ? 'position:absolute;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand);transform:translate(-100%,-50%);left:calc(' + (X(nB - 1) / 3).toFixed(2) + '% - 9px);top:' + (Y(cum[nB - 1]) / 130 * 100).toFixed(2) + '%;white-space:nowrap' : 'display:none',
+              tlEndLabel: nB ? (isClubP ? (net > 0 ? '+' : '') + net + ' net' : (Number.isInteger(avg) ? avg : avg.toFixed(1)) + ' avg') : '', tlEndStyle: nB ? 'position:absolute;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand);transform:translate(-100%,-50%);left:calc(' + (X(nB - 1) / 3).toFixed(2) + '% - 9px);top:' + (Y(series[nB - 1]) / 130 * 100).toFixed(2) + '%;white-space:nowrap' : 'display:none',
               tlNet: cum
             };
           })(),
           tlMove: this._slotHover('tlHover', nB), tlOff: () => this.setState({ tlHover: null }), tlTap: this._slotHover('tlHover', nB), tlTouchStart: e => this.touchScrub(e, 'start', this._slotHover('tlHover', nB)), tlTouchMove: e => this.touchScrub(e, 'move', this._slotHover('tlHover', nB)),
           tlHoverOn: hg != null, tlHoverLine: hg ? 'position:absolute;top:0;bottom:0;width:1px;background:var(--axis);left:' + ((nB < 2 ? 150 : (hi / (nB - 1)) * 300) / 3).toFixed(1) + '%' : '',
           tlTip: hg ? TIPSTYLE + ';top:6px;' + (hi / Math.max(1, nB - 1) > 0.55 ? 'right:calc(' + (100 - (nB < 2 ? 150 : (hi / (nB - 1)) * 300) / 3).toFixed(1) + '% + 8px)' : 'left:calc(' + ((nB < 2 ? 150 : (hi / (nB - 1)) * 300) / 3).toFixed(1) + '% + 8px)') : '',
-          tlTipHead: hg ? (hg.home ? 'vs ' : 'at ') + hg.opp + ' · ' + (S ? S.day(hg.d) : hg.d) : '', tlTipBody: hg ? (hg.margin > 0 ? 'won ' : hg.margin < 0 ? 'lost ' : 'tied ') + hg.pf + '-' + hg.pa + ' · model ' + (hg.prior == null ? '—' : hg.prior + '%') + (hg.on ? ' · ' + Math.abs(hg.edge).toFixed(1) + ' pts on ' + hg.on : '') + (hg.right == null ? '' : hg.right ? ' · right' : ' · wrong') + ' · net ' + (function (v) { return (v > 0 ? '+' : '') + v; })(played.slice(0, hi + 1).reduce((t, x) => t + x.margin, 0)) : '',
+          tlTipHead: hg ? (hg.home ? 'vs ' : 'at ') + hg.opp + ' · ' + (S ? S.day(hg.d) : hg.d) : '', tlTipBody: hg ? (isClubP ? ((hg.margin > 0 ? 'won ' : hg.margin < 0 ? 'lost ' : 'tied ') + hg.pf + '-' + hg.pa) : (hg.v + ' ' + unit + (hg.res === 'W' ? ' · won' : hg.res === 'L' ? ' · lost' : '') + (hg.pf != null ? ' ' + hg.pf + '-' + hg.pa : ''))) + ' · model ' + (hg.prior == null ? '—' : hg.prior + '%') + (hg.on ? ' · ' + Math.abs(hg.edge).toFixed(1) + ' pts on ' + hg.on : '') + (hg.right == null ? '' : hg.right ? ' · right' : ' · wrong') + (isClubP ? ' · net ' + (function (v) { return (v > 0 ? '+' : '') + v; })(played.slice(0, hi + 1).reduce((t, x) => t + x.margin, 0)) : '') : '',
           tlFrom: played.length ? (S ? S.day(played[0].d) : played[0].d) : '', tlTo: played.length ? (S ? S.day(played[played.length - 1].d) : played[played.length - 1].d) : '',
           // the games as a table beneath the bars: sortable and filterable from the headers, like every built table
           ...(() => {
-            const get = { d: x => x.d, opp: x => x.opp, where: x => x.home ? 'home' : 'away', result: x => x.margin == null ? null : (x.margin > 0 ? 'won' : x.margin < 0 ? 'lost' : 'tied'), score: x => x.pf == null ? null : x.pf + '-' + x.pa, margin: x => x.margin, prior: x => x.prior, edge: x => x.edge == null ? null : Math.abs(x.edge), call: x => x.right == null ? 'open' : x.right ? 'right' : 'wrong' };
+            const get = { d: x => x.d, opp: x => x.opp, where: x => x.home ? 'home' : 'away', result: x => isClubP ? (x.margin == null ? null : (x.margin > 0 ? 'won' : x.margin < 0 ? 'lost' : 'tied')) : (x.res === 'W' ? 'won' : x.res === 'L' ? 'lost' : null), score: x => isClubP ? (x.pf == null ? null : x.pf + '-' + x.pa) : (x.res || null), margin: x => isClubP ? x.margin : x.v, prior: x => x.prior, edge: x => x.edge == null ? null : Math.abs(x.edge), call: x => x.right == null ? 'open' : x.right ? 'right' : 'wrong' };
             TABLES.tlgames = { rows: played, get };
             const rows = tapply('tlgames', played, get, rowText(get));
             const lim = st.tlLimit || 10;
@@ -5353,13 +5362,13 @@ class Component extends DCLogic {
             const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
             return {
               tlBox: searchFor('tlgames', histMenuFor('tlgames', g.homeAbbr), { table: 'tlgames', cols: TL_COLS, placeholder: 'search the games · an opponent, home or away, won or lost, right or wrong', count: rows.length + ' of ' + played.length, groups: colGroups(played, get, TL_COLS) }),
-              tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', 'SCORE', null, 'left', .7), tcol('tlgames', 'margin', 'MARGIN', null, 'left', .6), tcol('tlgames', 'prior', 'PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'CALL', null, 'left', .6)],
-              tlRows: rows.slice(0, lim).map(x => { const k = x.d + '|' + x.opp; const open = openKey === k; const got = open ? gameOf(x) : { loading: false, game: null }; const gm = got.game; const f = gm ? (gm.first || {}) : null; return ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: x.pf == null ? '—' : x.pf + '-' + x.pa, margin: x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin, prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
+              tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', isClubP ? 'SCORE' : 'RESULT', null, 'left', .7), tcol('tlgames', 'margin', isClubP ? 'MARGIN' : unit, null, 'left', .6), tcol('tlgames', 'prior', 'PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'CALL', null, 'left', .6)],
+              tlRows: rows.slice(0, lim).map(x => { const k = x.d + '|' + x.opp; const open = openKey === k; const got = open ? gameOf(x) : { loading: false, game: null }; const gm = got.game; const f = gm ? (gm.first || {}) : null; return ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: isClubP ? (x.pf == null ? '—' : x.pf + '-' + x.pa) : (x.res === 'W' ? 'won' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : x.res === 'L' ? 'lost' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : '—'), margin: isClubP ? (x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin) : String(x.v), prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
                 call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34),
                 toggle: () => { if (!open) this.loadDay(lgl, x.d); this.setState({ tlOpen: open ? null : k }); }, open, loading: open && got.loading,
                 read: gm ? 'model prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') : (open && !got.loading ? 'the record holds no reading of this game' : ''),
                 noBox: open && !got.loading && !!gm && !gm.box,
-                sides: open && gm && gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }] : [] }); }),
+                mine: (() => { if (!open || !gm || !gm.box || isClubP) return ''; const nk = String(pr.name || '').toLowerCase().replace(/[^a-z]/g, ''); const own = (gm.box.away || []).concat(gm.box.home || []).find(y => String(y.n || '').toLowerCase().replace(/[^a-z]/g, '') === nk); return own ? 'his line · ' + lineOf(own, lgl) : 'his line is not among the eight fullest the record kept for this game'; })(), sides: open && gm && gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }] : [] }); }),
               tlCount: rows.length + ' of ' + played.length + (played.length === 1 ? ' game' : ' games'), tlMore: rows.length > lim, tlMoreLabel: 'Show ' + Math.min(20, rows.length - lim) + ' more',
               tlShowMore: () => this.setState({ tlLimit: lim + 20 }), tlShowAll: () => this.setState({ tlLimit: 100000 })
             };
