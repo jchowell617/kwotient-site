@@ -83,7 +83,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=0a162bd095"></script>
+<script src="./kq-bundle.js?v=4da5ae86d8"></script>
 <script src="./kq-seasons.js?v=752b4bde5c"></script>
 <style>
 :root{
@@ -2935,8 +2935,14 @@ class Component extends DCLogic {
         games.forEach(g => {
           const prev = series[g.id];
           if (!prev || !prev.real) { series[g.id] = this.seed(sport, [g])[g.id]; return; }
+          // a tick is a change in the feed — a play, a score, a line move — not a poll: the
+          // page asks every two seconds so it catches each change as it lands, and the
+          // series only advance when something did, so momentum reads plays, not seconds
+          const read = [g.hs, g.as, g.per, g.clock, g.wp, g.market ? g.line : g.fair, g.market ? g.mktProb : null].join('|');
+          if (prev.read === read) return;
           const margin = g.hs - g.as;
           series[g.id] = Object.assign({}, prev, {
+            read,
             hist: prev.hist.slice(1).concat(g.wp), mkt: prev.mkt.slice(1).concat(g.market && g.mktProb != null ? g.mktProb : g.wp),
             line: prev.line.slice(1).concat(g.market ? g.line : g.fair), fair: prev.fair.slice(1).concat(g.fair),
             mom: prev.mom.slice(1).concat((margin - (prev.margin == null ? margin : prev.margin)) / 2), margin
@@ -2955,7 +2961,7 @@ class Component extends DCLogic {
       if (!this._standingsAt || Date.now() - this._standingsAt > 15 * 60000) { this._standingsAt = Date.now(); this.loadStandings(); }
       // with nothing on the slate there is no game to read logs for; the placeholder is not asked
       if ((r.games || []).length || upcoming) setTimeout(() => this.ensureTrendLog(), 0);
-      this._liveT = setTimeout(() => this.pollLive(), r.ok ? Math.max(8000, r.beat || 60000) : 60000);
+      this._liveT = setTimeout(() => this.pollLive(), r.ok ? Math.max(2000, r.beat || 60000) : 60000);
     });
   }
   // the StoryStats narrative for the open game, in the reader's voice, carried verbatim
@@ -6027,7 +6033,7 @@ paceRows: (() => {
           kindStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:' + c,
           pill: 'font-family:var(--kw);font-size:9px;letter-spacing:.12em;padding:4px 8px;border-radius:5px;text-align:center;color:' + c + ';border:1px solid ' + mix(c, 34),
           phaseStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:' + pc,
-          delivery: a.real ? 'RECORD' : (a.kind === 'STORY' ? 'STORY' : 'FEED ' + Math.round(((st.liveMeta && st.liveMeta.beat) || 8000) / 1000) + 's'),
+          delivery: a.real ? 'RECORD' : (a.kind === 'STORY' ? 'STORY' : 'FEED ' + Math.round(((st.liveMeta && st.liveMeta.beat) || 2000) / 1000) + 's'),
           deliveryStyle: 'font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:' +
             (pushed ? 'var(--brand)' : 'var(--muted)') + ';border:1px solid ' + (pushed ? 'var(--axis)' : 'var(--grid)')
         });

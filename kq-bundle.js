@@ -37,8 +37,9 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
   var EDGE = 'https://kwotient-live.kwotientio.workers.dev';       /* site/live-endpoint.json */
   /* worker/src/index.js ORIGINS — kept in step by hand; the edge is the authority */
   var ORIGINS = ['https://kwotient.io', 'https://www.kwotient.io', 'http://localhost:8917', 'http://localhost:8788'];
-  /* the edge's own cache turns over on these beats; polling faster returns the same bytes */
-  var CADENCE = { live: 8000, soon: 60000, idle: 900000, story: 30000 };
+  /* the edge's own cache turns over on these beats; polling faster returns the same bytes.
+     Live is two seconds since 9 Sep 2026: the feed moves play by play, and so does the board. */
+  var CADENCE = { live: 2000, soon: 60000, idle: 900000, story: 30000 };
   var LEAGUES = ['nba', 'nfl'];
   var PHASES = ['pregame', 'live', 'postgame'];
   var TONES = ['editorial', 'humor'];
