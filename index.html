@@ -3513,6 +3513,8 @@ class Component extends DCLogic {
       const P = opts.params || (table ? tableParams(table, opts.cols || []) : genParams(key));
       const tagStyle = 'display:flex;align-items:center;font-family:var(--kw);font-size:8.5px;letter-spacing:.08em;padding:4px 8px;border-radius:5px;border:1px solid ' + BLUE + ';background:transparent;color:' + BLUE + ';cursor:pointer;white-space:nowrap;flex:none';
       const params = P.list.map(p => ({ label: p.group + ' · ' + p.label, style: tagStyle, remove: () => P.remove(p.group, p.value) }));
+      const folded = !(st.searchShow === key || st.searchOpen === key) && !!qv;
+      if (folded) params.unshift({ label: 'SEARCH · ' + q.trim(), style: tagStyle, remove: () => setQ('') });
       const close = { searchOpen: null, searchBrowse: false, searchGroup: null };
       const onStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:var(--nested);color:' + BLUE;
       const take = x => { const on = !x.pick && x.group && P.has(x.group, x.label); return { label: x.label, count: x.count || '', style: on ? onStyle : rowStyle,
@@ -3533,7 +3535,9 @@ class Component extends DCLogic {
       // the box shows on a press of its SEARCH control and stays, with its directory beneath it,
       // until the × closes it: never folded away on its own — a tap away or Enter only puts the
       // keyboard down, and what was typed stands as the search
-      const shown = st.searchShow === key || st.searchOpen === key || !!qv || P.list.length > 0;
+      // Enter folds the box and its directory away with the search still standing: the SEARCH
+      // control then carries what was typed as a chip, to reopen with a press or clear with its ×
+      const shown = st.searchShow === key || st.searchOpen === key;
       const browse = shown;
       // with something typed, a group holds only its matches, says how many of its options
       // those are, opens on its own and drops out when nothing in it pertains
@@ -3588,7 +3592,7 @@ class Component extends DCLogic {
         onKey: e => {
           // Enter, like a tap away, takes what was typed as the search and folds the directory
           // beneath it away: the directory is there to choose from, never a step that must be taken
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); try { const a = document.activeElement; if (a && a.tagName === 'INPUT' && a.blur) a.blur(); } catch (x) {} }
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); try { const a = document.activeElement; if (a && a.tagName === 'INPUT' && a.blur) a.blur(); } catch (x) {} this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); }
           else if (e.key === 'Escape') { e.preventDefault(); setQ(''); this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
