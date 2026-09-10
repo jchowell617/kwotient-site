@@ -3505,7 +3505,9 @@ class Component extends DCLogic {
       const rowStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:transparent;color:var(--lead)';
       const terms = qv.split(',').map(t => t.trim()).filter(Boolean);
       const m = list => list.filter(x => terms.some(t => x.label.toLowerCase().indexOf(t) >= 0));
-      const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState({ searchOpen: null }); } }));
+      // the box stays open after a pick, with its directory, so another can be chosen from it
+      const keep = { searchOpen: key, searchBrowse: true };
+      const wrap = items => items.map(x => ({ label: x.label, count: x.count || '', style: rowStyle, pick: () => { x.pick(); setQ(''); this.setState(keep); } }));
       const scope = H.label.replace(/^VS /, 'vs ').replace('ALL TEAMS', 'all teams');
       const groupsIn = opts.groups || [];
       const P = opts.params || (table ? tableParams(table, opts.cols || []) : genParams(key));
@@ -3515,10 +3517,11 @@ class Component extends DCLogic {
       const close = { searchOpen: null, searchBrowse: false, searchGroup: null };
       const onStyle = 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:var(--nested);color:' + BLUE;
       const take = x => { const on = !x.pick && x.group && P.has(x.group, x.label); return { label: x.label, count: x.count || '', style: on ? onStyle : rowStyle,
-        pick: () => { if (x.pick) { x.pick(); setQ(''); this.setState(close); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); if (!st.searchBrowse) this.setState(close); } } }; };
+        pick: () => { if (x.pick) { x.pick(); setQ(''); this.setState(keep); } else if (on) P.remove(x.group, x.label); else { P.add(x.group, x.label); setQ(''); this.setState(keep); } } }; };
       const picks = !qv ? [] : flat.filter(x => wordsMatch(x.label + ' ' + (x.count || ''), qv)).slice(0, 60).map(take);
       // a double click into the box: the ways to search, one group open at a time
-      const browse = st.searchOpen === key && !!st.searchBrowse;
+      // the directory shows whenever the box is open; what is typed filters the picks above it
+      const browse = st.searchOpen === key;
       const groups = !browse ? [] : groupsIn.filter(gp => gp.items.length).map(gp => { const open = st.searchGroup === gp.label; return { label: gp.label, open, chev: open ? '▴' : '▾',
         value: gp.value || (gp.items.length + (gp.items.length === 1 ? ' option' : ' options')), items: open ? gp.items.map(x => take(Object.assign({}, x, { group: gp.label }))) : [],
         toggle: () => this.setState(x => ({ searchGroup: x.searchGroup === gp.label ? null : gp.label })),
@@ -3560,14 +3563,14 @@ class Component extends DCLogic {
         closeBox: () => { setQ(''); this.setState({ searchShow: null, searchOpen: null, searchBrowse: false, searchGroup: null }); },
         // the box reads what stands picked when it is at rest, and empties to type into on a click
         q: st.searchOpen === key ? q : (q || opts.display || ''),
-        on: e => { setQ(e.target.value); this.setState({ searchOpen: key, searchBrowse: false }); },
-        focus: () => { if (st.searchOpen !== key) this.setState({ searchOpen: key, searchBrowse: false, searchGroup: null }); },
+        on: e => { setQ(e.target.value); this.setState({ searchOpen: key, searchBrowse: true }); },
+        focus: () => { if (st.searchOpen !== key) this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }); },
         // a click in the box lists what can be searched; typing filters the list
         click: () => this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }),
         dbl: () => this.setState({ searchOpen: key, searchBrowse: true, searchGroup: null }),
         groups, browse,
         onKey: e => {
-          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length && !st.searchBrowse) picks[0].pick(); else this.setState(close); }
+          if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13) { e.preventDefault(); if (picks.length) picks[0].pick(); else this.setState(close); }
           else if (e.key === 'Escape') { e.preventDefault(); this.setState(close); }
         },
         placeholder: opts.placeholder || 'search games · a club code or a week',
