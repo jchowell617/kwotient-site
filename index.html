@@ -83,7 +83,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=4da5ae86d8"></script>
+<script src="./kq-bundle.js?v=84da429a66"></script>
 <script src="./kq-seasons.js?v=752b4bde5c"></script>
 <style>
 :root{
@@ -2736,11 +2736,18 @@ class Component extends DCLogic {
       // panel holds no history before it opened, and says nothing it did not read
       if (g.live) {
         const wp = g.wp == null ? 50 : g.wp;
-        const flat = n => Array.from({ length: n }, () => wp);
+        // the score as it went, from the edge's record of the game: momentum and the win
+        // probability path open with the whole game so far, not with the moment the page did
+        const steps = (g.steps || []).slice(-100);
+        const first = steps.length ? steps[0].wp : wp;
+        const hist = Array.from({ length: 108 - steps.length }, () => first).concat(steps.map(x => x.wp));
+        const mom = Array.from({ length: 22 }, () => 0);
+        steps.forEach((x, i) => { if (i) mom.push(((x.hs - x.as) - (steps[i - 1].hs - steps[i - 1].as)) / 2); });
+        const last = steps[steps.length - 1];
         const mk = g.market && g.mktProb != null ? g.mktProb : wp, ln = g.market ? g.line : g.fair;
-        out[g.id] = { real: true, hist: flat(108), mkt: Array.from({ length: 108 }, () => mk), fa: wp, ma: mk, d: 0,
+        out[g.id] = { real: true, hist, mkt: Array.from({ length: 108 }, () => mk), fa: wp, ma: mk, d: 0,
           line: Array.from({ length: 60 }, () => ln), fair: Array.from({ length: 60 }, () => g.fair),
-          mom: Array.from({ length: 22 }, () => 0), margin: g.hs - g.as };
+          mom: mom.slice(-22), margin: last ? last.hs - last.as : g.hs - g.as };
         return;
       }
       // both walks are anchored to the fixture's own lines — the model series to the fair

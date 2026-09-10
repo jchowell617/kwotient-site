@@ -562,7 +562,13 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-03","lg":"nfl","kind":"contra
       per: g.period || 1, sec: clockSeconds(g.clock), clock: g.clock || '', detail: g.detail || '',
       line: Math.round(fair * 2) / 2, fair: Math.round(fair * 10) / 10, total: null, mktTotal: null, market: false,
       seed: hash(String(g.id)), poss: g.status || (g.state === 'in_progress' ? 'in progress' : g.state),
-      wp: w.p * 100, homeK: hk, awayK: ak, model: w
+      wp: w.p * 100, homeK: hk, awayK: ak, model: w,
+      /* the score as it went, from the edge's record of the game, each point read through the
+         same model: what the page's momentum and win-probability path open with */
+      steps: (g.scoring || []).map(function (pt) {
+        var w2 = winProb({ league: g.league, state: 'in_progress', period: pt[3], clock: pt[4], home: { score: pt[2] }, away: { score: pt[1] } }, hk, ak);
+        return { t: pt[0], as: pt[1], hs: pt[2], per: pt[3], clock: pt[4], wp: w2.p * 100 };
+      })
     };
   }
   /* the market for the league, from the edge's odds route */
