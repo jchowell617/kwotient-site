@@ -22,7 +22,11 @@
 <meta name="twitter:image" content="https://www.kwotient.io/assets/share-card.png">
 <meta name="twitter:image:alt" content="Kwotient — Sports Intelligence, On The Record">
 <meta name="theme-color" content="#03050a">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%234d8bff%22%2F%3E%3Cpath%20d%3D%22M9%207h4v8l7-8h5l-8%209%208%209h-5l-7-8v8H9z%22%20fill%3D%22%23050b16%22%2F%3E%3C%2Fsvg%3E">
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/favicon-16.png">
+<link rel="shortcut icon" href="favicon.ico">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -83,8 +87,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=4ce61ba396"></script>
-<script src="./kq-seasons.js?v=752b4bde5c"></script>
+<script src="./kq-bundle.js?v=e51d29bb47"></script>
+<script src="./kq-seasons.js?v=1e866f6eff"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -208,6 +212,15 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=tabs]{position:fixed;left:0;right:0;bottom:0;z-index:200;display:flex;background:color-mix(in srgb,var(--desk) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--grid);padding:6px 4px calc(20px + env(safe-area-inset-bottom))}
   /* the alerts screen IS the feed; the rail under it would show the same items twice */
   [data-tab=alerts] [data-shell=rail]{display:none!important}
+  /* the profile card's headline on a phone: three tiles across, the values one line each,
+     shrinking rather than wrapping — "1 of 158" and "$4.1M over" broke into two lines and
+     the card read as jumbled on an iPhone (10 Sep 2026) */
+  @media (max-width:700px){
+    [data-prof=headline]{gap:10px 14px!important}
+    [data-prof=tile]{flex:1 1 0;min-width:88px}
+    [data-prof=value]{font-size:clamp(13px,4.4vw,18px)!important;letter-spacing:-.01em}
+  }
+
   /* a chevron is an eleven-pixel glyph on a desktop; on a phone it is a thumb's target */
   [data-chev]{min-width:36px!important;min-height:36px!important;font-size:18px!important;padding:0!important;margin:-8px 0 -8px -8px!important;display:inline-flex!important;align-items:center;justify-content:center;touch-action:manipulation}
   [data-theme] button:hover{transform:none}
@@ -1929,11 +1942,11 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     </div>
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">OVERALL SCORE</span>
                   </div>
-                  <div style="display:flex;gap:22px">
+                  <div data-prof="headline" style="display:flex;gap:22px;flex-wrap:wrap">
                     <sc-for list="{{ profile.headline }}" as="h" hint-placeholder-count="3">
-                      <div style="display:flex;flex-direction:column;gap:5px">
-                        <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ h.k }}</span>
-                        <span style="font-family:var(--kw);font-size:20px;font-weight:700">{{ h.v }}</span>
+                      <div data-prof="tile" style="display:flex;flex-direction:column;gap:5px;min-width:0">
+                        <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted);white-space:nowrap">{{ h.k }}</span>
+                        <span data-prof="value" style="font-family:var(--kw);font-size:20px;font-weight:700;white-space:nowrap">{{ h.v }}</span>
                       </div>
                     </sc-for>
                   </div>
