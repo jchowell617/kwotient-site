@@ -3086,7 +3086,9 @@ class Component extends DCLogic {
     const g = st.liveSlate.find(x => x.id === st.activeId) || st.liveSlate[0];
     if (!g.live || !/^\d+$/.test(String(g.gameId))) return;
     const have = (st.props || {})[g.id];
-    if (have && have.at && Date.now() - Date.parse(have.at) < 60000) return;
+    // asked every ten seconds; the edge answers from its own cache, a minute old at most while
+    // the game is on, since every fresh read of the props costs the month's credits
+    if (have && have.at && Date.now() - Date.parse(have.at) < 10000) return;
     S.props(st.sport, g.gameId).then(r => this.setState(x => ({ props: Object.assign({}, x.props, { [g.id]: Object.assign({ at: new Date().toISOString() }, r) }) })));
   }
   // the open game's first trend player gets his log without being clicked
