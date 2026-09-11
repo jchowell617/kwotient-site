@@ -572,6 +572,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <div style="{{ tipStyle }}">
                         <div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:11.5px;color:var(--brand)"><span>{{ homeAbbr }}</span><span>{{ tipHome }}</span></div>
                         <div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:11.5px;color:var(--lead);margin-top:3px"><span>{{ awayAbbr }}</span><span>{{ tipAway }}</span></div>
+                        <sc-if value="{{ tipMktOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:10.5px;color:var(--muted);margin-top:3px"><span>MKT {{ homeAbbr }}</span><span>{{ tipMkt }}</span></div></sc-if>
                         <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:.1em">{{ tipTime }}</div>
                       </div>
                     </div>
@@ -3489,10 +3490,37 @@ class Component extends DCLogic {
     }
     const wpX = t => (t / TOTAL) * 600, wpY = v => 222 - (v / 100) * 222;
     const wpPathOf = key => wpPts.map((pt, i) => (i ? 'L' : 'M') + wpX(pt.t).toFixed(1) + ' ' + wpY(pt[key]).toFixed(1)).join(' ');
+    // THE MARKET LINE BY GAME TIME (owner, 11 Sep 2026): the edge's history of the consensus
+    // — a sample on its own beat, wall-clock stamped — placed on the game clock through the
+    // score-as-it-went record, whose points carry both the wall clock and the game clock; the
+    // line then moves through the game as the books did. Pregame samples fold to the kickoff.
+    const mktPts = (() => {
+      const hist = g.live && Array.isArray(g.history) ? g.history.filter(h => h && h[3] != null) : [];
+      const steps = (g.steps || []).filter(x => x.t != null).map(x => ({ w: x.t, e: x.per == null ? TOTAL : elapsedOf(x.per > 4 ? 'Q5' : 'Q' + x.per + (x.clock ? ' ' + x.clock : '')) })).filter(x => x.e != null).sort((a, b) => a.w - b.w);
+      const kick = Date.parse(g.start || '') || (steps.length ? steps[0].w : null);
+      if (!hist.length || !s.real) return null;
+      const nowW = Date.now();
+      const anchors = (kick != null ? [{ w: kick, e: 0 }] : []).concat(steps).concat(g.state === 'final' ? [] : [{ w: nowW, e: elapsedNow }]);
+      const wallToGame = w => { if (!anchors.length) return null; if (w <= anchors[0].w) return 0; for (let i = 1; i < anchors.length; i++) { if (w <= anchors[i].w) { const a = anchors[i - 1], b = anchors[i]; const f = b.w === a.w ? 1 : (w - a.w) / (b.w - a.w); return a.e + (b.e - a.e) * f; } } return anchors[anchors.length - 1].e; };
+      const pts = []; let pre = null;
+      hist.forEach(h => { const m = h[3] * 100; if (kick != null && h[0] < kick) { pre = m; return; } const t = wallToGame(h[0]); if (t == null) return; pts.push({ t: Math.min(TOTAL, t), m }); });
+      pts.sort((a, b) => a.t - b.t);
+      const out = pts.filter((pt, i, a) => i === a.length - 1 || a[i + 1].t !== pt.t);
+      if (!out.length || out[0].t > 0) out.unshift({ t: 0, m: pre != null ? pre : (out.length ? out[0].m : mk) });
+      if (hasMarket && out[out.length - 1].t < elapsedNow) out.push({ t: elapsedNow, m: mk });
+      return out;
+    })();
+    const mktPathOf = () => mktPts ? mktPts.map((pt, i) => (i ? 'L' : 'M') + wpX(pt.t).toFixed(1) + ' ' + wpY(pt.m).toFixed(1)).join(' ') : wpPathOf('m');
+    const mktAt = t => { const P = mktPts; if (!P || !P.length) return null; if (t <= P[0].t) return P[0].m; for (let i = 1; i < P.length; i++) { if (t <= P[i].t) { const a = P[i - 1], b = P[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return a.m + (b.m - a.m) * f; } } return P[P.length - 1].m; };
+    // THE HOVER READS ANY MOMENT (owner, 11 Sep 2026): the cursor sits anywhere on the chart and
+    // reads the probability at that moment on the game's clock, interpolated along the curve
+    // between the samples on either side — never snapped to a sample
     const hn = wpPts.length;
-    const hi = st.hoverIdx === null || st.hoverIdx === undefined ? null : clamp(st.hoverIdx, 0, hn - 1);
-    const hv = hi === null ? wp : wpPts[hi].v;
-    const hx = hi === null ? 0 : (wpPts[hi].t / TOTAL) * 100;
+    const lastT = wpPts.length ? wpPts[wpPts.length - 1].t : 0;
+    const wpAt = t => { if (!wpPts.length) return { v: wp, m: mk }; if (t <= wpPts[0].t) return wpPts[0]; for (let i = 1; i < wpPts.length; i++) { if (t <= wpPts[i].t) { const a = wpPts[i - 1], b = wpPts[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return { v: a.v + (b.v - a.v) * f, m: a.m != null && b.m != null ? a.m + (b.m - a.m) * f : (b.m != null ? b.m : a.m) }; } } return wpPts[wpPts.length - 1]; };
+    const hi = st.hoverIdx === null || st.hoverIdx === undefined ? null : clamp(st.hoverIdx, 0, lastT);
+    const hv = hi === null ? wp : wpAt(hi).v;
+    const hx = hi === null ? 0 : (hi / TOTAL) * 100;
     const hyH = 100 - hv;
     const hyA = hv;
     // the tooltip is ~64px tall in a 222px plot (~29%); flip it below the anchor
@@ -5680,7 +5708,7 @@ class Component extends DCLogic {
       wpPath: wpPathOf('v'),
       hasMarket,
       wpSubtitle: hasMarket ? 'model per team vs market-implied, full game' : 'model per team, full game',
-      mktPath: hasMarket ? wpPathOf('m') : '',
+      mktPath: hasMarket ? mktPathOf() : '',
       heroMarket: hasMarket ? g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') : '',
       heroMarketSub: hasMarket ? (g.marketN || 0) + ' books · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) + ' · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       heroEdge: hasMarket ? 'model ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase() : '',
@@ -5778,10 +5806,9 @@ class Component extends DCLogic {
       ...(() => {
         const move = (e) => {
           const r = e.currentTarget.getBoundingClientRect();
-          // the nearest sample to the moment under the pointer, on the game's clock
-          const t = ((this.ptX(e) - r.left) / Math.max(1, r.width)) * TOTAL;
-          let i = 0; wpPts.forEach((pt, k) => { if (Math.abs(pt.t - t) < Math.abs(wpPts[i].t - t)) i = k; });
-          if (i !== st.hoverIdx) this.setState({ hoverIdx: i });
+          // the moment under the pointer, on the game's clock, up to where the game stands
+          const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * TOTAL, 0, lastT));
+          if (t !== st.hoverIdx) this.setState({ hoverIdx: t });
         };
         return { onHover: move,
                  onHoverTouchStart: (e) => this.touchScrub(e, 'start'),
@@ -5801,7 +5828,8 @@ class Component extends DCLogic {
         };
         // a sample with its own clock is named by it; one from before the record opened is the
         // kickoff; a seeded fixture's is placed along the game
-        const nameAt = (whens, i, frac) => whens ? (whens[i] || 'KICKOFF') : clockAt(frac);
+        // a slot with a recorded clock is named by it; one without reads as its place in the time played
+        const nameAt = (whens, i, frac) => (whens && whens[i]) ? whens[i] : clockAt(frac);
         const build = (key, series, H, fmt, dom, whens) => {
           const n = series[0].vals.length;
           const idx = st[key] === null || st[key] === undefined ? null : clamp(st[key], 0, n - 1);
@@ -5850,8 +5878,9 @@ class Component extends DCLogic {
       hoverRingA: 'position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--lead);left:' + hx + '%;top:' + hyA + '%;transform:translate(-50%,-50%)',
       tipStyle: 'position:absolute;left:' + hx + '%;top:' + tipTop.toFixed(2) + '%;transform:translate(' + (hx > 65 ? '-105%' : hx < 12 ? '-2%' : '-50%') + ',' + (tipBelow ? '8%' : '-108%') + ');background:var(--rail);border:1px solid var(--brand);border-radius:8px;padding:8px 11px;width:max-content;max-width:min(220px,68vw);white-space:normal;overflow-wrap:anywhere;box-shadow:0 6px 18px rgba(0,0,0,.5)',
       tipHome: hv.toFixed(1) + '%',
+      tipMktOn: hasMarket && hi !== null && mktAt(hi) != null, tipMkt: hi === null || mktAt(hi) == null ? '' : mktAt(hi).toFixed(1) + '%',
       tipAway: (100 - hv).toFixed(1) + '%',
-      tipTime: hi === null ? '' : (wpPts[hi].when || clockAtT(wpPts[hi].t)),
+      tipTime: hi === null ? '' : (g.state === 'final' && hi >= TOTAL ? 'FINAL' : clockAtT(hi)),
       wpArea: wpPathOf('v') + ' L' + wpX(wpPts[wpPts.length - 1].t).toFixed(1) + ' 222 L' + wpX(wpPts[0].t).toFixed(1) + ' 222 Z',
       dotX: wpX(wpPts[wpPts.length - 1].t).toFixed(1), dotY: (222 - (wp / 100) * 222).toFixed(1),
       periodLines: [1, 2, 3].map(i => ({ x: i * 150 })),
