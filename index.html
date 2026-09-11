@@ -1101,7 +1101,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ p.playerProps.open }}" hint-placeholder-val="{{ true }}">
               <sc-for list="{{ propTable }}" as="r" hint-placeholder-count="8">
                 <div style="display:flex;justify-content:space-between;gap:10px;padding:6px 0 6px 28px;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline">
-                  <span style="flex:1.6;color:var(--reversed);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.who }}</span><span style="{{ r.teamStyle }}">{{ r.team }}</span><span style="flex:.5;color:var(--second)">{{ r.pos }}</span><span style="flex:1;color:var(--second)">{{ r.market }}</span><span style="flex:.6;font-weight:700">{{ r.line }}</span><span style="flex:1;color:var(--second)">{{ r.prices }}</span><span style="flex:.5;color:var(--faint)">{{ r.books }}</span><span style="{{ r.l10Style }};flex:.7;text-align:right">{{ r.l10 }}</span><span style="{{ r.overStyle }};flex:.7;text-align:right">{{ r.over }}</span>
+                  <span style="flex:1.6;color:var(--reversed);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.who }}</span><span style="{{ r.teamStyle }}">{{ r.team }}</span><span style="flex:.5;color:var(--second)">{{ r.pos }}</span><span style="flex:1;color:var(--second)">{{ r.market }}</span><span style="flex:.6;font-weight:700">{{ r.line }}</span><span style="flex:1;color:var(--second)">{{ r.prices }}</span><span style="flex:.5;color:var(--faint)">{{ r.books }}</span><span style="{{ r.l10Style }};flex:.7;text-align:right">{{ r.l10 }}</span><span style="{{ r.overStyle }};flex:.7;text-align:right">{{ r.over }}</span><span style="flex:.6;text-align:right;color:var(--reversed);font-weight:700">{{ r.actual }}</span><span style="{{ r.resultStyle }}">{{ r.result }}</span>
                 </div>
               </sc-for>
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
@@ -3921,8 +3921,31 @@ class Component extends DCLogic {
     const rosterByName = {}; rosterAll.forEach(p => { rosterByName[NK(p.full || p.name || p.n)] = p; });
     const propTeamOf = r => { const p = rosterByName[NK(r.who)]; return p ? p.team : null; };
     const propPosOf = r => { const p = rosterByName[NK(r.who)]; return p && p.pos ? String(p.pos) : null; };
+    // THE GAME'S OWN NUMBER FOR A PROP (owner, 10 Sep 2026: the props widget updates after each
+    // game): the player's line on the market's stat from the live box while the game is on and
+    // once it is over — a touchdown scored for the anytime market, the club's score for a team
+    // total — and the verdict against the consensus line: over, under, push, yes or no
+    const PROP_STAT = sport === 'NBA'
+      ? { player_points: b => b.pts, player_rebounds: b => b.reb, player_assists: b => b.ast, player_threes: b => b.fg3m, player_points_rebounds_assists: b => (b.pts || 0) + (b.reb || 0) + (b.ast || 0) }
+      : { player_pass_yds: b => b.pass_yds, player_rush_yds: b => b.rush_yds, player_reception_yds: b => b.rec_yds, player_receptions: b => b.rec, player_anytime_td: b => (b.rush_td || 0) + (b.rec_td || 0) };
+    const propGameOn = !!(g.live && (g.state === 'in_progress' || g.state === 'final')), propFinal = !!(g.live && g.state === 'final');
+    const propActual = r => {
+      if (!propGameOn) return null;
+      if (r.team) { const nm = NK(r.who); if (nm === NK(g.home)) return g.hs; if (nm === NK(g.away)) return g.as; return null; }
+      if (!boxOn) return null;
+      const f = PROP_STAT[r.market]; if (!f) return null;
+      const line = (box.home || []).concat(box.away || []).find(b => NK(b.n) === NK(r.who)); if (!line) return null;
+      const v = f(line); return v == null ? null : v;
+    };
+    const propVerdict = r => {
+      const a = propActual(r); const c = r.consensus || {}; if (a == null) return null;
+      if (r.market === 'player_anytime_td') return a >= 1 ? 'YES' : propFinal ? 'NO' : 'not yet';
+      if (c.line == null) return null;
+      return (a > c.line ? 'OVER' : a < c.line ? 'UNDER' : 'PUSH') + (propFinal ? '' : ' so far');
+    };
     const propGet = {
       who: r => r.who, team: r => propTeamOf(r) || '—', pos: r => propPosOf(r) || '—', market: r => r.label, line: r => r.consensus ? r.consensus.line : null, over: r => r.consensus ? r.consensus.over : null,
+      actual: r => propActual(r), result: r => propVerdict(r),
       books: r => r.consensus ? r.consensus.n : null, l10: r => { const v = readVsLine(r); return v ? v.l10 : null; },
       hit: r => { const v = readVsLine(r); return v ? (v.over > v.n / 2 ? 'over half' : v.over < v.n / 2 ? 'under half' : 'even') : 'no log'; }
     };
@@ -3939,7 +3962,8 @@ class Component extends DCLogic {
       tcol('props', 'market', 'MARKET', tdistinct(playerProps, propGet.market), 'left', 1),
       tcol('props', 'line', 'LINE', null, 'left', .6), tcol('props', 'over', 'OVER / UNDER', null, 'left', 1),
       tcol('props', 'books', 'BOOKS', tdistinct(playerProps, r => String(propGet.books(r))), 'left', .5),
-      tcol('props', 'l10', propUseVs ? 'AVG VS OPP' : 'SEASON AVG', null, 'right', .7), tcol('props', 'hit', propUseVs ? 'OVER VS OPP' : 'OVER', tdistinct(playerProps, propGet.hit), 'right', .7)
+      tcol('props', 'l10', propUseVs ? 'AVG VS OPP' : 'SEASON AVG', null, 'right', .7), tcol('props', 'hit', propUseVs ? 'OVER VS OPP' : 'OVER', tdistinct(playerProps, propGet.hit), 'right', .7),
+      tcol('props', 'actual', propFinal ? 'ACTUAL' : 'SO FAR', null, 'right', .6), tcol('props', 'result', 'RESULT', tdistinct(playerProps, r => propGet.result(r) || '—'), 'right', .8)
     ];
     // the books table: one row per club per book — that side's spread and moneyline, the total
     const bookName = b => String(b.title || b.book || '').replace(/_/g, ' ');
@@ -4795,7 +4819,8 @@ class Component extends DCLogic {
               { k: 'TONIGHT · LINE', v: sgn(sp) + ' · ' + (g.marketN || 0) + ' books' },
               { k: 'TONIGHT · MONEYLINE', v: oddsFmt(ml) },
               { k: 'TONIGHT · GAME TOTAL', v: g.mktTotal != null ? String(g.mktTotal) : '—' },
-              { k: 'TONIGHT · TEAM TOTAL', v: tt && tt.consensus && tt.consensus.line != null ? tt.consensus.line + ' · over ' + oddsFmtP(tt.consensus.over) + ' / under ' + oddsFmtP(tt.consensus.under) : 'not posted' }
+              { k: 'TONIGHT · TEAM TOTAL', v: (tt && tt.consensus && tt.consensus.line != null ? tt.consensus.line + ' · over ' + oddsFmtP(tt.consensus.over) + ' / under ' + oddsFmtP(tt.consensus.under) : 'not posted')
+                  + (g.live && (g.state === 'in_progress' || g.state === 'final') ? ' · ' + (cl.abbr === g.homeAbbr ? g.hs : g.as) + (g.state === 'final' ? ' scored' : ' so far') : '') }
             ];
           })()),
           edge: clubGap == null ? '—' : S.M(Math.abs(clubGap)) + (clubGap > 0 ? ' under' : ' over'),
@@ -5979,7 +6004,10 @@ paceRows: (() => {
         l10: v ? (v.l10 > 12 ? v.l10.toFixed(1) : v.l10.toFixed(2)) : '—',
         over: v ? v.over + ' of ' + v.n : '—',
         overStyle: 'font-family:var(--kw);font-size:11px;color:' + (v ? (v.over > v.n / 2 ? ACC : v.over < v.n / 2 ? RED : 'var(--reversed)') : 'var(--muted)'),
-        l10Style: 'font-family:var(--kw);font-size:11px;color:' + (v && c.line != null ? (v.l10 > c.line ? ACC : RED) : 'var(--muted)')
+        l10Style: 'font-family:var(--kw);font-size:11px;color:' + (v && c.line != null ? (v.l10 > c.line ? ACC : RED) : 'var(--muted)'),
+        actual: (() => { const a = propActual(r); return a == null ? '—' : String(a); })(),
+        result: propVerdict(r) || '—',
+        resultStyle: 'font-family:var(--kw);font-size:10px;letter-spacing:.06em;flex:.8;text-align:right;color:' + ((() => { const vd = propVerdict(r) || ''; return /^(OVER|YES)/.test(vd) ? ACC : /^(UNDER|NO)/.test(vd) ? RED : vd ? 'var(--reversed)' : 'var(--muted)'; })())
       }; }),
       propHasMore: propShown.length > propLimit,
       propMoreLabel: 'Show ' + Math.min(PROP_PAGE, propShown.length - propLimit) + ' more',
