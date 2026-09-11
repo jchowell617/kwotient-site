@@ -5816,7 +5816,10 @@ class Component extends DCLogic {
       mktValStyle: 'position:absolute;right:0;top:' + yMkt.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:' + MKT_COLOR + '',
       fairValStyle: 'position:absolute;right:0;top:' + yFair.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:' + ACC,
       lineEdgeNote: edgeText,
-      lineCaption: (hist.length >= 2 ? 'consensus across ' + (g.marketN || 0) + ' books · ' + hist.length + ' readings since ' + (S ? S.age(new Date(hist[0][0]).toISOString()) : '') + ' ago' : 'market since this panel opened · ' + (g.marketN || 0) + ' books')
+      // the count follows the chart: readings since the kickoff in a game, none before it
+      lineCaption: (pre ? 'consensus across ' + (g.marketN || 0) + ' books'
+                   : inGame ? 'consensus across ' + (g.marketN || 0) + ' books · ' + (gHist.length - 1) + (gHist.length - 1 === 1 ? ' reading' : ' readings') + ' since kickoff'
+                   : (hist.length >= 2 ? 'consensus across ' + (g.marketN || 0) + ' books · ' + hist.length + ' readings since ' + (S ? S.age(new Date(hist[0][0]).toISOString()) : '') + ' ago' : 'market since this panel opened · ' + (g.marketN || 0) + ' books'))
                    + (hasOpen ? ' · opening line from the books' : ' · opening line not posted yet'),
       mtotalBig: hasMarket && g.mktTotal != null ? String(g.mktTotal) : '—',
       mtotalOpen: hasMarket ? (g.opening && g.opening.total != null ? 'opened ' + g.opening.total + ' · moved ' + sgn(g.mktTotal - g.opening.total) : 'opening total not posted yet') : '',
