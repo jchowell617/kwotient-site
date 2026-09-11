@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_RECORD_VER = "947f583e1e";</script>
+<script>window.KQ_RECORD_VER = "bbcb858608";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -87,8 +87,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=2b01622e49"></script>
-<script src="./kq-seasons.js?v=aec0ddb41e"></script>
+<script src="./kq-bundle.js?v=267ba85e66"></script>
+<script src="./kq-seasons.js?v=2b86ee3dc4"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -215,9 +215,17 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   /* the profile card's headline on a phone: three tiles across, the values one line each,
      shrinking rather than wrapping — "1 of 158" and "$4.1M over" broke into two lines and
      the card read as jumbled on an iPhone (10 Sep 2026) */
+  /* the profile card on a phone: the name and the score share the top line, and the sub-line
+     spreads across the card's full width beneath them rather than stacking in a narrow column
+     beside the score (owner, 10 Sep 2026) */
   @media (max-width:700px){
-    [data-prof=headline]{gap:10px 14px!important}
-    [data-prof=tile]{flex:1 1 0;min-width:88px}
+    [data-prof=hero]{position:relative;gap:12px 18px!important}
+    [data-prof=name]{flex:1 1 100%!important}
+    [data-prof=name] > span:nth-child(1),[data-prof=name] > span:nth-child(2){padding-right:104px}
+    [data-prof=name] > span:nth-child(2){font-size:20px!important;line-height:1.15}
+    [data-prof=score]{position:absolute;right:18px;top:16px;padding:0!important}
+    [data-prof=headline]{flex:1 1 100%!important;gap:10px 14px!important}
+    [data-prof=tile]{flex:1 1 0!important;min-width:88px!important}
     [data-prof=value]{font-size:clamp(13px,4.4vw,18px)!important;letter-spacing:-.01em}
   }
 
@@ -1915,8 +1923,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <sc-if value="{{ hasProfile }}" hint-placeholder-val="{{ false }}">
               <div data-page="" style="display:flex;flex-direction:column;gap:13px">
 
-                <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:linear-gradient(180deg,var(--divider),var(--surface));padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-                  <div style="display:flex;flex-direction:column;gap:5px;min-width:0;flex:1">
+                <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:linear-gradient(180deg,var(--divider),var(--surface));padding:18px 20px;display:flex;align-items:center;gap:18px;flex-wrap:wrap" data-prof="hero">
+                  <div data-prof="name" style="display:flex;flex-direction:column;gap:5px;min-width:0;flex:1">
                     <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">{{ profile.kind }} PROFILE</span>
                     <span style="font-size:22px;font-weight:600">{{ profile.name }}</span>
                     <span style="font-family:var(--kw);font-size:10px;color:var(--second)">{{ profile.sub }}</span>
@@ -1936,7 +1944,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </div>
                   </div>
-                  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:0 14px 0 0">
+                  <div data-prof="score" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:0 14px 0 0">
                     <div style="display:flex;align-items:baseline;gap:7px">
                       <span style="{{ profile.cardStyle }}">{{ profile.card.overall }}</span>
                     </div>
@@ -3011,6 +3019,9 @@ class Component extends DCLogic {
       this.loadStory();
       this.loadBox();
       this.loadProps();
+      // a final on the board: the day's readings are read, so a club's timeline and the track
+      // record can grade today's call against the morning's first reading
+      if (games.some(g => g.live && g.state === 'final')) { try { const d = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); this.loadDay(sport.toLowerCase(), d); } catch (e) {} }
       if (!this._standingsAt || Date.now() - this._standingsAt > 15 * 60000) { this._standingsAt = Date.now(); this.loadStandings(); }
       // with nothing on the slate there is no game to read logs for; the placeholder is not asked
       if ((r.games || []).length || upcoming) setTimeout(() => this.ensureTrendLog(), 0);
@@ -3389,6 +3400,8 @@ class Component extends DCLogic {
       : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
     // a text with the city and nickname of every club code it names, so a keyword finds the line
     const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
+    // the Eastern day an instant falls on — the day the record files a game under
+    const etDayOf = iso => { try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso)); } catch (e) { return String(iso || '').slice(0, 10); } };
     const S = st.kq === 'ready' ? SRC() : null;
     // the slate is the edge's when it answers with games; the seeded one, and labeled so, otherwise
     const liveOn = !!(st.liveSlate && st.liveSlate.length);
@@ -5219,7 +5232,7 @@ class Component extends DCLogic {
         { k: 'Ratings, cohorts, contracts, injuries', v: 'The Kwotient record: the engine\'s ratings and dimensions, the cohort registers and filings with their hashes, contract terms from Over the Cap and nflverse, and the captured injury report. Rebuilt every morning from the day\'s captures.' }
       ],
       refGlossary: [
-        { k: 'KQ rating', v: 'The record\'s 0 to 100 rating of a player or club for the season in play: a rank inside the position cohort, never a blend or a guess.' },
+        { k: 'KQ rating', v: 'The record\'s 0 to 100 rating of a player or club: his rank inside the position cohort on the season as played, each game weighted in over the completed season until the season stands on its own. It moves after every game.' },
         { k: 'Model line', v: 'The model\'s own fair spread for a game, from the two club cards and the score; negative favors the home side.' },
         { k: 'Prior', v: 'The model\'s win probability before a ball is played, from the two club cards alone.' },
         { k: 'Consensus', v: 'The median line across the books that post one; for the moneyline, the mean implied probability with the vig removed.' },
@@ -5373,7 +5386,18 @@ class Component extends DCLogic {
       boardGames,
       // ---------- the model's track record (Model tab) ----------
       ...(() => {
-        const R = window.KQ_RECORD_CALLS || null; const all = R ? R.calls : [];
+        const R = window.KQ_RECORD_CALLS || null;
+        // a call graded live: a game on today's board that has gone final settles its call here
+        // and now, before the morning files it — the same arithmetic the filer uses
+        const liveFinal = {}; (st.liveSlate || []).forEach(g => { if (g.live && g.state === 'final' && g.gameId != null) liveFinal[String(g.gameId)] = g; });
+        const all = (R ? R.calls : []).map(c => {
+          if (c.right != null) return c;
+          const g = liveFinal[String(c.id)]; if (!g) return c;
+          const margin = g.hs - g.as, winner = margin > 0 ? c.home : margin < 0 ? c.away : 'tie';
+          const covered = c.line != null && c.edge ? (c.edge > 0 ? margin + c.line > 0 : margin + c.line < 0) : null;
+          return Object.assign({}, c, { as: g.as, hs: g.hs, margin, winner, right: c.side ? winner === c.side : null, covered, status: 'Final', liveGraded: true });
+        });
+        const liveN = all.filter(c => c.liveGraded).length;
         const sportCalls = all.filter(c => c.lg === sport);
         const settled = sportCalls.filter(c => c.right != null).slice().sort((a, b) => (a.settled || a.d).localeCompare(b.settled || b.d) || a.away.localeCompare(b.away));
         const right = settled.filter(c => c.right).length, wrong = settled.length - right;
@@ -5391,10 +5415,10 @@ class Component extends DCLogic {
         const n = f => all.filter(f).length, cnt = k => k + (k === 1 ? ' call' : ' calls');
         const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
         // the table's columns: sortable and filterable from their headers, as every built table is
-        const trGet = { d: c => c.d, game: c => c.away + ' @ ' + c.home, prior: c => c.prior, fair: c => c.fair, line: c => c.line, edge: c => c.edge == null ? null : Math.abs(c.edge), final: c => c.margin, call: c => verdictOf(c) };
+        const trGet = { d: c => c.start ? etDayOf(c.start) : c.d, game: c => c.away + ' @ ' + c.home, prior: c => c.prior, fair: c => c.fair, line: c => c.line, edge: c => c.edge == null ? null : Math.abs(c.edge), final: c => c.margin, call: c => verdictOf(c) };
         TABLES.track = { rows: shown, get: trGet };
         const sorted = tapply('track', shown, trGet, rowText(trGet));
-        const row = c => ({ day: S ? S.day(c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
+        const row = c => ({ day: S ? S.day(c.start ? etDayOf(c.start) : c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
           edge: c.edge == null || !c.on ? 'no edge' : Math.abs(c.edge).toFixed(1) + ' on ' + c.on, final: c.margin == null ? (c.status || 'scheduled') : c.as + '-' + c.hs,
           call: c.right == null ? 'OPEN' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
         // the cumulative line
@@ -5414,7 +5438,7 @@ class Component extends DCLogic {
         const di = st.trDotHover == null ? null : clamp(st.trDotHover, 0, Math.max(0, dotted.length - 1)); const dh = di == null ? null : dotted[di];
         const dotStyle = (d, i) => 'position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);left:' + (d.e / eMax * 96 + 2).toFixed(1) + '%;top:' + (50 - d.cm / cMax * 46).toFixed(1) + '%;background:' + (d.c.covered ? 'var(--good)' : 'var(--critical)') + ';box-shadow:0 0 0 2px var(--surface)' + (i === di ? ';width:13px;height:13px' : '');
         return {
-          trNote: R ? (sportCalls.length + ' ' + sport + ' calls on the record · ' + settled.length + ' settled · built ' + (S ? S.day(R.summary.built) : R.summary.built)) : 'reading the record…',
+          trNote: R ? (sportCalls.length + ' ' + sport + ' calls on the record · ' + settled.length + ' settled' + (liveN ? ' · ' + liveN + ' graded live today, filed in the morning' : '') + ' · built ' + (S ? S.day(R.summary.built) : R.summary.built)) : 'reading the record…',
           trTiles: [
             { k: 'CALLS', v: String(sportCalls.length), sub: 'filed before kickoff', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
             { k: 'SETTLED', v: String(settled.length), sub: sportCalls.length - settled.length + ' still open', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
@@ -5456,6 +5480,16 @@ class Component extends DCLogic {
         const pr = profile || null; const isClubP = pr && pr.kind === 'CLUB'; const ent = pr ? (st.profileEnt || null) : null;
         const clubAbbr = pr ? (isClubP ? pr.mono : (ent && ent.team) || null) : null;
         const games = T && clubAbbr && T.clubs[clubAbbr] ? T.clubs[clubAbbr].filter(x => x.margin != null || x.status) : [];
+        // today's final from the board, before the morning files it: the club's row for the day,
+        // read against the day's first reading when the record has it
+        const todayET = etDayOf(new Date().toISOString());
+        if (clubAbbr && !games.some(x => x.d === todayET)) (st.liveSlate || []).forEach(g => {
+          if (!(g.live && g.state === 'final') || (g.homeAbbr !== clubAbbr && g.awayAbbr !== clubAbbr)) return;
+          const home = g.homeAbbr === clubAbbr; const pf = home ? g.hs : g.as, pa = home ? g.as : g.hs;
+          const dayRec = (st.recDays || {})[String(sport).toLowerCase() + ':' + todayET]; const rec = dayRec && dayRec.games ? dayRec.games.find(x => String(x.gameId) === String(g.gameId)) : null; const f = rec ? (rec.first || {}) : {};
+          const side = f.modelSide || null, opp = home ? g.awayAbbr : g.homeAbbr; const winner = pf > pa ? clubAbbr : pf < pa ? opp : 'tie';
+          games.push({ d: todayET, opp, home, prior: f.prior == null ? null : (home ? f.prior : Math.round((100 - f.prior) * 10) / 10), edge: f.edge != null ? f.edge : null, on: f.edgeOn || null, pf, pa, margin: pf - pa, right: side ? winner === side : null, status: 'Final', live: true });
+        });
         // a player's timeline is his own: the games he played, from his log, each joined to the club's game on the record
         // for the model's read of it; a club's is the club's games
         const plog = !isClubP && pr && st.profileId ? (st.logs || {})[this.logKey(st.profileId)] : null;
