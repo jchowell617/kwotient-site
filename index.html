@@ -3324,6 +3324,17 @@ class Component extends DCLogic {
     sc.onerror = () => { delete this._rec[src]; this.setState({ recTick: (this.state.recTick || 0) + 1 }); };
     document.head.appendChild(sc);
   }
+  // a finished game's box from the edge, for a timeline row the record has not filed a box for
+  // yet — the same lines the morning's filing will keep
+  loadEdgeBox(sport, gameId) {
+    const S = SRC(); const key = String(gameId); const have = this.state.tlBox || {}; if (!S || have[key]) return;
+    this.setState({ tlBox: Object.assign({}, have, { [key]: { loading: true } }) });
+    // each side's eight fullest lines, as the morning's filing keeps them
+    const full = String(sport).toUpperCase() === 'NBA' ? r => (r.pts || 0) + (r.reb || 0) / 4 + (r.ast || 0) / 3 : r => (r.pass_yds || 0) + (r.rush_yds || 0) + (r.rec_yds || 0) + (r.tkl || 0) * 8 + (r.sacks || 0) * 20 + (r.int || 0) * 25;
+    const keep = rows => (rows || []).slice().sort((a, b) => full(b) - full(a)).slice(0, 8);
+    S.boxscore(sport, gameId).then(b => this.setState(x => ({ tlBox: Object.assign({}, x.tlBox, { [key]: b.ok && b.available ? { at: b.at || b.fetched || null, away: keep(b.away), home: keep(b.home) } : { missing: true } }) })))
+      .catch(() => this.setState(x => ({ tlBox: Object.assign({}, x.tlBox, { [key]: { missing: true } }) })));
+  }
   loadDay(lg, day) {
     const key = lg + ':' + day; const have = this.state.recDays || {}; if (have[key]) return;
     this.setState({ recDays: Object.assign({}, have, { [key]: { loading: true } }) });
@@ -5488,7 +5499,7 @@ class Component extends DCLogic {
           const home = g.homeAbbr === clubAbbr; const pf = home ? g.hs : g.as, pa = home ? g.as : g.hs;
           const dayRec = (st.recDays || {})[String(sport).toLowerCase() + ':' + todayET]; const rec = dayRec && dayRec.games ? dayRec.games.find(x => String(x.gameId) === String(g.gameId)) : null; const f = rec ? (rec.first || {}) : {};
           const side = f.modelSide || null, opp = home ? g.awayAbbr : g.homeAbbr; const winner = pf > pa ? clubAbbr : pf < pa ? opp : 'tie';
-          games.push({ d: todayET, opp, home, prior: f.prior == null ? null : (home ? f.prior : Math.round((100 - f.prior) * 10) / 10), edge: f.edge != null ? f.edge : null, on: f.edgeOn || null, pf, pa, margin: pf - pa, right: side ? winner === side : null, status: 'Final', live: true });
+          games.push({ d: todayET, opp, home, gameId: g.gameId, prior: f.prior == null ? null : (home ? f.prior : Math.round((100 - f.prior) * 10) / 10), edge: f.edge != null ? f.edge : null, on: f.edgeOn || null, pf, pa, margin: pf - pa, right: side ? winner === side : null, status: 'Final', live: true });
         });
         // a player's timeline is his own: the games he played, from his log, each joined to the club's game on the record
         // for the model's read of it; a club's is the club's games
@@ -5545,14 +5556,23 @@ class Component extends DCLogic {
               : [r.pass_yds != null ? r.pass_yds + ' pass yds' + (r.pass_td ? ', ' + r.pass_td + ' td' : '') : null, r.rush_yds != null ? r.rush_yds + ' rush yds' : null, r.rec_yds != null ? (r.rec != null ? r.rec + ' rec, ' : '') + r.rec_yds + ' yds' : null, r.tkl != null ? r.tkl + ' tkl' : null, r.sacks ? r.sacks + ' sk' : null, r.int ? r.int + ' int' : null].filter(Boolean).join(' · ');
             // a tap on a game reads that day from the record and opens the game's box score
             const openKey = st.tlOpen || null;
-            const gameOf = x => { const doc = (st.recDays || {})[lgl + ':' + x.d]; if (!doc || !doc.games) return { loading: !!(doc && doc.loading), game: null }; const me = clubAbbr; const gm = doc.games.find(gg => (gg.home === me && gg.away === x.opp) || (gg.away === me && gg.home === x.opp)); return { loading: false, game: gm || null }; };
+            // today's final, before the morning files it: the day's first reading when the record has
+            // it, the box from the edge once a tap has fetched it
+            const edgeBox = id => { const b = (st.tlBox || {})[String(id)]; return b && !b.missing && !b.loading ? b : null; };
+            const gameOf = x => {
+              const doc = (st.recDays || {})[lgl + ':' + x.d]; const me = clubAbbr;
+              const gm = doc && doc.games ? doc.games.find(gg => (gg.home === me && gg.away === x.opp) || (gg.away === me && gg.home === x.opp)) : null;
+              if (gm) return { loading: false, game: gm.box || x.gameId == null ? gm : Object.assign({}, gm, { box: edgeBox(x.gameId) }) };
+              if (x.live && x.gameId != null) { const bx = edgeBox(x.gameId); const lb = (st.tlBox || {})[String(x.gameId)]; return { loading: !!(lb && lb.loading) || !!(doc && doc.loading), game: { gameId: x.gameId, home: x.home ? me : x.opp, away: x.home ? x.opp : me, first: {}, box: bx } }; }
+              return { loading: !!(doc && doc.loading), game: null };
+            };
             const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
             return {
               tlBox: searchFor('tlgames', histMenuFor('tlgames', g.homeAbbr), { table: 'tlgames', cols: TL_COLS, placeholder: 'search the games · an opponent, home or away, won or lost, right or wrong', count: rows.length + ' of ' + played.length, groups: colGroups(played, get, TL_COLS) }),
               tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', isClubP ? 'SCORE' : 'RESULT', null, 'left', .7), tcol('tlgames', 'margin', isClubP ? 'MARGIN' : unit, null, 'left', .6), tcol('tlgames', 'prior', 'PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'CALL', null, 'left', .6)],
               tlRows: rows.slice(0, lim).map(x => { const k = x.d + '|' + x.opp; const open = openKey === k; const got = open ? gameOf(x) : { loading: false, game: null }; const gm = got.game; const f = gm ? (gm.first || {}) : null; return ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: isClubP ? (x.pf == null ? '—' : x.pf + '-' + x.pa) : (x.res === 'W' ? 'won' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : x.res === 'L' ? 'lost' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : '—'), margin: isClubP ? (x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin) : String(x.v), prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
                 call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34),
-                toggle: () => { if (!open) this.loadDay(lgl, x.d); this.setState({ tlOpen: open ? null : k }); }, open, loading: open && got.loading,
+                toggle: () => { if (!open) { this.loadDay(lgl, x.d); if (x.live && x.gameId != null) this.loadEdgeBox(sport, x.gameId); } this.setState({ tlOpen: open ? null : k }); }, open, loading: open && got.loading,
                 read: gm ? 'model prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') : (open && !got.loading ? 'the record holds no reading of this game' : ''),
                 noBox: open && !got.loading && !!gm && !gm.box,
                 mine: (() => { if (!open || !gm || !gm.box || isClubP) return ''; const nk = String(pr.name || '').toLowerCase().replace(/[^a-z]/g, ''); const own = (gm.box.away || []).concat(gm.box.home || []).find(y => String(y.n || '').toLowerCase().replace(/[^a-z]/g, '') === nk); return own ? 'his line · ' + lineOf(own, lgl) : 'his line is not among the eight fullest the record kept for this game'; })(), sides: open && gm && gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }] : [] }); }),
