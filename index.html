@@ -1004,7 +1004,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ p.books.open }}" hint-placeholder-val="{{ true }}">
               <sc-for list="{{ bookRows }}" as="b" hint-placeholder-count="6">
                 <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0 7px 28px;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline">
-                  <span style="flex:1.2;text-transform:capitalize;color:var(--lead)">{{ b.book }}</span><span style="{{ b.teamStyle }}">{{ b.team }}</span><span style="{{ b.spreadStyle }};flex:1">{{ b.spread }}</span><span style="flex:.8;color:var(--second)">{{ b.ml }}</span><span style="flex:1.6;color:var(--second)">{{ b.total }}</span><span style="flex:.5;text-align:right;color:var(--faint)">{{ b.age }}</span>
+                  <span style="flex:1.2;text-transform:capitalize;color:var(--lead)">{{ b.book }}</span><span style="{{ b.teamStyle }}">{{ b.team }}</span><span style="{{ b.spreadStyle }};flex:1">{{ b.spread }}</span><span style="flex:.8;color:var(--second)">{{ b.ml }}</span><span style="flex:1.6;color:var(--second)">{{ b.total }}</span><span style="{{ b.resultStyle }}">{{ b.result }}</span><span style="flex:.5;text-align:right;color:var(--faint)">{{ b.age }}</span>
                 </div>
               </sc-for>
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:11px">
@@ -3972,13 +3972,26 @@ class Component extends DCLogic {
       bookSides.push({ b, side: 'away', team: g.awayAbbr, spread: b.spreadAway, spreadOdds: b.spreadAwayOdds, ml: b.mlAway });
       bookSides.push({ b, side: 'home', team: g.homeAbbr, spread: b.spreadHome, spreadOdds: b.spreadHomeOdds, ml: b.mlHome });
     });
-    const bookGet = { book: r => bookName(r.b), team: r => r.team, spread: r => r.spread, ml: r => r.ml, total: r => r.b.total, age: r => r.b.updated || '' };
+    // A BOOK'S NUMBERS AGAINST THE SCORE (owner, 10 Sep 2026: the books widget updates after
+    // each game): for the side on the row, whether its spread covered, whether its moneyline
+    // won, and whether the game went over the book's total — the final's verdict once the game
+    // is over, the running one while it is on
+    const bookGrade = r => {
+      if (!propGameOn) return null;
+      const b = r.b; const m = r.side === 'home' ? g.hs - g.as : g.as - g.hs; const pts = (g.hs || 0) + (g.as || 0);
+      const parts = [];
+      if (r.spread != null) { const c = m + r.spread; parts.push(propFinal ? (c > 0 ? 'covered' : c < 0 ? 'lost' : 'push') : (c > 0 ? 'covering' : c < 0 ? 'not covering' : 'on the number')); }
+      if (r.ml != null) parts.push(propFinal ? (m > 0 ? 'won' : m < 0 ? 'lost' : 'tie') : (m > 0 ? 'leading' : m < 0 ? 'trailing' : 'level'));
+      if (b.total != null) parts.push((pts > b.total ? 'over' : pts < b.total ? 'under' : 'push') + (propFinal ? '' : ' so far'));
+      return parts.length ? parts.join(' · ') : null;
+    };
+    const bookGet = { book: r => bookName(r.b), team: r => r.team, spread: r => r.spread, ml: r => r.ml, total: r => r.b.total, result: r => bookGrade(r), age: r => r.b.updated || '' };
     TABLES.books = { rows: bookSides, get: bookGet };
     const bookShown = tapply('books', bookSides.slice().sort((x, y) => bookGet.book(x).localeCompare(bookGet.book(y)) || (x.side === 'away' ? -1 : 1)), bookGet, rowText(bookGet));
     const bookCols = [
       tcol('books', 'book', 'BOOK', tdistinct(bookSides, bookGet.book), 'left', 1.2), tcol('books', 'team', 'TEAM', tdistinct(bookSides, bookGet.team), 'left', .5),
       tcol('books', 'spread', 'SPREAD', null, 'left', 1), tcol('books', 'ml', 'MONEYLINE', null, 'left', .8),
-      tcol('books', 'total', 'TOTAL', null, 'left', 1.6), tcol('books', 'age', 'AGE', null, 'right', .5)
+      tcol('books', 'total', 'TOTAL', null, 'left', 1.6), tcol('books', 'result', propFinal ? 'RESULT' : 'SO FAR', tdistinct(bookSides, r => bookGet.result(r) || '—'), 'left', 1.4), tcol('books', 'age', 'AGE', null, 'right', .5)
     ];
     // ---------- the books through the history filter: the lines of past meetings ----------
     // the provider holds lines for the slate in front of it only (every past date and week
@@ -5700,6 +5713,8 @@ class Component extends DCLogic {
           teamStyle: 'font-family:var(--kw);font-size:10.5px;flex:.5;color:' + (r.side === 'home' ? 'var(--brand)' : 'var(--lead)'),
           spread: sgn(r.spread) + ' (' + oddsFmt(r.spreadOdds) + ')',
           total: b.total != null ? 'O/U ' + b.total + ' (' + oddsFmt(b.overOdds) + ' / ' + oddsFmt(b.underOdds) + ')' : '—',
+          result: bookGrade(r) || '—',
+          resultStyle: 'flex:1.4;font-family:var(--kw);font-size:10px;letter-spacing:.04em;color:' + ((() => { const t = bookGrade(r) || ''; return /^(covered|covering)/.test(t) ? ACC : /^(lost|not covering)/.test(t) ? RED : t ? 'var(--reversed)' : 'var(--muted)'; })()),
           ml: oddsFmt(r.ml),
           age: S ? S.age(b.updated) : '',
           spreadStyle: 'font-family:var(--kw);font-size:11px;color:' + (off ? ACC : 'var(--reversed)')
