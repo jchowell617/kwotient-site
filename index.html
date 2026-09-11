@@ -3496,6 +3496,20 @@ class Component extends DCLogic {
     const lineGap = lineNowV - fairNowV;          /* > 0: the model likes the home side more than the market does */
     let yMkt = yOf(lineNowV), yFair = yOf(fairNowV);
     if (Math.abs(yMkt - yFair) < 13) { const mid = (yMkt + yFair) / 2; const up = yMkt >= yFair; yMkt = mid + (up ? 7 : -7); yFair = mid + (up ? -7 : 7); }
+    // THE OPEN LABEL KEEPS CLEAR OF THE LINES (owner, 11 Sep 2026): it sits above or below the
+    // opening line, on whichever side has more room from the model's line and the market line
+    // where they cross the label's span at the left; only when both sides are crowded does it
+    // take a backing, so it reads over a line rather than through it
+    const openYv = yOf(openV), LBL = 11, LBL_W = 90;   /* label height in px; its width in the 300-wide plot */
+    const openLbl = (() => {
+      const cut = linePts.findIndex(pt => lineXOf(pt.t) > LBL_W);
+      const busy = [yOf(fairNowV)].concat((cut < 0 ? linePts : linePts.slice(0, cut + 1)).map(pt => yOf(pt.v)));
+      const room = top => Math.min.apply(null, busy.map(y => y < top ? top - y : y > top + LBL ? y - (top + LBL) : 0));
+      const sides = [openYv - LBL - 2, openYv + 2].filter(t => t >= 0 && t + LBL <= 92);
+      if (!sides.length) return { top: clamp(openYv - LBL - 2, 0, 92 - LBL), crowded: true };
+      const best = sides.reduce((a, b) => room(b) > room(a) ? b : a);
+      return { top: best, crowded: room(best) < 2 };
+    })();
     const edgeSide = Math.abs(lineGap) >= 1 ? (lineGap > 0 ? g.homeAbbr : g.awayAbbr) : null;
     const edgeText = edgeSide ? 'VALUE ' + edgeSide + ' ' + Math.abs(lineGap).toFixed(1) + ' PTS' : 'NO EDGE · ' + sgn(lineGap) + ' PTS';
     const mktProbNow = hasMarket && g.mktProb != null ? g.mktProb : null;
@@ -5809,7 +5823,7 @@ class Component extends DCLogic {
       ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Model fair', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(lineT0 + t) : 'tick ' + Math.round(t)),
       lineBandFill: edgeSide ? ACC : 'var(--muted)',
       openY: pre ? '-20' : yOf(openV).toFixed(1),
-      openLabel: (pre ? 'display:none;' : '') + 'position:absolute;left:0;top:' + yOf(openV).toFixed(1) + 'px;transform:translateY(-130%);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
+      openLabel: (pre ? 'display:none;' : '') + 'position:absolute;left:0;top:' + openLbl.top.toFixed(1) + 'px;line-height:' + LBL + 'px;white-space:nowrap;' + (openLbl.crowded ? 'background:var(--surface);padding:0 4px 0 0;' : '') + 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
       openWord: hasOpen ? 'OPEN' : 'FIRST SEEN',
       lineOpen: sgn(openV),
       lineNowVal: sgn(lineNowV), fairNowVal: sgn(fairNowV),
