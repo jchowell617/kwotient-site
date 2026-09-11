@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=267ba85e66"></script>
+<script src="./kq-bundle.js?v=8fb91232f2"></script>
 <script src="./kq-seasons.js?v=2b86ee3dc4"></script>
 <style>
 :root{
@@ -528,7 +528,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:flex;gap:14px;font-family:var(--kw);font-size:9.5px;color:var(--second)">
                   <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:2px;background:var(--brand);display:block"></span>{{ homeAbbr }}</span>
                   <span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:2px;background:var(--lead);display:block"></span>{{ awayAbbr }}</span>
-                  <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed var(--muted);display:block"></span>MKT</span></sc-if>
+                  <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}"><span style="display:flex;align-items:center;gap:6px"><span style="width:14px;height:0;border-top:2px dashed {{ mktColor }};display:block"></span>MKT</span></sc-if>
                 </div>
               </div>
               <sc-if value="{{ p.wp.open }}" hint-placeholder-val="{{ true }}">
@@ -557,7 +557,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <line x1="{{ p.x }}" y1="0" x2="{{ p.x }}" y2="222" stroke="var(--divider)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
                     </sc-for>
                     <path d="{{ wpArea }}" fill="url(#cs-fill)"></path>
-                    <path d="{{ mktPath }}" fill="none" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"></path>
+                    <path d="{{ mktPath }}" fill="none" stroke="{{ mktColor }}" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"></path>
                     <path class="cs-glow-a" d="{{ awayPath }}" fill="none" stroke="url(#cs-away)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                     <path class="cs-glow" d="{{ wpPath }}" fill="none" stroke="url(#cs-home)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                   </svg>
@@ -572,7 +572,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <div style="{{ tipStyle }}">
                         <div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:11.5px;color:var(--brand)"><span>{{ homeAbbr }}</span><span>{{ tipHome }}</span></div>
                         <div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:11.5px;color:var(--lead);margin-top:3px"><span>{{ awayAbbr }}</span><span>{{ tipAway }}</span></div>
-                        <sc-if value="{{ tipMktOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:10.5px;color:var(--muted);margin-top:3px"><span>MKT {{ homeAbbr }}</span><span>{{ tipMkt }}</span></div></sc-if>
+                        <sc-if value="{{ tipMktOn }}" hint-placeholder-val="{{ false }}"><div style="display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:10.5px;color:{{ mktColor }};margin-top:3px"><span>MKT {{ homeAbbr }}</span><span>{{ tipMkt }}</span></div></sc-if>
                         <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:5px;letter-spacing:.1em">{{ tipTime }}</div>
                       </div>
                     </div>
@@ -676,20 +676,30 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
               <sc-if value="{{ p.line.open }}" hint-placeholder-val="{{ true }}">
                 <div style="position:relative;height:92px;padding-right:46px">
-                  <div style="position:relative;height:92px">
+                  <div data-chart="1" onMouseMove="{{ lineHoverMove }}" onMouseLeave="{{ lineHoverOff }}" onTouchStart="{{ lineHoverTouchStart }}" onTouchMove="{{ lineHoverTouchMove }}" onClick="{{ lineHoverTap }}" style="position:relative;height:92px;cursor:crosshair">
                     <svg viewBox="0 0 300 92" preserveAspectRatio="none" style="width:100%;height:92px;display:block">
                       <path d="{{ lineBand }}" fill="{{ lineBandFill }}" fill-opacity="0.28"></path>
                       <line x1="0" y1="{{ openY }}" x2="300" y2="{{ openY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"></line>
                       <path d="{{ fairPath }}" fill="none" stroke="var(--good)" stroke-width="1.7" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"></path>
-                      <path d="{{ linePath }}" fill="none" stroke="var(--lead)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
+                      <path d="{{ linePath }}" fill="none" stroke="{{ mktColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
                     </svg>
                     <div style="{{ openLabel }}">{{ openWord }} {{ lineOpen }}</div>
+                    <sc-if value="{{ lineHoverOn }}" hint-placeholder-val="{{ false }}">
+                      <div style="position:absolute;inset:0;pointer-events:none">
+                        <div style="{{ lineHoverLine }}"></div>
+                        <sc-for list="{{ lineHoverRings }}" as="rg" hint-placeholder-count="2"><div style="{{ rg.style }}"></div></sc-for>
+                        <div style="{{ lineHoverTip }}">
+                          <sc-for list="{{ lineHoverRows }}" as="rw" hint-placeholder-count="2"><div style="{{ rw.style }}"><span>{{ rw.label }}</span><span>{{ rw.value }}</span></div></sc-for>
+                          <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:4px;letter-spacing:.1em">{{ lineHoverTime }}</div>
+                        </div>
+                      </div>
+                    </sc-if>
                   </div>
                   <div style="{{ mktValStyle }}">{{ lineNowVal }}</div>
                   <div style="{{ fairValStyle }}">{{ fairNowVal }}</div>
                 </div>
                 <div style="display:flex;gap:13px;font-family:var(--kw);font-size:9px;color:var(--second);margin-top:9px;flex-wrap:wrap">
-                  <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:var(--lead);display:block"></span>MARKET</span>
+                  <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:{{ mktColor }};display:block"></span>MARKET</span>
                   <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:0;border-top:2px dashed var(--good);display:block"></span>MODEL FAIR</span>
                   <span style="margin-left:auto;color:var(--reversed)">{{ lineEdgeNote }}</span>
                 </div>
@@ -3412,6 +3422,8 @@ class Component extends DCLogic {
       : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
     // a text with the city and nickname of every club code it names, so a keyword finds the line
     const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
+    // the market's one color, wherever the market is drawn or named
+    const MKT_COLOR = '#e2b53f';
     // the Eastern day an instant falls on — the day the record files a game under
     const etDayOf = iso => { try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date(iso)); } catch (e) { return String(iso || '').slice(0, 10); } };
     const S = st.kq === 'ready' ? SRC() : null;
@@ -3444,6 +3456,17 @@ class Component extends DCLogic {
     const dLo = bLo - bPad, dHi = bHi + bPad;
     const yOf = v => clamp(92 - ((v - dLo) / (dHi - dLo)) * 92, 0, 92);
     const lineNowV = lineSeries[lineSeries.length - 1], fairNowV = s.fair[s.fair.length - 1];
+    // THE LINE OVER ITS OWN TIMELINE (owner, 11 Sep 2026): each reading of the consensus placed at
+    // the moment the edge took it, from the first reading to now, so the movement is the books'
+    // and a hover reads the line at any moment; before two readings the panel's own ticks stand
+    const lineT0 = hist.length >= 2 ? hist[0][0] : null;
+    const lineSpan = lineT0 != null ? Math.max(60000, (g.state === 'final' && hist.length ? hist[hist.length - 1][0] : Date.now()) - lineT0) : 1;
+    const linePts = lineT0 != null ? hist.map(h => ({ t: h[0] - lineT0, v: h[1] })).concat(g.state === 'final' ? [] : [{ t: lineSpan, v: lineNowV }]) : lineSeries.map((v, i) => ({ t: i, v }));
+    const lineAxis = lineT0 != null ? lineSpan : Math.max(1, lineSeries.length - 1);
+    const fairPts = [{ t: 0, v: fairNowV }, { t: lineAxis, v: fairNowV }];
+    const lineXOf = t => (t / lineAxis) * 300;
+    const linePathT = linePts.map((pt, i) => (i ? 'L' : 'M') + lineXOf(pt.t).toFixed(1) + ' ' + yOf(pt.v).toFixed(1)).join(' ');
+    const wallLabel = ms => { try { return new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(ms)) + ' ET'; } catch (e) { return ''; } };
     // the total: the market's number against what the game is actually producing
     const played = hasMarket && g.model && g.model.f != null ? 1 - g.model.f : 0;
     const ptsNow = (Number(g.hs) || 0) + (Number(g.as) || 0);
@@ -4925,10 +4948,47 @@ class Component extends DCLogic {
     // read from either side: home by default, away when asked, the curve flipped
     const momSide = st.momSide === 'away' ? 'away' : 'home';
     const momSign = momSide === 'away' ? -1 : 1;
-    let acc = 0;
-    const cum = s.mom.map(v => (acc += v) * momSign);
+    // MOMENTUM BY GAME TIME (owner, 11 Sep 2026): every swing through the game, from the score
+    // as it went — the lead, home side over away (or flipped), at each recorded moment from the
+    // kickoff to where the game stands; a seeded fixture's ticks are spread over the time played
+    const momPts = (() => {
+      if (s.real) {
+        const pts = (g.steps || []).map(x => ({ t: x.per == null ? TOTAL : elapsedOf(x.per > 4 ? 'Q5' : 'Q' + x.per + (x.clock ? ' ' + x.clock : '')), v: ((x.hs || 0) - (x.as || 0)) / 2 * momSign, when: x.per == null ? 'FINAL' : 'Q' + x.per + (x.clock ? ' ' + x.clock : '') }))
+          .filter(pt => pt.t != null).sort((a, b) => a.t - b.t).filter((pt, i, a) => i === a.length - 1 || a[i + 1].t !== pt.t);
+        if (!pts.length || pts[0].t > 0) pts.unshift({ t: 0, v: 0, when: 'KICKOFF' });
+        const nowV = ((g.hs || 0) - (g.as || 0)) / 2 * momSign;
+        if (pts[pts.length - 1].t < elapsedNow) pts.push({ t: elapsedNow, v: nowV, when: g.state === 'final' ? 'FINAL' : 'Q' + g.per + (g.clock ? ' ' + g.clock : '') });
+        return pts;
+      }
+      let acc0 = 0; const n = s.mom.length; return s.mom.map((v, i) => ({ t: elapsedNow * (i / Math.max(1, n - 1)), v: (acc0 += v) * momSign, when: null }));
+    })();
+    const cum = momPts.map(pt => pt.v);
     const cumNow = cum[cum.length - 1];
     const momMax = Math.max(2, Math.max.apply(null, cum.map(Math.abs))) * 1.15;
+    const momX = t => (t / TOTAL) * 300, momY = v => 46 - (v / momMax) * 46;
+    const momPathT = momPts.map((pt, i) => (i ? 'L' : 'M') + momX(pt.t).toFixed(1) + ' ' + momY(pt.v).toFixed(1)).join(' ');
+    const momEndX = momX(momPts[momPts.length - 1].t);
+    // A HOVER OVER TIME, for the charts drawn on a clock: the cursor reads any moment, each
+    // series interpolated between the samples on either side, the label naming the moment
+    const buildT = (key, series, H, fmt, dom, axisMax, labelAt) => {
+      const tMax = Math.max(1, ...series.map(sr => sr.pts.length ? sr.pts[sr.pts.length - 1].t : 0));
+      const ht = st[key] == null ? null : clamp(st[key], 0, tMax);
+      const at = (pts, t) => { if (!pts.length) return null; if (t <= pts[0].t) return pts[0].v; for (let i = 1; i < pts.length; i++) { if (t <= pts[i].t) { const a = pts[i - 1], b = pts[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return a.v + (b.v - a.v) * f; } } return pts[pts.length - 1].v; };
+      const x = ht === null ? 0 : (ht / axisMax) * 100;
+      const out = {};
+      out[key + 'On'] = ht !== null;
+      const mv = (e) => { const r = e.currentTarget.getBoundingClientRect(); const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * axisMax, 0, tMax)); if (t !== st[key]) this.setState({ [key]: t }); };
+      out[key + 'Move'] = mv; out[key + 'Tap'] = mv;
+      out[key + 'TouchStart'] = (e) => this.touchScrub(e, 'start'); out[key + 'TouchMove'] = (e) => this.touchScrub(e, 'move', mv);
+      out[key + 'Off'] = () => this.setState({ [key]: null });
+      out[key + 'Line'] = 'position:absolute;top:0;bottom:0;width:1px;background:var(--brand);opacity:.45;left:' + x + '%';
+      out[key + 'Rings'] = series.map(sr => { const v = ht === null ? (sr.pts.length ? sr.pts[sr.pts.length - 1].v : 0) : at(sr.pts, ht); const y = H - ((v - dom[0]) / (dom[1] - dom[0])) * H;
+        return { style: 'position:absolute;width:9px;height:9px;border-radius:50%;border:2px solid ' + sr.color + ';background:var(--surface);left:' + x + '%;top:' + clamp(y, 0, H).toFixed(1) + 'px;transform:translate(-50%,-50%)' }; });
+      out[key + 'Rows'] = series.map(sr => ({ label: sr.label, value: fmt(ht === null ? (sr.pts.length ? sr.pts[sr.pts.length - 1].v : 0) : at(sr.pts, ht)), style: 'display:flex;justify-content:space-between;gap:14px;font-family:var(--kw);font-size:11px;color:' + sr.color }));
+      out[key + 'Time'] = ht === null ? '' : labelAt(ht);
+      out[key + 'Tip'] = 'position:absolute;top:4px;' + (x > 58 ? 'right:' + (100 - x) + '%;margin-right:10px;' : 'left:' + x + '%;margin-left:10px;') + 'background:var(--nested);border:1px solid var(--axis);border-radius:8px;padding:8px 10px;white-space:nowrap;box-shadow:0 10px 26px rgba(0,0,0,.4);z-index:6';
+      return out;
+    };
 
     const nba = sport === 'NBA';
     // selection states paint from resolved hexes: swapping only the var() token inside an
@@ -5715,16 +5775,18 @@ class Component extends DCLogic {
       heroEdgeStyle: 'font-family:var(--kw);font-size:10px;color:' + (edgeSide ? ACC : 'var(--second)'),
       lineNow: g.homeAbbr + ' ' + sgn(lineNowV),
       awayLineNow: g.awayAbbr + ' ' + sgn(-lineNowV),
-      linePath: this.path(lineSeries, 300, 92, dLo, dHi),
-      fairPath: this.path(s.fair, 300, 92, dLo, dHi),
-      lineBand: this.path(lineSeries, 300, 92, dLo, dHi) + ' ' + this.path(s.fair.slice().reverse(), 300, 92, dLo, dHi, true).replace('M', 'L') + ' Z',
+      linePath: linePathT,
+      fairPath: 'M0 ' + yOf(fairNowV).toFixed(1) + ' L300 ' + yOf(fairNowV).toFixed(1),
+      lineBand: linePathT + ' L' + lineXOf(linePts[linePts.length - 1].t).toFixed(1) + ' ' + yOf(fairNowV).toFixed(1) + ' L0 ' + yOf(fairNowV).toFixed(1) + ' Z',
+      mktColor: MKT_COLOR,
+      ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Model fair', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(lineT0 + t) : 'tick ' + Math.round(t)),
       lineBandFill: edgeSide ? ACC : 'var(--muted)',
       openY: yOf(openV).toFixed(1),
       openLabel: 'position:absolute;left:0;top:' + yOf(openV).toFixed(1) + 'px;transform:translateY(-130%);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
       openWord: hasOpen ? 'OPEN' : 'FIRST SEEN',
       lineOpen: sgn(openV),
       lineNowVal: sgn(lineNowV), fairNowVal: sgn(fairNowV),
-      mktValStyle: 'position:absolute;right:0;top:' + yMkt.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:var(--lead)',
+      mktValStyle: 'position:absolute;right:0;top:' + yMkt.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:' + MKT_COLOR + '',
       fairValStyle: 'position:absolute;right:0;top:' + yFair.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:' + ACC,
       lineEdgeNote: edgeText,
       lineCaption: (hist.length >= 2 ? 'consensus across ' + (g.marketN || 0) + ' books · ' + hist.length + ' readings since ' + (S ? S.age(new Date(hist[0][0]).toISOString()) : '') + ' ago' : 'market since this panel opened · ' + (g.marketN || 0) + ' books')
@@ -5868,8 +5930,8 @@ class Component extends DCLogic {
           return out;
         };
         return Object.assign({},
-          build('momHover', [{ label: 'Swing', vals: cum, color: 'var(--reversed)' }], 92,
-                v => (v > 0 ? '+' : '') + v.toFixed(1), [-momMax, momMax], s.real ? (s.momWhen || null) : null)
+          buildT('momHover', [{ label: 'Swing', pts: momPts, color: 'var(--reversed)' }], 92,
+                v => (v > 0 ? '+' : '') + v.toFixed(1), [-momMax, momMax], TOTAL, t => (g.state === 'final' && t >= TOTAL) ? 'FINAL' : clockAtT(t))
         );
       })(),
       hovering: hi !== null,
@@ -5886,15 +5948,15 @@ class Component extends DCLogic {
       periodLines: [1, 2, 3].map(i => ({ x: i * 150 })),
       periodLabels: (sport === 'NBA' ? ['Q1', 'Q2', 'Q3', 'Q4'] : ['Q1', 'Q2', 'Q3', 'Q4']).map(t => ({ t })),
 
-      momPath: this.path(cum, 300, 92, -momMax, momMax),
-      momArea: this.path(cum, 300, 92, -momMax, momMax) + ' L300 46 L0 46 Z',
-      momDot: 'position:absolute;right:0;top:' + (46 - (cum[cum.length - 1] / momMax) * 46).toFixed(1) + 'px;width:8px;height:8px;border-radius:50%;background:' + (cumNow > 0 ? ACC : RED) + ';transform:translate(50%,-50%);box-shadow:0 0 8px ' + (cumNow > 0 ? 'rgba(46,207,133,.6)' : 'rgba(255,91,106,.6)'),
+      momPath: momPathT,
+      momArea: momPathT + ' L' + momEndX.toFixed(1) + ' 46 L0 46 Z',
+      momDot: 'position:absolute;left:' + (momEndX / 3).toFixed(2) + '%;top:' + (46 - (cum[cum.length - 1] / momMax) * 46).toFixed(1) + 'px;width:8px;height:8px;border-radius:50%;background:' + (cumNow > 0 ? ACC : RED) + ';transform:translate(-50%,-50%);box-shadow:0 0 8px ' + (cumNow > 0 ? 'rgba(46,207,133,.6)' : 'rgba(255,91,106,.6)'),
       momentumLabel: (momSide === 'home' ? g.homeAbbr : g.awayAbbr) + ' ' + (cumNow > 0 ? '+' : '') + cumNow.toFixed(1) + ' swing',
       momTop: momSide === 'home' ? g.homeAbbr : g.awayAbbr, momBottom: momSide === 'home' ? g.awayAbbr : g.homeAbbr,
       momHome: () => this.setState({ momSide: 'home' }), momAway: () => this.setState({ momSide: 'away' }),
       momHomeBtn: 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ' + (momSide === 'home' ? BLUE : 'var(--axis)') + ';color:' + (momSide === 'home' ? BLUE : 'var(--second)'),
       momAwayBtn: 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ' + (momSide === 'away' ? BLUE : 'var(--axis)') + ';color:' + (momSide === 'away' ? BLUE : 'var(--second)'),
-      momentumWindow: sport === 'NBA' ? '-6 min' : '-12 plays',
+      momentumWindow: 'KICKOFF',
       teamHist: histMenuFor('team', teamAbbr), totalHist: histMenuFor('total', g.homeAbbr),
       teamSearch: (() => { const H = histMenuFor('team', teamAbbr); return searchFor('team', H, { placeholder: 'search the games against ' + (teamOppAbbr0 || 'tonight\'s opponent') + ' · week, season, W or L, home or away', count: tRowsC.length + ' games',
         groups: logGroups(teamScoped).filter(gp => gp.label !== 'OPPONENT') }); })(),
