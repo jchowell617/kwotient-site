@@ -3021,7 +3021,7 @@ class Component extends DCLogic {
       this.loadProps();
       // a final on the board: the day's readings are read, so a club's timeline and the track
       // record can grade today's call against the morning's first reading
-      if (games.some(g => g.live && g.state === 'final')) { try { const d = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); this.loadDay(sport.toLowerCase(), d); } catch (e) {} }
+      if ((r.games || []).some(x => x.state === 'final')) { try { const d = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date()); this.loadDay(sport.toLowerCase(), d); } catch (e) {} }
       if (!this._standingsAt || Date.now() - this._standingsAt > 15 * 60000) { this._standingsAt = Date.now(); this.loadStandings(); }
       // with nothing on the slate there is no game to read logs for; the placeholder is not asked
       if ((r.games || []).length || upcoming) setTimeout(() => this.ensureTrendLog(), 0);
@@ -3468,10 +3468,31 @@ class Component extends DCLogic {
     const prev = s.hist[s.hist.length - 6];
     const dark = this.props.showMarket === false;
 
-    const hn = s.hist.length;
+    // THE PATH BY GAME TIME (owner, 10 Sep 2026: the chart works in real time). Every sample that
+    // carries the clock it was read at sits at that moment on the game's clock, from the kickoff
+    // to now; the flat run before the record opened is dropped, and the line ends where the
+    // game stands, not at the right edge. A seeded fixture's samples are spread over the time played.
+    const qLenW = (sport === 'NBA' ? 12 : 15) * 60, TOTAL = qLenW * 4;
+    const elapsedOf = w => { const m = String(w || '').match(/^Q(\d)(?:\s+(\d{1,2}):(\d{2}))?$/); if (m) { const per = Number(m[1]); const left = m[2] != null ? Number(m[2]) * 60 + Number(m[3]) : qLenW; return per > 4 ? TOTAL : Math.min(TOTAL, (per - 1) * qLenW + (qLenW - left)); } if (/^FINAL/i.test(w)) return TOTAL; if (/^KICKOFF/i.test(w)) return 0; return null; };
+    const clockAtT = t => { const per = clamp(Math.floor(t / qLenW) + 1, 1, 4); const left = Math.max(0, qLenW - (t - (per - 1) * qLenW)); return 'Q' + per + ' ' + Math.floor(left / 60) + ':' + String(Math.floor(left % 60)).padStart(2, '0'); };
+    const elapsedNow = g.state === 'final' ? TOTAL : Math.max(0, Math.min(TOTAL, ((g.per || 1) - 1) * qLenW + (qLenW - (g.sec || 0))));
+    let wpPts;
+    if (s.real && s.when) {
+      wpPts = []; s.hist.forEach((v, i) => { const t = elapsedOf(s.when[i]); if (t == null) return; wpPts.push({ t, v, m: s.mkt[i], a: 100 - v, when: s.when[i] }); });
+      wpPts.sort((x, y) => x.t - y.t);
+      wpPts = wpPts.filter((pt, i, a) => i === a.length - 1 || a[i + 1].t !== pt.t);
+      if (!wpPts.length || wpPts[0].t > 0) wpPts.unshift({ t: 0, v: s.hist[0], m: s.mkt[0], a: 100 - s.hist[0], when: 'KICKOFF' });
+      const lastP = wpPts[wpPts.length - 1];
+      if (lastP.t < elapsedNow) wpPts.push({ t: elapsedNow, v: wp, m: mk, a: 100 - wp, when: g.state === 'final' ? 'FINAL' : 'Q' + g.per + (g.clock ? ' ' + g.clock : '') });
+    } else {
+      const n = s.hist.length; wpPts = s.hist.map((v, i) => ({ t: elapsedNow * (i / Math.max(1, n - 1)), v, m: s.mkt[i], a: 100 - v, when: null }));
+    }
+    const wpX = t => (t / TOTAL) * 600, wpY = v => 222 - (v / 100) * 222;
+    const wpPathOf = key => wpPts.map((pt, i) => (i ? 'L' : 'M') + wpX(pt.t).toFixed(1) + ' ' + wpY(pt[key]).toFixed(1)).join(' ');
+    const hn = wpPts.length;
     const hi = st.hoverIdx === null || st.hoverIdx === undefined ? null : clamp(st.hoverIdx, 0, hn - 1);
-    const hv = hi === null ? wp : s.hist[hi];
-    const hx = hi === null ? 0 : (hi / (hn - 1)) * 100;
+    const hv = hi === null ? wp : wpPts[hi].v;
+    const hx = hi === null ? 0 : (wpPts[hi].t / TOTAL) * 100;
     const hyH = 100 - hv;
     const hyA = hv;
     // the tooltip is ~64px tall in a 222px plot (~29%); flip it below the anchor
@@ -3487,13 +3508,16 @@ class Component extends DCLogic {
       'px;border-radius:50%;background:' + color + ';transform:translate(-50%,-50%);pointer-events:none;opacity:' + (last ? 1 : 0.55) +
       (last ? ';animation:csDot 2s ease-in-out infinite;box-shadow:0 0 10px ' + glow : '');
     const dots = [];
-    for (let i = 0; i < hn; i += 7) {
-      const pct = (i / (hn - 1)) * 100;
-      dots.push({ style: dot(pct, 100 - s.hist[i], 'var(--brand)', false) });
-      dots.push({ style: dot(pct, s.hist[i], 'var(--lead)', false) });
-    }
-    dots.push({ style: dot(100, 100 - wp, 'var(--brand)', true, 'rgba(77,139,255,.75)') });
-    dots.push({ style: dot(100, wp, 'var(--lead)', true, 'rgba(201,209,220,.5)') });
+    const every = Math.max(1, Math.ceil(wpPts.length / 16));
+    wpPts.forEach((pt, i) => {
+      if (i === wpPts.length - 1 || i % every) return;
+      const pct = (pt.t / TOTAL) * 100;
+      dots.push({ style: dot(pct, 100 - pt.v, 'var(--brand)', false) });
+      dots.push({ style: dot(pct, pt.v, 'var(--lead)', false) });
+    });
+    const nowPct = (wpPts[wpPts.length - 1].t / TOTAL) * 100;
+    dots.push({ style: dot(nowPct, 100 - wp, 'var(--brand)', true, 'rgba(77,139,255,.75)') });
+    dots.push({ style: dot(nowPct, wp, 'var(--lead)', true, 'rgba(201,209,220,.5)') });
     // ---------- the player trend: the two clubs' rated players, logs from the edge ----------
     // No props feed is licensed on the edge, so there is no book line here. The reference is
     // the player's own season average from the log the edge returned, and the panel says so.
@@ -5653,10 +5677,10 @@ class Component extends DCLogic {
       probLeft: 'width:' + (100 - wp).toFixed(1) + '%;background:var(--axis);display:flex;align-items:center;padding:0 10px;font-family:var(--kw);font-size:11.5px;color:var(--lead);transition:width .5s ease',
       probRight: 'width:' + wp.toFixed(1) + '%;background:' + BLUE + ';display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-family:var(--kw);font-size:11.5px;font-weight:700;color:var(--on-brand);transition:width .5s ease',
 
-      wpPath: this.path(s.hist, 600, 222, 0, 100),
+      wpPath: wpPathOf('v'),
       hasMarket,
       wpSubtitle: hasMarket ? 'model per team vs market-implied, full game' : 'model per team, full game',
-      mktPath: hasMarket ? this.path(s.mkt, 600, 222, 0, 100) : '',
+      mktPath: hasMarket ? wpPathOf('m') : '',
       heroMarket: hasMarket ? g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') : '',
       heroMarketSub: hasMarket ? (g.marketN || 0) + ' books · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) + ' · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       heroEdge: hasMarket ? 'model ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase() : '',
@@ -5749,12 +5773,14 @@ class Component extends DCLogic {
           railEdgesToggle: () => this.setState(x => ({ railEdgesAll: !x.railEdgesAll })) };
       })(),
       railEdgeStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (edgeSide ? ACC : 'var(--second)'),
-      awayPath: this.path(s.hist.map(v => 100 - v), 600, 222, 0, 100),
+      awayPath: wpPathOf('a'),
       chartDots: dots,
       ...(() => {
         const move = (e) => {
           const r = e.currentTarget.getBoundingClientRect();
-          const i = clamp(Math.round(((this.ptX(e) - r.left) / r.width) * (hn - 1)), 0, hn - 1);
+          // the nearest sample to the moment under the pointer, on the game's clock
+          const t = ((this.ptX(e) - r.left) / Math.max(1, r.width)) * TOTAL;
+          let i = 0; wpPts.forEach((pt, k) => { if (Math.abs(pt.t - t) < Math.abs(wpPts[i].t - t)) i = k; });
           if (i !== st.hoverIdx) this.setState({ hoverIdx: i });
         };
         return { onHover: move,
@@ -5825,17 +5851,9 @@ class Component extends DCLogic {
       tipStyle: 'position:absolute;left:' + hx + '%;top:' + tipTop.toFixed(2) + '%;transform:translate(' + (hx > 65 ? '-105%' : hx < 12 ? '-2%' : '-50%') + ',' + (tipBelow ? '8%' : '-108%') + ');background:var(--rail);border:1px solid var(--brand);border-radius:8px;padding:8px 11px;width:max-content;max-width:min(220px,68vw);white-space:normal;overflow-wrap:anywhere;box-shadow:0 6px 18px rgba(0,0,0,.5)',
       tipHome: hv.toFixed(1) + '%',
       tipAway: (100 - hv).toFixed(1) + '%',
-      tipTime: hi === null ? '' : s.real && s.when ? (s.when[hi] || 'KICKOFF') : (() => {
-        // a seeded fixture's series spans tip-off to now, so map the index onto elapsed game time
-        const qLen = (sport === 'NBA' ? 12 : 15) * 60;
-        const elapsedNow = (g.per - 1) * qLen + (qLen - g.sec);
-        const el = elapsedNow * (hi / (hn - 1));
-        const per = clamp(Math.floor(el / qLen) + 1, 1, sport === 'NBA' ? 4 : 4);
-        const left = Math.max(0, qLen - (el - (per - 1) * qLen));
-        return 'Q' + per + ' ' + Math.floor(left / 60) + ':' + String(Math.floor(left % 60)).padStart(2, '0');
-      })(),
-      wpArea: this.path(s.hist, 600, 222, 0, 100) + ' L600 222 L0 222 Z',
-      dotX: 600, dotY: (222 - (wp / 100) * 222).toFixed(1),
+      tipTime: hi === null ? '' : (wpPts[hi].when || clockAtT(wpPts[hi].t)),
+      wpArea: wpPathOf('v') + ' L' + wpX(wpPts[wpPts.length - 1].t).toFixed(1) + ' 222 L' + wpX(wpPts[0].t).toFixed(1) + ' 222 Z',
+      dotX: wpX(wpPts[wpPts.length - 1].t).toFixed(1), dotY: (222 - (wp / 100) * 222).toFixed(1),
       periodLines: [1, 2, 3].map(i => ({ x: i * 150 })),
       periodLabels: (sport === 'NBA' ? ['Q1', 'Q2', 'Q3', 'Q4'] : ['Q1', 'Q2', 'Q3', 'Q4']).map(t => ({ t })),
 
