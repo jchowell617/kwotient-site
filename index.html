@@ -537,17 +537,17 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   <svg viewBox="0 0 600 222" preserveAspectRatio="none" style="width:100%;height:222px;display:block">
                     <defs>
                       <linearGradient id="cs-fill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="var(--brand)" stop-opacity="0.26"></stop>
-                        <stop offset="100%" stop-color="var(--brand)" stop-opacity="0"></stop>
+                        <stop offset="0%" style="stop-color:var(--brand)" stop-opacity="0.26"></stop>
+                        <stop offset="100%" style="stop-color:var(--brand)" stop-opacity="0"></stop>
                       </linearGradient>
                       <linearGradient id="cs-home" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="var(--brand-deep)"><animate attributeName="stop-color" values="var(--brand-deep);var(--brand);var(--brand-deep)" dur="3.2s" repeatCount="indefinite"></animate></stop>
-                        <stop offset="55%" stop-color="var(--brand)"><animate attributeName="stop-color" values="var(--brand);var(--brand-lite);var(--brand)" dur="3.2s" repeatCount="indefinite"></animate></stop>
-                        <stop offset="100%" stop-color="var(--brand-lite)"><animate attributeName="stop-color" values="var(--brand-lite);var(--brand);var(--brand-lite)" dur="3.2s" repeatCount="indefinite"></animate></stop>
+                        <stop offset="0%" style="stop-color:var(--brand-deep)"><animate attributeName="stop-color" values="var(--brand-deep);var(--brand);var(--brand-deep)" dur="3.2s" repeatCount="indefinite"></animate></stop>
+                        <stop offset="55%" style="stop-color:var(--brand)"><animate attributeName="stop-color" values="var(--brand);var(--brand-lite);var(--brand)" dur="3.2s" repeatCount="indefinite"></animate></stop>
+                        <stop offset="100%" style="stop-color:var(--brand-lite)"><animate attributeName="stop-color" values="var(--brand-lite);var(--brand);var(--brand-lite)" dur="3.2s" repeatCount="indefinite"></animate></stop>
                       </linearGradient>
                       <linearGradient id="cs-away" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stop-color="var(--muted)"><animate attributeName="stop-color" values="var(--muted);var(--second);var(--muted)" dur="3.2s" repeatCount="indefinite"></animate></stop>
-                        <stop offset="100%" stop-color="var(--lead)"><animate attributeName="stop-color" values="var(--lead);var(--reversed);var(--lead)" dur="3.2s" repeatCount="indefinite"></animate></stop>
+                        <stop offset="0%" style="stop-color:var(--muted)"><animate attributeName="stop-color" values="var(--muted);var(--second);var(--muted)" dur="3.2s" repeatCount="indefinite"></animate></stop>
+                        <stop offset="100%" style="stop-color:var(--lead)"><animate attributeName="stop-color" values="var(--lead);var(--reversed);var(--lead)" dur="3.2s" repeatCount="indefinite"></animate></stop>
                       </linearGradient>
                     </defs>
                     <line x1="0" y1="55.5" x2="600" y2="55.5" stroke="var(--divider)" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"></line>
@@ -558,8 +558,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     </sc-for>
                     <path d="{{ wpArea }}" fill="url(#cs-fill)"></path>
                     <path d="{{ mktPath }}" fill="none" stroke="{{ mktColor }}" stroke-width="1.5" stroke-dasharray="5 4" vector-effect="non-scaling-stroke"></path>
-                    <path class="cs-glow-a" d="{{ awayPath }}" fill="none" stroke="url(#cs-away)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                    <path class="cs-glow" d="{{ wpPath }}" fill="none" stroke="url(#cs-home)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                    <path class="cs-glow-a" d="{{ awayPath }}" fill="none" stroke="var(--lead)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                    <path class="cs-glow" d="{{ wpPath }}" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                   </svg>
                   <sc-for list="{{ chartDots }}" as="d" hint-placeholder-count="30">
                     <div style="{{ d.style }}"></div>
@@ -2363,7 +2363,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ tlGamesLabel }}</span>
                     <div data-chart="1" onMouseMove="{{ tlMove }}" onMouseLeave="{{ tlOff }}" onTouchStart="{{ tlTouchStart }}" onTouchMove="{{ tlTouchMove }}" onClick="{{ tlTap }}" style="position:relative;height:150px;cursor:crosshair;touch-action:pan-y;padding:8px 0 0 34px">
                       <svg viewBox="0 0 300 130" preserveAspectRatio="none" style="width:100%;height:130px;display:block;overflow:visible">
-                        <defs><linearGradient id="cs-tl-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--brand)" stop-opacity="0.22"></stop><stop offset="100%" stop-color="var(--brand)" stop-opacity="0"></stop></linearGradient></defs>
+                        <defs><linearGradient id="cs-tl-fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" style="stop-color:var(--brand)" stop-opacity="0.22"></stop><stop offset="100%" style="stop-color:var(--brand)" stop-opacity="0"></stop></linearGradient></defs>
                         <line x1="0" y1="10" x2="300" y2="10" stroke="var(--divider)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
                         <line x1="0" y1="65" x2="300" y2="65" stroke="var(--divider)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
                         <line x1="0" y1="{{ tlAxisY }}" x2="300" y2="{{ tlAxisY }}" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
