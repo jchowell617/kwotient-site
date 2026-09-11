@@ -561,6 +561,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <path class="cs-glow-a" d="{{ awayPath }}" fill="none" stroke="var(--lead)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                     <path class="cs-glow" d="{{ wpPath }}" fill="none" stroke="var(--brand)" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                   </svg>
+                  <sc-if value="{{ preGame }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;color:var(--muted)"><span style="background:var(--surface);padding:3px 10px;border-radius:4px">{{ preLabel }}</span></div></sc-if>
                   <sc-for list="{{ chartDots }}" as="d" hint-placeholder-count="30">
                     <div style="{{ d.style }}"></div>
                   </sc-for>
@@ -644,6 +645,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <path d="{{ momPath }}" fill="none" stroke="var(--reversed)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
                   </svg>
                   <div style="{{ momDot }}"></div>
+                  <sc-if value="{{ preGame }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;color:var(--muted)"><span style="background:var(--surface);padding:3px 10px;border-radius:4px">{{ preLabel }}</span></div></sc-if>
                   <sc-if value="{{ momHoverOn }}" hint-placeholder-val="{{ false }}">
                     <div style="position:absolute;inset:0;pointer-events:none">
                       <div style="{{ momHoverLine }}"></div>
@@ -684,6 +686,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <path d="{{ linePath }}" fill="none" stroke="{{ mktColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
                     </svg>
                     <div style="{{ openLabel }}">{{ openWord }} {{ lineOpen }}</div>
+                    <sc-if value="{{ preGame }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;color:var(--muted)"><span style="background:var(--surface);padding:3px 10px;border-radius:4px">{{ preLabel }}</span></div></sc-if>
                     <sc-if value="{{ lineHoverOn }}" hint-placeholder-val="{{ false }}">
                       <div style="position:absolute;inset:0;pointer-events:none">
                         <div style="{{ lineHoverLine }}"></div>
@@ -3438,6 +3441,12 @@ class Component extends DCLogic {
     const KWC = S ? S.cohorts(sport) : [];
     const g = slate.find(x => x.id === st.activeId) || slate[0];
     const s = st.series[g.id] || this.seed(sport, [g])[g.id];
+    // BEFORE THE GAME (owner, 11 Sep 2026): the momentum, line movement and win probability charts
+    // draw nothing until the edge has the game in play; each opens at the kickoff (tip-off) and
+    // moves with the action. A scheduled game carries no period, which read as a quarter played.
+    const pre = !!g.live && g.state !== 'in_progress' && g.state !== 'final';
+    const kickW = g.live ? Date.parse(g.start || '') : NaN;
+    const preLabel = (sport === 'NBA' ? 'TIP-OFF' : 'KICKOFF') + (isFinite(kickW) ? ' · ' + new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(kickW)).toUpperCase() + ' ET' : '');
     // the market against the model, in points on the home spread: the band between the
     // market line and the model's fair line IS the edge, and the chart scales to its own data
     const hasMarket = !!g.market;
@@ -3459,9 +3468,15 @@ class Component extends DCLogic {
     // THE LINE OVER ITS OWN TIMELINE (owner, 11 Sep 2026): each reading of the consensus placed at
     // the moment the edge took it, from the first reading to now, so the movement is the books'
     // and a hover reads the line at any moment; before two readings the panel's own ticks stand
-    const lineT0 = hist.length >= 2 ? hist[0][0] : null;
-    const lineSpan = lineT0 != null ? Math.max(60000, (g.state === 'final' && hist.length ? hist[hist.length - 1][0] : Date.now()) - lineT0) : 1;
-    const linePts = lineT0 != null ? hist.map(h => ({ t: h[0] - lineT0, v: h[1] })).concat(g.state === 'final' ? [] : [{ t: lineSpan, v: lineNowV }]) : lineSeries.map((v, i) => ({ t: i, v }));
+    // In a game on the edge the timeline opens at the kickoff: the line as it stood then (the
+    // last pregame reading), and every reading since; before the kickoff there is no line.
+    const inGame = !pre && isFinite(kickW);
+    const gHist = inGame ? (() => { const before = hist.filter(h => h[0] < kickW), after = hist.filter(h => h[0] >= kickW);
+      const atKick = before.length ? before[before.length - 1][1] : (after.length ? after[0][1] : lineNowV);
+      return [[kickW, atKick]].concat(after); })() : hist;
+    const lineT0 = pre ? null : inGame ? kickW : hist.length >= 2 ? hist[0][0] : null;
+    const lineSpan = lineT0 != null ? Math.max(60000, (g.state === 'final' && gHist.length ? gHist[gHist.length - 1][0] : Date.now()) - lineT0) : 1;
+    const linePts = pre ? [] : lineT0 != null ? gHist.map(h => ({ t: h[0] - lineT0, v: h[1] })).concat(g.state === 'final' ? [] : [{ t: lineSpan, v: lineNowV }]) : lineSeries.map((v, i) => ({ t: i, v }));
     const lineAxis = lineT0 != null ? lineSpan : Math.max(1, lineSeries.length - 1);
     const fairPts = [{ t: 0, v: fairNowV }, { t: lineAxis, v: fairNowV }];
     const lineXOf = t => (t / lineAxis) * 300;
@@ -3499,7 +3514,7 @@ class Component extends DCLogic {
     const qLenW = (sport === 'NBA' ? 12 : 15) * 60, TOTAL = qLenW * 4;
     const elapsedOf = w => { const m = String(w || '').match(/^Q(\d)(?:\s+(\d{1,2}):(\d{2}))?$/); if (m) { const per = Number(m[1]); const left = m[2] != null ? Number(m[2]) * 60 + Number(m[3]) : qLenW; return per > 4 ? TOTAL : Math.min(TOTAL, (per - 1) * qLenW + (qLenW - left)); } if (/^FINAL/i.test(w)) return TOTAL; if (/^KICKOFF/i.test(w)) return 0; return null; };
     const clockAtT = t => { const per = clamp(Math.floor(t / qLenW) + 1, 1, 4); const left = Math.max(0, qLenW - (t - (per - 1) * qLenW)); return 'Q' + per + ' ' + Math.floor(left / 60) + ':' + String(Math.floor(left % 60)).padStart(2, '0'); };
-    const elapsedNow = g.state === 'final' ? TOTAL : Math.max(0, Math.min(TOTAL, ((g.per || 1) - 1) * qLenW + (qLenW - (g.sec || 0))));
+    const elapsedNow = pre ? 0 : g.state === 'final' ? TOTAL : Math.max(0, Math.min(TOTAL, ((g.per || 1) - 1) * qLenW + (qLenW - (g.sec || 0))));
     let wpPts;
     if (s.real && s.when) {
       wpPts = []; s.hist.forEach((v, i) => { const t = elapsedOf(s.when[i]); if (t == null) return; wpPts.push({ t, v, m: s.mkt[i], a: 100 - v, when: s.when[i] }); });
@@ -3567,8 +3582,12 @@ class Component extends DCLogic {
       dots.push({ style: dot(pct, pt.v, 'var(--lead)', false) });
     });
     const nowPct = (wpPts[wpPts.length - 1].t / TOTAL) * 100;
-    dots.push({ style: dot(nowPct, 100 - wp, 'var(--brand)', true, 'rgba(77,139,255,.75)') });
-    dots.push({ style: dot(nowPct, wp, 'var(--lead)', true, 'rgba(201,209,220,.5)') });
+    // before the game there is no path, so no dots: not even the live pair at the kickoff
+    if (pre) dots.length = 0;
+    else {
+      dots.push({ style: dot(nowPct, 100 - wp, 'var(--brand)', true, 'rgba(77,139,255,.75)') });
+      dots.push({ style: dot(nowPct, wp, 'var(--lead)', true, 'rgba(201,209,220,.5)') });
+    }
     // ---------- the player trend: the two clubs' rated players, logs from the edge ----------
     // No props feed is licensed on the edge, so there is no book line here. The reference is
     // the player's own season average from the log the edge returned, and the panel says so.
@@ -4976,8 +4995,8 @@ class Component extends DCLogic {
       const at = (pts, t) => { if (!pts.length) return null; if (t <= pts[0].t) return pts[0].v; for (let i = 1; i < pts.length; i++) { if (t <= pts[i].t) { const a = pts[i - 1], b = pts[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return a.v + (b.v - a.v) * f; } } return pts[pts.length - 1].v; };
       const x = ht === null ? 0 : (ht / axisMax) * 100;
       const out = {};
-      out[key + 'On'] = ht !== null;
-      const mv = (e) => { const r = e.currentTarget.getBoundingClientRect(); const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * axisMax, 0, tMax)); if (t !== st[key]) this.setState({ [key]: t }); };
+      out[key + 'On'] = !pre && ht !== null;
+      const mv = (e) => { if (pre) return; const r = e.currentTarget.getBoundingClientRect(); const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * axisMax, 0, tMax)); if (t !== st[key]) this.setState({ [key]: t }); };
       out[key + 'Move'] = mv; out[key + 'Tap'] = mv;
       out[key + 'TouchStart'] = (e) => this.touchScrub(e, 'start'); out[key + 'TouchMove'] = (e) => this.touchScrub(e, 'move', mv);
       out[key + 'Off'] = () => this.setState({ [key]: null });
@@ -5275,6 +5294,13 @@ class Component extends DCLogic {
       const p = xs.hist[xs.hist.length - 1];
       const rising = p >= xs.hist[xs.hist.length - 8];
       const active = x.id === st.activeId;
+      // the card's sparkline is the game as played: nothing before the kickoff, then the line as it
+      // stood at the kickoff and every reading on the game clock since (a seeded fixture keeps its walk)
+      const gv = !x.live ? xs.hist : (x.state !== 'in_progress' && x.state !== 'final') ? [] : (() => {
+        const w = xs.when || []; let start = null; const v = [];
+        xs.hist.forEach((h, i) => { if (/^(Q\d+ \d|FINAL)/.test(w[i] || '')) v.push(h); else if (!v.length) start = h; });
+        return (start != null ? [start] : []).concat(v);
+      })();
       return {
         awayAbbr: x.awayAbbr, homeAbbr: x.homeAbbr, awayScore: x.as, homeScore: x.hs,
         clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? 'Q' + x.per + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
@@ -5287,10 +5313,10 @@ class Component extends DCLogic {
         awayProbLabel: (100 - p).toFixed(1) + '%',
         mktLabel: x.market && x.mktProb != null ? ' · mkt ' + x.mktProb.toFixed(0) + '%' : '',
         mktMini: x.market ? sgn(x.line) + (x.mktTotal != null ? ' · ' + x.mktTotal : '') : '',
-        spark: this.path(xs.hist.slice(-40), 48, 16, 0, 100),
-        sparkAway: this.path(xs.hist.slice(-40).map(v => 100 - v), 48, 16, 0, 100),
-        bigSpark: this.path(xs.hist.slice(-70), 140, 54, 0, 100),
-        bigSparkAway: this.path(xs.hist.slice(-70).map(v => 100 - v), 140, 54, 0, 100),
+        spark: this.path(gv.slice(-40), 48, 16, 0, 100),
+        sparkAway: this.path(gv.slice(-40).map(v => 100 - v), 48, 16, 0, 100),
+        bigSpark: this.path(gv.slice(-70), 140, 54, 0, 100),
+        bigSparkAway: this.path(gv.slice(-70).map(v => 100 - v), 140, 54, 0, 100),
         sparkColor: rising ? ACC : RED,
         probBar: 'height:100%;width:' + p.toFixed(1) + '%;background:' + (rising ? ACC : RED) + ';transition:width .5s ease',
         rowStyle: 'padding:9px 10px;border-radius:8px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent'),
@@ -5765,24 +5791,25 @@ class Component extends DCLogic {
       probLeft: 'width:' + (100 - wp).toFixed(1) + '%;background:var(--axis);display:flex;align-items:center;padding:0 10px;font-family:var(--kw);font-size:11.5px;color:var(--lead);transition:width .5s ease',
       probRight: 'width:' + wp.toFixed(1) + '%;background:' + BLUE + ';display:flex;align-items:center;justify-content:flex-end;padding:0 10px;font-family:var(--kw);font-size:11.5px;font-weight:700;color:var(--on-brand);transition:width .5s ease',
 
-      wpPath: wpPathOf('v'),
+      wpPath: pre ? '' : wpPathOf('v'),
+      preGame: pre, preLabel,
       hasMarket,
       wpSubtitle: hasMarket ? 'model per team vs market-implied, full game' : 'model per team, full game',
-      mktPath: hasMarket ? mktPathOf() : '',
+      mktPath: hasMarket && !pre ? mktPathOf() : '',
       heroMarket: hasMarket ? g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') : '',
       heroMarketSub: hasMarket ? (g.marketN || 0) + ' books · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) + ' · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       heroEdge: hasMarket ? 'model ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase() : '',
       heroEdgeStyle: 'font-family:var(--kw);font-size:10px;color:' + (edgeSide ? ACC : 'var(--second)'),
       lineNow: g.homeAbbr + ' ' + sgn(lineNowV),
       awayLineNow: g.awayAbbr + ' ' + sgn(-lineNowV),
-      linePath: linePathT,
-      fairPath: 'M0 ' + yOf(fairNowV).toFixed(1) + ' L300 ' + yOf(fairNowV).toFixed(1),
-      lineBand: linePathT + ' L' + lineXOf(linePts[linePts.length - 1].t).toFixed(1) + ' ' + yOf(fairNowV).toFixed(1) + ' L0 ' + yOf(fairNowV).toFixed(1) + ' Z',
+      linePath: pre ? '' : linePathT,
+      fairPath: pre ? '' : 'M0 ' + yOf(fairNowV).toFixed(1) + ' L300 ' + yOf(fairNowV).toFixed(1),
+      lineBand: pre || !linePts.length ? '' : linePathT + ' L' + lineXOf(linePts[linePts.length - 1].t).toFixed(1) + ' ' + yOf(fairNowV).toFixed(1) + ' L0 ' + yOf(fairNowV).toFixed(1) + ' Z',
       mktColor: MKT_COLOR,
       ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Model fair', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(lineT0 + t) : 'tick ' + Math.round(t)),
       lineBandFill: edgeSide ? ACC : 'var(--muted)',
-      openY: yOf(openV).toFixed(1),
-      openLabel: 'position:absolute;left:0;top:' + yOf(openV).toFixed(1) + 'px;transform:translateY(-130%);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
+      openY: pre ? '-20' : yOf(openV).toFixed(1),
+      openLabel: (pre ? 'display:none;' : '') + 'position:absolute;left:0;top:' + yOf(openV).toFixed(1) + 'px;transform:translateY(-130%);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
       openWord: hasOpen ? 'OPEN' : 'FIRST SEEN',
       lineOpen: sgn(openV),
       lineNowVal: sgn(lineNowV), fairNowVal: sgn(fairNowV),
@@ -5863,10 +5890,11 @@ class Component extends DCLogic {
           railEdgesToggle: () => this.setState(x => ({ railEdgesAll: !x.railEdgesAll })) };
       })(),
       railEdgeStyle: 'font-family:var(--kw);font-size:11px;font-weight:700;color:' + (edgeSide ? ACC : 'var(--second)'),
-      awayPath: wpPathOf('a'),
+      awayPath: pre ? '' : wpPathOf('a'),
       chartDots: dots,
       ...(() => {
         const move = (e) => {
+          if (pre) return;
           const r = e.currentTarget.getBoundingClientRect();
           // the moment under the pointer, on the game's clock, up to where the game stands
           const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * TOTAL, 0, lastT));
@@ -5934,7 +5962,7 @@ class Component extends DCLogic {
                 v => (v > 0 ? '+' : '') + v.toFixed(1), [-momMax, momMax], TOTAL, t => (g.state === 'final' && t >= TOTAL) ? 'FINAL' : clockAtT(t))
         );
       })(),
-      hovering: hi !== null,
+      hovering: !pre && hi !== null,
       hoverLine: 'position:absolute;top:0;bottom:0;width:1px;background:var(--brand);opacity:.45;left:' + hx + '%',
       hoverRingH: 'position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--brand);left:' + hx + '%;top:' + hyH + '%;transform:translate(-50%,-50%)',
       hoverRingA: 'position:absolute;width:16px;height:16px;border-radius:50%;border:2px solid var(--lead);left:' + hx + '%;top:' + hyA + '%;transform:translate(-50%,-50%)',
@@ -5943,15 +5971,15 @@ class Component extends DCLogic {
       tipMktOn: hasMarket && hi !== null && mktAt(hi) != null, tipMkt: hi === null || mktAt(hi) == null ? '' : mktAt(hi).toFixed(1) + '%',
       tipAway: (100 - hv).toFixed(1) + '%',
       tipTime: hi === null ? '' : (g.state === 'final' && hi >= TOTAL ? 'FINAL' : clockAtT(hi)),
-      wpArea: wpPathOf('v') + ' L' + wpX(wpPts[wpPts.length - 1].t).toFixed(1) + ' 222 L' + wpX(wpPts[0].t).toFixed(1) + ' 222 Z',
+      wpArea: pre ? '' : wpPathOf('v') + ' L' + wpX(wpPts[wpPts.length - 1].t).toFixed(1) + ' 222 L' + wpX(wpPts[0].t).toFixed(1) + ' 222 Z',
       dotX: wpX(wpPts[wpPts.length - 1].t).toFixed(1), dotY: (222 - (wp / 100) * 222).toFixed(1),
       periodLines: [1, 2, 3].map(i => ({ x: i * 150 })),
       periodLabels: (sport === 'NBA' ? ['Q1', 'Q2', 'Q3', 'Q4'] : ['Q1', 'Q2', 'Q3', 'Q4']).map(t => ({ t })),
 
-      momPath: momPathT,
-      momArea: momPathT + ' L' + momEndX.toFixed(1) + ' 46 L0 46 Z',
-      momDot: 'position:absolute;left:' + (momEndX / 3).toFixed(2) + '%;top:' + (46 - (cum[cum.length - 1] / momMax) * 46).toFixed(1) + 'px;width:8px;height:8px;border-radius:50%;background:' + (cumNow > 0 ? ACC : RED) + ';transform:translate(-50%,-50%);box-shadow:0 0 8px ' + (cumNow > 0 ? 'rgba(46,207,133,.6)' : 'rgba(255,91,106,.6)'),
-      momentumLabel: (momSide === 'home' ? g.homeAbbr : g.awayAbbr) + ' ' + (cumNow > 0 ? '+' : '') + cumNow.toFixed(1) + ' swing',
+      momPath: pre ? '' : momPathT,
+      momArea: pre ? '' : momPathT + ' L' + momEndX.toFixed(1) + ' 46 L0 46 Z',
+      momDot: (pre ? 'display:none;' : '') + 'position:absolute;left:' + (momEndX / 3).toFixed(2) + '%;top:' + (46 - (cum[cum.length - 1] / momMax) * 46).toFixed(1) + 'px;width:8px;height:8px;border-radius:50%;background:' + (cumNow > 0 ? ACC : RED) + ';transform:translate(-50%,-50%);box-shadow:0 0 8px ' + (cumNow > 0 ? 'rgba(46,207,133,.6)' : 'rgba(255,91,106,.6)'),
+      momentumLabel: pre ? '' : (momSide === 'home' ? g.homeAbbr : g.awayAbbr) + ' ' + (cumNow > 0 ? '+' : '') + cumNow.toFixed(1) + ' swing',
       momTop: momSide === 'home' ? g.homeAbbr : g.awayAbbr, momBottom: momSide === 'home' ? g.awayAbbr : g.homeAbbr,
       momHome: () => this.setState({ momSide: 'home' }), momAway: () => this.setState({ momSide: 'away' }),
       momHomeBtn: 'padding:3px 8px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.08em;background:transparent;border:1px solid ' + (momSide === 'home' ? BLUE : 'var(--axis)') + ';color:' + (momSide === 'home' ? BLUE : 'var(--second)'),
