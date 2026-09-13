@@ -1745,6 +1745,9 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
               </section>
             </sc-for>
+            <sc-if value="{{ buzzMore }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ buzzMoreClick }}" style="padding:10px 14px;border-radius:9px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--second);align-self:center">{{ buzzMoreLabel }}</button>
+            </sc-if>
           </div>
         </sc-if>
 
@@ -3262,12 +3265,26 @@ class Component extends DCLogic {
   // looks inside; the blockquote a platform expects is written there by hand, and the
   // platform's own script turns it into the post. A script loads once, on first need.
   mountEmbeds() {
-    const hosts = document.querySelectorAll('[data-embed]');
+    const all = document.querySelectorAll('[data-embed]');
+    if (!all.length) return;
+    // a post is mounted when it comes within a screen of view, not the moment the tab opens:
+    // ten platform frames at once is more than a phone keeps in memory
+    const io = this._embedIO || (this._embedIO = ('IntersectionObserver' in window) ? new IntersectionObserver(es => {
+      let hit = false;
+      es.forEach(en => { if (en.isIntersecting) { this._embedIO.unobserve(en.target); en.target.setAttribute('data-near', '1'); hit = true; } });
+      if (hit) this.mountEmbeds();
+    }, { rootMargin: '900px 0px' }) : null);
+    const hosts = [];
+    all.forEach(h => {
+      const spec = h.getAttribute('data-embed') || '';
+      if (!spec || h.getAttribute('data-mounted') === spec) return;
+      if (io && !h.getAttribute('data-near')) { io.observe(h); return; }
+      hosts.push(h);
+    });
     if (!hosts.length) return;
     const need = {};
     hosts.forEach(h => {
       const spec = h.getAttribute('data-embed') || '';
-      if (!spec || h.getAttribute('data-mounted') === spec) return;
       h.innerHTML = ''; h.setAttribute('data-mounted', spec);
       let e; try { e = JSON.parse(spec); } catch (x) { return; }
       const bq = document.createElement('blockquote'); bq.style.margin = '0';
@@ -5178,7 +5195,12 @@ class Component extends DCLogic {
     const buzzShut = st.shut || {};
     const buzzQ = String(st.buzzQ || '').trim().toLowerCase();
     const buzzKindOk = b => buzzKind === 'ALL' ? true : buzzKind === 'RECORD' ? (b.kind !== 'LIVE' && b.kind !== 'STORY' && b.kind !== 'SOCIAL') : String(buzzKind).indexOf('~') === 0 ? String(b.kind).toLowerCase().indexOf(String(buzzKind).slice(1).toLowerCase()) >= 0 : b.kind === buzzKind;
-    const buzzItems = buzzAll.filter(b => buzzKindOk(b) && (!st.buzzClub || (b.mono || monoOf(b.who)) === st.buzzClub) && (!buzzQ || matchQ(withClubNames((b.who || '') + ' ' + (b.mono || monoOf(b.who)) + ' ' + (b.head || '') + ' ' + (b.body || '')) + ' ' + (b.kind || ''), buzzQ))).map(b => {
+    // a phone draws a page of the feed at a time: on a game day the whole feed runs to
+    // hundreds of cards and tens of thousands of pixels, redrawn on every live tick, and
+    // Safari on an iPhone kills a page that large. Thirty at a time, more on a tap.
+    const BUZZ_PAGE = 30;
+    const buzzShown = st.buzzShown || BUZZ_PAGE;
+    const buzzMatched = buzzAll.filter(b => buzzKindOk(b) && (!st.buzzClub || (b.mono || monoOf(b.who)) === st.buzzClub) && (!buzzQ || matchQ(withClubNames((b.who || '') + ' ' + (b.mono || monoOf(b.who)) + ' ' + (b.head || '') + ' ' + (b.body || '')) + ' ' + (b.kind || ''), buzzQ))).map(b => {
       const c = b.tone === 1 ? ACC : b.tone === 2 ? 'var(--lead)' : b.tone === 0 ? RED : 'var(--second)';
       const bk = 'bz' + buzzAll.indexOf(b);
       return {
@@ -5193,8 +5215,11 @@ class Component extends DCLogic {
         unconfirmed: b.kind === 'RUMOR'
       };
     });
+    const buzzItems = buzzMatched.slice(0, buzzShown);
+    const buzzMore = Math.max(0, buzzMatched.length - buzzItems.length);
+    const buzzMoreClick = () => this.setState(x => ({ buzzShown: (x.buzzShown || BUZZ_PAGE) + BUZZ_PAGE }));
     const buzzChips = ['ALL', 'LIVE', 'SOCIAL', 'STORY', 'RECORD'].map(k => ({
-      label: k, pick: () => this.setState({ buzzKind: k, buzzKindOpen: false, buzzKindQ: '' }),
+      label: k, pick: () => this.setState({ buzzKind: k, buzzKindOpen: false, buzzKindQ: '', buzzShown: 0 }),
       style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid ' +
         (buzzKind === k ? BLUE : 'var(--axis)') + ';color:' + (buzzKind === k ? BLUE : 'var(--second)')
     }));
@@ -5569,7 +5594,7 @@ class Component extends DCLogic {
             open: () => this.setState({ cohortSel: c.cohort })
           };
         }),
-      buzzItems, buzzChips,
+      buzzItems, buzzChips, buzzMore, buzzMoreClick, buzzMoreLabel: 'SHOW ' + Math.min(BUZZ_PAGE, buzzMore) + ' MORE · ' + buzzMore + ' LEFT',
       // StoryStats ships four voices for the same events, both leagues
       // a pick re-reads every game's narrative in that audience and tone at once, and every
       // later beat keeps reading in it
@@ -5578,7 +5603,7 @@ class Component extends DCLogic {
       toneChips: ['EDITORIAL', 'HUMOR'].map(v => ({ label: v, pick: () => this.setVoice({ tone: v }),
         style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid ' + ((st.tone || 'EDITORIAL') === v ? HEX.brand : HEX.axis) + ';color:' + ((st.tone || 'EDITORIAL') === v ? HEX.brand : HEX.second) })),
       voiceNote: 'read for the ' + (st.audience || 'BETTING').toLowerCase() + ' audience in the ' + (st.tone || 'EDITORIAL').toLowerCase() + ' tone' + (st.storiesLoading ? ' · re-reading every game…' : ''),
-      buzzCount: buzzItems.length + ' of ' + buzzAll.length,
+      buzzCount: buzzMatched.length + ' of ' + buzzAll.length,
       buzzLiveNote: liveOn && st.liveMeta && st.liveMeta.fetched && S ? ' · live · read ' + S.age(st.liveMeta.fetched) + ' ago' : '',
       isProfiles: st.tab === 'profiles',
       isAlerts: st.tab === 'alerts',
@@ -6389,7 +6414,7 @@ paceRows: (() => {
       alertFilterOn: !!((st.alertQ || '').trim()) || (st.phase || 'ALL') !== 'ALL' || (st.alertKind || 'ALL') !== 'ALL' || !!st.alertClub,
       alertClear: () => this.setState({ alertQ: '', phase: 'ALL', alertKind: 'ALL', alertClub: null, alertKindOpen: false, alertKindQ: '', searchOpen: null }),
       buzzFilterOn: buzzKind !== 'ALL' || !!buzzQ || !!st.buzzClub,
-      buzzClear: () => this.setState({ buzzKind: 'ALL', buzzQ: '', buzzClub: null, buzzKindOpen: false, buzzKindQ: '', searchOpen: null }),
+      buzzClear: () => this.setState({ buzzKind: 'ALL', buzzQ: '', buzzClub: null, buzzKindOpen: false, buzzKindQ: '', searchOpen: null, buzzShown: 0 }),
       // every search box works the way the matchup box does: a click lists what can be searched,
       // typing filters the list, Enter takes the first, a pick becomes a tag beside the box
       buzzBox: (() => {
@@ -6424,7 +6449,7 @@ paceRows: (() => {
         return searchFor('stat', histMenuFor('stat', g.homeAbbr), { q: st.statQ || '', setQ: v => this.setState({ statQ: v }), params: P, groups: [{ label: 'STAT', items: keys.map(k => ({ label: k, count: 'STAT' })) }],
           placeholder: 'search stats — points, min, stl, rating…', count: '' });
       })(),
-      buzzKindCol, buzzQ: st.buzzQ || '', onBuzzQ: e => this.setState({ buzzQ: e.target.value }), buzzCountNote: buzzItems.length + ' of ' + buzzAll.length,
+      buzzKindCol, buzzQ: st.buzzQ || '', onBuzzQ: e => this.setState({ buzzQ: e.target.value, buzzShown: 0 }), buzzCountNote: buzzMatched.length + ' of ' + buzzAll.length,
       alertCountNote: (() => { const n = feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(withClubNames(a.text + ' ' + a.game) + ' ' + a.kind + ' ' + a.phase, st.alertQ)).length; return n + ' of ' + feed.length; })(),
       alerts: feed.filter(a => (st.phase === 'ALL' || a.phase === st.phase) && (!st.alertClub || a.game === st.alertClub) && ((st.alertKind || 'ALL') === 'ALL' || (String(st.alertKind).indexOf('~') === 0 ? a.kind.toLowerCase().indexOf(String(st.alertKind).slice(1).toLowerCase()) >= 0 : a.kind === st.alertKind)) && matchQ(withClubNames(a.text + ' ' + a.game) + ' ' + a.kind + ' ' + a.phase, st.alertQ)).map(a => {
         const c = a.tone === 1 ? ACC : a.tone === 2 ? 'var(--lead)' : a.tone === 0 ? RED : 'var(--second)';
