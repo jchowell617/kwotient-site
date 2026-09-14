@@ -179,7 +179,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-shell=league]{position:sticky!important;top:0;z-index:5;margin:0!important;border-radius:0 0 8px 8px!important;border-top:0!important;box-shadow:0 4px 10px var(--rail)}
   /* the menu sits tight so the slate shows beneath it on a short screen */
   [data-shell=nav]{gap:0!important;padding:4px 8px 2px!important}
-  [data-shell=nav] button,[data-shell=cohortbtn] button,[data-shell=modelbtn] button,[data-shell=contactbtn] button{padding:3px 10px!important;min-height:0!important;line-height:1.25!important}
+  [data-shell=nav] button,[data-shell=cohortbtn] button,[data-shell=modelbtn] button,[data-shell=contactbtn] button button{padding:3px 10px!important;min-height:0!important;line-height:1.25!important}
   [data-shell=cohortbtn],[data-shell=modelbtn],[data-shell=contactbtn]{padding:0 8px 2px!important}
   [data-shell=league] button{padding:4px!important}
   [data-shell=slate-head]{padding-top:6px!important;margin-top:4px!important}
@@ -306,7 +306,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </div>
         <div data-shell="modelbtn" style="padding:0 8px 10px">
           <button onClick="{{ goModel }}" style-hover="transform:translateY(-2px);box-shadow:0 8px 18px rgba(0,0,0,.26)" style="{{ modelNavBtn }}">
-            <span style="flex:1;text-align:left">Model</span>
+            <span style="flex:1;text-align:left">About</span>
             <span style="font-family:var(--kw);font-size:9.5px;color:var(--muted)">{{ modelBadge }}</span>
           </button>
         </div>
@@ -315,7 +315,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <span style="flex:1;text-align:left">Contact Us</span>
           </button>
         </div>
-
         <div data-shell="slate-head" style="border-top:1px solid var(--grid);margin-top:6px;padding:12px 14px 8px">
           <div style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key);margin-bottom:9px">SLATE</div>
         </div>
@@ -1230,7 +1229,28 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
         <sc-if value="{{ isModel }}" hint-placeholder-val="{{ false }}">
           <div data-page="" style="display:flex;flex-direction:column;gap:13px">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">Model</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">About</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
+
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mAbout.toggle }}" style="{{ p.mAbout.btn }}">{{ p.mAbout.chevron }}</button><span style="font-size:13.5px;font-weight:600">What Kwotient Is &amp; How to Use It</span></div>
+              <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">a public record of forecasts, graded in the open · not a sportsbook · not betting advice</span>
+              <sc-if value="{{ p.mAbout.open }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px 26px;margin-top:14px">
+                <sc-for list="{{ aboutSections }}" as="a" hint-placeholder-count="4">
+                  <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">{{ a.head }}</span>
+                    <sc-if value="{{ a.lead }}" hint-placeholder-val="{{ false }}"><span style="font-size:12.5px;line-height:1.55;color:var(--reversed);text-wrap:pretty">{{ a.lead }}</span></sc-if>
+                    <sc-for list="{{ a.rows }}" as="r" hint-placeholder-count="4">
+                      <div style="display:flex;gap:12px;align-items:flex-start;border-top:1px solid var(--grid);padding-top:8px">
+                        <span style="font-family:var(--kw);font-size:9.5px;letter-spacing:.1em;color:var(--brand);flex:none;width:92px;padding-top:2px">{{ r.k }}</span>
+                        <span style="font-size:12px;line-height:1.55;color:var(--second);text-wrap:pretty;min-width:0">{{ r.v }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </sc-for>
+              </div>
+              </sc-if>
+            </section>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
@@ -5312,7 +5332,7 @@ class Component extends DCLogic {
       toggle: () => this.setState(s => ({ shut: Object.assign({}, s.shut, { [k]: !(s.shut || {})[k] }) })),
       btn: 'background:transparent;border:none;cursor:pointer;padding:0 2px;font-size:11px;line-height:1;color:var(--brand);flex:none'
     });
-    const TAB_PANELS = { board: ['boardCards'], model: ['track', 'mDrift', 'mRef'], alerts: ['alertsList'],
+    const TAB_PANELS = { board: ['boardCards'], model: ['mAbout', 'track', 'mDrift', 'mRef'], alerts: ['alertsList'],
                         cohorts: ['cohortBody', 'cohPop', 'cohBefore', 'cohCalib', 'cohErr', 'cohSkill'] };
     const panels = PANELS.concat(PROFILE_PANELS).concat(DIR_PANELS).concat(BUZZ_PANELS).concat(TAB_PANELS.board, TAB_PANELS.model, TAB_PANELS.alerts, TAB_PANELS.cohorts).reduce((a, k) => (a[k] = panel(k), a), {});
     // one expand / collapse tool at the top of every tab, over the panels that tab shows
@@ -5382,6 +5402,27 @@ class Component extends DCLogic {
       windowTitle: sport + ' · ' + (slateSim ? 'no games on the slate' : slate.length + (st.liveMeta && st.liveMeta.upcoming ? ' upcoming' : ' on the slate')),
       theme: st.theme || 'dark',
       themeLabel: (st.theme || 'dark') === 'dark' ? 'LIGHT' : 'DARK',
+      aboutSections: [
+        { head: 'WHAT KWOTIENT IS', lead: 'Kwotient is a public record of sports forecasts. The model rates every NFL and NBA player and club, calls every game before it starts, and files each call before the outcome is known. When the outcome arrives the call is graded against it and the grade is published, right or wrong. Nothing is revised after the fact.', rows: [
+          { k: 'THE POINT', v: 'To show, in the open, how good the model is. A forecast that can be checked is worth something; one that cannot is a guess with confidence.' },
+          { k: 'THE RATING', v: 'Every player and club carries a KQ rating, 0 to 100, on the season as played. It moves after every game. Rankings, profiles, matchups and the game calls are built from it.' },
+          { k: 'THE RECORD', v: 'Cohorts of forecasts are registered with a freeze date, a scale and the baseline they must beat, then frozen, filed and settled in that order. The methodology is published before any forecast exists.' }
+        ] },
+        { head: 'WHAT IT IS NOT', lead: 'Kwotient is not a sportsbook and not a picks service. No wager is placed here, nothing is sold, and no screen tells you what to bet.', rows: [
+          { k: 'THE LINES', v: 'Spreads, totals and win probabilities from the books appear beside the model\'s because the market is the strongest public forecast there is. It is the yardstick. The record shows where the model beat it and where it did not.' },
+          { k: 'NO ACCOUNT', v: 'There is nothing to sign up for and nothing stored about you. The site reads the same for everyone.' }
+        ] },
+        { head: 'HOW TO USE IT', lead: 'Pick a league at the top, then read left to right. Every section updates on its own while games are on.', rows: [
+          { k: 'BOARD', v: 'The day\'s slate. Each card shows the score, the clock, the model\'s win probability and the market\'s. Tap a game to open it.' },
+          { k: 'LIVE', v: 'The open game in full: win probability and momentum over the game clock, the line as it moved, the box score, props and books with their result once the game ends. Slide along any chart to read that moment.' },
+          { k: 'ALERTS', v: 'The edge\'s reads as they land: scores, line moves and the gaps between the model and the market.' },
+          { k: 'BUZZ', v: 'The narrative for each game, posts from the league\'s reporters, and the signings, injuries and rumors the record captured. Filter by kind, or search a player or club.' },
+          { k: 'PLAYERS & CLUBS', v: 'Every profile: the rating and what it is made of, the season as played, the record and place, rankings against the position or the league, matchup history, and a timeline of every game with the model\'s call and the result. Search with the directory.' },
+          { k: 'COHORTS', v: 'The registered forecasts: what was forecast, when it was frozen, the baseline it must beat and the verdict once it settles.' },
+          { k: 'MODEL', v: 'The track record: every daily call graded against the final score, with calibration and skill against the market over time.' }
+        ] },
+        { head: 'HOW TO READ IT CRITICALLY', lead: 'Check the four things we would check. The method predates the forecasts. Every baseline was declared before the outcome. Cases the model declines to call are withheld, not filled in. Where the model disagrees with public reporting, the disagreement is left standing until the answer arrives.', rows: [] }
+      ],
       contactOpen: !!st.contactOpen,
       openContact: () => this.setState({ contactOpen: true }),
       closeContact: () => this.setState({ contactOpen: false }),
@@ -5434,10 +5475,10 @@ class Component extends DCLogic {
       modelNavBtn: navBtn(st.tab === 'model'),
       contactNavBtn: navBtn(!!st.contactOpen),
       modelBadge: badges.model,
-      tabItems: NAV.concat([['cohorts', 'Cohorts'], ['model', 'Model']]).map(([k, label]) => {
+      tabItems: NAV.concat([['cohorts', 'Cohorts'], ['model', 'About']]).map(([k, label]) => {
         const active = st.tab === k;
         return {
-          short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'Model' })[k] || label,
+          short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'About' })[k] || label,
           style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--brand)' : 'var(--muted)'),
           dot: 'width:4px;height:4px;border-radius:50%;background:var(--brand);opacity:' + (active ? '1' : '0'),
           go: () => this.goTab(k, { profileId: k === 'profiles' ? st.profileId : null })
