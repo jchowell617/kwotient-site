@@ -1689,7 +1689,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
             <div style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">AUDIENCE</span>
+              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">LENS</span>
               <sc-for list="{{ audienceChips }}" as="vc" hint-placeholder-count="2">
                 <button onClick="{{ vc.pick }}" style="{{ vc.style }}">{{ vc.label }}</button>
               </sc-for>
@@ -2514,7 +2514,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
             <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">AUDIENCE</span>
+              <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);flex:none;width:72px">LENS</span>
               <sc-for list="{{ audienceChips }}" as="vc" hint-placeholder-count="2">
                 <button onClick="{{ vc.pick }}" style="{{ vc.style }}">{{ vc.label }}</button>
               </sc-for>
@@ -5639,11 +5639,13 @@ class Component extends DCLogic {
       // StoryStats ships four voices for the same events, both leagues
       // a pick re-reads every game's narrative in that audience and tone at once, and every
       // later beat keeps reading in it
-      audienceChips: ['BETTING', 'STATS'].map(v => ({ label: v, pick: () => this.setVoice({ audience: v }),
+      // the narrative comes in two lenses: read against the market (the provider's 'betting'
+      // audience) or on the stats alone; the chips say which, in the record's words
+      audienceChips: ['BETTING', 'STATS'].map(v => ({ label: v === 'BETTING' ? 'MARKET' : v, pick: () => this.setVoice({ audience: v }),
         style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid ' + ((st.audience || 'BETTING') === v ? HEX.brand : HEX.axis) + ';color:' + ((st.audience || 'BETTING') === v ? HEX.brand : HEX.second) })),
       toneChips: ['EDITORIAL', 'HUMOR'].map(v => ({ label: v, pick: () => this.setVoice({ tone: v }),
         style: 'padding:5px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid ' + ((st.tone || 'EDITORIAL') === v ? HEX.brand : HEX.axis) + ';color:' + ((st.tone || 'EDITORIAL') === v ? HEX.brand : HEX.second) })),
-      voiceNote: 'read for the ' + (st.audience || 'BETTING').toLowerCase() + ' audience in the ' + (st.tone || 'EDITORIAL').toLowerCase() + ' tone' + (st.storiesLoading ? ' · re-reading every game…' : ''),
+      voiceNote: 'the narrative read ' + ((st.audience || 'BETTING') === 'STATS' ? 'on the stats' : 'against the market') + ', in the ' + (st.tone || 'EDITORIAL').toLowerCase() + ' tone' + (st.storiesLoading ? ' · re-reading every game…' : ''),
       buzzCount: buzzMatched.length + ' of ' + buzzAll.length,
       buzzLiveNote: liveOn && st.liveMeta && st.liveMeta.fetched && S ? ' · live · read ' + S.age(st.liveMeta.fetched) + ' ago' : '',
       isProfiles: st.tab === 'profiles',
