@@ -407,7 +407,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <div style="flex:1;min-width:250px;display:flex;flex-direction:column;gap:7px">
                   <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">
-                    <span>WIN PROBABILITY</span><span>{{ probDelta }}</span>
+                    <span>KWOTIENT WIN PROBABILITY</span><span>{{ probDelta }}</span>
                   </div>
                   <div style="display:flex;height:32px;border-radius:7px;overflow:hidden;border:1px solid var(--axis)">
                     <div style="{{ probLeft }}">{{ awayProb }}</div>
@@ -1254,7 +1254,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Model Today</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Kwotient Model Today</span></div>
                 <sc-if value="{{ p.mDrift.open }}" hint-placeholder-val="{{ true }}">
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 14px">how the model is doing on today's {{ sport }} slate, on the live beat</div>
                 <div style="display:flex;flex-direction:column;gap:9px">
@@ -1272,7 +1272,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </section>
             </div>
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="grid-column:1/-1;transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
-                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.track.toggle }}" style="{{ p.track.btn }}">{{ p.track.chevron }}</button><span style="font-size:13.5px;font-weight:600">Track Record · The Model's Scoreboard</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.track.toggle }}" style="{{ p.track.btn }}">{{ p.track.chevron }}</button><span style="font-size:13.5px;font-weight:600">Track Record · The Kwotient Model's Scoreboard</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
                 <sc-if value="{{ p.track.open }}" hint-placeholder-val="{{ true }}">
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);line-height:1.5">every call the model made, filed before kickoff and graded when the game is over — the prior, its fair line against the market, the result, and whether the side it took came in · {{ trNote }}</div>
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px">
@@ -1295,7 +1295,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }}</span><span>net {{ trCumNow }} · latest</span></div>
                   </div>
                   <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · how often the side the model liked won, by how sure it was</span>
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · how often the side the Kwotient model liked won, by how sure it was</span>
                     <div style="position:relative;height:120px">
                       <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
                         <line x1="0" y1="100" x2="300" y2="100" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
@@ -1647,7 +1647,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ det.settled }}" hint-placeholder-val="{{ true }}">
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 14px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                  <span style="font-size:12.5px;font-weight:600">Model vs. Baseline</span>
+                  <span style="font-size:12.5px;font-weight:600">Kwotient vs. Baseline</span>
                   
                 </div>
                 <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin:3px 0 15px">share of the cohort called correctly · {{ det.headline }}</div>
@@ -1817,7 +1817,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                 </sc-if>
                   </div>
-                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin-top:-4px">rating is model-derived from season stats, not a feed field</span>
+                  <span style="font-family:var(--kw);font-size:9.5px;color:var(--second);margin-top:-4px">the Kwotient Score is derived from season stats, not a feed field</span>
                   <sc-if value="{{ p.dirSearch.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid var(--grid);padding-top:12px">
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ dirCount }}</span>
@@ -1985,7 +1985,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="display:flex;align-items:baseline;gap:7px">
                       <span style="{{ profile.cardStyle }}">{{ profile.card.overall }}</span>
                     </div>
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">OVERALL SCORE</span>
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT SCORE</span>
                   </div>
                   <div data-prof="headline" style="display:flex;gap:22px;flex-wrap:wrap">
                     <sc-for list="{{ profile.headline }}" as="h" hint-placeholder-count="3">
@@ -2003,7 +2003,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Scorecard</span></div>
                       <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">ranked inside cohort {{ profile.card.cohort }}</span>
                     </div>
-                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">OVERALL {{ profile.card.overall }}</span>
+                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">KWOTIENT {{ profile.card.overall }}</span>
                   </div></div></div>
                   <sc-if value="{{ p.pfCard.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(258px,1fr));gap:11px 22px">
@@ -2181,7 +2181,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     </div>
                     <div style="flex:1;min-width:180px;display:flex;flex-direction:column;gap:9px">
                       <div style="display:flex;justify-content:space-between;align-items:baseline">
-                        <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--second)">OVERALL RATING</span>
+                        <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--second)">KWOTIENT SCORE</span>
                         <span style="font-family:var(--kw);font-size:10px;color:var(--lead)">{{ profile.explorer.standRank }} in cohort</span>
                       </div>
                       <div style="height:8px;background:var(--rail);border-radius:4px;overflow:hidden;border:1px solid var(--axis)">
@@ -2195,7 +2195,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     </div>
                   </div>
                   <div style="display:grid;grid-template-columns:92px 46px 1fr 44px 34px;gap:10px;padding:9px 17px;font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted);border-bottom:1px solid var(--divider)">
-                    <span>ATTRIBUTE</span><span style="text-align:right">STAT</span><span>RATING</span><span style="text-align:center">0-100</span><span style="text-align:right">RANK</span>
+                    <span>ATTRIBUTE</span><span style="text-align:right">STAT</span><span>KWOTIENT</span><span style="text-align:center">0-100</span><span style="text-align:right">RANK</span>
                   </div>
                   <sc-for list="{{ profile.explorer.rows }}" as="ex" hint-placeholder-count="12">
                     <div style="display:grid;grid-template-columns:92px 46px 1fr 44px 34px;gap:10px;padding:9px 17px;border-bottom:1px solid var(--divider);align-items:center">
@@ -2206,7 +2206,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <span style="font-family:var(--kw);font-size:9.5px;text-align:right;color:var(--muted)">{{ ex.rank }}</span>
                     </div>
                   </sc-for>
-                  <div style="padding:11px 17px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--faint)">RATING IS THIS ENTITY'S 0-100 PERCENTILE INSIDE ITS COHORT FOR THE SELECTED SEASON</div>
+                  <div style="padding:11px 17px;font-family:var(--kw);font-size:9px;letter-spacing:.12em;color:var(--faint)">THE KWOTIENT RATING IS THIS ENTITY'S 0-100 PERCENTILE INSIDE ITS COHORT FOR THE SELECTED SEASON</div>
                 </sc-if>
                 </section>
 
@@ -2342,8 +2342,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                   <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                     <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfPerf.toggle }}" style="{{ p.pfPerf.btn }}">{{ p.pfPerf.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px;margin-bottom:15px">
-                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Model Factors</span></div>
-                      <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">contribution to the model view, in points</span>
+                      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:12.5px;font-weight:600">Kwotient Model Factors</span></div>
+                      <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">contribution to the Kwotient model's view, in points</span>
                     </div></div></div>
                   <sc-if value="{{ p.pfPerf.open }}" hint-placeholder-val="{{ true }}">
                     <div style="display:flex;flex-direction:column;gap:10px">
@@ -2405,7 +2405,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         <sc-if value="{{ tlHoverOn }}" hint-placeholder-val="{{ false }}"><div style="{{ tlHoverLine }}"></div><div style="{{ tlTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ tlTipHead }}</div><div>{{ tlTipBody }}</div></div></sc-if>
                       </div>
                     </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--kw);font-size:9px;color:var(--faint);padding-left:34px"><span>{{ tlFrom }}</span><span><span style="color:var(--good)">● won</span> &nbsp;<span style="color:var(--critical)">● lost</span> &nbsp;<span style="color:var(--brand)">◯ model right</span></span><span>{{ tlTo }}</span></div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;font-family:var(--kw);font-size:9px;color:var(--faint);padding-left:34px"><span>{{ tlFrom }}</span><span><span style="color:var(--good)">● won</span> &nbsp;<span style="color:var(--critical)">● lost</span> &nbsp;<span style="color:var(--brand)">◯ Kwotient right</span></span><span>{{ tlTo }}</span></div>
                   </sc-if>
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">ARCHIVE · every game on the record · a tap opens the box score</span><sc-if value="{{ tlNoGames }}" hint-placeholder-val="{{ false }}"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">no game on the record yet · the first files with the first final score</span></sc-if><span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ tlCount }}</span></div>
                     <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
@@ -4663,7 +4663,7 @@ class Component extends DCLogic {
       col('pos', isPlayers ? 'POS' : 'DIV', (useFamilies
         ? NFL_FAMILY.map(f => f[0]).filter(f => universe.some(x => famOf(posOf(x)) === f)).map(f => ({ label: f + ' · group', value: 'fam:' + f, count: universe.filter(x => famOf(posOf(x)) === f).length }))
         : []).concat(distinct(posOf))),
-      col('rating', 'RATING', RATING_BANDS.map(b => ({
+      col('rating', 'KWOTIENT SCORE', RATING_BANDS.map(b => ({
         label: b[0], value: b[0],
         count: universe.filter(x => { const r = ratingOf(x); return r >= b[1] && r <= b[2]; }).length
       })), 'right')
@@ -4966,7 +4966,7 @@ class Component extends DCLogic {
             { k: 'MARKET VALUE, COMPARABLES', v: clubMedian == null ? 'no band' : S.M(clubMedian) + ' committed · league median' },
             { k: 'COMMITTED NOW', v: S.M(cl.committed) },
             { k: 'KWOTIENT SCORE', v: cl.rank ? '#' + cl.rank + ' of ' + (cl.of || clubs.length) + ' clubs' : '—' },
-            { k: 'MODEL WIN PROB', v: wpp == null ? '—' : wpp.toFixed(1) + '%' },
+            { k: 'KWOTIENT WIN PROB', v: wpp == null ? '—' : wpp.toFixed(1) + '%' },
             { k: 'STANDING', v: cl.standing || '—' }
           ].concat((() => {
             // tonight's market for this club, when it is in the open game and the market is posted
@@ -5072,9 +5072,9 @@ class Component extends DCLogic {
     const LINES = {
       PRIOR: { be: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. Prior ' + f1(d.p) + '% ' + d.home + ' from the two club cards' + (d.homeK != null ? ' (' + d.homeK + ' v ' + d.awayK + ')' : '') + '.',
                bh: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. The cards like ' + d.home + ' at ' + f1(d.p) + '% before anyone has laced up' + (d.homeK != null ? ' (' + d.homeK + ' v ' + d.awayK + ')' : '') + '.',
-               se: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. ' + d.home + ' ' + f1(d.p) + '% by club rating' + (d.homeK != null ? ', KQ ' + d.homeK + ' to ' + d.awayK : '') + '.',
-               sh: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. ' + (d.homeK != null ? 'KQ ' + d.homeK + ' meets KQ ' + d.awayK + '; the' : 'The') + ' math gives ' + d.home + ' ' + f1(d.p) + '% and a head start.' },
-      MODEL: { be: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — model has ' + d.home + ' at ' + f1(d.p) + '%; ' + d.poss + '.',
+               se: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. ' + d.home + ' ' + f1(d.p) + '% by Kwotient Score' + (d.homeK != null ? ', Kwotient Score ' + d.homeK + ' to ' + d.awayK : '') + '.',
+               sh: d => d.away + ' @ ' + d.home + ' — ' + d.status + '. ' + (d.homeK != null ? 'Kwotient Score ' + d.homeK + ' meets ' + d.awayK + '; the' : 'The') + ' math gives ' + d.home + ' ' + f1(d.p) + '% and a head start.' },
+      MODEL: { be: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — the Kwotient model has ' + d.home + ' at ' + f1(d.p) + '%; ' + d.poss + '.',
                bh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — ' + d.home + ' ' + f1(d.p) + '%' + (d.poss ? ', ' + d.poss : '') + '; the number is doing the talking.',
                se: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — win probability ' + d.home + ' ' + f1(d.p) + '%' + (d.poss ? '; ' + d.poss : '') + '.',
                sh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — ' + d.home + ' ' + f1(d.p) + '% to win' + (d.poss ? ', and ' + d.poss + ', which helps' : '') + '.' },
@@ -5082,10 +5082,10 @@ class Component extends DCLogic {
                bh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final; the market can stop arguing.',
                se: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final, a ' + Math.abs(d.hs - d.as) + '-point margin.',
                sh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final, by ' + Math.abs(d.hs - d.as) + ', for the box score.' },
-      EDGE:  { be: d => 'Model ' + d.home + ' ' + sgn(d.fair) + ' against a market ' + sgn(d.line) + ' — ' + f1(Math.abs(d.gap)) + ' points on ' + (d.gap > 0 ? d.home : d.away) + ' across ' + d.n + ' books.',
-               bh: d => 'The books say ' + d.home + ' ' + sgn(d.line) + '; the model says ' + sgn(d.fair) + '. ' + f1(Math.abs(d.gap)) + ' points of daylight on ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books unconvinced.',
+      EDGE:  { be: d => 'Kwotient ' + d.home + ' ' + sgn(d.fair) + ' against a market ' + sgn(d.line) + ' — ' + f1(Math.abs(d.gap)) + ' points on ' + (d.gap > 0 ? d.home : d.away) + ' across ' + d.n + ' books.',
+               bh: d => 'The books say ' + d.home + ' ' + sgn(d.line) + '; the Kwotient model says ' + sgn(d.fair) + '. ' + f1(Math.abs(d.gap)) + ' points of daylight on ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books unconvinced.',
                se: d => 'Projected margin ' + d.home + ' ' + sgn(d.fair) + ' against a posted ' + sgn(d.line) + ' — a ' + f1(Math.abs(d.gap)) + '-point gap toward ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books sampled.',
-               sh: d => 'Model margin ' + sgn(d.fair) + ', posted ' + sgn(d.line) + '; the ' + f1(Math.abs(d.gap)) + ' in between is where ' + (d.gap > 0 ? d.home : d.away) + '\'s numbers live. ' + d.n + ' books.' },
+               sh: d => 'Kwotient margin ' + sgn(d.fair) + ', posted ' + sgn(d.line) + '; the ' + f1(Math.abs(d.gap)) + ' in between is where ' + (d.gap > 0 ? d.home : d.away) + '\'s numbers live. ' + d.n + ' books.' },
       LINE:  { be: d => d.home + ' moved from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '.',
                bh: d => d.home + ' went from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + ' — somebody bet with conviction.',
                se: d => d.home + '\'s posted margin moved from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '.',
@@ -5094,14 +5094,14 @@ class Component extends DCLogic {
                bh: d => d.home + ' ' + sgn(d.from) + ' to ' + sgn(d.to) + ' in thirty minutes — that is steam, not a breeze.',
                se: d => d.home + '\'s posted margin changed ' + f1(Math.abs(d.to - d.from)) + ' points in the last thirty minutes, ' + sgn(d.from) + ' to ' + sgn(d.to) + '.',
                sh: d => f1(Math.abs(d.to - d.from)) + ' points of movement in thirty minutes on ' + d.home + ' (' + sgn(d.from) + ' to ' + sgn(d.to) + '); someone refreshed the model.' },
-      INJURY: { be: d => d.full + ' (' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ') — ' + d.inj + ', on the captured report.',
-                bh: d => d.full + ' (' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ') — ' + d.inj + ' on the captured report; price the doubt.',
-                se: d => d.full + ', ' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ' — ' + d.inj + ', per the captured report.',
-                sh: d => d.full + ' (' + d.pos + (d.k != null ? ', KQ ' + d.k : '') + ') is ' + d.inj + ', per the report; the depth chart is holding its breath.' },
-      MODELGAP: { be: d => 'Model has ' + d.home + ' at ' + f1(d.wp) + '%, market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of edge.' : 'Inside the 2-point threshold.'),
-                  bh: d => 'Model ' + d.home + ' ' + f1(d.wp) + '%, market ' + f1(d.mk) + '% — ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points the books have not caught up to.' : 'inside two points; nothing to bet on here.'),
+      INJURY: { be: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') — ' + d.inj + ', on the captured report.',
+                bh: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') — ' + d.inj + ' on the captured report; price the doubt.',
+                se: d => d.full + ', ' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ' — ' + d.inj + ', per the captured report.',
+                sh: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') is ' + d.inj + ', per the report; the depth chart is holding its breath.' },
+      MODELGAP: { be: d => 'Kwotient has ' + d.home + ' at ' + f1(d.wp) + '%, market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of edge.' : 'Inside the 2-point threshold.'),
+                  bh: d => 'Kwotient ' + d.home + ' ' + f1(d.wp) + '%, market ' + f1(d.mk) + '% — ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points the books have not caught up to.' : 'inside two points; nothing to bet on here.'),
                   se: d => 'Win probability ' + d.home + ' ' + f1(d.wp) + '%; implied market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? 'Gap ' + f1(Math.abs(d.wp - d.mk)) + ' points.' : 'Gap under 2 points.'),
-                  sh: d => d.home + ' ' + f1(d.wp) + '% by the model, ' + f1(d.mk) + '% by the crowd; ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of disagreement.' : 'the two agree within 2 points, which is rare.') },
+                  sh: d => d.home + ' ' + f1(d.wp) + '% by Kwotient, ' + f1(d.mk) + '% by the crowd; ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of disagreement.' : 'the two agree within 2 points, which is rare.') },
       SWING: { be: d => d.side + ' have taken ' + f1(Math.abs(d.swing)) + ' points of win probability over the last ten ticks.',
                bh: d => d.side + ' picked up ' + f1(Math.abs(d.swing)) + ' points of win probability in ten ticks; the live line is late.',
                se: d => d.side + ' +' + f1(Math.abs(d.swing)) + ' win-probability points over the last ten ticks.',
@@ -5118,7 +5118,7 @@ class Component extends DCLogic {
         const xs = st.series[x.id];
         const p = xs ? xs.hist[xs.hist.length - 1] : (x.wp == null ? 50 : x.wp);
         const fin = x.state === 'final', on = x.state === 'in_progress';
-        items.push({ phase: fin ? 'POST' : on ? 'LIVE' : 'PRE', kind: fin ? 'FINAL' : on ? 'MODEL' : 'PRIOR', t: on && x.clock ? 'Q' + x.per + ' ' + x.clock : (S ? S.age(st.liveMeta && st.liveMeta.fetched) : ''),
+        items.push({ phase: fin ? 'POST' : on ? 'LIVE' : 'PRE', kind: fin ? 'FINAL' : on ? 'KWOTIENT' : 'KWOTIENT PRIOR', t: on && x.clock ? 'Q' + x.per + ' ' + x.clock : (S ? S.age(st.liveMeta && st.liveMeta.fetched) : ''),
           game: x.homeAbbr, tone: on ? 1 : 3,
           text: say(fin ? 'FINAL' : on ? 'MODEL' : 'PRIOR', { away: x.awayAbbr, home: x.homeAbbr, as: x.as, hs: x.hs, p, poss: x.poss || '', status: x.status || 'scheduled', homeK: x.homeK, awayK: x.awayK }) });
       });
@@ -5157,7 +5157,7 @@ class Component extends DCLogic {
       const own = feed.filter(a => sides.indexOf(a.game) >= 0);
       const swing = wp - s.hist[s.hist.length - 11];
       const derived = [
-        { phase: 'LIVE', kind: 'MODEL', t: 'now', game: g.homeAbbr, tone: Math.abs(wp - mk) >= 2 ? 1 : 3,
+        { phase: 'LIVE', kind: 'KWOTIENT', t: 'now', game: g.homeAbbr, tone: Math.abs(wp - mk) >= 2 ? 1 : 3,
           text: say('MODELGAP', { home: g.homeAbbr, wp, mk }) },
         { phase: 'LIVE', kind: 'SWING', t: '0:0' + (2 + (st.tick % 7)), game: g.homeAbbr, tone: swing > 0 ? 2 : 0,
           text: say('SWING', { side: swing > 0 ? g.homeAbbr : g.awayAbbr, swing }) }
@@ -5367,7 +5367,7 @@ class Component extends DCLogic {
         clockStyle: 'font-family:var(--kw);font-size:9.5px;display:inline-flex;align-items:center;gap:5px;transition:none;color:' + (x.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
         dotStyle: 'width:6px;height:6px;border-radius:50%;display:block;flex:none;transition:none;background:' + (x.state === 'in_progress' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--axis)'),
         lineLabel: x.market ? x.homeAbbr + ' ' + (x.line > 0 ? '+' : '') + Number(x.line).toFixed(1) + (x.mktTotal != null ? ' · O/U ' + x.mktTotal : '') + ' · market'
-                             : x.homeAbbr + ' ' + (x.fair > 0 ? '+' : '') + x.fair.toFixed(1) + ' · model line',
+                             : x.homeAbbr + ' ' + (x.fair > 0 ? '+' : '') + x.fair.toFixed(1) + ' · Kwotient line',
         probLabel: p.toFixed(1) + '%',
         awayProbLabel: (100 - p).toFixed(1) + '%',
         mktLabel: x.market && x.mktProb != null ? ' · mkt ' + x.mktProb.toFixed(0) + '%' : '',
@@ -5403,25 +5403,25 @@ class Component extends DCLogic {
       theme: st.theme || 'dark',
       themeLabel: (st.theme || 'dark') === 'dark' ? 'LIGHT' : 'DARK',
       aboutSections: [
-        { head: 'WHAT KWOTIENT IS', lead: 'Kwotient is a public record of sports forecasts. The model rates every NFL and NBA player and club, calls every game before it starts, and files each call before the outcome is known. When the outcome arrives the call is graded against it and the grade is published, right or wrong. Nothing is revised after the fact.', rows: [
-          { k: 'THE POINT', v: 'To show, in the open, how good the model is. A forecast that can be checked is worth something; one that cannot is a guess with confidence.' },
-          { k: 'THE RATING', v: 'Every player and club carries a KQ rating, 0 to 100, on the season as played. It moves after every game. Rankings, profiles, matchups and the game calls are built from it.' },
-          { k: 'THE RECORD', v: 'Cohorts of forecasts are registered with a freeze date, a scale and the baseline they must beat, then frozen, filed and settled in that order. The methodology is published before any forecast exists.' }
+        { head: 'WHAT KWOTIENT IS', lead: 'Kwotient is a public record of its own sports forecasts. The Kwotient model rates every NFL and NBA player and club, calls every game before it starts, and files each call before the outcome is known. When the outcome arrives the call is graded against it and the grade is published, right or wrong. Nothing is revised after the fact.', rows: [
+          { k: 'THE POINT', v: 'To show, in the open, how good the Kwotient model is. A forecast that can be checked is worth something; one that cannot is a guess with confidence.' },
+          { k: 'THE SCORE', v: 'Every player and club carries a Kwotient Score, 0 to 100, on the season as played. It moves after every game. Rankings, profiles, matchups and the game calls are built from it.' },
+          { k: 'THE RECORD', v: 'Cohorts of Kwotient forecasts are registered with a freeze date, a scale and the baseline they must beat, then frozen, filed and settled in that order. The methodology is published before any forecast exists.' }
         ] },
         { head: 'WHAT IT IS NOT', lead: 'Kwotient is not a sportsbook and not a picks service. No wager is placed here, nothing is sold, and no screen tells you what to bet.', rows: [
-          { k: 'THE LINES', v: 'Spreads, totals and win probabilities from the books appear beside the model\'s because the market is the strongest public forecast there is. It is the yardstick. The record shows where the model beat it and where it did not.' },
+          { k: 'THE LINES', v: 'Spreads, totals and win probabilities from the books appear beside the Kwotient model\'s because the market is the strongest public forecast there is. It is the yardstick. The record shows where Kwotient beat it and where it did not.' },
           { k: 'NO ACCOUNT', v: 'There is nothing to sign up for and nothing stored about you. The site reads the same for everyone.' }
         ] },
         { head: 'HOW TO USE IT', lead: 'Pick a league at the top, then read left to right. Every section updates on its own while games are on.', rows: [
-          { k: 'BOARD', v: 'The day\'s slate. Each card shows the score, the clock, the model\'s win probability and the market\'s. Tap a game to open it.' },
+          { k: 'BOARD', v: 'The day\'s slate. Each card shows the score, the clock, the Kwotient model\'s win probability and the market\'s. Tap a game to open it.' },
           { k: 'LIVE', v: 'The open game in full: win probability and momentum over the game clock, the line as it moved, the box score, props and books with their result once the game ends. Slide along any chart to read that moment.' },
-          { k: 'ALERTS', v: 'The edge\'s reads as they land: scores, line moves and the gaps between the model and the market.' },
+          { k: 'ALERTS', v: 'The edge\'s reads as they land: scores, line moves and the gaps between the Kwotient model and the market.' },
           { k: 'BUZZ', v: 'The narrative for each game, posts from the league\'s reporters, and the signings, injuries and rumors the record captured. Filter by kind, or search a player or club.' },
-          { k: 'PLAYERS & CLUBS', v: 'Every profile: the rating and what it is made of, the season as played, the record and place, rankings against the position or the league, matchup history, and a timeline of every game with the model\'s call and the result. Search with the directory.' },
-          { k: 'COHORTS', v: 'The registered forecasts: what was forecast, when it was frozen, the baseline it must beat and the verdict once it settles.' },
-          { k: 'MODEL', v: 'The track record: every daily call graded against the final score, with calibration and skill against the market over time.' }
+          { k: 'PLAYERS & CLUBS', v: 'Every profile: the Kwotient Score and what it is made of, the season as played, the record and place, rankings against the position or the league, matchup history, and a timeline of every game with the Kwotient model\'s call and the result. Search with the directory.' },
+          { k: 'COHORTS', v: 'The registered Kwotient forecasts: what was forecast, when it was frozen, the baseline it must beat and the verdict once it settles.' },
+          { k: 'ABOUT', v: 'The track record: every daily Kwotient call graded against the final score, with calibration and skill against the market over time.' }
         ] },
-        { head: 'HOW TO READ IT CRITICALLY', lead: 'Check the four things we would check. The method predates the forecasts. Every baseline was declared before the outcome. Cases the model declines to call are withheld, not filled in. Where the model disagrees with public reporting, the disagreement is left standing until the answer arrives.', rows: [] }
+        { head: 'HOW TO READ IT CRITICALLY', lead: 'Check the four things we would check. The method predates the forecasts. Every baseline was declared before the outcome. Cases the Kwotient model declines to call are withheld, not filled in. Where the model disagrees with public reporting, the disagreement is left standing until the answer arrives.', rows: [] }
       ],
       contactOpen: !!st.contactOpen,
       openContact: () => this.setState({ contactOpen: true }),
@@ -5499,12 +5499,12 @@ class Component extends DCLogic {
         { k: 'Ratings, cohorts, contracts, injuries', v: 'The Kwotient record: the engine\'s ratings and dimensions, the cohort registers and filings with their hashes, contract terms from Over the Cap and nflverse, and the captured injury report. Rebuilt every morning from the day\'s captures.' }
       ],
       refGlossary: [
-        { k: 'KQ rating', v: 'The record\'s 0 to 100 rating of a player or club: his rank inside the position cohort on the season as played, each game weighted in over the completed season until the season stands on its own. It moves after every game.' },
-        { k: 'Model line', v: 'The model\'s own fair spread for a game, from the two club cards and the score; negative favors the home side.' },
-        { k: 'Prior', v: 'The model\'s win probability before a ball is played, from the two club cards alone.' },
+        { k: 'Kwotient Score', v: 'Kwotient\'s 0 to 100 score of a player or club: his rank inside the position cohort on the season as played, each game weighted in over the completed season until the season stands on its own. It moves after every game.' },
+        { k: 'Kwotient line', v: 'The Kwotient model\'s own fair spread for a game, from the two club cards and the score; negative favors the home side.' },
+        { k: 'Kwotient prior', v: 'The Kwotient model\'s win probability before a ball is played, from the two club cards alone.' },
         { k: 'Consensus', v: 'The median line across the books that post one; for the moneyline, the mean implied probability with the vig removed.' },
         { k: 'Implied probability', v: 'What a moneyline says about a side\'s chance once the book\'s margin is taken out, so the two sides sum to 100.' },
-        { k: 'Edge', v: 'The gap between the model\'s fair line and the market\'s, in points on the home spread; a point or more is worth noting, two is an alert.' },
+        { k: 'Edge', v: 'The gap between the Kwotient model\'s fair line and the market\'s, in points on the home spread; a point or more is worth noting, two is an alert.' },
         { k: 'L10', v: 'A player\'s last ten games in the record\'s game log; against a line, how many of them cleared it.' },
         { k: 'Best number', v: 'The most favorable line or price on a side among the books listed, and the book that posts it.' },
         { k: 'Cohort', v: 'A registered population the record freezes on a date, files projections for, and settles against the outcome — frozen, filed, settled, in that order.' },
@@ -5596,7 +5596,7 @@ class Component extends DCLogic {
           metrics: c.metrics.map(m => ({ label: m[0], value: m[1] })),
           memberUnit: c.memberUnit,
           memberNote: settled ? 'bare facts and Kwotient projections, graded at settlement'
-            : c.status === 'filed' ? 'the frozen roster with the projection as filed; a signing on the record shows as such, and nothing is graded before settlement'
+            : c.status === 'filed' ? 'the frozen roster with the Kwotient projection as filed; a signing on the record shows as such, and nothing is graded before settlement'
             : c.status === 'frozen' ? 'the frozen population; projections file before the window opens'
             : 'the population freezes on ' + (c.freezes || S.day(c.freezeDate)) + ' — nothing is listed before then',
           members: c.members.map(mb => ({
@@ -5711,7 +5711,7 @@ class Component extends DCLogic {
           trTiles: [
             { k: 'CALLS', v: String(sportCalls.length), sub: 'filed before kickoff', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
             { k: 'SETTLED', v: String(settled.length), sub: sportCalls.length - settled.length + ' still open', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
-            { k: 'MODEL RIGHT', v: settled.length ? right + '-' + wrong : '—', sub: settled.length ? pct(right, settled.length) + ' of settled calls' : 'no result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
+            { k: 'KWOTIENT RIGHT', v: settled.length ? right + '-' + wrong : '—', sub: settled.length ? pct(right, settled.length) + ' of settled calls' : 'no result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
             { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (coverable.length ? (covered * 2 >= coverable.length ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
             { k: 'BRIER', v: brier == null ? '—' : brier.toFixed(3), sub: brier == null ? 'lower is better · 0.250 is a coin' : (brier < 0.25 ? 'beating a coin' : 'behind a coin') + ' · 0.250 is a coin', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' }
           ],
@@ -5732,7 +5732,7 @@ class Component extends DCLogic {
           trDotHoverOn: dh != null, trDotTip: dh ? TIPSTYLE + ';top:6px;' + ((dh.e / eMax) > 0.55 ? 'right:6px' : 'left:6px') : '',
           trDotTipHead: dh ? dh.c.away + ' @ ' + dh.c.home + ' · ' + (S ? S.day(dh.c.d) : dh.c.d) : '', trDotTipBody: dh ? dh.e.toFixed(1) + ' pts on ' + dh.c.on + ' · final ' + dh.c.as + '-' + dh.c.hs + ' · ' + (dh.c.covered ? 'covered by ' : 'missed by ') + Math.abs(dh.cm).toFixed(1) : '',
           trRows: sorted.slice(0, st.trLimit || 10).map(row), trMore: sorted.length > (st.trLimit || 10), trMoreLabel: 'Show ' + Math.min(20, sorted.length - (st.trLimit || 10)) + ' more',
-          trCols: [tcol('track', 'd', 'DATE', null, 'left', .9), tcol('track', 'game', 'GAME', null, 'left', 1.4), tcol('track', 'prior', 'PRIOR', null, 'left', .8), tcol('track', 'fair', 'FAIR', null, 'left', .8), tcol('track', 'line', 'MARKET', null, 'left', .8), tcol('track', 'edge', 'EDGE', null, 'left', 1), tcol('track', 'final', 'FINAL', null, 'left', .8), tcol('track', 'call', 'CALL', null, 'left', .7)],
+          trCols: [tcol('track', 'd', 'DATE', null, 'left', .9), tcol('track', 'game', 'GAME', null, 'left', 1.2), tcol('track', 'prior', 'KWOTIENT PRIOR', null, 'left', 1.6), tcol('track', 'fair', 'KWOTIENT FAIR', null, 'left', 1.5), tcol('track', 'line', 'MARKET', null, 'left', .8), tcol('track', 'edge', 'EDGE', null, 'left', 1), tcol('track', 'final', 'FINAL', null, 'left', .8), tcol('track', 'call', 'KWOTIENT CALL', null, 'left', 1.5)],
           trShowMore: () => this.setState({ trLimit: (st.trLimit || 10) + 20 }), trShowAll: () => this.setState({ trLimit: 100000 }),
           trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 10 }), params: P,
             groups: [
@@ -5778,7 +5778,7 @@ class Component extends DCLogic {
         const bands = injList.map((c, i) => { const a = (new Date(c[0]) - new Date(injFrom)) / 86400000; const b = i + 1 < injList.length ? (new Date(injList[i + 1][0]) - new Date(injFrom)) / 86400000 : span; return { style: 'position:absolute;top:0;bottom:0;left:' + (a / span * 100).toFixed(2) + '%;width:' + Math.max(0.6, (b - a) / span * 100).toFixed(2) + '%;background:' + toneOf(c[1]), title: (S ? S.day(c[0]) : c[0]) + ' · ' + (c[1] || 'off the report') }; });
         return {
           tlNote: !pr ? '' : !T ? 'reading the record…' : (played.length || injList.length || moves.length) ? 'what the record holds on ' + pr.name + ', dated the day it was filed' : 'the record holds nothing dated on ' + pr.name + ' yet — games, injury designations and contract moves file here as the season goes',
-          tlHasGames: played.length > 0, tlNoGames: !!T && played.length === 0 && !(plog && plog.state === 'loading'), tlGamesLabel: isClubP ? 'SEASON · net margin as the games are played, each game a dot' : (unit + ' PER GAME · his season, each game a dot · ' + (clubAbbr || '') + ' result and the model\'s read'),
+          tlHasGames: played.length > 0, tlNoGames: !!T && played.length === 0 && !(plog && plog.state === 'loading'), tlGamesLabel: isClubP ? 'SEASON · net margin as the games are played, each game a dot' : (unit + ' PER GAME · his season, each game a dot · ' + (clubAbbr || '') + ' result and the Kwotient model\'s read'),
           // the line: a club's net margin after each game on a symmetric scale; a player's stat per game from zero
           ...(() => {
             let net = 0; const cum = played.map(x => (net += x.margin));
@@ -5801,7 +5801,7 @@ class Component extends DCLogic {
           tlMove: this._slotHover('tlHover', nB), tlOff: () => this.setState({ tlHover: null }), tlTap: this._slotHover('tlHover', nB), tlTouchStart: e => this.touchScrub(e, 'start', this._slotHover('tlHover', nB)), tlTouchMove: e => this.touchScrub(e, 'move', this._slotHover('tlHover', nB)),
           tlHoverOn: hg != null, tlHoverLine: hg ? 'position:absolute;top:0;bottom:0;width:1px;background:var(--axis);left:' + ((nB < 2 ? 150 : (hi / (nB - 1)) * 300) / 3).toFixed(1) + '%' : '',
           tlTip: hg ? TIPSTYLE + ';top:6px;' + (hi / Math.max(1, nB - 1) > 0.55 ? 'right:calc(' + (100 - (nB < 2 ? 150 : (hi / (nB - 1)) * 300) / 3).toFixed(1) + '% + 8px)' : 'left:calc(' + ((nB < 2 ? 150 : (hi / (nB - 1)) * 300) / 3).toFixed(1) + '% + 8px)') : '',
-          tlTipHead: hg ? (hg.home ? 'vs ' : 'at ') + hg.opp + ' · ' + (S ? S.day(hg.d) : hg.d) : '', tlTipBody: hg ? (isClubP ? ((hg.margin > 0 ? 'won ' : hg.margin < 0 ? 'lost ' : 'tied ') + hg.pf + '-' + hg.pa) : (hg.v + ' ' + unit + (hg.res === 'W' ? ' · won' : hg.res === 'L' ? ' · lost' : '') + (hg.pf != null ? ' ' + hg.pf + '-' + hg.pa : ''))) + ' · model ' + (hg.prior == null ? '—' : hg.prior + '%') + (hg.on ? ' · ' + Math.abs(hg.edge).toFixed(1) + ' pts on ' + hg.on : '') + (hg.right == null ? '' : hg.right ? ' · right' : ' · wrong') + (isClubP ? ' · net ' + (function (v) { return (v > 0 ? '+' : '') + v; })(played.slice(0, hi + 1).reduce((t, x) => t + x.margin, 0)) : '') : '',
+          tlTipHead: hg ? (hg.home ? 'vs ' : 'at ') + hg.opp + ' · ' + (S ? S.day(hg.d) : hg.d) : '', tlTipBody: hg ? (isClubP ? ((hg.margin > 0 ? 'won ' : hg.margin < 0 ? 'lost ' : 'tied ') + hg.pf + '-' + hg.pa) : (hg.v + ' ' + unit + (hg.res === 'W' ? ' · won' : hg.res === 'L' ? ' · lost' : '') + (hg.pf != null ? ' ' + hg.pf + '-' + hg.pa : ''))) + ' · Kwotient ' + (hg.prior == null ? '—' : hg.prior + '%') + (hg.on ? ' · ' + Math.abs(hg.edge).toFixed(1) + ' pts on ' + hg.on : '') + (hg.right == null ? '' : hg.right ? ' · right' : ' · wrong') + (isClubP ? ' · net ' + (function (v) { return (v > 0 ? '+' : '') + v; })(played.slice(0, hi + 1).reduce((t, x) => t + x.margin, 0)) : '') : '',
           tlFrom: played.length ? (S ? S.day(played[0].d) : played[0].d) : '', tlTo: played.length ? (S ? S.day(played[played.length - 1].d) : played[played.length - 1].d) : '',
           // the games as a table beneath the bars: sortable and filterable from the headers, like every built table
           ...(() => {
@@ -5809,7 +5809,7 @@ class Component extends DCLogic {
             TABLES.tlgames = { rows: played, get };
             const rows = tapply('tlgames', played, get, rowText(get));
             const lim = st.tlLimit || 10;
-            const lgl = String(sport).toLowerCase(); const TL_COLS = [['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['call', 'CALL']];
+            const lgl = String(sport).toLowerCase(); const TL_COLS = [['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['call', 'KWOTIENT CALL']];
             const lineOf = (r, Lg) => Lg === 'nba' ? [r.pts != null ? r.pts + ' pts' : null, r.reb != null ? r.reb + ' reb' : null, r.ast != null ? r.ast + ' ast' : null, r.min != null ? Math.round(r.min) + ' min' : null].filter(Boolean).join(' · ')
               : [r.pass_yds != null ? r.pass_yds + ' pass yds' + (r.pass_td ? ', ' + r.pass_td + ' td' : '') : null, r.rush_yds != null ? r.rush_yds + ' rush yds' : null, r.rec_yds != null ? (r.rec != null ? r.rec + ' rec, ' : '') + r.rec_yds + ' yds' : null, r.tkl != null ? r.tkl + ' tkl' : null, r.sacks ? r.sacks + ' sk' : null, r.int ? r.int + ' int' : null].filter(Boolean).join(' · ');
             // a tap on a game reads that day from the record and opens the game's box score
@@ -5827,11 +5827,11 @@ class Component extends DCLogic {
             const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
             return {
               tlBox: searchFor('tlgames', histMenuFor('tlgames', g.homeAbbr), { table: 'tlgames', cols: TL_COLS, placeholder: 'search the games · an opponent, home or away, won or lost, right or wrong', count: rows.length + ' of ' + played.length, groups: colGroups(played, get, TL_COLS) }),
-              tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', isClubP ? 'SCORE' : 'RESULT', null, 'left', .7), tcol('tlgames', 'margin', isClubP ? 'MARGIN' : unit, null, 'left', .6), tcol('tlgames', 'prior', 'PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'CALL', null, 'left', .6)],
+              tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', isClubP ? 'SCORE' : 'RESULT', null, 'left', .7), tcol('tlgames', 'margin', isClubP ? 'MARGIN' : unit, null, 'left', .6), tcol('tlgames', 'prior', 'KWOTIENT PRIOR', null, 'left', 1.6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'KWOTIENT CALL', null, 'left', 1.5)],
               tlRows: rows.slice(0, lim).map(x => { const k = x.d + '|' + x.opp; const open = openKey === k; const got = open ? gameOf(x) : { loading: false, game: null }; const gm = got.game; const f = gm ? (gm.first || {}) : null; return ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: isClubP ? (x.pf == null ? '—' : x.pf + '-' + x.pa) : (x.res === 'W' ? 'won' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : x.res === 'L' ? 'lost' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : '—'), margin: isClubP ? (x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin) : String(x.v), prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
                 call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34),
                 toggle: () => { if (!open) { this.loadDay(lgl, x.d); if (x.live && x.gameId != null) this.loadEdgeBox(sport, x.gameId); } this.setState({ tlOpen: open ? null : k }); }, open, loading: open && got.loading,
-                read: gm ? 'model prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') : (open && !got.loading ? 'the record holds no reading of this game' : ''),
+                read: gm ? 'Kwotient prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') : (open && !got.loading ? 'the record holds no reading of this game' : ''),
                 noBox: open && !got.loading && !!gm && !gm.box,
                 mine: (() => { if (!open || !gm || !gm.box || isClubP) return ''; const nk = String(pr.name || '').toLowerCase().replace(/[^a-z]/g, ''); const own = (gm.box.away || []).concat(gm.box.home || []).find(y => String(y.n || '').toLowerCase().replace(/[^a-z]/g, '') === nk); return own ? 'his line · ' + lineOf(own, lgl) : 'his line is not among the eight fullest the record kept for this game'; })(), sides: open && gm && gm.box ? [{ club: gm.away, rows: (gm.box.away || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }, { club: gm.home, rows: (gm.box.home || []).map(y => ({ n: y.n, pos: y.pos || '', line: lineOf(y, lgl) })) }] : [] }); }),
               tlCount: rows.length + ' of ' + played.length + (played.length === 1 ? ' game' : ' games'), tlMore: rows.length > lim, tlMoreLabel: 'Show ' + Math.min(20, rows.length - lim) + ' more',
@@ -5876,11 +5876,11 @@ class Component extends DCLogic {
       wpPath: pre ? '' : wpPathOf('v'),
       preGame: pre, preLabel,
       hasMarket,
-      wpSubtitle: hasMarket ? 'model per team vs market-implied, full game' : 'model per team, full game',
+      wpSubtitle: hasMarket ? 'Kwotient per team vs market-implied, full game' : 'Kwotient per team, full game',
       mktPath: hasMarket && !pre ? mktPathOf() : '',
       heroMarket: hasMarket ? g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') : '',
       heroMarketSub: hasMarket ? (g.marketN || 0) + ' books · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) + ' · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
-      heroEdge: hasMarket ? 'model ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase() : '',
+      heroEdge: hasMarket ? 'Kwotient ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase() : '',
       heroEdgeStyle: 'font-family:var(--kw);font-size:10px;color:' + (edgeSide ? ACC : 'var(--second)'),
       lineNow: g.homeAbbr + ' ' + sgn(lineNowV),
       awayLineNow: g.awayAbbr + ' ' + sgn(-lineNowV),
@@ -5888,7 +5888,7 @@ class Component extends DCLogic {
       fairPath: pre ? '' : 'M0 ' + yOf(fairNowV).toFixed(1) + ' L300 ' + yOf(fairNowV).toFixed(1),
       lineBand: pre || !linePts.length ? '' : linePathT + ' L' + lineXOf(linePts[linePts.length - 1].t).toFixed(1) + ' ' + yOf(fairNowV).toFixed(1) + ' L0 ' + yOf(fairNowV).toFixed(1) + ' Z',
       mktColor: MKT_COLOR,
-      ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Model fair', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(lineT0 + t) : 'tick ' + Math.round(t)),
+      ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Kwotient fair', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(lineT0 + t) : 'tick ' + Math.round(t)),
       lineBandFill: edgeSide ? ACC : 'var(--muted)',
       openY: pre ? '-20' : yOf(openV).toFixed(1),
       openLabel: (pre ? 'display:none;' : '') + 'position:absolute;left:0;top:' + openLbl.top.toFixed(1) + 'px;line-height:' + LBL + 'px;white-space:nowrap;' + (openLbl.crowded ? 'background:var(--surface);padding:0 4px 0 0;' : '') + 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
@@ -5946,8 +5946,8 @@ class Component extends DCLogic {
           spreadStyle: 'font-family:var(--kw);font-size:11px;color:' + (off ? ACC : 'var(--reversed)')
         };
       }),
-      railMarketLine: hasMarket ? 'market ' + g.homeAbbr + ' ' + sgn(g.line) + ' · model ' + sgn(g.fair) : '',
-      railMarketProb: hasMarket ? 'implied ' + g.homeAbbr + ' ' + (mktProbNow != null ? mktProbNow.toFixed(1) + '%' : '—') + ' · model ' + s.hist[s.hist.length - 1].toFixed(1) + '%' : '',
+      railMarketLine: hasMarket ? 'market ' + g.homeAbbr + ' ' + sgn(g.line) + ' · Kwotient ' + sgn(g.fair) : '',
+      railMarketProb: hasMarket ? 'implied ' + g.homeAbbr + ' ' + (mktProbNow != null ? mktProbNow.toFixed(1) + '%' : '—') + ' · Kwotient ' + s.hist[s.hist.length - 1].toFixed(1) + '%' : '',
       railEdge: edgeText,
       // every game on the slate with a line posted: the model against the market, the open game marked
       ...(() => {
@@ -5960,8 +5960,8 @@ class Component extends DCLogic {
             gameStyle: 'font-family:var(--kw);font-size:10.5px;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--brand)' : 'var(--reversed)'),
             edge: side ? 'VALUE ' + side + ' ' + Math.abs(gap).toFixed(1) : 'no edge · ' + sgn(gap),
             edgeStyle: 'font-family:var(--kw);font-size:10.5px;font-weight:700;white-space:nowrap;color:' + (side ? ACC : 'var(--muted)'),
-            lines: 'mkt ' + x.homeAbbr + ' ' + sgn(x.line) + ' · model ' + sgn(x.fair),
-            probs: x.mktProb != null && x.wp != null ? 'mkt ' + Number(x.mktProb).toFixed(0) + '% · model ' + Number(x.wp).toFixed(0) + '%' : '',
+            lines: 'mkt ' + x.homeAbbr + ' ' + sgn(x.line) + ' · Kwotient ' + sgn(x.fair),
+            probs: x.mktProb != null && x.wp != null ? 'mkt ' + Number(x.mktProb).toFixed(0) + '% · Kwotient ' + Number(x.wp).toFixed(0) + '%' : '',
             style: 'appearance:none;width:100%;text-align:left;display:flex;flex-direction:column;gap:3px;padding:7px 8px;border-radius:7px;cursor:pointer;border:1px solid ' + (active ? 'var(--axis)' : 'transparent') + ';background:' + (active ? 'var(--nested)' : 'transparent') + ';color:inherit;font:inherit',
             select: () => { this.setState({ activeId: x.id, tab: 'live', trendId: null, trendHover: null, searchF: {}, searchQ: {}, searchOpen: null }, () => this.toTop()); this.toTop(); setTimeout(() => { this.ensureTrendLog(); this.loadProps(); }, 0); }
           };
@@ -6137,7 +6137,7 @@ paceRows: (() => {
       teamTrendNote: (tDone.length ? tWins + '-' + (tDone.length - tWins) + ' in the last ' + tDone.length + ' · ' + (tAvg(tDone) > 0 ? '+' : '') + tAvg(tDone).toFixed(1) + ' average margin · ' : '') + teamLogNote,
       teamAxisLeft: (tRowsC.length + (tRowsC.length === 1 ? ' GAME' : ' GAMES') + ' VS ' + (teamOppAbbr0 || '—') + (teamSpan ? ' · ' + teamSpan : '')).toUpperCase(),
       teamRollPath: tRoll.length > 1 ? this.path(tRoll, 100, 108, -tMx, tMx) : '',
-      trendPlayer: pp.name + ' · ' + pp.team + ' ' + pp.pos + (pp.k != null ? ' · KQ ' + pp.k : ''),
+      trendPlayer: pp.name + ' · ' + pp.team + ' ' + pp.pos + (pp.k != null ? ' · Kwotient Score ' + pp.k : ''),
       trendMarket: trendUnit + ' · vs season average',
       trendLine: logs.length ? fmt(season) : '—',
       trendMax: logs.length ? fmt(tMax) : '—',
@@ -6175,7 +6175,7 @@ paceRows: (() => {
           q: on ? (st.trendQ || '') : '', onQ: e => this.setState({ trendQ: e.target.value }),
           onKey: e => { if (e.type === 'submit' || e.key === 'Enter' || e.key === 'Return' || e.keyCode === 13 || e.key === 'Escape') { e.preventDefault(); this.setState({ trendMenuOpen: false }); } },
           clear: () => this.setState({ trendQ: '', trendMenuOpen: false }),
-          values: trendMatches.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : ''), pick: () => { this.pickTrend(p); this.setState({ trendMenuOpen: false }); },
+          values: trendMatches.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · Kwotient Score ' + p.k : ''), pick: () => { this.pickTrend(p); this.setState({ trendMenuOpen: false }); },
             style: 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + (p.id === pp.id ? 'var(--nested)' : 'transparent') + ';color:' + (p.id === pp.id ? BLUE : 'var(--lead)') }))
         };
       })(),
@@ -6218,7 +6218,7 @@ paceRows: (() => {
       trendHist: histMenuFor('trend', pp.team, tRowsAll),
       trendSearch: (() => { const H = histMenuFor('trend', pp.team, tRowsAll); return searchFor('trend', H, { q: st.trendQ || '', setQ: v => this.setState({ trendQ: v }), placeholder: 'search a player · type to filter, pick from the list', count: trendMatches.length + ' players', display: pp.name || '', params: trendP,
         groups: [
-          { label: 'NAME', items: trendPool.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · KQ ' + p.k : '') + (CLUB_NAMES[p.team] ? ' · ' + CLUB_NAMES[p.team] : ''), pick: () => this.pickTrend(p) })) },
+          { label: 'NAME', items: trendPool.map(p => ({ label: p.name, count: p.team + ' ' + p.pos + (p.k != null ? ' · Kwotient Score ' + p.k : '') + (CLUB_NAMES[p.team] ? ' · ' + CLUB_NAMES[p.team] : ''), pick: () => this.pickTrend(p) })) },
           { label: 'TEAM', items: Array.from(new Set(trendPool.map(p => p.team))).sort().map(t => ({ label: t, count: (CLUB_NAMES[t] ? CLUB_NAMES[t] + ' · ' : 'TEAM · ') + trendPool.filter(p => p.team === t).length + ' players' })) },
           { label: 'POSITION', items: Array.from(new Set(trendPool.map(p => p.pos).filter(Boolean))).sort().map(ps => ({ label: ps, count: 'POSITION · ' + trendPool.filter(p => p.pos === ps).length + ' players' })) },
           { label: 'SEASON', items: trendSeasons.map(y => ({ label: histSeasonLabel(y), count: 'SEASON · ' + scoped.filter(x => x.season === y).length + ' games' })) }
@@ -6272,7 +6272,7 @@ paceRows: (() => {
       trendLineMark: 'position:absolute;left:0;right:0;bottom:' + ((logs.length ? season / tMax : 0) * 118).toFixed(1) + 'px;height:0;border-top:1px dashed var(--brand);opacity:.6',
       trendLineLabel: 'position:absolute;left:0;width:26px;text-align:left;bottom:' + ((logs.length ? season / tMax : 0) * 118 - 5).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
       modelEdge: (Math.abs(wp - mk)).toFixed(1) + '-pt',
-      factorsCaption: g.live && g.model ? 'the model\'s parts for this game, in points · club cards from the record, the score from the feed' : 'the model\'s parts fill once a game is on the slate',
+      factorsCaption: g.live && g.model ? 'the Kwotient model\'s parts for this game, in points · club cards from the record, the score from the feed' : 'the Kwotient model\'s parts fill once a game is on the slate',
       factorsEmpty: g.live && g.model ? '' : 'no live game to read yet',
       factors: (g.live && g.model ? [['Club card gap', g.model.priorPoints - (g.homeK != null ? LEAGUE_EDGE[sport] : 0)], ['Home edge', g.homeK != null ? LEAGUE_EDGE[sport] : 0], ['Score margin', g.model.margin], ['Game left', g.model.f * 4 - 2]] : []).map(([k, v]) => ({
         k, v: (v > 0 ? '+' : '') + v.toFixed(1),
@@ -6308,7 +6308,7 @@ paceRows: (() => {
         const p = S ? S.programme() : null;
         const n = p && p.nextSettle && p.nextSettle[0];
         return 'No Kwotient cohort has settled yet, so no calibration is on the record — what is drawn here is the design\'s illustration. ' +
-          (n ? 'The first settlement is ' + ((KWC.find(c => c.id === n.id) || {}).cohort || n.id) + ' on ' + S.day(n.on) + '; every score is published whether or not it flatters the model.' : '');
+          (n ? 'The first settlement is ' + ((KWC.find(c => c.id === n.id) || {}).cohort || n.id) + ' on ' + S.day(n.on) + '; every score is published whether or not it flatters the Kwotient model.' : '');
       })(),
       drift: (() => {
         const m = st.liveMeta;
@@ -6339,10 +6339,10 @@ paceRows: (() => {
         if (!games.length) return [{ k: 'SLATE', v: 'no ' + sport + ' games on the slate today' }];
         return [
           { k: 'SLATE', v: games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + live.length + ' live · ' + finals.length + ' final · ' + ahead.length + ' ahead' },
-          { k: 'MODEL VS MARKET', v: avgGap != null ? avgGap.toFixed(1) + ' pts apart on average across ' + gaps.length + ' lines' + (big ? ' · widest ' + big.x.awayAbbr + ' @ ' + big.x.homeAbbr + ' ' + sgn(big.gap) : '') : 'no lines posted yet' },
-          { k: 'MODEL FAVORITES', v: favN ? favRight + ' of ' + favN + ' won' : 'no finals yet today' },
+          { k: 'KWOTIENT VS MARKET', v: avgGap != null ? avgGap.toFixed(1) + ' pts apart on average across ' + gaps.length + ' lines' + (big ? ' · widest ' + big.x.awayAbbr + ' @ ' + big.x.homeAbbr + ' ' + sgn(big.gap) : '') : 'no lines posted yet' },
+          { k: 'KWOTIENT FAVORITES', v: favN ? favRight + ' of ' + favN + ' won' : 'no finals yet today' },
           { k: 'MARKET FAVORITES', v: mktN ? mktRight + ' of ' + mktN + ' won' : 'no finals yet today' },
-          { k: 'IN PROGRESS', v: live.length ? live.length + ' on now · model and market 2+ pts apart in ' + apart : 'nothing on right now' }
+          { k: 'IN PROGRESS', v: live.length ? live.length + ' on now · Kwotient and market 2+ pts apart in ' + apart : 'nothing on right now' }
         ];
       })(),
 
@@ -6371,7 +6371,7 @@ paceRows: (() => {
             style: 'display:flex;justify-content:space-between;gap:10px;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + ((dirSeason || null) === o.value ? 'var(--nested)' : 'transparent') + ';color:' + ((dirSeason || null) === o.value ? BLUE : 'var(--lead)') }))
         };
       })(),
-      seasonNoteDir: dirSeason ? 'the ' + (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : dirSeason) + ' season' + (isPlayers ? ' · each man on the club he was with, his games and his line that season' : '') + ' · the rating and the injury report are current' : '',
+      seasonNoteDir: dirSeason ? 'the ' + (sport === 'NBA' ? dirSeason + '-' + String(dirSeason + 1).slice(2) : dirSeason) + ' season' + (isPlayers ? ' · each man on the club he was with, his games and his line that season' : '') + ' · the Kwotient Score and the injury report are current' : '',
       hasSeasonNote: !!dirSeason,
       colsStand: isPlayers ? [] : [col('record', 'REC', distinct(recOf), 'left'), col('conf', 'CONF', distinct(confPlOf), 'left'), col('div', 'DIV PL', distinct(divPlOf), 'left')],
       dirGrid: isPlayers ? '18px minmax(88px,1.8fr) 44px 38px 64px minmax(56px,1fr) 36px' : '18px minmax(88px,1.6fr) 40px 62px 54px 72px 62px 64px minmax(48px,1fr) 36px',
@@ -6386,7 +6386,7 @@ paceRows: (() => {
       // the directory's box: a click lists clubs, positions and rating bands; typing lists the names too;
       // a pick from a group becomes a column filter and a tag, a name opens the profile
       dirBox: (() => {
-        const G = { CLUB: 'team', POSITION: 'pos', FAMILY: 'fam', RATING: 'rating', CONFERENCE: 'conf', DIVISION: 'div' };
+        const G = { CLUB: 'team', POSITION: 'pos', FAMILY: 'fam', 'KWOTIENT SCORE': 'rating', CONFERENCE: 'conf', DIVISION: 'div' };
         const Fv = colF, setF = n => this.setState({ colF: n, dirLimit: 12 });
         const P = { list: Object.keys(G).filter(k => Fv[G[k]] != null && Fv[G[k]] !== '').map(k => ({ group: k, value: Fv[G[k]], label: String(Fv[G[k]]).indexOf('~') === 0 ? 'contains ' + String(Fv[G[k]]).slice(1) : String(Fv[G[k]]) })),
           has: (k, v) => !!G[k] && String(Fv[G[k]]) === String(v), add: (k, v) => { if (G[k]) setF(Object.assign({}, Fv, { [G[k]]: v })); },
@@ -6396,10 +6396,10 @@ paceRows: (() => {
         const grp = (label, fn) => ({ label, items: tdistinct(universe, fn).filter(v => v.label && v.label !== '—').map(v => ({ label: String(v.label), count: (label === 'CLUB' && CLUB_NAMES[v.label] ? CLUB_NAMES[v.label] + ' · ' : '') + cnt(label, v.count) })) });
         const groups = [grp('CLUB', teamOf)]
           .concat(isPlayers ? [useFamilies ? grp('FAMILY', x => famOf(posOf(x))) : grp('POSITION', posOf)] : [grp('CONFERENCE', x => x.conf || ''), grp('DIVISION', x => x.div || '')])
-          .concat([{ label: 'RATING', items: RATING_BANDS.map(b => ({ label: b[0], count: cnt('RATING', universe.filter(x => { const r = ratingOf(x); return r >= b[1] && r <= b[2]; }).length) })) }]);
+          .concat([{ label: 'KWOTIENT SCORE', items: RATING_BANDS.map(b => ({ label: b[0], count: cnt('KWOTIENT SCORE', universe.filter(x => { const r = ratingOf(x); return r >= b[1] && r <= b[2]; }).length) })) }]);
         const picks = universe.map(x => ({ label: nameOf(x), count: isPlayers ? (x.pos + ' · ' + x.team + (CLUB_NAMES[x.team] ? ' · ' + CLUB_NAMES[x.team] : '')) : (x.abbr + (CLUB_NAMES[x.abbr] ? ' · ' + CLUB_NAMES[x.abbr] : '')), pick: () => this.openProfile((isPlayers ? 'p:' : 'c:') + (isPlayers ? x.name : x.abbr), x) }));
         return searchFor('dir', histMenuFor('dir', g.homeAbbr), { q: st.dirQ || '', setQ: v => this.setState({ dirQ: v, dirLimit: 12 }), params: P, groups, picks,
-          placeholder: 'name, club, position, or rating — 84, 80+, >70, 60-75 · commas for several', count: '' });
+          placeholder: 'name, club, position, or Kwotient Score — 84, 80+, >70, 60-75 · commas for several', count: '' });
       })(),
       dirCount: sorted.length.toLocaleString() + ' of ' + universe.length.toLocaleString() + ' · showing ' + shown.length,
       dirMore: sorted.length > limit,
