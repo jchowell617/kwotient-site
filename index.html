@@ -299,7 +299,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <div data-shell="cohortbtn" style="padding:0 8px 10px">
           <button onClick="{{ goCohorts }}" style="{{ cohortNavBtn }}" style-hover="transform:translateY(-2px);box-shadow:0 10px 22px rgba(0,0,0,.3)">
             <span style="display:flex;text-align:left;flex:1;min-width:0">
-              <span style="font-family:var(--kw);font-size:12.5px;font-weight:600">Cohorts</span>
+              <span style="font-family:var(--kw);font-size:12.5px;font-weight:600">Kwotient Record</span>
             </span>
             <span style="font-family:var(--kw);font-size:9.5px;color:var(--brand);flex:none">{{ cohortBadge }}</span>
           </button>
@@ -702,7 +702,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
                 <div style="display:flex;gap:13px;font-family:var(--kw);font-size:9px;color:var(--second);margin-top:9px;flex-wrap:wrap">
                   <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:{{ mktColor }};display:block"></span>MARKET</span>
-                  <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:0;border-top:2px dashed var(--good);display:block"></span>MODEL FAIR</span>
+                  <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:0;border-top:2px dashed var(--good);display:block"></span>KWOTIENT FAIR</span>
                   <span style="margin-left:auto;color:var(--reversed)">{{ lineEdgeNote }}</span>
                 </div>
                 <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:7px">{{ lineCaption }}</div>
@@ -1252,6 +1252,62 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               </sc-if>
             </section>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
+            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mRef.toggle }}" style="{{ p.mRef.btn }}">{{ p.mRef.chevron }}</button><span style="font-size:13.5px;font-weight:600">Glossary &amp; Sources</span></div>
+              <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">where every number on these screens comes from, and what the words mean · not official league data · not betting advice</span>
+              <sc-if value="{{ p.mRef.open }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">SOURCES</span>
+                  <sc-for list="{{ refSources }}" as="r" hint-placeholder-count="5">
+                    <div style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--grid);border-radius:8px;background:var(--nested)">
+                      <span style="font-family:var(--kw);font-size:10.5px;font-weight:700;color:var(--reversed)">{{ r.k }}</span>
+                      <span style="font-size:12px;line-height:1.5;color:var(--lead)">{{ r.v }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">GLOSSARY</span>
+                  <sc-for list="{{ refGlossary }}" as="r" hint-placeholder-count="8">
+                    <div style="display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--divider)">
+                      <span style="font-family:var(--kw);font-size:10px;font-weight:700;color:var(--reversed);flex:none;min-width:110px">{{ r.k }}</span>
+                      <span style="font-size:12px;line-height:1.5;color:var(--lead)">{{ r.v }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+              </sc-if>
+            </section>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ isCohorts }}" hint-placeholder-val="{{ false }}">
+          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
+                  <span style="font-size:15px;font-weight:600">Kwotient Record</span>
+                  <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--on-brand);background:var(--brand)">PROPRIETARY</span>
+                </div>
+                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">every forecast Kwotient files, graded in the open: the game calls at each final score, the cohorts at settlement against a declared baseline</span>
+              </div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+              </div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px">
+              <sc-for list="{{ recordStrip }}" as="t" hint-placeholder-count="4">
+                <div style="border:1px solid var(--grid);border-radius:10px;background:var(--surface);padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0">
+                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ t.k }}</span>
+                  <span style="{{ t.vStyle }}">{{ t.v }}</span>
+                  <span style="font-family:var(--kw);font-size:9px;color:var(--second);text-wrap:pretty">{{ t.sub }}</span>
+                </div>
+              </sc-for>
+            </div>
+
+            <div style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key);margin-top:2px">GAME CALLS · filed before kickoff, graded at the final score</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(286px,1fr));gap:13px">
 
               <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.mDrift.toggle }}" style="{{ p.mDrift.btn }}">{{ p.mDrift.chevron }}</button><span style="font-size:12.5px;font-weight:600">Kwotient Model Today</span></div>
@@ -1379,46 +1435,9 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
               </section>
 
-            <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mRef.toggle }}" style="{{ p.mRef.btn }}">{{ p.mRef.chevron }}</button><span style="font-size:13.5px;font-weight:600">Glossary &amp; Sources</span></div>
-              <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">where every number on these screens comes from, and what the words mean · not official league data · not betting advice</span>
-              <sc-if value="{{ p.mRef.open }}" hint-placeholder-val="{{ true }}">
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:14px">
-                <div style="display:flex;flex-direction:column;gap:8px">
-                  <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">SOURCES</span>
-                  <sc-for list="{{ refSources }}" as="r" hint-placeholder-count="5">
-                    <div style="display:flex;flex-direction:column;gap:2px;padding:8px 10px;border:1px solid var(--grid);border-radius:8px;background:var(--nested)">
-                      <span style="font-family:var(--kw);font-size:10.5px;font-weight:700;color:var(--reversed)">{{ r.k }}</span>
-                      <span style="font-size:12px;line-height:1.5;color:var(--lead)">{{ r.v }}</span>
-                    </div>
-                  </sc-for>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:8px">
-                  <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">GLOSSARY</span>
-                  <sc-for list="{{ refGlossary }}" as="r" hint-placeholder-count="8">
-                    <div style="display:flex;gap:10px;align-items:baseline;padding:6px 0;border-bottom:1px solid var(--divider)">
-                      <span style="font-family:var(--kw);font-size:10px;font-weight:700;color:var(--reversed);flex:none;min-width:110px">{{ r.k }}</span>
-                      <span style="font-size:12px;line-height:1.5;color:var(--lead)">{{ r.v }}</span>
-                    </div>
-                  </sc-for>
-                </div>
-              </div>
-              </sc-if>
-            </section>
-          </div>
-        </sc-if>
-
-        <sc-if value="{{ isCohorts }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
-            <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
-              <div style="display:flex;flex-direction:column;gap:5px">
-                <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
-                  <span style="font-size:15px;font-weight:600">Cohorts · The Kwotient Record</span>
-                  <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 6px;border-radius:4px;flex:none;white-space:nowrap;color:var(--on-brand);background:var(--brand)">PROPRIETARY</span>
-                </div>
-                <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">a population is frozen, projections are filed before the outcome, and the settlement grades them against a declared baseline — click a cohort for its charts</span>
-              </div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:2px">
+              <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">COHORTS · frozen, filed before the outcome, settled against a declared baseline · click a cohort for its charts</span>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
                 <sc-if value="{{ cohortOpen }}" hint-placeholder-val="{{ false }}">
                   <button onClick="{{ closeCohort }}" style="padding:6px 13px;border-radius:7px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:10px;background:transparent;border:1px solid var(--axis);color:var(--second)" style-hover="border-color:var(--second);color:var(--reversed)">← ALL COHORTS</button>
                 </sc-if>
@@ -2598,7 +2617,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         <sc-if value="{{ railEdgesOn }}" hint-placeholder-val="{{ false }}">
         <div style="padding:14px 15px 13px;border-bottom:1px solid var(--grid);display:flex;flex-direction:column;gap:7px">
           <div style="display:flex;justify-content:space-between;align-items:baseline">
-            <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">MODEL VS MARKET</span>
+            <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">KWOTIENT VS MARKET</span>
             <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ railEdgesNote }}</span>
           </div>
           <sc-for list="{{ railEdges }}" as="e" hint-placeholder-count="4">
@@ -3398,7 +3417,7 @@ class Component extends DCLogic {
   }
   goTab(tab, extra) {
     this.tick();
-    if (tab === 'model' || tab === 'board') this.loadRecord('calls');
+    if (tab === 'cohorts' || tab === 'board') this.loadRecord('calls');
     // a section opens clean: its filters and menus reset with it
     this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}), () => this.toTop());
     this.toTop();
@@ -5332,8 +5351,8 @@ class Component extends DCLogic {
       toggle: () => this.setState(s => ({ shut: Object.assign({}, s.shut, { [k]: !(s.shut || {})[k] }) })),
       btn: 'background:transparent;border:none;cursor:pointer;padding:0 2px;font-size:11px;line-height:1;color:var(--brand);flex:none'
     });
-    const TAB_PANELS = { board: ['boardCards'], model: ['mAbout', 'track', 'mDrift', 'mRef'], alerts: ['alertsList'],
-                        cohorts: ['cohortBody', 'cohPop', 'cohBefore', 'cohCalib', 'cohErr', 'cohSkill'] };
+    const TAB_PANELS = { board: ['boardCards'], model: ['mAbout', 'mRef'], alerts: ['alertsList'],
+                        cohorts: ['track', 'mDrift', 'cohortBody', 'cohPop', 'cohBefore', 'cohCalib', 'cohErr', 'cohSkill'] };
     const panels = PANELS.concat(PROFILE_PANELS).concat(DIR_PANELS).concat(BUZZ_PANELS).concat(TAB_PANELS.board, TAB_PANELS.model, TAB_PANELS.alerts, TAB_PANELS.cohorts).reduce((a, k) => (a[k] = panel(k), a), {});
     // one expand / collapse tool at the top of every tab, over the panels that tab shows
     const tabKeys = st.tab === 'live' ? PANELS : st.tab === 'profiles' ? (st.profileId ? PROFILE_PANELS : DIR_PANELS) : st.tab === 'buzz' ? BUZZ_PANELS : (TAB_PANELS[st.tab] || []);
@@ -5475,7 +5494,7 @@ class Component extends DCLogic {
       modelNavBtn: navBtn(st.tab === 'model'),
       contactNavBtn: navBtn(!!st.contactOpen),
       modelBadge: badges.model,
-      tabItems: NAV.concat([['cohorts', 'Cohorts'], ['model', 'About']]).map(([k, label]) => {
+      tabItems: NAV.concat([['cohorts', 'Kwotient Record'], ['model', 'About']]).map(([k, label]) => {
         const active = st.tab === k;
         return {
           short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'About' })[k] || label,
@@ -5653,7 +5672,7 @@ class Component extends DCLogic {
 
       games: gameCards,
       boardGames,
-      // ---------- the model's track record (Model tab) ----------
+      // ---------- the model's track record (Kwotient Record tab) ----------
       ...(() => {
         const R = window.KQ_RECORD_CALLS || null;
         // a call graded live: a game on today's board that has gone final settles its call here
@@ -5708,6 +5727,17 @@ class Component extends DCLogic {
         const dotStyle = (d, i) => 'position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);left:' + (d.e / eMax * 96 + 2).toFixed(1) + '%;top:' + (50 - d.cm / cMax * 46).toFixed(1) + '%;background:' + (d.c.covered ? 'var(--good)' : 'var(--critical)') + ';box-shadow:0 0 0 2px var(--surface)' + (i === di ? ';width:13px;height:13px' : '');
         return {
           trNote: R ? (sportCalls.length + ' ' + sport + ' calls on the record · ' + settled.length + ' settled' + (liveN ? ' · ' + liveN + ' graded live today, filed in the morning' : '') + ' · built ' + (S ? S.day(R.summary.built) : R.summary.built)) : 'reading the record…',
+          // the record in one line: every forecast Kwotient has filed, and how it stands
+          recordStrip: (() => {
+            const own = KWC.filter(c => !c.unpublished), filedC = own.filter(c => c.status === 'filed' || c.status === 'settled').length, settledC = own.filter(c => c.status === 'settled'), beat = settledC.filter(c => c.beat === true).length;
+            const big = c => 'font-family:var(--kw);font-size:20px;font-weight:700;color:' + c;
+            return [
+              { k: 'GAME CALLS', v: String(sportCalls.length), sub: settled.length + ' settled · ' + (sportCalls.length - settled.length) + ' open', vStyle: big('var(--reversed)') },
+              { k: 'KWOTIENT RIGHT', v: settled.length ? right + '-' + wrong : '—', sub: settled.length ? pct(right, settled.length) + ' of settled calls' : 'no final score yet', vStyle: big(settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
+              { k: 'COHORTS', v: String(own.length), sub: filedC + ' filed · ' + settledC.length + ' settled', vStyle: big('var(--reversed)') },
+              { k: 'BEAT BASELINE', v: settledC.length ? beat + '-' + (settledC.length - beat) : '—', sub: settledC.length ? 'of settled cohorts' : 'first settlement pending', vStyle: big(settledC.length ? (beat * 2 >= settledC.length ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') }
+            ];
+          })(),
           trTiles: [
             { k: 'CALLS', v: String(sportCalls.length), sub: 'filed before kickoff', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
             { k: 'SETTLED', v: String(settled.length), sub: sportCalls.length - settled.length + ' still open', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
