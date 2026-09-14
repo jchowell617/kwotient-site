@@ -1336,11 +1336,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="background:var(--nested);border:1px solid var(--grid);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ t.k }}</span><span style="{{ t.vStyle }}">{{ t.v }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ t.sub }}</span></div>
                   </sc-for>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:6px">
-                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">EVERY CALL · in the order they settled · {{ trRecordLine }}</span>
-                  <div style="display:flex;flex-wrap:wrap;gap:5px">
-                    <sc-for list="{{ trStrip }}" as="s" hint-placeholder-count="8"><div title="{{ s.title }}" style="{{ s.style }}"><span style="font-weight:700">{{ s.mark }}</span> {{ s.label }}<span style="color:var(--muted)"> · {{ s.pick }}</span></div></sc-for>
-                  </div>
                 </div>
                 <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
@@ -1356,6 +1351,19 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
                     </div>
                     <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }} → {{ trCumTo }}</span><span>{{ trCumNote }}</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT VS MARKET · how far each was from the final margin, per settled call · shorter is closer</span>
+                    <div style="position:relative;height:120px">
+                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="110" x2="300" y2="110" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                        <sc-for list="{{ trMiss }}" as="m" hint-placeholder-count="8">
+                          <rect x="{{ m.kx }}" y="{{ m.ky }}" width="{{ m.w }}" height="{{ m.kh }}" rx="1" fill="var(--brand)"><title>{{ m.title }}</title></rect>
+                          <rect x="{{ m.mx }}" y="{{ m.my }}" width="{{ m.w }}" height="{{ m.mh }}" rx="1" fill="#e2b53f"><title>{{ m.title }}</title></rect>
+                        </sc-for>
+                      </svg>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--kw);font-size:9px;color:var(--faint)"><span><span style="color:var(--brand)">■</span> Kwotient &nbsp;<span style="color:#e2b53f">■</span> market</span><span>{{ trMissNote }}</span></div>
                   </div>
                 </div>
                 <button onClick="{{ trDetailToggle }}" style="align-self:flex-start;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ trDetailLabel }}</button>
@@ -1376,19 +1384,6 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                     </div>
                     <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">bar · how often it won &nbsp; dash · how sure it said it was &nbsp; under · calls in the band</div>
-                  </div>
-                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT VS MARKET · how far each was from the final margin, per settled call · shorter is closer</span>
-                    <div style="position:relative;height:120px">
-                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                        <line x1="0" y1="110" x2="300" y2="110" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                        <sc-for list="{{ trMiss }}" as="m" hint-placeholder-count="8">
-                          <rect x="{{ m.kx }}" y="{{ m.ky }}" width="{{ m.w }}" height="{{ m.kh }}" rx="1" fill="var(--brand)"><title>{{ m.title }}</title></rect>
-                          <rect x="{{ m.mx }}" y="{{ m.my }}" width="{{ m.w }}" height="{{ m.mh }}" rx="1" fill="#e2b53f"><title>{{ m.title }}</title></rect>
-                        </sc-for>
-                      </svg>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--kw);font-size:9px;color:var(--faint)"><span><span style="color:var(--brand)">■</span> Kwotient &nbsp;<span style="color:#e2b53f">■</span> market</span><span>{{ trMissNote }}</span></div>
                   </div>
                 </div>
                 </sc-if>
@@ -1441,7 +1436,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                   <sc-for list="{{ trRows }}" as="r" hint-placeholder-count="8">
                     <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
-                      <span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--second)">{{ r.day }}</span><span style="flex:1.4;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed);font-weight:600">{{ r.game }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.prior }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.fair }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.market }}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--brand)">{{ r.edge }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.final }}</span><span style="flex:.7;min-width:0;display:flex"><span style="{{ r.callStyle }}">{{ r.call }}</span></span>
+                      <span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--second)">{{ r.wk }}</span><span style="flex:0.9;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--second)">{{ r.day }}</span><span style="flex:1.2;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--reversed);font-weight:600">{{ r.game }}</span><span style="flex:1.6;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.prior }}</span><span style="flex:1.5;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.fair }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.market }}</span><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--brand)">{{ r.edge }}</span><span style="flex:0.8;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.final }}</span><span style="flex:1.5;min-width:0;display:flex"><span style="{{ r.callStyle }}">{{ r.call }}</span></span>
                     </div>
                   </sc-for>
                 </div></div>
@@ -5707,20 +5702,32 @@ class Component extends DCLogic {
         const sideP = c => c.prior == null ? null : (c.side === c.home ? c.prior : c.side === c.away ? 100 - c.prior : Math.max(c.prior, 100 - c.prior));
         const brier = settled.length ? settled.reduce((a, c) => { const p = c.prior == null ? 50 : c.prior / 100; const y = c.winner === c.home ? 1 : 0; return a + (p - y) * (p - y); }, 0) / settled.length : null;
         const pct = (n, d) => d ? Math.round((n / d) * 100) + '%' : '—';
-        const G = { LEAGUE: 'trLg', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
+        // the week a call belongs to: the NFL's week runs Tuesday to Monday from the first call's
+        // week; the NBA has no weeks, so its calls group by month
+        const etDay = c => c.start ? etDayOf(c.start) : c.d;
+        const dayNum = d => Math.round(Date.UTC(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10)) / 86400000);
+        const firstNfl = all.filter(c => c.lg === 'NFL').map(etDay).sort()[0];
+        const firstTue = firstNfl ? dayNum(firstNfl) - ((dayNum(firstNfl) - 5 + 7 * 1000) % 7) : null;   /* day 0 (1970-01-01) was a Thursday; Tuesday is 5 days on */
+        const weekOf = c => c.lg === 'NFL' ? (firstTue == null ? '' : 'WEEK ' + (1 + Math.floor((dayNum(etDay(c)) - firstTue) / 7))) : etDay(c).slice(0, 7);
+        const weeks = Array.from(new Set(all.map(weekOf))).filter(Boolean).sort((x, y) => x.localeCompare(y, undefined, { numeric: true }));
+        const latestWeek = weeks.length ? weeks[weeks.length - 1] : null;
+        const G = { LEAGUE: 'trLg', WEEK: 'trWeek', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
-          add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trClub: null, trVerdict: null, trMonth: null }) };
+          add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trWeek: null, trClub: null, trVerdict: null, trMonth: null }) };
         const verdictOf = c => c.right == null ? 'open' : c.right ? 'right' : 'wrong';
         const trQ = String(st.trQ || '').trim().toLowerCase();
-        const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
-          && (!trQ || matchQ(withClubNames(c.d + ' ' + c.lg + ' ' + c.away + ' @ ' + c.home + ' ' + c.status) + ' ' + verdictOf(c) + ' ' + (c.on || ''), trQ)));
+        // with nothing picked the table shows the latest week; a pick or a word opens the whole record
+        const trNothingPicked = !st.trLg && !st.trWeek && !st.trClub && !st.trVerdict && !st.trMonth && !trQ;
+        const weekWanted = st.trWeek || (trNothingPicked ? latestWeek : null);
+        const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!weekWanted || weekOf(c) === weekWanted) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
+          && (!trQ || matchQ(withClubNames(c.d + ' ' + c.lg + ' ' + c.away + ' @ ' + c.home + ' ' + c.status) + ' ' + weekOf(c) + ' ' + verdictOf(c) + ' ' + (c.on || ''), trQ)));
         const n = f => all.filter(f).length, cnt = k => k + (k === 1 ? ' call' : ' calls');
         const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
         // the table's columns: sortable and filterable from their headers, as every built table is
-        const trGet = { d: c => c.start ? etDayOf(c.start) : c.d, game: c => c.away + ' @ ' + c.home, prior: c => c.prior, fair: c => c.fair, line: c => c.line, edge: c => c.edge == null ? null : Math.abs(c.edge), final: c => c.margin, call: c => verdictOf(c) };
+        const trGet = { wk: c => weekOf(c), d: c => c.start ? etDayOf(c.start) : c.d, game: c => c.away + ' @ ' + c.home, prior: c => c.prior, fair: c => c.fair, line: c => c.line, edge: c => c.edge == null ? null : Math.abs(c.edge), final: c => c.margin, call: c => verdictOf(c) };
         TABLES.track = { rows: shown, get: trGet };
         const sorted = tapply('track', shown, trGet, rowText(trGet));
-        const row = c => ({ day: S ? S.day(c.start ? etDayOf(c.start) : c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
+        const row = c => ({ wk: weekOf(c), day: S ? S.day(c.start ? etDayOf(c.start) : c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
           edge: c.edge == null || !c.on ? 'no edge' : Math.abs(c.edge).toFixed(1) + ' on ' + c.on, final: c.margin == null ? (c.status || 'scheduled') : c.as + '-' + c.hs,
           call: c.right == null ? 'OPEN' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
         // the cumulative line
@@ -5741,10 +5748,6 @@ class Component extends DCLogic {
         const missMax = Math.max(7, ...misses.map(m => Math.max(m.kw, m.mk))); const gw = misses.length ? 300 / misses.length : 300, bw = Math.max(2, Math.min(14, gw * 0.36));
         const kwCloser = misses.filter(m => m.kw < m.mk).length, avg = k => misses.length ? misses.reduce((a, m) => a + m[k], 0) / misses.length : 0;
         const openCalls = sportCalls.filter(c => c.right == null);
-        const chip = c => { const col = c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)';
-          return { label: c.away + '@' + c.home, pick: c.on || '—', mark: c.right == null ? '·' : c.right ? '✓' : '✗',
-            title: c.away + ' @ ' + c.home + ' · ' + (c.right == null ? 'open' : (c.right ? 'right' : 'wrong') + ' · ' + c.as + '-' + c.hs),
-            style: 'font-family:var(--kw);font-size:9.5px;padding:4px 8px;border-radius:6px;background:var(--nested);border:1px solid ' + mix(col, 40) + ';color:' + col }; };
         const hi = st.trCumHover == null ? null : clamp(st.trCumHover, 0, Math.max(0, settled.length - 1)); const hc = hi == null ? null : settled[hi];
         const hx = hi == null || settled.length < 2 ? 0 : (hi / (settled.length - 1)) * 100;
         // the calibration bins on the side the model liked
@@ -5779,11 +5782,9 @@ class Component extends DCLogic {
             ky: (110 - m.kw / missMax * 100).toFixed(1), kh: (m.kw / missMax * 100).toFixed(1), my: (110 - m.mk / missMax * 100).toFixed(1), mh: (m.mk / missMax * 100).toFixed(1),
             title: m.label + ' · Kwotient off by ' + m.kw.toFixed(1) + ' · market off by ' + m.mk.toFixed(1) })),
           trMissNote: misses.length ? 'Kwotient closer in ' + kwCloser + ' of ' + misses.length + ' · average miss Kwotient ' + avg('kw').toFixed(1) + ' · market ' + avg('mk').toFixed(1) + ' pts' : 'no lined result yet',
-          trStrip: settled.concat(openCalls).map(chip),
-          trRecordLine: settled.length ? right + '-' + wrong + ' · net ' + (net > 0 ? '+' : '') + net + (openCalls.length ? ' · ' + openCalls.length + ' open' : '') : (openCalls.length + ' open · none settled yet'),
           trCumTo: settled.length ? (S ? S.day(settled[settled.length - 1].settled || settled[settled.length - 1].d) : settled[settled.length - 1].d) : '',
           trDetailOpen: !!st.trDetail, trDetailToggle: () => this.setState(x => ({ trDetail: !x.trDetail })),
-          trDetailLabel: (st.trDetail ? 'HIDE' : 'SHOW') + ' CALIBRATION & COMPARISON · ' + (settled.length < 30 ? 'read with care under 30 settled calls' : settled.length + ' settled calls'),
+          trDetailLabel: (st.trDetail ? 'HIDE' : 'SHOW') + ' CALIBRATION · ' + (settled.length < 30 ? 'read with care under 30 settled calls' : settled.length + ' settled calls'),
           trHasSettled: settled.length > 0, trNoneSettled: !!R && settled.length === 0,
           trZeroY: zeroY, trCumPath: cumPath, trCumArea: cumPath ? cumPath + ' L600 ' + zeroY + ' L0 ' + zeroY + ' Z' : '',
           trCumFrom: settled.length ? (S ? S.day(settled[0].settled || settled[0].d) : settled[0].d) : '', trCumNow: (net > 0 ? '+' : '') + net,
@@ -5795,15 +5796,16 @@ class Component extends DCLogic {
           trCumTipHead: hc ? hc.away + ' @ ' + hc.home + ' · ' + (S ? S.day(hc.settled || hc.d) : hc.d) : '', trCumTipBody: hc ? (hc.right ? 'right' : 'wrong') + ' · ' + hc.as + '-' + hc.hs + ' · net ' + (cum[hi] > 0 ? '+' : '') + cum[hi] : '',
           trBins: bins,
           trRows: sorted.slice(0, st.trLimit || 10).map(row), trMore: sorted.length > (st.trLimit || 10), trMoreLabel: 'Show ' + Math.min(20, sorted.length - (st.trLimit || 10)) + ' more',
-          trCols: [tcol('track', 'd', 'DATE', null, 'left', .9), tcol('track', 'game', 'GAME', null, 'left', 1.2), tcol('track', 'prior', 'KWOTIENT PRIOR', null, 'left', 1.6), tcol('track', 'fair', 'KWOTIENT FAIR', null, 'left', 1.5), tcol('track', 'line', 'MARKET', null, 'left', .8), tcol('track', 'edge', 'EDGE', null, 'left', 1), tcol('track', 'final', 'FINAL', null, 'left', .8), tcol('track', 'call', 'KWOTIENT CALL', null, 'left', 1.5)],
+          trCols: [tcol('track', 'wk', 'WEEK', null, 'left', .8), tcol('track', 'd', 'DATE', null, 'left', .9), tcol('track', 'game', 'GAME', null, 'left', 1.2), tcol('track', 'prior', 'KWOTIENT PRIOR', null, 'left', 1.6), tcol('track', 'fair', 'KWOTIENT FAIR', null, 'left', 1.5), tcol('track', 'line', 'MARKET', null, 'left', .8), tcol('track', 'edge', 'EDGE', null, 'left', 1), tcol('track', 'final', 'FINAL', null, 'left', .8), tcol('track', 'call', 'KWOTIENT CALL', null, 'left', 1.5)],
           trShowMore: () => this.setState({ trLimit: (st.trLimit || 10) + 20 }), trShowAll: () => this.setState({ trLimit: 100000 }),
           trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 10 }), params: P,
             groups: [
               { label: 'LEAGUE', items: ['NFL', 'NBA'].map(l => ({ label: l, count: 'LEAGUE · ' + cnt(n(c => c.lg === l)) })).filter(o => !/· 0 calls$/.test(o.count)) },
+              { label: 'WEEK', items: weeks.slice().reverse().map(w => ({ label: w, count: 'WEEK · ' + cnt(n(c => weekOf(c) === w)) + (w === latestWeek ? ' · latest' : '') })) },
               { label: 'CLUB', items: Array.from(new Set(all.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
               { label: 'VERDICT', items: ['right', 'wrong', 'open'].map(v => ({ label: v, count: 'VERDICT · ' + cnt(n(c => verdictOf(c) === v)) })).filter(o => !/· 0 calls$/.test(o.count)) },
               { label: 'MONTH', items: Array.from(new Set(all.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
-            ], placeholder: 'search the calls · a club, a day, right or wrong · commas for several', count: R ? sorted.length + ' of ' + all.length : '' })
+            ], placeholder: 'search the calls · a week, a club, a day, right or wrong · commas for several', count: R ? (trNothingPicked && latestWeek ? latestWeek + ' · ' : '') + sorted.length + ' of ' + all.length : '' })
         };
       })(),
       // ---------- a profile's timeline ----------
