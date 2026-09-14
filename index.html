@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=f4bd96ea5d"></script>
+<script src="./kq-bundle.js?v=c6aa5831fc"></script>
 <script src="./kq-seasons.js?v=f4d8a30b1a"></script>
 <style>
 :root{
@@ -1336,20 +1336,31 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="background:var(--nested);border:1px solid var(--grid);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ t.k }}</span><span style="{{ t.vStyle }}">{{ t.v }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ t.sub }}</span></div>
                   </sc-for>
                 </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">EVERY CALL · in the order they settled · {{ trRecordLine }}</span>
+                  <div style="display:flex;flex-wrap:wrap;gap:5px">
+                    <sc-for list="{{ trStrip }}" as="s" hint-placeholder-count="8"><div title="{{ s.title }}" style="{{ s.style }}"><span style="font-weight:700">{{ s.mark }}</span> {{ s.label }}<span style="color:var(--muted)"> · {{ s.pick }}</span></div></sc-for>
+                  </div>
+                </div>
                 <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
                 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
                   <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">NET RECORD OVER TIME · right minus wrong, settled calls in order</span>
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">RUNNING RECORD · right minus wrong, one step per settled call · <span style="color:var(--brand)">—</span> Kwotient &nbsp;<span style="color:#e2b53f">- -</span> market favorite</span>
                     <div data-chart="1" onMouseMove="{{ trCumMove }}" onMouseLeave="{{ trCumOff }}" onTouchStart="{{ trCumTouchStart }}" onTouchMove="{{ trCumTouchMove }}" onClick="{{ trCumTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
                       <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
                         <line x1="0" y1="{{ trZeroY }}" x2="600" y2="{{ trZeroY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
                         <path d="{{ trCumArea }}" fill="var(--brand)" fill-opacity="0.12"></path>
                         <path d="{{ trCumPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                        <path d="{{ trCumMktPath }}" fill="none" stroke="#e2b53f" stroke-width="2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                       </svg>
                       <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
                     </div>
-                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }}</span><span>net {{ trCumNow }} · latest</span></div>
+                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }} → {{ trCumTo }}</span><span>{{ trCumNote }}</span></div>
                   </div>
+                </div>
+                <button onClick="{{ trDetailToggle }}" style="align-self:flex-start;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ trDetailLabel }}</button>
+                <sc-if value="{{ trDetailOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
                   <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
                     <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · how often the side the Kwotient model liked won, by how sure it was</span>
                     <div style="position:relative;height:120px">
@@ -1367,17 +1378,20 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">bar · how often it won &nbsp; dash · how sure it said it was &nbsp; under · calls in the band</div>
                   </div>
                   <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">EDGE AGAINST THE MARKET · points claimed, and the cover margin that followed</span>
-                    <div data-chart="1" onMouseMove="{{ trDotMove }}" onMouseLeave="{{ trDotOff }}" onTouchStart="{{ trDotTouchStart }}" onTouchMove="{{ trDotTouchMove }}" onClick="{{ trDotTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT VS MARKET · how far each was from the final margin, per settled call · shorter is closer</span>
+                    <div style="position:relative;height:120px">
                       <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                        <line x1="0" y1="60" x2="300" y2="60" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                        <line x1="0" y1="110" x2="300" y2="110" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                        <sc-for list="{{ trMiss }}" as="m" hint-placeholder-count="8">
+                          <rect x="{{ m.kx }}" y="{{ m.ky }}" width="{{ m.w }}" height="{{ m.kh }}" rx="1" fill="var(--brand)"><title>{{ m.title }}</title></rect>
+                          <rect x="{{ m.mx }}" y="{{ m.my }}" width="{{ m.w }}" height="{{ m.mh }}" rx="1" fill="#e2b53f"><title>{{ m.title }}</title></rect>
+                        </sc-for>
                       </svg>
-                      <sc-for list="{{ trDots }}" as="d" hint-placeholder-count="8"><div style="{{ d.style }}"></div></sc-for>
-                      <sc-if value="{{ trDotHoverOn }}" hint-placeholder-val="{{ false }}"><div style="{{ trDotTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trDotTipHead }}</div><div>{{ trDotTipBody }}</div></div></sc-if>
                     </div>
-                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>0 pts of edge</span><span><span style="color:var(--good)">● covered</span> &nbsp;<span style="color:var(--critical)">● did not</span></span><span>{{ trDotMax }} pts</span></div>
+                    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--kw);font-size:9px;color:var(--faint)"><span><span style="color:var(--brand)">■</span> Kwotient &nbsp;<span style="color:#e2b53f">■</span> market</span><span>{{ trMissNote }}</span></div>
                   </div>
                 </div>
+                </sc-if>
                 </sc-if>
                 <sc-if value="{{ trNoneSettled }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:8px 0;border-top:1px solid var(--grid)">no call has settled yet — the charts open with the first final score; every call below is on the record now, before kickoff</div></sc-if>
                 <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--grid)">
@@ -3478,7 +3492,7 @@ class Component extends DCLogic {
     // season data has not filed yet; a word two clubs share (New, Los Angeles) resolves nothing
     const CLUB_NAMES = sport === 'NBA'
       ? { ATL: 'Atlanta Hawks', BOS: 'Boston Celtics', BKN: 'Brooklyn Nets', CHA: 'Charlotte Hornets', CHI: 'Chicago Bulls', CLE: 'Cleveland Cavaliers', DAL: 'Dallas Mavericks', DEN: 'Denver Nuggets', DET: 'Detroit Pistons', GSW: 'Golden State Warriors', HOU: 'Houston Rockets', IND: 'Indiana Pacers', LAC: 'Los Angeles Clippers', LAL: 'Los Angeles Lakers', MEM: 'Memphis Grizzlies', MIA: 'Miami Heat', MIL: 'Milwaukee Bucks', MIN: 'Minnesota Timberwolves', NOP: 'New Orleans Pelicans', NYK: 'New York Knicks', OKC: 'Oklahoma City Thunder', ORL: 'Orlando Magic', PHI: 'Philadelphia 76ers', PHX: 'Phoenix Suns', POR: 'Portland Trail Blazers', SAC: 'Sacramento Kings', SAS: 'San Antonio Spurs', TOR: 'Toronto Raptors', UTA: 'Utah Jazz', WAS: 'Washington Wizards' }
-      : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders' };
+      : { ARI: 'Arizona Cardinals', ATL: 'Atlanta Falcons', BAL: 'Baltimore Ravens', BUF: 'Buffalo Bills', CAR: 'Carolina Panthers', CHI: 'Chicago Bears', CIN: 'Cincinnati Bengals', CLE: 'Cleveland Browns', DAL: 'Dallas Cowboys', DEN: 'Denver Broncos', DET: 'Detroit Lions', GB: 'Green Bay Packers', HOU: 'Houston Texans', IND: 'Indianapolis Colts', JAX: 'Jacksonville Jaguars', KC: 'Kansas City Chiefs', LAC: 'Los Angeles Chargers', LAR: 'Los Angeles Rams', LV: 'Las Vegas Raiders', MIA: 'Miami Dolphins', MIN: 'Minnesota Vikings', NE: 'New England Patriots', NO: 'New Orleans Saints', NYG: 'New York Giants', NYJ: 'New York Jets', PHI: 'Philadelphia Eagles', PIT: 'Pittsburgh Steelers', SEA: 'Seattle Seahawks', SF: 'San Francisco 49ers', TB: 'Tampa Bay Buccaneers', TEN: 'Tennessee Titans', WAS: 'Washington Commanders', WSH: 'Washington Commanders' };
     // a text with the city and nickname of every club code it names, so a keyword finds the line
     const withClubNames = text => { const t = String(text || ''); const names = (t.match(/\b[A-Z]{2,3}\b/g) || []).map(c => CLUB_NAMES[c]).filter(Boolean); return names.length ? t + ' ' + Array.from(new Set(names)).join(' ') : t; };
     // the market's one color, wherever the market is drawn or named
@@ -5711,8 +5725,26 @@ class Component extends DCLogic {
           call: c.right == null ? 'OPEN' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
         // the cumulative line
         let net = 0; const cum = settled.map(c => (net += c.right ? 1 : -1));
-        const M = Math.max(3, ...cum.map(Math.abs)); const zeroY = 60;
-        const cumPath = cum.length > 1 ? this.path(cum.slice(), 600, 120, -M, M) : cum.length === 1 ? 'M0 ' + (60 - cum[0] / M * 60).toFixed(1) + ' L600 ' + (60 - cum[0] / M * 60).toFixed(1) : '';
+        // the market's own call on the same games: the favorite by implied probability
+        const mktPick = c => c.mktProb == null || c.mktProb === 50 ? null : (c.mktProb > 50 ? c.home : c.away);
+        let netM = 0; const cumM = settled.map(c => { const pk = mktPick(c); if (pk && c.winner) netM += pk === c.winner ? 1 : -1; return netM; });
+        const mGraded = settled.filter(c => mktPick(c) && c.winner), mRight = mGraded.filter(c => mktPick(c) === c.winner).length;
+        const M = Math.max(3, ...cum.map(Math.abs), ...cumM.map(Math.abs)); const zeroY = 60;
+        // a staircase from zero: each settled call is one step up or down, at the same x the hover reads
+        const nC = cum.length, xC = i => nC > 1 ? i / (nC - 1) * 600 : 0, yC = v => 60 - v / M * 60;
+        const stair = arr => { if (!arr.length) return ''; if (arr.length === 1) return 'M0 ' + yC(0).toFixed(1) + ' L0 ' + yC(arr[0]).toFixed(1) + ' L600 ' + yC(arr[0]).toFixed(1);
+          let d = 'M0 ' + yC(0).toFixed(1); arr.forEach((v, i) => { const x = xC(i).toFixed(1); d += ' L' + x + ' ' + yC(i ? arr[i - 1] : 0).toFixed(1) + ' L' + x + ' ' + yC(v).toFixed(1); }); return d; };
+        const cumPath = stair(cum), cumMktPath = stair(cumM);
+        // how far each was from the final margin, per settled call: Kwotient's fair line and the
+        // market's line are both a home margin; the miss is the distance to the one that happened
+        const misses = settled.filter(c => c.fair != null && c.line != null && c.margin != null).map(c => ({ label: c.away + '@' + c.home, kw: Math.abs(c.margin + c.fair), mk: Math.abs(c.margin + c.line) }));
+        const missMax = Math.max(7, ...misses.map(m => Math.max(m.kw, m.mk))); const gw = misses.length ? 300 / misses.length : 300, bw = Math.max(2, Math.min(14, gw * 0.36));
+        const kwCloser = misses.filter(m => m.kw < m.mk).length, avg = k => misses.length ? misses.reduce((a, m) => a + m[k], 0) / misses.length : 0;
+        const openCalls = sportCalls.filter(c => c.right == null);
+        const chip = c => { const col = c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)';
+          return { label: c.away + '@' + c.home, pick: c.on || '—', mark: c.right == null ? '·' : c.right ? '✓' : '✗',
+            title: c.away + ' @ ' + c.home + ' · ' + (c.right == null ? 'open' : (c.right ? 'right' : 'wrong') + ' · ' + c.as + '-' + c.hs),
+            style: 'font-family:var(--kw);font-size:9.5px;padding:4px 8px;border-radius:6px;background:var(--nested);border:1px solid ' + mix(col, 40) + ';color:' + col }; };
         const hi = st.trCumHover == null ? null : clamp(st.trCumHover, 0, Math.max(0, settled.length - 1)); const hc = hi == null ? null : settled[hi];
         const hx = hi == null || settled.length < 2 ? 0 : (hi / (settled.length - 1)) * 100;
         // the calibration bins on the side the model liked
@@ -5721,10 +5753,6 @@ class Component extends DCLogic {
           const x = i * 60 + 8, w = 44; return { x, x2: x + w, w, y: 100 - actual * 90, h: inb.length ? actual * 90 : 0, py: 100 - pred * 90, label, n: inb.length ? inb.length + (inb.length === 1 ? ' call' : ' calls') : '—', actual: inb.length ? Math.round(actual * 100) + '%' : '' };
         });
         // the edge dots
-        const dotted = coverable.map(c => { const cm = c.on === c.home ? c.margin + c.line : -(c.margin + c.line); return { c, e: Math.abs(c.edge || 0), cm }; });
-        const eMax = Math.max(1, ...dotted.map(d => d.e)), cMax = Math.max(7, ...dotted.map(d => Math.abs(d.cm)));
-        const di = st.trDotHover == null ? null : clamp(st.trDotHover, 0, Math.max(0, dotted.length - 1)); const dh = di == null ? null : dotted[di];
-        const dotStyle = (d, i) => 'position:absolute;width:9px;height:9px;border-radius:50%;transform:translate(-50%,-50%);left:' + (d.e / eMax * 96 + 2).toFixed(1) + '%;top:' + (50 - d.cm / cMax * 46).toFixed(1) + '%;background:' + (d.c.covered ? 'var(--good)' : 'var(--critical)') + ';box-shadow:0 0 0 2px var(--surface)' + (i === di ? ';width:13px;height:13px' : '');
         return {
           trNote: R ? (sportCalls.length + ' ' + sport + ' calls on the record · ' + settled.length + ' settled' + (liveN ? ' · ' + liveN + ' graded live today, filed in the morning' : '') + ' · built ' + (S ? S.day(R.summary.built) : R.summary.built)) : 'reading the record…',
           // the record in one line: every forecast Kwotient has filed, and how it stands
@@ -5745,6 +5773,17 @@ class Component extends DCLogic {
             { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (coverable.length ? (covered * 2 >= coverable.length ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
             { k: 'BRIER', v: brier == null ? '—' : brier.toFixed(3), sub: brier == null ? 'lower is better · 0.250 is a coin' : (brier < 0.25 ? 'beating a coin' : 'behind a coin') + ' · 0.250 is a coin', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' }
           ],
+          trCumMktPath: cumMktPath,
+          trCumNote: settled.length ? 'Kwotient ' + right + '-' + wrong + ' · market favorite ' + mRight + '-' + (mGraded.length - mRight) + ' on the same games' : '',
+          trMiss: misses.map((m, i) => ({ w: bw.toFixed(1), kx: (i * gw + gw / 2 - bw - 1).toFixed(1), mx: (i * gw + gw / 2 + 1).toFixed(1),
+            ky: (110 - m.kw / missMax * 100).toFixed(1), kh: (m.kw / missMax * 100).toFixed(1), my: (110 - m.mk / missMax * 100).toFixed(1), mh: (m.mk / missMax * 100).toFixed(1),
+            title: m.label + ' · Kwotient off by ' + m.kw.toFixed(1) + ' · market off by ' + m.mk.toFixed(1) })),
+          trMissNote: misses.length ? 'Kwotient closer in ' + kwCloser + ' of ' + misses.length + ' · average miss Kwotient ' + avg('kw').toFixed(1) + ' · market ' + avg('mk').toFixed(1) + ' pts' : 'no lined result yet',
+          trStrip: settled.concat(openCalls).map(chip),
+          trRecordLine: settled.length ? right + '-' + wrong + ' · net ' + (net > 0 ? '+' : '') + net + (openCalls.length ? ' · ' + openCalls.length + ' open' : '') : (openCalls.length + ' open · none settled yet'),
+          trCumTo: settled.length ? (S ? S.day(settled[settled.length - 1].settled || settled[settled.length - 1].d) : settled[settled.length - 1].d) : '',
+          trDetailOpen: !!st.trDetail, trDetailToggle: () => this.setState(x => ({ trDetail: !x.trDetail })),
+          trDetailLabel: (st.trDetail ? 'HIDE' : 'SHOW') + ' CALIBRATION & COMPARISON · ' + (settled.length < 30 ? 'read with care under 30 settled calls' : settled.length + ' settled calls'),
           trHasSettled: settled.length > 0, trNoneSettled: !!R && settled.length === 0,
           trZeroY: zeroY, trCumPath: cumPath, trCumArea: cumPath ? cumPath + ' L600 ' + zeroY + ' L0 ' + zeroY + ' Z' : '',
           trCumFrom: settled.length ? (S ? S.day(settled[0].settled || settled[0].d) : settled[0].d) : '', trCumNow: (net > 0 ? '+' : '') + net,
@@ -5755,12 +5794,6 @@ class Component extends DCLogic {
           trCumTip: hc ? TIPSTYLE + ';top:6px;' + (hx > 55 ? 'right:calc(' + (100 - hx).toFixed(1) + '% + 10px)' : 'left:calc(' + hx.toFixed(1) + '% + 10px)') : '',
           trCumTipHead: hc ? hc.away + ' @ ' + hc.home + ' · ' + (S ? S.day(hc.settled || hc.d) : hc.d) : '', trCumTipBody: hc ? (hc.right ? 'right' : 'wrong') + ' · ' + hc.as + '-' + hc.hs + ' · net ' + (cum[hi] > 0 ? '+' : '') + cum[hi] : '',
           trBins: bins,
-          trDots: dotted.map((d, i) => ({ style: dotStyle(d, i) })), trDotMax: eMax.toFixed(1),
-          trDotMove: e => { if (!dotted.length) return; const r = e.currentTarget.getBoundingClientRect(); const x = (this.ptX(e) - r.left) / Math.max(1, r.width); let best = 0, bd = 9; dotted.forEach((d, i) => { const dx = Math.abs(d.e / eMax * 0.96 + 0.02 - x); if (dx < bd) { bd = dx; best = i; } }); if (st.trDotHover !== best) this.setState({ trDotHover: best }); },
-          trDotOff: () => this.setState({ trDotHover: null }), trDotTap: e => { const r = e.currentTarget.getBoundingClientRect(); const x = (this.ptX(e) - r.left) / Math.max(1, r.width); let best = 0, bd = 9; dotted.forEach((d, i) => { const dx = Math.abs(d.e / eMax * 0.96 + 0.02 - x); if (dx < bd) { bd = dx; best = i; } }); this.setState({ trDotHover: dotted.length ? best : null }); },
-          trDotTouchStart: e => this.touchScrub(e, 'start', () => {}), trDotTouchMove: e => this.touchScrub(e, 'move', () => {}),
-          trDotHoverOn: dh != null, trDotTip: dh ? TIPSTYLE + ';top:6px;' + ((dh.e / eMax) > 0.55 ? 'right:6px' : 'left:6px') : '',
-          trDotTipHead: dh ? dh.c.away + ' @ ' + dh.c.home + ' · ' + (S ? S.day(dh.c.d) : dh.c.d) : '', trDotTipBody: dh ? dh.e.toFixed(1) + ' pts on ' + dh.c.on + ' · final ' + dh.c.as + '-' + dh.c.hs + ' · ' + (dh.c.covered ? 'covered by ' : 'missed by ') + Math.abs(dh.cm).toFixed(1) : '',
           trRows: sorted.slice(0, st.trLimit || 10).map(row), trMore: sorted.length > (st.trLimit || 10), trMoreLabel: 'Show ' + Math.min(20, sorted.length - (st.trLimit || 10)) + ' more',
           trCols: [tcol('track', 'd', 'DATE', null, 'left', .9), tcol('track', 'game', 'GAME', null, 'left', 1.2), tcol('track', 'prior', 'KWOTIENT PRIOR', null, 'left', 1.6), tcol('track', 'fair', 'KWOTIENT FAIR', null, 'left', 1.5), tcol('track', 'line', 'MARKET', null, 'left', .8), tcol('track', 'edge', 'EDGE', null, 'left', 1), tcol('track', 'final', 'FINAL', null, 'left', .8), tcol('track', 'call', 'KWOTIENT CALL', null, 'left', 1.5)],
           trShowMore: () => this.setState({ trLimit: (st.trLimit || 10) + 20 }), trShowAll: () => this.setState({ trLimit: 100000 }),
