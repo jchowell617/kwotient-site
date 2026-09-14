@@ -3548,7 +3548,7 @@ class Component extends DCLogic {
       return { top: best, crowded: room(best) < 2 };
     })();
     const edgeSide = Math.abs(lineGap) >= 1 ? (lineGap > 0 ? g.homeAbbr : g.awayAbbr) : null;
-    const edgeText = edgeSide ? 'VALUE ' + edgeSide + ' ' + Math.abs(lineGap).toFixed(1) + ' PTS' : 'NO EDGE · ' + sgn(lineGap) + ' PTS';
+    const edgeText = edgeSide ? 'EDGE ' + edgeSide + ' ' + Math.abs(lineGap).toFixed(1) + ' PTS' : 'NO EDGE · ' + sgn(lineGap) + ' PTS';
     const mktProbNow = hasMarket && g.mktProb != null ? g.mktProb : null;
     const box = (st.box || {})[g.id] || null;
     const boxOn = !!(box && box.available && (box.home.length || box.away.length));
@@ -5083,23 +5083,23 @@ class Component extends DCLogic {
                se: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final, a ' + Math.abs(d.hs - d.as) + '-point margin.',
                sh: d => d.away + ' ' + d.as + ' @ ' + d.home + ' ' + d.hs + ' — final, by ' + Math.abs(d.hs - d.as) + ', for the box score.' },
       EDGE:  { be: d => 'Kwotient ' + d.home + ' ' + sgn(d.fair) + ' against a market ' + sgn(d.line) + ' — ' + f1(Math.abs(d.gap)) + ' points on ' + (d.gap > 0 ? d.home : d.away) + ' across ' + d.n + ' books.',
-               bh: d => 'The books say ' + d.home + ' ' + sgn(d.line) + '; the Kwotient model says ' + sgn(d.fair) + '. ' + f1(Math.abs(d.gap)) + ' points of daylight on ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books unconvinced.',
+               bh: d => 'The books say ' + d.home + ' ' + sgn(d.line) + '; the Kwotient model says ' + sgn(d.fair) + '. ' + f1(Math.abs(d.gap)) + ' points of daylight on ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books posting otherwise.',
                se: d => 'Projected margin ' + d.home + ' ' + sgn(d.fair) + ' against a posted ' + sgn(d.line) + ' — a ' + f1(Math.abs(d.gap)) + '-point gap toward ' + (d.gap > 0 ? d.home : d.away) + ', ' + d.n + ' books sampled.',
                sh: d => 'Kwotient margin ' + sgn(d.fair) + ', posted ' + sgn(d.line) + '; the ' + f1(Math.abs(d.gap)) + ' in between is where ' + (d.gap > 0 ? d.home : d.away) + '\'s numbers live. ' + d.n + ' books.' },
       LINE:  { be: d => d.home + ' moved from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '.',
-               bh: d => d.home + ' went from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + ' — somebody bet with conviction.',
+               bh: d => d.home + ' went from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + ' — the books moved it with conviction.',
                se: d => d.home + '\'s posted margin moved from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '.',
                sh: d => d.home + '\'s number drifted from ' + sgn(d.from) + ' to ' + sgn(d.to) + ' ' + d.since + '; the spreadsheet noticed.' },
       STEAM: { be: d => d.home + ' ' + sgn(d.from) + ' to ' + sgn(d.to) + ' in the last thirty minutes.',
-               bh: d => d.home + ' ' + sgn(d.from) + ' to ' + sgn(d.to) + ' in thirty minutes — that is steam, not a breeze.',
+               bh: d => d.home + ' ' + sgn(d.from) + ' to ' + sgn(d.to) + ' in thirty minutes — that is a shove, not a drift.',
                se: d => d.home + '\'s posted margin changed ' + f1(Math.abs(d.to - d.from)) + ' points in the last thirty minutes, ' + sgn(d.from) + ' to ' + sgn(d.to) + '.',
                sh: d => f1(Math.abs(d.to - d.from)) + ' points of movement in thirty minutes on ' + d.home + ' (' + sgn(d.from) + ' to ' + sgn(d.to) + '); someone refreshed the model.' },
       INJURY: { be: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') — ' + d.inj + ', on the captured report.',
-                bh: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') — ' + d.inj + ' on the captured report; price the doubt.',
+                bh: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') — ' + d.inj + ' on the captured report; the doubt is on the record.',
                 se: d => d.full + ', ' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ' — ' + d.inj + ', per the captured report.',
                 sh: d => d.full + ' (' + d.pos + (d.k != null ? ', Kwotient Score ' + d.k : '') + ') is ' + d.inj + ', per the report; the depth chart is holding its breath.' },
       MODELGAP: { be: d => 'Kwotient has ' + d.home + ' at ' + f1(d.wp) + '%, market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of edge.' : 'Inside the 2-point threshold.'),
-                  bh: d => 'Kwotient ' + d.home + ' ' + f1(d.wp) + '%, market ' + f1(d.mk) + '% — ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points the books have not caught up to.' : 'inside two points; nothing to bet on here.'),
+                  bh: d => 'Kwotient ' + d.home + ' ' + f1(d.wp) + '%, market ' + f1(d.mk) + '% — ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points the books have not moved to.' : 'inside two points; the two agree.'),
                   se: d => 'Win probability ' + d.home + ' ' + f1(d.wp) + '%; implied market ' + f1(d.mk) + '%. ' + (Math.abs(d.wp - d.mk) >= 2 ? 'Gap ' + f1(Math.abs(d.wp - d.mk)) + ' points.' : 'Gap under 2 points.'),
                   sh: d => d.home + ' ' + f1(d.wp) + '% by Kwotient, ' + f1(d.mk) + '% by the crowd; ' + (Math.abs(d.wp - d.mk) >= 2 ? f1(Math.abs(d.wp - d.mk)) + ' points of disagreement.' : 'the two agree within 2 points, which is rare.') },
       SWING: { be: d => d.side + ' have taken ' + f1(Math.abs(d.swing)) + ' points of win probability over the last ten ticks.',
@@ -5958,7 +5958,7 @@ class Component extends DCLogic {
           return {
             game: x.awayAbbr + ' @ ' + x.homeAbbr + (x.state === 'in_progress' ? ' · ' + x.as + '-' + x.hs : ''),
             gameStyle: 'font-family:var(--kw);font-size:10.5px;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--brand)' : 'var(--reversed)'),
-            edge: side ? 'VALUE ' + side + ' ' + Math.abs(gap).toFixed(1) : 'no edge · ' + sgn(gap),
+            edge: side ? 'EDGE ' + side + ' ' + Math.abs(gap).toFixed(1) : 'no edge · ' + sgn(gap),
             edgeStyle: 'font-family:var(--kw);font-size:10.5px;font-weight:700;white-space:nowrap;color:' + (side ? ACC : 'var(--muted)'),
             lines: 'mkt ' + x.homeAbbr + ' ' + sgn(x.line) + ' · Kwotient ' + sgn(x.fair),
             probs: x.mktProb != null && x.wp != null ? 'mkt ' + Number(x.mktProb).toFixed(0) + '% · Kwotient ' + Number(x.wp).toFixed(0) + '%' : '',
