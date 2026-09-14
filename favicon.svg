@@ -1,1 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#4d8bff"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" role="img" aria-label="Kwotient">
+  <title>Kwotient mark — light tile, for dark backgrounds</title>
+  <rect width="100" height="100" rx="22" fill="#e9edf3"/>
+  <circle cx="60" cy="32" r="9.5" fill="#4d8bff"/>
+  <rect x="22" y="49" width="56" height="7" rx="3.5" fill="#080a0e"/>
+  <rect x="22" y="65" width="30" height="7" rx="3.5" fill="#080a0e"/>
+</svg>
