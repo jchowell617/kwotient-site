@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=549fa1e489"></script>
+<script src="./kq-bundle.js?v=4fe6e7db88"></script>
 <script src="./kq-seasons.js?v=509b0126ac"></script>
 <style>
 :root{
@@ -1397,59 +1397,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <div style="background:var(--nested);border:1px solid var(--grid);border-radius:9px;padding:10px 12px;display:flex;flex-direction:column;gap:3px;min-width:0"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">{{ t.k }}</span><span style="{{ t.vStyle }}">{{ t.v }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ t.sub }}</span></div>
                   </sc-for>
                 </div>
-                <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
-                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">RUNNING RECORD · right minus wrong, one step per settled call · <span style="color:var(--brand)">—</span> Kwotient &nbsp;<span style="color:#e2b53f">- -</span> market favorite</span>
-                    <div data-chart="1" onMouseMove="{{ trCumMove }}" onMouseLeave="{{ trCumOff }}" onTouchStart="{{ trCumTouchStart }}" onTouchMove="{{ trCumTouchMove }}" onClick="{{ trCumTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
-                      <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                        <line x1="0" y1="{{ trZeroY }}" x2="600" y2="{{ trZeroY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
-                        <path d="{{ trCumArea }}" fill="var(--brand)" fill-opacity="0.12"></path>
-                        <path d="{{ trCumPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                        <path d="{{ trCumMktPath }}" fill="none" stroke="#e2b53f" stroke-width="2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                      </svg>
-                      <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }} → {{ trCumTo }}</span><span>{{ trCumNote }}</span></div>
-                  </div>
-                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT VS MARKET · how far each was from the final margin, per settled call · shorter is closer</span>
-                    <div style="position:relative;height:120px">
-                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                        <line x1="0" y1="110" x2="300" y2="110" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                        <sc-for list="{{ trMiss }}" as="m" hint-placeholder-count="8">
-                          <rect x="{{ m.kx }}" y="{{ m.ky }}" width="{{ m.w }}" height="{{ m.kh }}" rx="1" fill="var(--brand)"><title>{{ m.title }}</title></rect>
-                          <rect x="{{ m.mx }}" y="{{ m.my }}" width="{{ m.w }}" height="{{ m.mh }}" rx="1" fill="#e2b53f"><title>{{ m.title }}</title></rect>
-                        </sc-for>
-                      </svg>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--kw);font-size:9px;color:var(--faint)"><span><span style="color:var(--brand)">■</span> Kwotient &nbsp;<span style="color:#e2b53f">■</span> market</span><span>{{ trMissNote }}</span></div>
-                  </div>
-                </div>
-                <button onClick="{{ trDetailToggle }}" style="align-self:flex-start;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ trDetailLabel }}</button>
-                <sc-if value="{{ trDetailOpen }}" hint-placeholder-val="{{ false }}">
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
-                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · how often the side the Kwotient model liked won, by how sure it was</span>
-                    <div style="position:relative;height:120px">
-                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
-                        <line x1="0" y1="100" x2="300" y2="100" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                        <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5">
-                          <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="2" fill="var(--brand)" fill-opacity="0.75"></rect>
-                          <line x1="{{ b.x }}" y1="{{ b.py }}" x2="{{ b.x2 }}" y2="{{ b.py }}" stroke="var(--reversed)" stroke-width="1.5" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"></line>
-                        </sc-for>
-                      </svg>
-                      <div style="position:absolute;inset:0;display:flex;pointer-events:none">
-                        <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-family:var(--kw);font-size:8.5px;color:var(--second);padding-bottom:2px"><span style="color:var(--reversed)">{{ b.actual }}</span><span>{{ b.label }}</span><span style="color:var(--muted)">{{ b.n }}</span></div></sc-for>
-                      </div>
-                    </div>
-                    <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">bar · how often it won &nbsp; dash · how sure it said it was &nbsp; under · calls in the band</div>
-                  </div>
-                </div>
-                </sc-if>
-                </sc-if>
-                <sc-if value="{{ trNoneSettled }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:8px 0;border-top:1px solid var(--grid)">no call has settled yet — the charts open with the first final score; every call below is on the record now, before kickoff</div></sc-if>
-                <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px;border-top:1px solid var(--grid)">
+                <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:2px">
                   <sc-if value="{{ trBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ trBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ trBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ trBox.boxKey }}" value="{{ trBox.q }}" onChange="{{ trBox.on }}" onFocus="{{ trBox.focus }}" onClick="{{ trBox.click }}" onDoubleClick="{{ trBox.dbl }}" onKeyDown="{{ trBox.onKey }}" placeholder="{{ trBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ trBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ trBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                   <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ trBox.count }}</span>
                   <sc-for list="{{ trBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
@@ -1473,6 +1421,58 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     </div>
                   </sc-if>
                 </div>
+                <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">RUNNING RECORD · {{ trScope }} · right minus wrong, one step per settled call · <span style="color:var(--brand)">—</span> Kwotient &nbsp;<span style="color:#e2b53f">- -</span> market favorite</span>
+                    <div data-chart="1" onMouseMove="{{ trCumMove }}" onMouseLeave="{{ trCumOff }}" onTouchStart="{{ trCumTouchStart }}" onTouchMove="{{ trCumTouchMove }}" onClick="{{ trCumTap }}" style="position:relative;height:120px;cursor:crosshair;touch-action:pan-y">
+                      <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="{{ trZeroY }}" x2="600" y2="{{ trZeroY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke"></line>
+                        <path d="{{ trCumArea }}" fill="var(--brand)" fill-opacity="0.12"></path>
+                        <path d="{{ trCumPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                        <path d="{{ trCumMktPath }}" fill="none" stroke="#e2b53f" stroke-width="2" stroke-dasharray="5 3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
+                      </svg>
+                      <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint)"><span>{{ trCumFrom }} → {{ trCumTo }}</span><span>{{ trCumNote }}</span></div>
+                  </div>
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT VS MARKET · {{ trScope }} · how far each was from the final margin, per settled call · shorter is closer</span>
+                    <div style="position:relative;height:120px">
+                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="110" x2="300" y2="110" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                        <sc-for list="{{ trMiss }}" as="m" hint-placeholder-count="8">
+                          <rect x="{{ m.kx }}" y="{{ m.ky }}" width="{{ m.w }}" height="{{ m.kh }}" rx="1" fill="var(--brand)"><title>{{ m.title }}</title></rect>
+                          <rect x="{{ m.mx }}" y="{{ m.my }}" width="{{ m.w }}" height="{{ m.mh }}" rx="1" fill="#e2b53f"><title>{{ m.title }}</title></rect>
+                        </sc-for>
+                      </svg>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--kw);font-size:9px;color:var(--faint)"><span><span style="color:var(--brand)">■</span> Kwotient &nbsp;<span style="color:#e2b53f">■</span> market</span><span>{{ trMissNote }}</span></div>
+                  </div>
+                </div>
+                <button onClick="{{ trDetailToggle }}" style="align-self:flex-start;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ trDetailLabel }}</button>
+                <sc-if value="{{ trDetailOpen }}" hint-placeholder-val="{{ false }}">
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
+                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
+                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">CALIBRATION · {{ trScope }} · how often the side the Kwotient model liked won, by how sure it was</span>
+                    <div style="position:relative;height:120px">
+                      <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:120px;display:block">
+                        <line x1="0" y1="100" x2="300" y2="100" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                        <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5">
+                          <rect x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="2" fill="var(--brand)" fill-opacity="0.75"></rect>
+                          <line x1="{{ b.x }}" y1="{{ b.py }}" x2="{{ b.x2 }}" y2="{{ b.py }}" stroke="var(--reversed)" stroke-width="1.5" stroke-dasharray="3 2" vector-effect="non-scaling-stroke"></line>
+                        </sc-for>
+                      </svg>
+                      <div style="position:absolute;inset:0;display:flex;pointer-events:none">
+                        <sc-for list="{{ trBins }}" as="b" hint-placeholder-count="5"><div style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;font-family:var(--kw);font-size:8.5px;color:var(--second);padding-bottom:2px"><span style="color:var(--reversed)">{{ b.actual }}</span><span>{{ b.label }}</span><span style="color:var(--muted)">{{ b.n }}</span></div></sc-for>
+                      </div>
+                    </div>
+                    <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">bar · how often it won &nbsp; dash · how sure it said it was &nbsp; under · calls in the band</div>
+                  </div>
+                </div>
+                </sc-if>
+                </sc-if>
+                <sc-if value="{{ trNoneSettled }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:10px;color:var(--second);padding:8px 0;border-top:1px solid var(--grid)">{{ trNoneNote }}</div></sc-if>
                 <div data-scroll="x"><div style="min-width:560px">
                   <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                     <sc-for list="{{ trCols }}" as="c" hint-placeholder-count="8">
@@ -3073,7 +3073,7 @@ class Component extends DCLogic {
     this.connectRecord();
     this.loadRecord('calls');
   }
-  componentDidUpdate() { try { this.mountEmbeds(); } catch (e) {} if (this._focusBox) { const el = document.querySelector('input[data-box="' + this._focusBox + '"]'); if (el) { this._focusBox = null; try { el.focus(); } catch (x) {} } } try { this.armTicks(); } catch (e) {} this.ensureOddsHist(); (this._logNeed || []).forEach(n => this.loadLog(n.id, n.ent, n.season)); }
+  componentDidUpdate() { try { this.mountEmbeds(); } catch (e) {} if (this._focusBox) { const el = document.querySelector('input[data-box="' + this._focusBox + '"]'); if (el) { this._focusBox = null; try { el.focus({ preventScroll: true }); } catch (x) {} } } try { this.armTicks(); } catch (e) {} this.ensureOddsHist(); (this._logNeed || []).forEach(n => this.loadLog(n.id, n.ent, n.season)); }
   // the lines of past meetings: asked of the edge once per slate the history filter reaches,
   // held per date (NBA) or per week (NFL); the edge answers from its own closing-line file
   ensureOddsHist() {
@@ -5844,10 +5844,11 @@ class Component extends DCLogic {
         // commas), and whatever else was typed narrows inside it
         const trQraw = String(st.trQ || '').trim().toLowerCase();
         const weeksTyped = [];
-        const trQ = trQraw.replace(/\b(?:weeks?|wk|w)\s*(\d{1,2})\b/g, (m, n) => { weeksTyped.push('WEEK ' + (+n)); return ''; }).split(',').map(x => x.trim()).filter(Boolean).join(', ');
+        const trQ = trQraw.replace(/\b(?:weeks?|wk|w)\s*(\d{1,2})\b/g, (m, n) => { weeksTyped.push('WEEK ' + (+n)); return ''; }).replace(/\b(all weeks|season|all)\b/g, '').split(',').map(x => x.trim()).filter(Boolean).join(', ');
         // with nothing picked the table shows the latest week; a pick or a word opens the whole record
         const trNothingPicked = !st.trLg && !st.trWeek && !st.trClub && !st.trVerdict && !st.trMonth && !trQraw;
-        const weekSet = st.trWeek ? [st.trWeek] : weeksTyped.length ? weeksTyped : (trNothingPicked && latestWeek ? [latestWeek] : null);
+        const allWeeksAsked = st.trWeek === 'ALL WEEKS' || /\b(all weeks|season|all)\b/.test(trQraw);
+        const weekSet = allWeeksAsked ? null : st.trWeek ? [st.trWeek] : weeksTyped.length ? weeksTyped : (trNothingPicked && latestWeek ? [latestWeek] : null);
         const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!weekSet || weekSet.indexOf(weekOf(c)) >= 0) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
           && (!trQ || matchQ(withClubNames(c.d + ' ' + c.lg + ' ' + c.away + ' @ ' + c.home + ' ' + c.status) + ' ' + weekOf(c) + ' ' + verdictOf(c) + ' ' + (c.on || ''), trQ)));
         const wkKey = c => { const w = weekOf(c); return c.lg === 'NFL' ? +(/(\d+)$/.exec(w) || [0, 0])[1] : +String(w).replace('-', ''); };
@@ -5861,12 +5862,17 @@ class Component extends DCLogic {
         const row = c => ({ wk: weekOf(c), day: S ? S.day(c.start ? etDayOf(c.start) : c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
           edge: c.edge == null || !c.on ? 'no edge' : Math.abs(c.edge).toFixed(1) + ' on ' + c.on, final: c.margin == null ? (c.status || 'scheduled') : c.as + '-' + c.hs,
           call: c.right == null ? 'OPEN' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
+        // the charts read the same weeks the table does: the latest week with nothing picked, the
+        // week searched, or the whole season when all weeks are asked for
+        const scoped = weekSet ? settled.filter(c => weekSet.indexOf(weekOf(c)) >= 0) : settled;
+        const scRight = scoped.filter(c => c.right).length, scWrong = scoped.length - scRight;
+        const scopeLabel = weekSet ? weekSet.join(', ') : 'SEASON';
         // the cumulative line
-        let net = 0; const cum = settled.map(c => (net += c.right ? 1 : -1));
+        let net = 0; const cum = scoped.map(c => (net += c.right ? 1 : -1));
         // the market's own call on the same games: the favorite by implied probability
         const mktPick = c => c.mktProb == null || c.mktProb === 50 ? null : (c.mktProb > 50 ? c.home : c.away);
-        let netM = 0; const cumM = settled.map(c => { const pk = mktPick(c); if (pk && c.winner) netM += pk === c.winner ? 1 : -1; return netM; });
-        const mGraded = settled.filter(c => mktPick(c) && c.winner), mRight = mGraded.filter(c => mktPick(c) === c.winner).length;
+        let netM = 0; const cumM = scoped.map(c => { const pk = mktPick(c); if (pk && c.winner) netM += pk === c.winner ? 1 : -1; return netM; });
+        const mGraded = scoped.filter(c => mktPick(c) && c.winner), mRight = mGraded.filter(c => mktPick(c) === c.winner).length;
         const M = Math.max(3, ...cum.map(Math.abs), ...cumM.map(Math.abs)); const zeroY = 60;
         // a staircase from zero: each settled call is one step up or down, at the same x the hover reads
         const nC = cum.length, xC = i => nC > 1 ? i / (nC - 1) * 600 : 0, yC = v => 60 - v / M * 60;
@@ -5875,15 +5881,15 @@ class Component extends DCLogic {
         const cumPath = stair(cum), cumMktPath = stair(cumM);
         // how far each was from the final margin, per settled call: Kwotient's fair line and the
         // market's line are both a home margin; the miss is the distance to the one that happened
-        const misses = settled.filter(c => c.fair != null && c.line != null && c.margin != null).map(c => ({ label: c.away + '@' + c.home, kw: Math.abs(c.margin + c.fair), mk: Math.abs(c.margin + c.line) }));
+        const misses = scoped.filter(c => c.fair != null && c.line != null && c.margin != null).map(c => ({ label: c.away + '@' + c.home, kw: Math.abs(c.margin + c.fair), mk: Math.abs(c.margin + c.line) }));
         const missMax = Math.max(7, ...misses.map(m => Math.max(m.kw, m.mk))); const gw = misses.length ? 300 / misses.length : 300, bw = Math.max(2, Math.min(14, gw * 0.36));
         const kwCloser = misses.filter(m => m.kw < m.mk).length, avg = k => misses.length ? misses.reduce((a, m) => a + m[k], 0) / misses.length : 0;
         const openCalls = sportCalls.filter(c => c.right == null);
-        const hi = st.trCumHover == null ? null : clamp(st.trCumHover, 0, Math.max(0, settled.length - 1)); const hc = hi == null ? null : settled[hi];
-        const hx = hi == null || settled.length < 2 ? 0 : (hi / (settled.length - 1)) * 100;
+        const hi = st.trCumHover == null ? null : clamp(st.trCumHover, 0, Math.max(0, scoped.length - 1)); const hc = hi == null ? null : scoped[hi];
+        const hx = hi == null || scoped.length < 2 ? 0 : (hi / (scoped.length - 1)) * 100;
         // the calibration bins on the side the model liked
         const bins = [[50, 60, '50-60%'], [60, 70, '60-70%'], [70, 80, '70-80%'], [80, 90, '80-90%'], [90, 101, '90%+']].map(([lo, hiB, label], i) => {
-          const inb = settled.filter(c => { const p = sideP(c); return p != null && p >= lo && p < hiB; }); const won = inb.filter(c => c.right).length; const actual = inb.length ? won / inb.length : 0; const pred = inb.length ? inb.reduce((a, c) => a + sideP(c), 0) / inb.length / 100 : (lo + Math.min(hiB, 100)) / 200;
+          const inb = scoped.filter(c => { const p = sideP(c); return p != null && p >= lo && p < hiB; }); const won = inb.filter(c => c.right).length; const actual = inb.length ? won / inb.length : 0; const pred = inb.length ? inb.reduce((a, c) => a + sideP(c), 0) / inb.length / 100 : (lo + Math.min(hiB, 100)) / 200;
           const x = i * 60 + 8, w = 44; return { x, x2: x + w, w, y: 100 - actual * 90, h: inb.length ? actual * 90 : 0, py: 100 - pred * 90, label, n: inb.length ? inb.length + (inb.length === 1 ? ' call' : ' calls') : '—', actual: inb.length ? Math.round(actual * 100) + '%' : '' };
         });
         // the edge dots
@@ -5908,19 +5914,20 @@ class Component extends DCLogic {
             { k: 'BRIER', v: brier == null ? '—' : brier.toFixed(3), sub: brier == null ? 'lower is better · 0.250 is a coin' : (brier < 0.25 ? 'beating a coin' : 'behind a coin') + ' · 0.250 is a coin', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' }
           ],
           trCumMktPath: cumMktPath,
-          trCumNote: settled.length ? 'Kwotient ' + right + '-' + wrong + ' · market favorite ' + mRight + '-' + (mGraded.length - mRight) + ' on the same games' : '',
+          trCumNote: scoped.length ? 'Kwotient ' + scRight + '-' + scWrong + ' · market favorite ' + mRight + '-' + (mGraded.length - mRight) + ' on the same games' : '',
           trMiss: misses.map((m, i) => ({ w: bw.toFixed(1), kx: (i * gw + gw / 2 - bw - 1).toFixed(1), mx: (i * gw + gw / 2 + 1).toFixed(1),
             ky: (110 - m.kw / missMax * 100).toFixed(1), kh: (m.kw / missMax * 100).toFixed(1), my: (110 - m.mk / missMax * 100).toFixed(1), mh: (m.mk / missMax * 100).toFixed(1),
             title: m.label + ' · Kwotient off by ' + m.kw.toFixed(1) + ' · market off by ' + m.mk.toFixed(1) })),
           trMissNote: misses.length ? 'Kwotient closer in ' + kwCloser + ' of ' + misses.length + ' · average miss Kwotient ' + avg('kw').toFixed(1) + ' · market ' + avg('mk').toFixed(1) + ' pts' : 'no lined result yet',
-          trCumTo: settled.length ? (S ? S.day(settled[settled.length - 1].settled || settled[settled.length - 1].d) : settled[settled.length - 1].d) : '',
+          trCumTo: scoped.length ? (S ? S.day(scoped[scoped.length - 1].settled || scoped[scoped.length - 1].d) : scoped[scoped.length - 1].d) : '',
           trDetailOpen: !!st.trDetail, trDetailToggle: () => this.setState(x => ({ trDetail: !x.trDetail })),
-          trDetailLabel: (st.trDetail ? 'HIDE' : 'SHOW') + ' CALIBRATION · ' + (settled.length < 30 ? 'read with care under 30 settled calls' : settled.length + ' settled calls'),
-          trHasSettled: settled.length > 0, trNoneSettled: !!R && settled.length === 0,
+          trDetailLabel: (st.trDetail ? 'HIDE' : 'SHOW') + ' CALIBRATION · ' + (scoped.length < 30 ? 'read with care under 30 settled calls' : scoped.length + ' settled calls'),
+          trHasSettled: scoped.length > 0, trNoneSettled: !!R && scoped.length === 0, trScope: scopeLabel,
+          trNoneNote: settled.length ? 'no call in ' + scopeLabel + ' has settled yet — its charts fill with the first final score · type "all weeks" for the season so far' : 'no call has settled yet — the charts open with the first final score; every call below is on the record now, before kickoff',
           trZeroY: zeroY, trCumPath: cumPath, trCumArea: cumPath ? cumPath + ' L600 ' + zeroY + ' L0 ' + zeroY + ' Z' : '',
-          trCumFrom: settled.length ? (S ? S.day(settled[0].settled || settled[0].d) : settled[0].d) : '', trCumNow: (net > 0 ? '+' : '') + net,
-          trCumMove: this._slotHover('trCumHover', settled.length), trCumOff: () => this.setState({ trCumHover: null }), trCumTap: this._slotHover('trCumHover', settled.length),
-          trCumTouchStart: e => this.touchScrub(e, 'start', this._slotHover('trCumHover', settled.length)), trCumTouchMove: e => this.touchScrub(e, 'move', this._slotHover('trCumHover', settled.length)),
+          trCumFrom: scoped.length ? (S ? S.day(scoped[0].settled || scoped[0].d) : scoped[0].d) : '', trCumNow: (net > 0 ? '+' : '') + net,
+          trCumMove: this._slotHover('trCumHover', scoped.length), trCumOff: () => this.setState({ trCumHover: null }), trCumTap: this._slotHover('trCumHover', scoped.length),
+          trCumTouchStart: e => this.touchScrub(e, 'start', this._slotHover('trCumHover', scoped.length)), trCumTouchMove: e => this.touchScrub(e, 'move', this._slotHover('trCumHover', scoped.length)),
           trCumHoverOn: hc != null, trCumHoverLine: 'position:absolute;top:0;bottom:0;width:1px;background:var(--axis);left:' + hx.toFixed(1) + '%',
           trCumHoverDot: hc ? 'position:absolute;width:9px;height:9px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 2px var(--surface);transform:translate(-50%,-50%);left:' + hx.toFixed(1) + '%;top:' + (50 - cum[hi] / M * 50).toFixed(1) + '%' : '',
           trCumTip: hc ? TIPSTYLE + ';top:6px;' + (hx > 55 ? 'right:calc(' + (100 - hx).toFixed(1) + '% + 10px)' : 'left:calc(' + hx.toFixed(1) + '% + 10px)') : '',
@@ -5932,7 +5939,7 @@ class Component extends DCLogic {
           trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 10 }), params: P,
             groups: [
               { label: 'LEAGUE', items: ['NFL', 'NBA'].map(l => ({ label: l, count: 'LEAGUE · ' + cnt(n(c => c.lg === l)) })).filter(o => !/· 0 calls$/.test(o.count)) },
-              { label: 'WEEK', items: weeks.slice().reverse().map(w => ({ label: w, count: 'WEEK · ' + cnt(n(c => weekOf(c) === w)) + (w === latestWeek ? ' · latest' : '') })) },
+              { label: 'WEEK', items: [{ label: 'ALL WEEKS', count: 'WEEK · ' + cnt(all.length) + ' · the season' }].concat(weeks.slice().reverse().map(w => ({ label: w, count: 'WEEK · ' + cnt(n(c => weekOf(c) === w)) + (w === latestWeek ? ' · latest' : '') }))) },
               { label: 'CLUB', items: Array.from(new Set(all.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
               { label: 'VERDICT', items: ['right', 'wrong', 'open'].map(v => ({ label: v, count: 'VERDICT · ' + cnt(n(c => verdictOf(c) === v)) })).filter(o => !/· 0 calls$/.test(o.count)) },
               { label: 'MONTH', items: Array.from(new Set(all.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
