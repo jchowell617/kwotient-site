@@ -233,9 +233,30 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-chev]{min-width:36px!important;min-height:36px!important;font-size:18px!important;padding:0!important;margin:-8px 0 -8px -8px!important;display:inline-flex!important;align-items:center;justify-content:center;touch-action:manipulation}
   [data-theme] button:hover{transform:none}
 }
+/* TWO SECTIONS AT ONCE. The root carries data-split with the second section's key. On a desk the
+   main column becomes two panes side by side, each scrolling on its own, and the rail steps
+   aside; on a phone the panes stack, each half its own scroll. The first section is order 1. */
+@media (min-width:768px) and (min-height:521px){
+  [data-split]:not([data-split=""]) [data-shell=main]{flex-direction:row!important;overflow:hidden!important;padding:0!important;gap:0!important}
+  [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{flex:1 1 0;min-width:0;height:100%;box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 16px 44px}
+  [data-split]:not([data-split=""]) [data-shell=main] > [data-page][style*="order:2"]{border-left:1px solid var(--axis)}
+  [data-split]:not([data-split=""]) [data-shell=rail]{display:none!important}
+}
+@media (min-width:768px) and (max-height:520px){
+  [data-split]:not([data-split=""]) [data-shell=main]{flex-direction:row!important;gap:14px!important}
+  [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{flex:1 1 0;min-width:0}
+}
+@media (max-width:767px){
+  [data-split]:not([data-split=""]) [data-shell=main]{display:flex!important;flex-direction:column!important;height:calc(100dvh - 176px - env(safe-area-inset-bottom))!important;overflow:hidden!important;padding:0!important;gap:0!important;flex:none!important}
+  [data-shell=splitname]{display:none}
+  [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{flex:1 1 0;min-height:0;box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px 18px}
+  [data-split]:not([data-split=""]) [data-shell=main] > [data-page][style*="order:2"]{border-top:2px solid var(--axis)}
+  [data-split]:not([data-split=""]) [data-shell=rail]{display:none!important}
+  [data-split]:not([data-split=""]) [data-shell=body]{padding-bottom:calc(70px + env(safe-area-inset-bottom))!important}
+}
 </style>
 </helmet>
-<div data-theme="{{ theme }}" data-tab="{{ tabKey }}" style="height:100vh;height:100dvh;overflow:hidden;background:var(--desk);padding:0;display:flex;flex-direction:column;font-family:var(--kw);color:var(--reversed)">
+<div data-theme="{{ theme }}" data-tab="{{ tabKey }}" data-split="{{ splitKey }}" style="height:100vh;height:100dvh;overflow:hidden;background:var(--desk);padding:0;display:flex;flex-direction:column;font-family:var(--kw);color:var(--reversed)">
 
   <div style="display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;background:var(--ink);border:1px solid var(--axis);box-shadow:var(--shadow)">
 
@@ -246,6 +267,28 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase">Kwotient</span>
         </button>
         <button onClick="{{ toggleTheme }}" style="{{ themeBtn }}">{{ themeLabel }}</button>
+        <span data-colmenu="1" style="position:relative;display:inline-flex;flex:none">
+          <button data-colmenu="1" onClick="{{ splitToggleMenu }}" title="View two sections at once" style="{{ splitBtn }}">SPLIT<span data-shell="splitname">{{ splitName }}</span></button>
+          <sc-if value="{{ splitMenuOpen }}" hint-placeholder-val="{{ false }}">
+            <div data-colmenu="1" style="position:absolute;top:26px;left:0;z-index:260;width:296px;max-width:calc(100vw - 24px);background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:9px;display:flex;flex-direction:column;gap:8px">
+              <span style="font-family:var(--kw);font-size:9px;line-height:1.5;color:var(--second)">{{ splitHelp }}</span>
+              <div style="display:flex;gap:8px">
+                <sc-for list="{{ splitCols }}" as="col" hint-placeholder-count="2">
+                  <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:1px">
+                    <span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel);padding:2px 6px 4px">{{ col.head }}</span>
+                    <sc-for list="{{ col.options }}" as="o" hint-placeholder-count="7"><button onClick="{{ o.pick }}" style="{{ o.style }}">{{ o.label }}</button></sc-for>
+                  </div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ splitOn }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;gap:6px;border-top:1px solid var(--grid);padding-top:8px">
+                  <button onClick="{{ splitSwap }}" style="{{ splitAct }}">SWAP SIDES</button>
+                  <button onClick="{{ splitClose }}" style="{{ splitAct }}">CLOSE SPLIT</button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </span>
         <span data-shell="wintitle" style="font-family:var(--kw);font-size:9.5px;color:var(--muted);margin-left:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ windowTitle }}</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;font-family:var(--kw);font-size:9.5px;color:var(--muted);flex:none">
@@ -357,7 +400,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
       <main data-shell="main" style="flex:1;min-width:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 18px 44px;display:flex;flex-direction:column;gap:13px">
 
         <sc-if value="{{ isLive }}" hint-placeholder-val="{{ true }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.live }}">
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">WIDGETS</span>
               <span style="flex:1"></span>
@@ -1166,7 +1209,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </sc-if>
 
         <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.board }}">
             <div style="display:flex;justify-content:space-between;align-items:baseline">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">{{ sport }} scoreboard · {{ gameCount }} games</span></div>
               <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">click a card to open the live dashboard</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
@@ -1228,7 +1271,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </sc-if>
 
         <sc-if value="{{ isModel }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.model }}">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">About</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
 
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
@@ -1283,7 +1326,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </sc-if>
 
         <sc-if value="{{ isCohorts }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.cohorts }}">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
               <div style="display:flex;flex-direction:column;gap:5px">
                 <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap">
@@ -1700,7 +1743,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </sc-if>
 
         <sc-if value="{{ isBuzz }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.buzz }}">
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Buzz</span></div>
@@ -1799,7 +1842,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </sc-if>
 
         <sc-if value="{{ isProfiles }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.profiles }}">
 
             <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
               <div style="display:flex;gap:6px">
@@ -2526,7 +2569,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
         </sc-if>
 
         <sc-if value="{{ isAlerts }}" hint-placeholder-val="{{ false }}">
-          <div data-page="" style="display:flex;flex-direction:column;gap:13px">
+          <div data-page="" style="{{ pane.alerts }}">
             <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
               <div style="display:flex;flex-direction:column;gap:3px">
                 <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">Alerts</span></div>
@@ -2897,6 +2940,7 @@ class Component extends DCLogic {
     this._outside = e => {
       try { if (e.target && e.target.closest && e.target.closest('[data-colmenu]')) return; } catch (x) {}
       const st = this.state;
+      if (st.splitMenu) this.setState({ splitMenu: false });
       const openTables = Object.keys(st.tables || {}).filter(k => st.tables[k] && st.tables[k].open);
       if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.buzzKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen) return;
       this.setState(x => {
@@ -2907,7 +2951,7 @@ class Component extends DCLogic {
     };
     document.addEventListener('mousedown', this._outside, true);
     // back from the background: a fresh read at once rather than waiting out a throttled timer
-    this._esc = e => { if (e.key === 'Escape' && this.state.contactOpen) this.setState({ contactOpen: false }); };
+    this._esc = e => { if (e.key === 'Escape' && (this.state.contactOpen || this.state.splitMenu)) this.setState({ contactOpen: false, splitMenu: false }); };
     document.addEventListener('keydown', this._esc);
     // Enter closes a search: the phone's keyboard goes away with it, rather than waiting for a
     // tap on the page. The widget's own Enter handling runs first; the blur follows it.
@@ -3389,6 +3433,7 @@ class Component extends DCLogic {
     const go = () => { try {
       window.scrollTo(0, 0);
       ['main', 'body', 'rail'].forEach(k => { const el = document.querySelector('[data-shell=' + k + ']'); if (el) el.scrollTop = 0; });
+      document.querySelectorAll('[data-shell=main] > [data-page]').forEach(el => { el.scrollTop = 0; });
     } catch (e) {} };
     go(); requestAnimationFrame(go); setTimeout(go, 80);
   }
@@ -3425,9 +3470,12 @@ class Component extends DCLogic {
   }
   goTab(tab, extra) {
     this.tick();
-    if (tab === 'cohorts' || tab === 'board') this.loadRecord('calls');
+    // with two sections open, picking the second as the first swaps them
+    const was = this.state; let split = was.split || null;
+    if (split && tab === split) split = was.tab === tab ? null : was.tab;
+    if ([tab, split].some(k => k === 'cohorts' || k === 'board')) this.loadRecord('calls');
     // a section opens clean: its filters and menus reset with it
-    this.setState(Object.assign(this.freshFilters(), { tab }, extra || {}), () => this.toTop());
+    this.setState(Object.assign(this.freshFilters(), { tab, split, splitMenu: false }, extra || {}), () => this.toTop());
     this.toTop();
   }
   goHome() {
@@ -5365,7 +5413,11 @@ class Component extends DCLogic {
                         cohorts: ['track', 'mDrift', 'cohortBody', 'cohPop', 'cohBefore', 'cohCalib', 'cohErr', 'cohSkill'] };
     const panels = PANELS.concat(PROFILE_PANELS).concat(DIR_PANELS).concat(BUZZ_PANELS).concat(TAB_PANELS.board, TAB_PANELS.model, TAB_PANELS.alerts, TAB_PANELS.cohorts).reduce((a, k) => (a[k] = panel(k), a), {});
     // one expand / collapse tool at the top of every tab, over the panels that tab shows
-    const tabKeys = st.tab === 'live' ? PANELS : st.tab === 'profiles' ? (st.profileId ? PROFILE_PANELS : DIR_PANELS) : st.tab === 'buzz' ? BUZZ_PANELS : (TAB_PANELS[st.tab] || []);
+    // two sections at once: the first is the tab, the second is the split; a section is on when it is either
+    const splitOn = !!st.split && st.split !== st.tab;
+    const onTab = k => st.tab === k || (splitOn && st.split === k);
+    const keysOf = t => t === 'live' ? PANELS : t === 'profiles' ? (st.profileId ? PROFILE_PANELS : DIR_PANELS) : t === 'buzz' ? BUZZ_PANELS : (TAB_PANELS[t] || []);
+    const tabKeys = keysOf(st.tab).concat(splitOn ? keysOf(st.split) : []);
     const tabAnyOpen = tabKeys.some(k => !(st.shut || {})[k]);
 
     const navBtn = (active) => 'display:flex;align-items:center;gap:8px;width:100%;padding:8px 10px;border:none;border-radius:7px;cursor:pointer;transition:box-shadow .22s ease,transform .22s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:12.5px;font-weight:' + (active ? '600' : '400') + ';background:' + (active ? 'var(--nested)' : 'transparent') + ';color:' + (active ? 'var(--reversed)' : 'var(--second)') + ';box-shadow:' + (active ? 'inset 2px 0 0 ' + BLUE : 'none');
@@ -5496,16 +5548,16 @@ class Component extends DCLogic {
         label, badge: badges[k], badgeColor: k === 'live' ? 'var(--critical)' : 'var(--muted)',
         // the live badge breathes like the header's dot; the counts sit still
         badgeStyle: 'font-family:var(--kw);font-size:9.5px;color:' + (k === 'live' ? 'var(--critical)' + (anyOn ? ';animation:pulseDot 1.6s ease-in-out infinite' : '') : 'var(--muted)'),
-        style: navBtn(st.tab === k), go: () => this.goTab(k)
+        style: navBtn(onTab(k)), go: () => this.goTab(k)
       })),
       // the phone's bottom tab bar: the same sections, short names, the cohorts first
       // the model sits last, after the cohorts, in the side nav and on the phone's bar alike
       goModel: () => this.goTab('model'),
-      modelNavBtn: navBtn(st.tab === 'model'),
+      modelNavBtn: navBtn(onTab('model')),
       contactNavBtn: navBtn(!!st.contactOpen),
       modelBadge: badges.model,
       tabItems: NAV.concat([['cohorts', 'Kwotient Record'], ['model', 'About']]).map(([k, label]) => {
-        const active = st.tab === k;
+        const active = onTab(k);
         return {
           short: ({ board: 'Board', live: 'Live', alerts: 'Alerts', buzz: 'Buzz', profiles: 'Players & clubs', model: 'About' })[k] || label,
           style: 'appearance:none;background:none;border:0;flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0 2px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.06em;text-transform:uppercase;font-weight:' + (active ? '700' : '500') + ';color:' + (active ? 'var(--brand)' : 'var(--muted)'),
@@ -5572,17 +5624,38 @@ class Component extends DCLogic {
         return { shut: n };
       }),
       anyShut: PANELS.some(k => shut[k]),
-      isLive: st.tab === 'live', isBoard: st.tab === 'board',
-      isModel: st.tab === 'model',
+      isLive: onTab('live'), isBoard: onTab('board'),
+      isModel: onTab('model'),
       showModelNow: () => this.setState({ modelView: 'now' }),
-      isBuzz: st.tab === 'buzz',
-      isCohorts: st.tab === 'cohorts',
+      isBuzz: onTab('buzz'),
+      isCohorts: onTab('cohorts'),
       goCohorts: () => this.goTab('cohorts'),
       goHome: () => this.goHome(),
       tabKey: st.tab,
+      // ---------- two sections at once ----------
+      splitKey: splitOn ? st.split : '', splitOn,
+      pane: ['live', 'board', 'model', 'cohorts', 'buzz', 'profiles', 'alerts'].reduce((a, k) => (a[k] = 'display:flex;flex-direction:column;gap:13px' + (splitOn && onTab(k) ? ';order:' + (st.tab === k ? 1 : 2) : ''), a), {}),
+      ...(() => {
+        const ALL = NAV.concat([['cohorts', 'Kwotient Record'], ['model', 'About']]);
+        const nameOf = k => (ALL.filter(t => t[0] === k)[0] || [k, k])[1];
+        const opt = on => 'text-align:left;padding:6px 8px;border-radius:6px;cursor:pointer;font-family:var(--kw);font-size:10px;border:0;background:' + (on ? 'var(--nested)' : 'transparent') + ';color:' + (on ? BLUE : 'var(--lead)') + ';font-weight:' + (on ? '700' : '500');
+        const pickSecond = k => { if (k === 'cohorts' || k === 'board') this.loadRecord('calls'); this.setState(x => ({ split: k === x.tab ? (x.split || null) : (x.split === k ? null : k), splitMenu: k === x.tab })); };
+        return {
+          splitMenuOpen: !!st.splitMenu, splitToggleMenu: () => this.setState(x => ({ splitMenu: !x.splitMenu })),
+          splitName: splitOn ? ' · ' + nameOf(st.split).toUpperCase() : '',
+          splitBtn: 'padding:3px 9px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;white-space:nowrap;background:transparent;border:1px solid ' + (splitOn || st.splitMenu ? BLUE : 'var(--axis)') + ';color:' + (splitOn || st.splitMenu ? BLUE : 'var(--muted)'),
+          splitHelp: splitOn ? nameOf(st.tab) + ' and ' + nameOf(st.split) + ', each scrolling on its own' : 'pick a second section to view beside ' + nameOf(st.tab),
+          splitCols: [
+            { head: 'FIRST', options: ALL.map(([k, label]) => ({ label, style: opt(st.tab === k), pick: () => this.goTab(k, { splitMenu: true }) })) },
+            { head: 'SECOND', options: ALL.map(([k, label]) => ({ label, style: opt(splitOn && st.split === k) + (st.tab === k ? ';opacity:.35;cursor:default' : ''), pick: () => pickSecond(k) })) }
+          ],
+          splitSwap: () => this.goTab(st.split, { splitMenu: true }), splitClose: () => this.setState({ split: null, splitMenu: false }),
+          splitAct: 'flex:1;padding:7px 8px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:transparent;border:1px solid var(--axis);color:var(--second)'
+        };
+      })(),
       cohortBadge: String(KWC.filter(c => !c.unpublished).length),
       cohortNavBtn: 'display:flex;align-items:center;gap:10px;width:100%;padding:10px 11px;border:none;border-radius:8px;cursor:pointer;transition:transform .22s cubic-bezier(.22,.7,.3,1),box-shadow .22s ease;font-family:var(--kw);background:' +
-        (st.tab === 'cohorts' ? 'var(--nested)' : 'transparent') + ';color:' + BLUE,
+        (onTab('cohorts') ? 'var(--nested)' : 'transparent') + ';color:' + BLUE,
       cohortFilters: ['ALL', 'FILED', 'FROZEN', 'QUEUED', 'SETTLED'].map(k => ({
         label: k,
         count: ' ' + KWC.filter(c => k === 'ALL' ? !c.unpublished : c.status.toUpperCase() === k).length,
@@ -5677,8 +5750,8 @@ class Component extends DCLogic {
       voiceNote: 'the narrative read ' + ((st.audience || 'BETTING') === 'STATS' ? 'on the stats' : 'against the market') + ', in the ' + (st.tone || 'EDITORIAL').toLowerCase() + ' tone' + (st.storiesLoading ? ' · re-reading every game…' : ''),
       buzzCount: buzzMatched.length + ' of ' + buzzAll.length,
       buzzLiveNote: liveOn && st.liveMeta && st.liveMeta.fetched && S ? ' · live · read ' + S.age(st.liveMeta.fetched) + ' ago' : '',
-      isProfiles: st.tab === 'profiles',
-      isAlerts: st.tab === 'alerts',
+      isProfiles: onTab('profiles'),
+      isAlerts: onTab('alerts'),
 
       games: gameCards,
       boardGames,
