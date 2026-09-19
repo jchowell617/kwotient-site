@@ -414,7 +414,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">WIDGETS</span>
               <span style="flex:1"></span>
-              <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+              <button onClick="{{ tog.live.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.live.label }}</button>
             </div>
             <sc-if value="{{ noSlate }}" hint-placeholder-val="{{ false }}">
             <section style="border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:22px 20px;display:flex;flex-direction:column;gap:8px">
@@ -1222,7 +1222,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
           <div data-page="" style="{{ pane.board }}">
             <div style="display:flex;justify-content:space-between;align-items:baseline">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:15px;font-weight:600">{{ sport }} scoreboard · {{ gameCount }} games</span></div>
-              <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">click a card to open the live dashboard</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
+              <div style="display:flex;align-items:center;gap:10px"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">click a card to open the live dashboard</span><button onClick="{{ tog.board.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.board.label }}</button></div>
             </div>
             <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
               <sc-if value="{{ boardBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ boardBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ boardBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ boardBox.boxKey }}" value="{{ boardBox.q }}" onChange="{{ boardBox.on }}" onFocus="{{ boardBox.focus }}" onClick="{{ boardBox.click }}" onDoubleClick="{{ boardBox.dbl }}" onKeyDown="{{ boardBox.onKey }}" placeholder="{{ boardBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ boardBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ boardBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
@@ -1282,7 +1282,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
         <sc-if value="{{ isModel }}" hint-placeholder-val="{{ false }}">
           <div data-page="" style="{{ pane.model }}">
-            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">About</span><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px"><span style="font-size:15px;font-weight:600">About</span><button onClick="{{ tog.model.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.model.label }}</button></div>
 
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px"><button data-chev="1" onClick="{{ p.mAbout.toggle }}" style="{{ p.mAbout.btn }}">{{ p.mAbout.chevron }}</button><span style="font-size:13.5px;font-weight:600">What Kwotient Is &amp; How to Use It</span></div>
@@ -1345,7 +1345,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
                 <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">every forecast Kwotient files, graded in the open: the game calls at each final score, the cohorts at settlement against a declared baseline</span>
               </div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center"><button onClick="{{ tog.cohorts.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.cohorts.label }}</button>
               </div>
             </div>
 
@@ -1763,7 +1763,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <sc-for list="{{ buzzChips }}" as="p" hint-placeholder-count="4">
                   <button onClick="{{ p.pick }}" style="{{ p.style }}">{{ p.label }}</button>
                 </sc-for>
-                <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+                <button onClick="{{ tog.buzz.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.buzz.label }}</button>
               </div>
             </div>
 
@@ -1858,7 +1858,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;gap:6px">
                 <button onClick="{{ showPlayers }}" style="{{ dirPlayersBtn }}">PLAYERS</button>
                 <button onClick="{{ showClubs }}" style="{{ dirClubsBtn }}">CLUBS</button>
-                <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+                <button onClick="{{ tog.profiles.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.profiles.label }}</button>
               </div>
               <sc-if value="{{ hasProfile }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center">
@@ -2589,7 +2589,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <sc-for list="{{ phaseFilters }}" as="p" hint-placeholder-count="4">
                   <button onClick="{{ p.set }}" style="{{ p.style }}">{{ p.label }}</button>
                 </sc-for>
-                <button onClick="{{ tabToggle }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tabToggleLabel }}</button>
+                <button onClick="{{ tog.alerts.click }}" style="padding:6px 11px;border-radius:100px;cursor:pointer;transition:transform .2s cubic-bezier(.22,.7,.3,1);font-family:var(--kw);font-size:9.5px;letter-spacing:.08em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ tog.alerts.label }}</button>
               </div>
             </div>
             <div style="display:flex;flex-direction:column;gap:8px">
@@ -5603,6 +5603,9 @@ class Component extends DCLogic {
         { k: 'Cohort', v: 'A registered population the record freezes on a date, files projections for, and settles against the outcome — frozen, filed, settled, in that order.' },
         { k: 'Momentum', v: 'The running swing in win probability over the last stretch of play, read from either side.' }
       ],
+      // each section collapses and expands its own panels; with two sections open, neither touches the other
+      tog: ['live', 'board', 'model', 'cohorts', 'buzz', 'profiles', 'alerts'].reduce((a, t) => { const ks = keysOf(t), anyOpen = ks.some(k => !(st.shut || {})[k]);
+        a[t] = { label: anyOpen ? 'COLLAPSE ALL' : 'EXPAND ALL', click: () => this.setState(x => { const n = Object.assign({}, x.shut); ks.forEach(k => { if (anyOpen) n[k] = true; else delete n[k]; }); return { shut: n }; }) }; return a; }, {}),
       tabToggleLabel: tabAnyOpen ? 'COLLAPSE ALL' : 'EXPAND ALL',
       tabToggle: () => this.setState(x => { const n = Object.assign({}, x.shut); tabKeys.forEach(k => { if (tabAnyOpen) n[k] = true; else delete n[k]; }); return { shut: n }; }),
       widgetsToggleLabel: PANELS.some(k => !(st.shut || {})[k]) ? 'COLLAPSE ALL' : 'EXPAND ALL',
