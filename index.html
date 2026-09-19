@@ -235,11 +235,10 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 }
 /* TWO SECTIONS AT ONCE. The root carries data-split with the second section's key. On a desk the
    main column becomes two panes side by side, each scrolling on its own, and the rail steps
-   aside; on a phone the panes stack, each half its own scroll. The first section is order 1, the bar between them order 2, the second section order 3. */
+   aside; on a phone the panes stack, each half its own scroll. The first section is order 1, the bar between them order 2, the second section order 3; each pane's share is its flex-grow. */
 @media (min-width:768px) and (min-height:521px){
   [data-split]:not([data-split=""]) [data-shell=main]{flex-direction:row!important;overflow:hidden!important;padding:0!important;gap:0!important}
   [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{flex:1 1 0;min-width:0;height:100%;box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 16px 44px}
-  [data-split]:not([data-split=""]) [data-shell=main]::before{content:"";order:2;flex:none;align-self:stretch;width:9px;border-left:1px solid var(--axis);border-right:1px solid var(--axis);background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% - 9px)/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center 50%/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% + 9px)/9px 9px no-repeat,var(--rail)}
   [data-split]:not([data-split=""]) [data-shell=rail]{display:none!important}
 }
 @media (min-width:768px) and (max-height:520px){
@@ -247,13 +246,11 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-split]:not([data-split=""]) [data-shell=side],[data-split]:not([data-split=""]) [data-shell=rail]{display:none!important}
   [data-split]:not([data-split=""]) [data-shell=main]{flex-direction:row!important;flex:1!important;height:calc(100dvh - 40px)!important;overflow:hidden!important;padding:0!important;gap:0!important}
   [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{flex:1 1 0;min-width:0;height:100%;box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 14px 28px}
-  [data-split]:not([data-split=""]) [data-shell=main]::before{content:"";order:2;flex:none;align-self:stretch;width:9px;border-left:1px solid var(--axis);border-right:1px solid var(--axis);background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% - 9px)/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center 50%/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% + 9px)/9px 9px no-repeat,var(--rail)}
 }
 @media (max-width:767px){
   [data-split]:not([data-split=""]) [data-shell=main]{display:flex!important;flex-direction:column!important;height:calc(100dvh - 176px - env(safe-area-inset-bottom))!important;overflow:hidden!important;padding:0!important;gap:0!important;flex:none!important}
   [data-shell=splitname]{display:none}
   [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{flex:1 1 0;min-height:0;box-sizing:border-box;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:12px 12px 18px}
-  [data-split]:not([data-split=""]) [data-shell=main]::before{content:"";order:2;flex:none;align-self:stretch;height:9px;border-top:1px solid var(--axis);border-bottom:1px solid var(--axis);background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) calc(50% - 9px) center/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) 50% center/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) calc(50% + 9px) center/9px 9px no-repeat,var(--rail)}
   [data-split]:not([data-split=""]) [data-shell=rail]{display:none!important}
   [data-split]:not([data-split=""]) [data-shell=body]{padding-bottom:calc(70px + env(safe-area-inset-bottom))!important}
 }
@@ -261,9 +258,19 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
   [data-split]:not([data-split=""]) [data-shell=side]{display:none!important}
   [data-split]:not([data-split=""]) [data-shell=main]{flex-direction:row!important;height:calc(100dvh - 150px - env(safe-area-inset-bottom))!important}
   [data-split]:not([data-split=""]) [data-shell=main] > [data-page]{min-width:0;height:100%}
-  [data-split]:not([data-split=""]) [data-shell=main]::before{height:auto;width:9px;border-top:0;border-bottom:0;border-left:1px solid var(--axis);border-right:1px solid var(--axis);background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% - 9px)/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center 50%/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% + 9px)/9px 9px no-repeat,var(--rail)}
 }
 @media (max-width:480px){[data-shell=clockdate]{display:none}}
+/* the bar between the two sections: a real element, held and dragged to resize; upright beside
+   side-by-side panes, flat between stacked ones; its hit area reaches past its edges for a thumb */
+[data-shell=splitbar]{order:2;flex:none;align-self:stretch;position:relative;z-index:6;width:9px;cursor:col-resize;touch-action:none;-webkit-user-select:none;user-select:none;border-left:1px solid var(--axis);border-right:1px solid var(--axis);
+  background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% - 9px)/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center 50%/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) center calc(50% + 9px)/9px 9px no-repeat,var(--rail)}
+[data-shell=splitbar]::after{content:"";position:absolute;top:0;bottom:0;left:-9px;right:-9px}
+[data-shell=splitbar]:hover,[data-shell=splitbar][data-drag]{border-color:var(--brand)}
+@media (max-width:767px) and (min-height:521px){
+  [data-shell=splitbar]{width:auto;height:11px;cursor:row-resize;border-left:0;border-right:0;border-top:1px solid var(--axis);border-bottom:1px solid var(--axis);
+    background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) calc(50% - 9px) center/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) 50% center/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) calc(50% + 9px) center/9px 9px no-repeat,var(--rail)}
+  [data-shell=splitbar]::after{left:0;right:0;top:-10px;bottom:-10px}
+}
 </style>
 </helmet>
 <div data-theme="{{ theme }}" data-tab="{{ tabKey }}" data-split="{{ splitKey }}" style="height:100vh;height:100dvh;overflow:hidden;background:var(--desk);padding:0;display:flex;flex-direction:column;font-family:var(--kw);color:var(--reversed)">
@@ -408,6 +415,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
       
 
       <main data-shell="main" style="flex:1;min-width:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:16px 18px 44px;display:flex;flex-direction:column;gap:13px">
+        <sc-if value="{{ splitOn }}" hint-placeholder-val="{{ false }}"><div data-shell="splitbar" role="separator" aria-label="Drag to resize the two sections" title="Drag to resize · double-click to even out" onMouseDown="{{ splitDragStart }}" onTouchStart="{{ splitDragStart }}" onDoubleClick="{{ splitEven }}"></div></sc-if>
 
         <sc-if value="{{ isLive }}" hint-placeholder-val="{{ true }}">
           <div data-page="" style="{{ pane.live }}">
@@ -3439,6 +3447,32 @@ class Component extends DCLogic {
   }
   // the page returns to the top now, on the next frame and once more after Safari has settled,
   // so nothing that scrolls on its own in between — a focused control, a layout pass — keeps it down
+  // The bar is dragged: while it moves the two panes take their share straight on the element, so
+  // the page is not redrawn on every pixel; the release files the share in the state.
+  splitDrag(e) {
+    const main = document.querySelector('[data-shell=main]'); if (!main) return;
+    const bar = main.querySelector('[data-shell=splitbar]');
+    const row = String(getComputedStyle(main).flexDirection).indexOf('row') === 0;
+    const panes = Array.prototype.slice.call(main.children).filter(el => el.hasAttribute('data-page')).sort((a, b) => (+getComputedStyle(a).order) - (+getComputedStyle(b).order));
+    if (panes.length < 2) return;
+    if (e && e.type === 'mousedown' && e.preventDefault) e.preventDefault();
+    const at = ev => { const t = (ev.touches && ev.touches[0]) || (ev.changedTouches && ev.changedTouches[0]) || ev; return row ? t.clientX : t.clientY; };
+    const move = ev => {
+      const r = main.getBoundingClientRect(); const size = row ? r.width : r.height, start = row ? r.left : r.top;
+      const v = Math.max(0.2, Math.min(0.8, (at(ev) - start) / Math.max(1, size)));
+      this._dragRatio = v; panes[0].style.flexGrow = v; panes[1].style.flexGrow = 1 - v;
+      if (ev.cancelable) ev.preventDefault();
+    };
+    const end = () => {
+      document.removeEventListener('mousemove', move); document.removeEventListener('mouseup', end);
+      document.removeEventListener('touchmove', move); document.removeEventListener('touchend', end); document.removeEventListener('touchcancel', end);
+      try { document.body.style.userSelect = ''; document.body.style.webkitUserSelect = ''; if (bar) bar.removeAttribute('data-drag'); } catch (x) {}
+      const v = this._dragRatio; this._dragRatio = null; if (v != null) this.setState({ splitRatio: v });
+    };
+    document.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
+    document.addEventListener('touchmove', move, { passive: false }); document.addEventListener('touchend', end); document.addEventListener('touchcancel', end);
+    try { document.body.style.userSelect = 'none'; document.body.style.webkitUserSelect = 'none'; if (bar) bar.setAttribute('data-drag', '1'); } catch (x) {}
+  }
   toTop() {
     const go = () => { try {
       window.scrollTo(0, 0);
@@ -5649,7 +5683,9 @@ class Component extends DCLogic {
       tabKey: st.tab,
       // ---------- two sections at once ----------
       splitKey: splitOn ? st.split : '', splitOn,
-      pane: ['live', 'board', 'model', 'cohorts', 'buzz', 'profiles', 'alerts'].reduce((a, k) => (a[k] = 'display:flex;flex-direction:column;gap:13px' + (splitOn && onTab(k) ? ';order:' + (st.tab === k ? 1 : 3) : ''), a), {}),
+      pane: (() => { const share = this._dragRatio != null ? this._dragRatio : (st.splitRatio || 0.5);
+        return ['live', 'board', 'model', 'cohorts', 'buzz', 'profiles', 'alerts'].reduce((a, k) => (a[k] = 'display:flex;flex-direction:column;gap:13px' + (splitOn && onTab(k) ? (st.tab === k ? ';order:1;flex-grow:' + share : ';order:3;flex-grow:' + (1 - share)) : ''), a), {}); })(),
+      splitDragStart: e => this.splitDrag(e), splitEven: () => this.setState({ splitRatio: 0.5 }),
       ...(() => {
         const ALL = NAV.concat([['cohorts', 'Kwotient Record'], ['model', 'About']]);
         const nameOf = k => (ALL.filter(t => t[0] === k)[0] || [k, k])[1];
