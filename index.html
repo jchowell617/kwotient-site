@@ -5840,12 +5840,18 @@ class Component extends DCLogic {
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
           add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trWeek: null, trClub: null, trVerdict: null, trMonth: null }) };
         const verdictOf = c => c.right == null ? 'open' : c.right ? 'right' : 'wrong';
-        const trQ = String(st.trQ || '').trim().toLowerCase();
+        // a typed week is a week, not two words: "week 2", "wk 2" or "w2" picks that week (several, with
+        // commas), and whatever else was typed narrows inside it
+        const trQraw = String(st.trQ || '').trim().toLowerCase();
+        const weeksTyped = [];
+        const trQ = trQraw.replace(/\b(?:weeks?|wk|w)\s*(\d{1,2})\b/g, (m, n) => { weeksTyped.push('WEEK ' + (+n)); return ''; }).split(',').map(x => x.trim()).filter(Boolean).join(', ');
         // with nothing picked the table shows the latest week; a pick or a word opens the whole record
-        const trNothingPicked = !st.trLg && !st.trWeek && !st.trClub && !st.trVerdict && !st.trMonth && !trQ;
-        const weekWanted = st.trWeek || (trNothingPicked ? latestWeek : null);
-        const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!weekWanted || weekOf(c) === weekWanted) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
+        const trNothingPicked = !st.trLg && !st.trWeek && !st.trClub && !st.trVerdict && !st.trMonth && !trQraw;
+        const weekSet = st.trWeek ? [st.trWeek] : weeksTyped.length ? weeksTyped : (trNothingPicked && latestWeek ? [latestWeek] : null);
+        const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!weekSet || weekSet.indexOf(weekOf(c)) >= 0) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
           && (!trQ || matchQ(withClubNames(c.d + ' ' + c.lg + ' ' + c.away + ' @ ' + c.home + ' ' + c.status) + ' ' + weekOf(c) + ' ' + verdictOf(c) + ' ' + (c.on || ''), trQ)));
+        const wkKey = c => { const w = weekOf(c); return c.lg === 'NFL' ? +(/(\d+)$/.exec(w) || [0, 0])[1] : +String(w).replace('-', ''); };
+        shown.sort((a, b) => wkKey(b) - wkKey(a) || String(a.start || a.d).localeCompare(String(b.start || b.d)) || a.away.localeCompare(b.away));
         const n = f => all.filter(f).length, cnt = k => k + (k === 1 ? ' call' : ' calls');
         const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
         // the table's columns: sortable and filterable from their headers, as every built table is
@@ -5930,7 +5936,7 @@ class Component extends DCLogic {
               { label: 'CLUB', items: Array.from(new Set(all.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
               { label: 'VERDICT', items: ['right', 'wrong', 'open'].map(v => ({ label: v, count: 'VERDICT · ' + cnt(n(c => verdictOf(c) === v)) })).filter(o => !/· 0 calls$/.test(o.count)) },
               { label: 'MONTH', items: Array.from(new Set(all.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
-            ], placeholder: 'search the calls · a week, a club, a day, right or wrong · commas for several', count: R ? (trNothingPicked && latestWeek ? latestWeek + ' · ' : '') + sorted.length + ' of ' + all.length : '' })
+            ], placeholder: 'search the calls · week 2, a club, a day, right or wrong · commas for several', count: R ? (!st.trWeek && weekSet ? weekSet.join(', ') + ' · ' : '') + sorted.length + ' of ' + all.length : '' })
         };
       })(),
       // ---------- a profile's timeline ----------
