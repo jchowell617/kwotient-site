@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=fe18a1f7ea"></script>
+<script src="./kq-bundle.js?v=b206444183"></script>
 <script src="./kq-seasons.js?v=0048502213"></script>
 <style>
 :root{
@@ -2224,6 +2224,68 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
                 </section>
 
+                <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfLog.toggle }}" style="{{ p.pfLog.btn }}">{{ p.pfLog.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12.5px;font-weight:600">Game Stats</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ plogNote }}</span></div></div></div>
+                  <sc-if value="{{ p.pfLog.open }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+                <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:2px">
+                  <sc-if value="{{ plogBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ plogBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ plogBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ plogBox.boxKey }}" value="{{ plogBox.q }}" onChange="{{ plogBox.on }}" onFocus="{{ plogBox.focus }}" onClick="{{ plogBox.click }}" onDoubleClick="{{ plogBox.dbl }}" onKeyDown="{{ plogBox.onKey }}" placeholder="{{ plogBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ plogBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ plogBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
+                  <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ plogBox.count }}</span>
+                  <sc-for list="{{ plogBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                  <sc-if value="{{ plogBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ plogBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                  <sc-if value="{{ plogBox.open }}" hint-placeholder-val="{{ false }}">
+                    <div data-colmenu="1" onKeyDown="{{ plogBox.onKey }}" style="{{ plogBox.menuStyle }}">
+      <sc-if value="{{ plogBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ plogBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                      <sc-for list="{{ plogBox.groups }}" as="gp" hint-placeholder-count="3">
+                        <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                        <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                            <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </sc-for>
+                      <sc-for list="{{ plogBox.values }}" as="v" hint-placeholder-count="6">
+                        <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </div>
+                  <sc-if value="{{ plogHasRows }}" hint-placeholder-val="{{ false }}">
+                    <div data-scroll="x"><div style="min-width:{{ plogMinW }}">
+                      <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                        <sc-for list="{{ plogCols }}" as="c" hint-placeholder-count="8">
+                          <div style="{{ c.cellStyle }}">
+                            <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                            <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                              <div data-colmenu="1" style="{{ c.menuStyle }}">
+                                <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:6px"></form>
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                                  <button onClick="{{ c.sortAsc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▲</button>
+                                  <button onClick="{{ c.sortDesc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▼</button>
+                                  <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                                </div>
+                                <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                                  <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                                </sc-for>
+                              </div>
+                            </sc-if>
+                          </div>
+                        </sc-for>
+                      </div>
+                      <sc-for list="{{ plogRows }}" as="r" hint-placeholder-count="8">
+                        <div style="display:flex;gap:6px;padding:7px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
+                          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="12"><span style="{{ c.style }}">{{ c.v }}</span></sc-for>
+                        </div>
+                      </sc-for>
+                    </div></div>
+                    <sc-if value="{{ plogMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden"><button onClick="{{ plogShowMore }}" style="flex:1;padding:9px;border:none;cursor:pointer;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em">{{ plogMoreLabel }}</button><button onClick="{{ plogShowAll }}" style="flex:1;padding:9px;border:none;cursor:pointer;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em">Show all</button></div></sc-if>
+                  </sc-if>
+                  </div>
+                  </sc-if>
+                </section>
+
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);overflow:hidden">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfExplorer.toggle }}" style="{{ p.pfExplorer.btn }}">{{ p.pfExplorer.chevron }}</button><div style="flex:1;min-width:0"><div style="padding:15px 17px 13px;border-bottom:1px solid var(--grid);display:flex;flex-direction:column;gap:12px">
                     <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px">
@@ -3188,6 +3250,7 @@ class Component extends DCLogic {
     this.loadRecord('timeline');
     this.setState({ profileId: id, profileEnt: ent, histMenu: null, histSub: null });
     this.loadLog(id, ent);
+    this.loadFullLog(id, ent);
   }
   // a club's whole season, for the meetings with one opponent; a season the club has not
   // played yet falls back to the previous one, and the panel says so
@@ -3315,12 +3378,28 @@ class Component extends DCLogic {
       store(r, season, false);
     });
   }
+  // the full line of every game of a season — every field the edge carries — for the profile's
+  // Game Log; a player's from the game-log route, a club's from the club-stats route
+  loadFullLog(id, ent, seasonArg) {
+    const S = SRC(); if (!S || !ent || !S.gamelogFull) return;
+    const season = String(seasonArg || this.logSeason());
+    const key = id + '@' + season;
+    const have = (this.state.flogs || {})[key];
+    if (have && have.state !== 'failed') return;
+    const sport = this.state.sport;
+    this.setState(s => ({ flogs: Object.assign({}, s.flogs, { [key]: { state: 'loading', cols: [], rows: [] } }) }));
+    const ask = id.slice(0, 2) === 'p:' ? S.gamelogFull(sport, ent, season) : S.teamstats(sport, ent.abbr, season);
+    ask.then(r => this.setState(s => ({ flogs: Object.assign({}, s.flogs, { [key]: {
+      state: r.ok ? 'ready' : 'failed', cols: r.cols || [], rows: r.rows || [], season,
+      reason: r.ok ? (r.rows && r.rows.length ? '' : (r.available === false ? (r.reason || 'the provider lists no rows for that season') : 'no games in that season')) : (r.reason || 'the feed did not answer')
+    } }) })));
+  }
   // the SEASON menu's pick: the logs on screen reload for that season
   setLogSeason(y) {
     if (y && !(this.state.standings || {})[this.state.sport + ':' + y]) this.loadStandings(y);
     this.setState({ logSeason: y || null, logMenuOpen: null, logMenuQ: '', tables: Object.assign({}, this.state.tables, { roster: null }) }, () => {
       this.ensureTrendLog();
-      if (this.state.profileId && this.state.profileEnt) this.loadLog(this.state.profileId, this.state.profileEnt);
+      if (this.state.profileId && this.state.profileEnt) { this.loadLog(this.state.profileId, this.state.profileEnt); this.loadFullLog(this.state.profileId, this.state.profileEnt); }
     });
   }
   // a column header takes a single click and a fast double click as different things: the
@@ -5444,7 +5523,7 @@ class Component extends DCLogic {
     // per-widget collapse; purely display, no grouping or reordering
     const shut = st.shut || {};
     const PANELS = ['hero', 'pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'pstats', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
-    const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews', 'timeline'];
+    const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfLog', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews', 'timeline'];
     const DIR_PANELS = ['dirSearch', 'dirTable'];
     const BUZZ_PANELS = ['bz0', 'bz1', 'bz2', 'bz3', 'bz4', 'bz5', 'bz6', 'bz7'];
     const panel = (k) => ({
@@ -5944,6 +6023,67 @@ class Component extends DCLogic {
               { label: 'VERDICT', items: ['right', 'wrong', 'open'].map(v => ({ label: v, count: 'VERDICT · ' + cnt(n(c => verdictOf(c) === v)) })).filter(o => !/· 0 calls$/.test(o.count)) },
               { label: 'MONTH', items: Array.from(new Set(all.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
             ], placeholder: 'search the calls · week 2, a club, a day, right or wrong · commas for several', count: R ? (!st.trWeek && weekSet ? weekSet.join(', ') + ' · ' : '') + sorted.length + ' of ' + all.length : '' })
+        };
+      })(),
+      // ---------- a profile's game log: every game of a season, every stat the feed carries ----------
+      ...(() => {
+        const pr = profile || null; const ent = pr ? (st.profileEnt || null) : null; const isClubP = pr && pr.kind === 'CLUB';
+        const key = st.profileId ? st.profileId + '@' + this.logSeason() : null;
+        const F = key ? (st.flogs || {})[key] : null;
+        const cols = F && F.cols ? F.cols : [], raw = F && F.rows ? F.rows : [];
+        const LABEL = {
+          pass_cmp: 'CMP', pass_att: 'ATT', pass_yds: 'PASS YDS', pass_td: 'PASS TD', pass_int: 'INT THROWN', pass_ypa: 'Y/A', qb_rating: 'RTG', qbr: 'QBR',
+          rush_att: 'RUSH ATT', rush_yds: 'RUSH YDS', rush_td: 'RUSH TD', rush_ypc: 'Y/CARRY', rush_long: 'RUSH LONG',
+          tgt: 'TGT', rec: 'REC', rec_yds: 'REC YDS', rec_td: 'REC TD', rec_ypr: 'Y/REC', rec_long: 'REC LONG',
+          tkl: 'TKL', solo: 'SOLO', tfl: 'TFL', sacks: 'SACKS', sack_yds: 'SACK YDS', qbh: 'QB HITS', int: 'INT', int_yds: 'INT YDS', int_td: 'INT TD', pd: 'PD',
+          fum: 'FUM', fum_lost: 'FUM LOST', fum_rec: 'FUM REC', fum_td: 'FUM TD', fgm: 'FGM', fga: 'FGA', fg_pct: 'FG%', fg_long: 'FG LONG', xpm: 'XPM',
+          punts: 'PUNTS', punt_yds: 'PUNT YDS', punt_avg: 'PUNT AVG', punt_long: 'PUNT LONG', punt_in20: 'IN 20', touchbacks: 'TB',
+          kr: 'KR', kr_yds: 'KR YDS', kr_td: 'KR TD', kr_long: 'KR LONG', kr_avg: 'KR AVG', pr: 'PR', pr_yds: 'PR YDS', pr_td: 'PR TD', pr_long: 'PR LONG', pr_avg: 'PR AVG', pts: 'PTS',
+          min: 'MIN', reb: 'REB', ast: 'AST', stl: 'STL', blk: 'BLK', tov: 'TOV', fg3m: '3PM', fg3a: '3PA', ftm: 'FTM', fta: 'FTA', oreb: 'OREB', dreb: 'DREB', pf: 'PF', plus_minus: '+/-',
+          fg3_pct: '3P%', ft_pct: 'FT%', pa: 'PA', fouls: 'PF',
+          first_downs: '1ST DOWNS', first_downs_passing: '1ST PASS', first_downs_rushing: '1ST RUSH', first_downs_penalty: '1ST PEN', third_down_efficiency: '3RD DOWN', third_down_conversions: '3RD CONV', third_down_attempts: '3RD ATT',
+          fourth_down_efficiency: '4TH DOWN', fourth_down_conversions: '4TH CONV', fourth_down_attempts: '4TH ATT', total_offensive_plays: 'PLAYS', total_yards: 'TOTAL YDS', yards_per_play: 'Y/PLAY', total_drives: 'DRIVES',
+          net_passing_yards: 'NET PASS', passing_completions: 'CMP', passing_attempts: 'ATT', yards_per_pass: 'Y/PASS', sack_yards_lost: 'SACK YDS', rushing_yards: 'RUSH YDS', rushing_attempts: 'RUSH ATT', yards_per_rush_attempt: 'Y/RUSH',
+          red_zone_scores: 'RZ SCORES', red_zone_attempts: 'RZ ATT', penalties: 'PEN', penalty_yards: 'PEN YDS', turnovers: 'TO', fumbles_lost: 'FUM LOST', interceptions_thrown: 'INT THROWN', defensive_touchdowns: 'DEF TD', possession_time: 'TOP', possession_time_seconds: 'TOP SEC'
+        };
+        // the edge ships a header once and the rows as arrays; the client unpacks them to objects — either shape reads here
+        const idx = {}; cols.forEach((k, i) => { idx[k] = i; });
+        const at = (r, k) => Array.isArray(r) ? (idx[k] == null ? null : r[idx[k]]) : (r == null ? null : r[k]);
+        // the games in the order they were played, the preseason flagged rather than dropped
+        const games = raw.map(r => ({ r, d: at(r, 'date'), week: at(r, 'week'), opp: at(r, 'opp'), home: !!at(r, 'home'),
+          res: isClubP ? at(r, 'result') : (String(at(r, 'result') || '').charAt(0) || null), score: isClubP ? (at(r, 'pf') != null && at(r, 'pa') != null ? at(r, 'pf') + '-' + at(r, 'pa') : null) : (String(at(r, 'result') || '').slice(2) || null),
+          pre: !!at(r, 'preseason'), post: !!at(r, 'postseason') }));
+        // the stat columns the feed filled for this player or club this season — a quarterback's
+        // punting columns are blank in every row, and a blank column says nothing
+        const HEAD = ['date', 'week', 'opp', 'home', 'result', 'postseason', 'preseason', 'pf', 'pa', 'status', 'myQ', 'oppQ'];
+        const statKeys = cols.filter(k => HEAD.indexOf(k) < 0 && games.some(g => at(g.r, k) != null && at(g.r, k) !== ''));
+        const fmt = v => v == null || v === '' ? '—' : Array.isArray(v) ? v.join('·') : typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(1)) : String(v);
+        const get = { d: g => g.d, week: g => g.week, opp: g => g.opp, where: g => g.home ? 'home' : 'away', result: g => g.res === 'W' ? 'won' : g.res === 'L' ? 'lost' : g.res === 'T' ? 'tied' : null,
+          score: g => g.score, phase: g => g.pre ? 'preseason' : g.post ? 'postseason' : 'regular' };
+        statKeys.forEach(k => { get[k] = g => at(g.r, k); });
+        TABLES.plog = { rows: games, get };
+        const rows = tapply('plog', games, get, rowText(get));
+        const lim = st.plogLimit || 20;
+        const NFLp = sport === 'NFL';
+        const PLOG_COLS = [['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
+        const fixed = [['d', 'DATE', 1.1]].concat(NFLp ? [['week', 'WK', .5]] : []).concat([['opp', 'OPP', .6], ['where', 'WHERE', .6], ['score', 'SCORE', .9]]);
+        const colDefs = fixed.concat(statKeys.map(k => [k, LABEL[k] || k.toUpperCase().replace(/_/g, ' '), .7]));
+        const cell = (v, flex, dim) => ({ v, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' + (dim ? ';color:var(--second)' : '') });
+        const label = y => sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y);
+        const seasonY = Number(this.logSeason());
+        const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
+        return {
+          plogNote: !pr ? '' : !F || F.state === 'loading' ? 'reading every game of ' + label(seasonY) + ' from the edge…'
+            : F.state === 'failed' || !games.length ? (F.reason || 'no games in that season') + ' · pick another season from the SEASON menu at the top of the card'
+            : label(seasonY) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · the SEASON menu at the top of the card picks the season' + (games.some(g => g.pre) ? ' · preseason marked' : ''),
+          plogHasRows: games.length > 0,
+          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · an opponent, home or away, won or lost, a week, a phase', count: rows.length + ' of ' + games.length, groups: colGroups(games, get, PLOG_COLS) }),
+          plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead),
+          plogMinW: (colDefs.length * 62 + 120) + 'px',
+          plogRows: rows.slice(0, lim).map(g => ({ cells: colDefs.map(([k, lab, flex]) => k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
+            : k === 'opp' ? cell(g.opp || '—', flex) : k === 'where' ? cell(g.home ? 'home' : 'away', flex, true)
+            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || '') + (g.pre ? ' · pre' : g.post ? ' · post' : ''), flex) : cell(fmt(at(g.r, k)), flex)) })),
+          plogMore: rows.length > lim, plogMoreLabel: 'Show ' + Math.min(20, rows.length - lim) + ' more', plogShowMore: () => this.setState({ plogLimit: lim + 20 }), plogShowAll: () => this.setState({ plogLimit: 100000 })
         };
       })(),
       // ---------- a profile's timeline ----------

@@ -157,6 +157,14 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-24","lg":"nba","kind":"contra
       return ask('/live/teamlog', { league: lg, team: String(team).toUpperCase(), season: season })
         .then(function (r) { r.rows = r.ok ? unpack(r.body) : []; return r; });
     },
+    /* one club's full stat line in every game of a season */
+    teamstats: function (lg, team, season) {
+      lg = league(lg); if (!lg) return bad('league must be nba or nfl');
+      if (!/^[A-Za-z]{2,4}$/.test(String(team || ''))) return bad('team must be a club code');
+      if (!/^\d{4}$/.test(String(season || ''))) return bad('season must be a four-digit year');
+      return ask('/live/teamstats', { league: lg, team: String(team).toUpperCase(), season: season, v: 4 })
+        .then(function (r) { r.rows = r.ok ? unpack(r.body) : []; return r; });
+    },
     /* the market for the league's games in the window: per-book spread, total and moneyline
        with a consensus per game, the opening consensus when the provider has posted one, and
        the consensus history sampled on the edge's beat */
@@ -744,6 +752,26 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-24","lg":"nba","kind":"contra
       return { ok: r.ok, reason: r.reason, refused: r.refused, rows: rows, season: season };
     });
   }
+  /* one player's full line in every game of a season — every field the edge carries, the
+     preseason flagged rather than dropped */
+  function gamelogFull(sport, p, season) {
+    var L = lg(sport);
+    var who = L === 'nba' ? (p.id || null) : { name: p.full || p.name, team: p.team };
+    if (L === 'nba' && !who) return Promise.resolve({ ok: false, reason: 'the record holds no provider id for him', cols: [], rows: [] });
+    return kq().live.gamelog(L, who, season).then(function (r) {
+      var rows = r.rows || [];
+      return { ok: r.ok, reason: r.reason, pending: r.pending, refused: r.refused, season: season,
+               cols: (r.body && r.body.cols) || (rows[0] ? Object.keys(rows[0]) : []), rows: rows, available: r.body ? r.body.available !== false : false };
+    });
+  }
+  /* one club's full stat line in every game of a season */
+  function teamstats(sport, abbr, season) {
+    return kq().live.teamstats(lg(sport), abbr, season).then(function (r) {
+      var rows = r.rows || [];
+      return { ok: r.ok, reason: r.reason, refused: r.refused, season: season,
+               cols: (r.body && r.body.cols) || (rows[0] ? Object.keys(rows[0]) : []), rows: rows, available: r.body ? r.body.available !== false : false };
+    });
+  }
   function story(sport, gameId, phase, opts) { return kq().live.story(lg(sport), gameId, phase, opts || {}); }
 
   /* the live box score for one game: every player's line as the edge holds it, both sides */
@@ -837,6 +865,7 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-09-24","lg":"nba","kind":"contra
     built: function () { var d = kq().cohorts.doc(); return d ? d.built : ''; },
     players: players, clubs: clubs, clubK: clubK, cohorts: cohorts, cohortsFor: cohortsFor, cohortRecord: cohortRecord,
     programme: function () { var d = kq().cohorts.doc(); return d ? d.programme : null; },
+    gamelogFull: gamelogFull, teamstats: teamstats,
     wire: wire, slate: slate, slateGame: slateGame, odds: odds, oddsAt: odds, marketFor: marketFor, withMarket: withMarket, upcoming: upcoming, props: props, standings: standings, seasons: seasons, seasonRow: seasonRow, gamelog: gamelog, teamlog: teamlog, story: story,
     embeds: embeds, boxscore: boxscore, boxStat: boxStat, teamLine: teamLine, teamStatKeys: teamStatKeys, topLine: topLine,
     seasonRows: seasonRows,
