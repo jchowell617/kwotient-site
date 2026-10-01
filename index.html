@@ -2226,14 +2226,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
                   <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfLog.toggle }}" style="{{ p.pfLog.btn }}">{{ p.pfLog.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12.5px;font-weight:600">Game Stats</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ plogNote }}</span></div></div>
-                    <sc-if value="{{ plogHasSeasons }}" hint-placeholder-val="{{ false }}"><div data-colmenu="1" style="position:relative;flex:none">
-                      <button data-colmenu="1" onClick="{{ plogMenuToggle }}" style="{{ plogSeasonBtn }}">{{ plogSeasonLabel }}<span style="font-size:7px;margin-left:6px">▾</span></button>
-                      <sc-if value="{{ plogMenuOpen }}" hint-placeholder-val="{{ false }}">
-                        <div data-colmenu="1" style="position:absolute;top:26px;right:0;z-index:40;width:150px;max-height:280px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:6px;display:flex;flex-direction:column;gap:1px">
-                          <sc-for list="{{ plogSeasons }}" as="y" hint-placeholder-count="8"><button onClick="{{ y.pick }}" style="{{ y.style }}">{{ y.label }}</button></sc-for>
-                        </div>
-                      </sc-if>
-                    </div></sc-if></div>
+                  </div>
                   <sc-if value="{{ p.pfLog.open }}" hint-placeholder-val="{{ true }}">
                   <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
                 <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:2px">
@@ -3031,11 +3024,11 @@ class Component extends DCLogic {
       const st = this.state;
       if (st.splitMenu) this.setState({ splitMenu: false });
       const openTables = Object.keys(st.tables || {}).filter(k => st.tables[k] && st.tables[k].open);
-      if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.buzzKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen && !st.plogMenu) return;
+      if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.buzzKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen) return;
       this.setState(x => {
         const tables = Object.assign({}, x.tables);
         openTables.forEach(k => { tables[k] = Object.assign({}, tables[k], { open: null }); });
-        return { openCol: null, plogMenu: false, alertKindOpen: false, buzzKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
+        return { openCol: null, alertKindOpen: false, buzzKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
       });
     };
     document.addEventListener('mousedown', this._outside, true);
@@ -3257,7 +3250,7 @@ class Component extends DCLogic {
   }
   openProfile(id, ent) {
     this.loadRecord('timeline');
-    this.setState({ profileId: id, profileEnt: ent, histMenu: null, histSub: null, plogSeason: null, plogLimit: null, tables: Object.assign({}, this.state.tables, { plog: null }) });
+    this.setState({ profileId: id, profileEnt: ent, histMenu: null, histSub: null, plogLimit: null, tables: Object.assign({}, this.state.tables, { plog: null }) });
     this.loadLog(id, ent);
     this.loadCareer(id, ent);
   }
@@ -6088,26 +6081,38 @@ class Component extends DCLogic {
         const at = (r, k) => Array.isArray(r) ? (idx[k] == null ? null : r[idx[k]]) : (r == null ? null : r[k]);
         // the games in the order they were played, the preseason flagged rather than dropped
         const seasonsAll = recs.map(r => Number(r.season));
-        const seasonOn = st.plogSeason != null && seasonsAll.indexOf(Number(st.plogSeason)) >= 0 ? Number(st.plogSeason) : (seasonsAll[0] != null ? seasonsAll[0] : null);
-        const wantPre = (() => { const f = tstate('plog').f || {}; const v = f.phase; return Array.isArray(v) ? v.indexOf('preseason') >= 0 : v === 'preseason'; })();
-        const games = raw.filter(r => (seasonOn == null || r.__season === seasonOn) && (wantPre || !at(r, 'preseason'))).map(r => ({ r, season: r.__season, d: at(r, 'date'), week: at(r, 'week'), opp: at(r, 'opp'), home: !!at(r, 'home'),
-          res: isClubP ? at(r, 'result') : (String(at(r, 'result') || '').charAt(0) || null), score: isClubP ? (at(r, 'pf') != null && at(r, 'pa') != null ? at(r, 'pf') + '-' + at(r, 'pa') : null) : (String(at(r, 'result') || '').slice(2) || null),
-          pre: !!at(r, 'preseason'), post: !!at(r, 'postseason') })).sort((a, b) => String(b.d || '').localeCompare(String(a.d || '')));
-        // the stat columns the feed filled for this player or club this season — a quarterback's
-        // punting columns are blank in every row, and a blank column says nothing
-        const HEAD = ['date', 'week', 'opp', 'home', 'result', 'postseason', 'preseason', 'pf', 'pa', 'status', 'myQ', 'oppQ'];
-        const statKeys = cols.filter(k => HEAD.indexOf(k) < 0 && games.some(g => at(g.r, k) != null && at(g.r, k) !== ''));
-        const fmt = v => v == null || v === '' ? '—' : Array.isArray(v) ? v.join('·') : typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(1)) : String(v);
         const label = y => sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y);
+        // the season is chosen in the search like everything else: nothing picked shows the newest
+        // season; a SEASON pick in the directory or a typed year shows that season (several with
+        // commas); any other pick or word searches the whole career
+        const ts0 = tstate('plog'); const f0 = ts0.f || {}; const q0 = String(ts0.q || '').trim();
+        const asList = v => v == null || v === '' ? [] : (Array.isArray(v) ? v : [v]);
+        const yearOf = lab => { const y = seasonsAll.find(y => label(y) === String(lab).replace(/^~/, '')); return y == null ? (seasonsAll.find(y => String(y) === String(lab).replace(/^~/, '').slice(0, 4)) || null) : y; };
+        const picked = asList(f0.season).map(yearOf).filter(y => y != null);
+        const typed = (q0.match(/\b(?:19|20)\d{2}(?:-\d{2})?\b/g) || []).map(yearOf).filter(y => y != null);
+        const otherPicks = Object.keys(f0).some(k => k !== 'season' && f0[k] != null && f0[k] !== '' && !(Array.isArray(f0[k]) && !f0[k].length));
+        const seasonSet = picked.length ? picked : typed.length ? typed : (!otherPicks && !q0 && seasonsAll.length ? [seasonsAll[0]] : null);
+        const seasonOn = seasonSet && seasonSet.length === 1 ? seasonSet[0] : null;
+        const wantPre = (() => { const v = f0.phase; return Array.isArray(v) ? v.indexOf('preseason') >= 0 : v === 'preseason'; })();
+        const gameOf = r => ({ r, season: r.__season, d: at(r, 'date'), week: at(r, 'week'), opp: at(r, 'opp'), home: !!at(r, 'home'),
+          res: isClubP ? at(r, 'result') : (String(at(r, 'result') || '').charAt(0) || null), score: isClubP ? (at(r, 'pf') != null && at(r, 'pa') != null ? at(r, 'pf') + '-' + at(r, 'pa') : null) : (String(at(r, 'result') || '').slice(2) || null),
+          pre: !!at(r, 'preseason'), post: !!at(r, 'postseason') });
+        const gamesAll = raw.filter(r => wantPre || !at(r, 'preseason')).map(gameOf).sort((a, b) => String(b.d || '').localeCompare(String(a.d || '')));
+        const games = seasonSet ? gamesAll.filter(g => seasonSet.indexOf(g.season) >= 0) : gamesAll;
+        // every stat column the feed defines for the league, in the feed's order, blank or not
+        const HEAD = ['date', 'week', 'opp', 'home', 'result', 'postseason', 'preseason', 'pf', 'pa', 'status', 'myQ', 'oppQ'];
+        const statKeys = cols.filter(k => HEAD.indexOf(k) < 0);
+        const multi = games.some(g => g.season !== games[0].season);
+        const fmt = v => v == null || v === '' ? '—' : Array.isArray(v) ? v.join('·') : typeof v === 'number' ? (Number.isInteger(v) ? String(v) : v.toFixed(1)) : String(v);
         const get = { season: g => g.season == null ? null : label(g.season), d: g => g.d, week: g => g.week, opp: g => g.opp, where: g => g.home ? 'home' : 'away', result: g => g.res === 'W' ? 'won' : g.res === 'L' ? 'lost' : g.res === 'T' ? 'tied' : null,
           score: g => g.score, phase: g => g.pre ? 'preseason' : g.post ? 'postseason' : 'regular' };
         statKeys.forEach(k => { get[k] = g => at(g.r, k); });
-        TABLES.plog = { rows: games, get };
+        TABLES.plog = { rows: gamesAll, get };
         const rows = tapply('plog', games, get, rowText(get));
         const lim = st.plogLimit || 25;
         const NFLp = sport === 'NFL';
-        const PLOG_COLS = [['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
-        const fixed = [['d', 'DATE', 1.1]].concat(NFLp ? [['week', 'WK', .5]] : []).concat([['opp', 'OPP', .6], ['where', 'WHERE', .6], ['score', 'SCORE', .9]]);
+        const PLOG_COLS = [['season', 'SEASON'], ['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
+        const fixed = (multi ? [['season', 'SEASON', .8]] : []).concat([['d', 'DATE', 1.1]]).concat(NFLp ? [['week', 'WK', .5]] : []).concat([['opp', 'OPP', .6], ['where', 'WHERE', .6], ['score', 'SCORE', .9]]);
         const colDefs = fixed.concat(statKeys.map(k => [k, LABEL[k] || k.toUpperCase().replace(/_/g, ' '), .7]));
         const cell = (v, flex, dim) => ({ v, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' + (dim ? ';color:var(--second)' : '') });
         const seasonY = Number(this.logSeason());
@@ -6129,21 +6134,16 @@ class Component extends DCLogic {
         const monthOf = d => { try { return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(String(d) + 'T12:00:00Z')).toUpperCase(); } catch (e) { return String(d).slice(0, 7); } };
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
         return {
-          plogNote: !pr ? '' : !games.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
-            : label(seasonOn) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons')
+          plogNote: !pr ? '' : !gamesAll.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
+            : (seasonOn != null ? label(seasonOn) : seasonSet ? seasonSet.map(label).join(', ') : label(seasons[seasons.length - 1]) + ' to ' + label(seasons[0])) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
               + (reading != null ? ' · reading ' + label(reading) + '…' : '') + (raw.some(r => r.__season === seasonOn && at(r, 'preseason')) && !wantPre ? ' · preseason kept out, pick it under PHASE' : ''),
-          plogSeasons: seasons.map(y => ({ label: label(y), pick: () => this.setState({ plogSeason: y, plogMenu: false, plogLimit: null, tables: Object.assign({}, st.tables, { plog: null }) }),
-            style: 'display:flex;justify-content:space-between;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + (y === seasonOn ? 'var(--nested)' : 'transparent') + ';color:' + (y === seasonOn ? BLUE : 'var(--lead)') })),
-          plogSeasonLabel: seasonOn == null ? '' : label(seasonOn), plogMenuOpen: !!st.plogMenu, plogMenuToggle: () => this.setState(x => ({ plogMenu: !x.plogMenu })),
-          plogSeasonBtn: 'display:flex;align-items:center;background:transparent;border:none;padding:4px 0 4px 8px;cursor:pointer;font-family:var(--kw);font-size:10px;letter-spacing:.12em;font-weight:700;color:' + (st.plogMenu ? BLUE : 'var(--reversed)'),
-          plogHasSeasons: seasons.length > 1,
           plogHasRows: games.length > 0,
-          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the season · an opponent, home or away, won or lost, a week, a phase', count: rows.length + ' of ' + games.length, groups: colGroups(games, get, PLOG_COLS) }),
+          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS) }),
           plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead),
           plogMinW: (colDefs.length * 62 + 120) + 'px',
           // the NBA's long season reads by month, as the league sites lay it out; a foot carries the totals
-          plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort; rows.slice(0, lim).forEach(g => { if (!sorted) { const m = g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON'); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
-            out.push({ rowStyle: ROW, cells: colDefs.map(([k, lab, flex]) => k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
+          plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort; rows.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
+            out.push({ rowStyle: ROW, cells: colDefs.map(([k, lab, flex]) => k === 'season' ? cell(label(g.season), flex, true) : k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
             : k === 'opp' ? cell(g.opp || '—', flex) : k === 'where' ? cell(g.home ? 'home' : 'away', flex, true)
             : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(rows.length <= lim ? footRows(rows) : []); })(),
           plogMore: rows.length > lim, plogMoreLabel: 'Show ' + Math.min(25, rows.length - lim) + ' more', plogShowMore: () => this.setState({ plogLimit: lim + 25 }), plogShowAll: () => this.setState({ plogLimit: 100000 })
