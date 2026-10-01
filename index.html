@@ -6091,7 +6091,10 @@ class Component extends DCLogic {
         const picked = asList(f0.season).map(yearOf).filter(y => y != null);
         const typed = (q0.match(/\b(?:19|20)\d{2}(?:-\d{2})?\b/g) || []).map(yearOf).filter(y => y != null);
         const otherPicks = Object.keys(f0).some(k => k !== 'season' && f0[k] != null && f0[k] !== '' && !(Array.isArray(f0[k]) && !f0[k].length));
-        const seasonSet = picked.length ? picked : typed.length ? typed : (!otherPicks && !q0 && seasonsAll.length ? [seasonsAll[0]] : null);
+        // the season in play is the default; one that has no games yet names itself and the newest played season stands in
+        const curSeason = this.logSeasonDefault(sport), curHas = seasonsAll.indexOf(curSeason) >= 0;
+        const standIn = !curHas && seasonsAll.length ? seasonsAll[0] : null;
+        const seasonSet = picked.length ? picked : typed.length ? typed : (!otherPicks && !q0 && seasonsAll.length ? [curHas ? curSeason : seasonsAll[0]] : null);
         const seasonOn = seasonSet && seasonSet.length === 1 ? seasonSet[0] : null;
         const wantPre = (() => { const v = f0.phase; return Array.isArray(v) ? v.indexOf('preseason') >= 0 : v === 'preseason'; })();
         const gameOf = r => ({ r, season: r.__season, d: at(r, 'date'), week: at(r, 'week'), opp: at(r, 'opp'), home: !!at(r, 'home'),
@@ -6135,7 +6138,7 @@ class Component extends DCLogic {
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
         return {
           plogNote: !pr ? '' : !gamesAll.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
-            : (seasonOn != null ? label(seasonOn) : seasonSet ? seasonSet.map(label).join(', ') : label(seasons[seasons.length - 1]) + ' to ' + label(seasons[0])) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
+            : (seasonOn != null ? (standIn != null && seasonOn === standIn && !picked.length && !typed.length ? 'no games yet in ' + label(curSeason) + ' · ' + label(seasonOn) : label(seasonOn)) : seasonSet ? seasonSet.map(label).join(', ') : label(seasons[seasons.length - 1]) + ' to ' + label(seasons[0])) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
               + (reading != null ? ' · reading ' + label(reading) + '…' : '') + (raw.some(r => r.__season === seasonOn && at(r, 'preseason')) && !wantPre ? ' · preseason kept out, pick it under PHASE' : ''),
           plogHasRows: games.length > 0,
           plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS) }),
