@@ -2225,12 +2225,17 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </section>
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfLog.toggle }}" style="{{ p.pfLog.btn }}">{{ p.pfLog.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12.5px;font-weight:600">Game Stats</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ plogNote }}</span></div></div></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfLog.toggle }}" style="{{ p.pfLog.btn }}">{{ p.pfLog.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;flex-direction:column;gap:3px"><span style="font-size:12.5px;font-weight:600">Game Stats</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ plogNote }}</span></div></div>
+                    <sc-if value="{{ plogHasSeasons }}" hint-placeholder-val="{{ false }}"><div data-colmenu="1" style="position:relative;flex:none">
+                      <button data-colmenu="1" onClick="{{ plogMenuToggle }}" style="{{ plogSeasonBtn }}">{{ plogSeasonLabel }}<span style="font-size:7px;margin-left:6px">▾</span></button>
+                      <sc-if value="{{ plogMenuOpen }}" hint-placeholder-val="{{ false }}">
+                        <div data-colmenu="1" style="position:absolute;top:26px;right:0;z-index:40;width:150px;max-height:280px;overflow-y:auto;background:var(--surface);border:1px solid var(--axis);border-radius:9px;box-shadow:0 16px 40px rgba(0,0,0,.6);padding:6px;display:flex;flex-direction:column;gap:1px">
+                          <sc-for list="{{ plogSeasons }}" as="y" hint-placeholder-count="8"><button onClick="{{ y.pick }}" style="{{ y.style }}">{{ y.label }}</button></sc-for>
+                        </div>
+                      </sc-if>
+                    </div></sc-if></div>
                   <sc-if value="{{ p.pfLog.open }}" hint-placeholder-val="{{ true }}">
                   <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
-                  <sc-if value="{{ plogHasSeasons }}" hint-placeholder-val="{{ false }}">
-                    <div data-scroll="x" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none"><sc-for list="{{ plogSeasons }}" as="y" hint-placeholder-count="6"><button onClick="{{ y.pick }}" style="{{ y.style }}">{{ y.label }}</button></sc-for></div>
-                  </sc-if>
                 <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:2px">
                   <sc-if value="{{ plogBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ plogBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ plogBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ plogBox.boxKey }}" value="{{ plogBox.q }}" onChange="{{ plogBox.on }}" onFocus="{{ plogBox.focus }}" onClick="{{ plogBox.click }}" onDoubleClick="{{ plogBox.dbl }}" onKeyDown="{{ plogBox.onKey }}" placeholder="{{ plogBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ plogBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ plogBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
                   <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ plogBox.count }}</span>
@@ -3026,11 +3031,11 @@ class Component extends DCLogic {
       const st = this.state;
       if (st.splitMenu) this.setState({ splitMenu: false });
       const openTables = Object.keys(st.tables || {}).filter(k => st.tables[k] && st.tables[k].open);
-      if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.buzzKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen) return;
+      if (!st.openCol && !openTables.length && !st.alertKindOpen && !st.buzzKindOpen && !st.trendMenuOpen && !st.logMenuOpen && !st.h2hMenu && !st.histMenu && !st.searchOpen && !st.plogMenu) return;
       this.setState(x => {
         const tables = Object.assign({}, x.tables);
         openTables.forEach(k => { tables[k] = Object.assign({}, tables[k], { open: null }); });
-        return { openCol: null, alertKindOpen: false, buzzKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
+        return { openCol: null, plogMenu: false, alertKindOpen: false, buzzKindOpen: false, trendMenuOpen: false, logMenuOpen: null, h2hMenu: null, histMenu: null, searchOpen: null, searchBrowse: false, searchGroup: null, tables };
       });
     };
     document.addEventListener('mousedown', this._outside, true);
@@ -6125,10 +6130,12 @@ class Component extends DCLogic {
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
         return {
           plogNote: !pr ? '' : !games.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
-            : label(seasonOn) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' on the tabs'
+            : label(seasonOn) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons')
               + (reading != null ? ' · reading ' + label(reading) + '…' : '') + (raw.some(r => r.__season === seasonOn && at(r, 'preseason')) && !wantPre ? ' · preseason kept out, pick it under PHASE' : ''),
-          plogSeasons: seasons.map(y => ({ label: label(y), pick: () => this.setState({ plogSeason: y, plogLimit: null, tables: Object.assign({}, st.tables, { plog: null }) }),
-            style: 'flex:none;padding:5px 11px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.1em;background:' + (y === seasonOn ? BLUE : 'transparent') + ';border:1px solid ' + (y === seasonOn ? BLUE : 'var(--axis)') + ';color:' + (y === seasonOn ? 'var(--on-brand)' : 'var(--second)') })),
+          plogSeasons: seasons.map(y => ({ label: label(y), pick: () => this.setState({ plogSeason: y, plogMenu: false, plogLimit: null, tables: Object.assign({}, st.tables, { plog: null }) }),
+            style: 'display:flex;justify-content:space-between;width:100%;padding:6px 9px;border:none;border-radius:5px;cursor:pointer;text-align:left;font-family:var(--kw);font-size:10.5px;background:' + (y === seasonOn ? 'var(--nested)' : 'transparent') + ';color:' + (y === seasonOn ? BLUE : 'var(--lead)') })),
+          plogSeasonLabel: seasonOn == null ? '' : label(seasonOn), plogMenuOpen: !!st.plogMenu, plogMenuToggle: () => this.setState(x => ({ plogMenu: !x.plogMenu })),
+          plogSeasonBtn: 'display:flex;align-items:center;background:transparent;border:none;padding:4px 0 4px 8px;cursor:pointer;font-family:var(--kw);font-size:10px;letter-spacing:.12em;font-weight:700;color:' + (st.plogMenu ? BLUE : 'var(--reversed)'),
           plogHasSeasons: seasons.length > 1,
           plogHasRows: games.length > 0,
           plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the season · an opponent, home or away, won or lost, a week, a phase', count: rows.length + ' of ' + games.length, groups: colGroups(games, get, PLOG_COLS) }),
