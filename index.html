@@ -1434,53 +1434,25 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </sc-if>
                 </div>
                 <sc-if value="{{ trHasSettled }}" hint-placeholder-val="{{ false }}">
-                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(262px,1fr));gap:13px">
-                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">RUNNING RECORD · {{ trScope }} · right minus wrong, one step per settled call · <span style="color:var(--brand)">—</span> Kwotient &nbsp;<span style="color:#e2b53f">- -</span> market favorite</span>
-                    <div style="display:flex;gap:6px;align-items:stretch">
-                      <div style="flex:none;width:26px;position:relative;height:150px;font-family:var(--kw);font-size:8px;color:var(--faint);text-align:right"><span style="position:absolute;right:0;top:0">{{ trAxisTop }}</span><span style="position:absolute;right:0;top:50%;transform:translateY(-50%)">0</span><span style="position:absolute;right:0;bottom:0">{{ trAxisBot }}</span></div>
-                      <div data-chart="1" onMouseMove="{{ trCumMove }}" onMouseLeave="{{ trCumOff }}" onTouchStart="{{ trCumTouchStart }}" onTouchMove="{{ trCumTouchMove }}" onTouchEnd="{{ trCumOff }}" onClick="{{ trCumTap }}" style="position:relative;height:150px;flex:1;min-width:0;cursor:crosshair;touch-action:pan-y;padding-right:64px">
-                        <svg viewBox="0 0 600 120" preserveAspectRatio="none" style="width:100%;height:150px;display:block">
-                          <line x1="0" y1="30" x2="600" y2="30" stroke="var(--grid)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                          <line x1="0" y1="90" x2="600" y2="90" stroke="var(--grid)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                          <line x1="0" y1="{{ trZeroY }}" x2="600" y2="{{ trZeroY }}" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                          <path d="{{ trCumArea }}" fill="var(--brand)" fill-opacity="0.10"></path>
-                          <path d="{{ trCumMktPath }}" fill="none" stroke="#e2b53f" stroke-width="1.5" stroke-dasharray="4 3" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                          <path d="{{ trCumPath }}" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
-                        </svg>
-                        <div style="{{ trEndKqStyle }}"><span style="width:7px;height:7px;border-radius:50%;background:var(--brand);display:inline-block;flex:none"></span>{{ trEndKq }}</div>
-                        <div style="{{ trEndMkStyle }}"><span style="width:7px;height:7px;border-radius:50%;background:#e2b53f;display:inline-block;flex:none"></span>{{ trEndMk }}</div>
-                        <sc-if value="{{ trCumHoverOn }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;pointer-events:none"><div style="{{ trCumHoverLine }}"></div><div style="{{ trCumHoverDot }}"></div><div style="{{ trCumTip }}"><div style="font-weight:700;color:var(--reversed);margin-bottom:3px">{{ trCumTipHead }}</div><div>{{ trCumTipBody }}</div></div></div></sc-if>
-                      </div>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">STANDINGS · week by week · Kwotient's calls and the market favorite's on the same games · the week on the table is marked</span>
+                  <div data-scroll="x"><div style="min-width:560px">
+                    <div style="display:flex;gap:8px;padding:6px 10px;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel)">
+                      <span style="flex:0 0 78px">WEEK</span><span style="flex:0 0 58px">KWOTIENT</span><span style="flex:1 1 0;min-width:70px">PCT</span><span style="flex:0 0 58px">MARKET</span><span style="flex:1 1 0;min-width:70px">PCT</span><span style="flex:0 0 96px;text-align:right">CLOSER TO MARGIN</span><span style="flex:0 0 40px;text-align:right">OPEN</span>
                     </div>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;font-family:var(--kw);font-size:9px;color:var(--faint);padding-left:32px"><span>{{ trCumFrom }}</span><span>{{ trCumMid }}</span><span>{{ trCumTo }}</span></div>
-                    <div style="font-family:var(--kw);font-size:9.5px;color:var(--second);padding-left:32px">{{ trCumNote }}</div>
-                  </div>
-                  <div style="display:flex;flex-direction:column;gap:6px;min-width:0">
-                    <span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--muted)">KWOTIENT VS MARKET · {{ trScope }} · which line was closer to the final margin, game by game, and by how much</span>
-                    <sc-if value="{{ trMissRowsOn }}" hint-placeholder-val="{{ true }}">
-                      <div style="display:flex;flex-direction:column;gap:3px">
-                        <sc-for list="{{ trMissRows }}" as="m" hint-placeholder-count="8">
-                          <div style="display:flex;align-items:center;gap:8px;height:13px">
-                            <span style="flex:none;width:64px;font-family:var(--kw);font-size:8.5px;color:var(--second);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ m.label }}</span>
-                            <div style="flex:1;position:relative;height:11px"><div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--axis)"></div><div style="{{ m.barStyle }}"></div><span style="{{ m.valStyle }}">{{ m.val }}</span></div>
-                          </div>
-                        </sc-for>
+                    <sc-for list="{{ trWeeks }}" as="w" hint-placeholder-count="6">
+                      <div onClick="{{ w.pick }}" style="{{ w.rowStyle }}">
+                        <span style="flex:0 0 78px;font-weight:700;color:var(--reversed)">{{ w.label }}</span>
+                        <span style="flex:0 0 58px;color:{{ w.kqColor }};font-weight:700">{{ w.kq }}</span>
+                        <span style="flex:1 1 0;min-width:70px;display:flex;align-items:center;gap:6px"><span style="flex:1;height:6px;border-radius:3px;background:var(--grid);overflow:hidden;display:block"><span style="{{ w.kqBar }}"></span></span><span style="flex:none;width:30px;text-align:right;color:var(--second)">{{ w.kqPct }}</span></span>
+                        <span style="flex:0 0 58px;color:#e2b53f;font-weight:700">{{ w.mk }}</span>
+                        <span style="flex:1 1 0;min-width:70px;display:flex;align-items:center;gap:6px"><span style="flex:1;height:6px;border-radius:3px;background:var(--grid);overflow:hidden;display:block"><span style="{{ w.mkBar }}"></span></span><span style="flex:none;width:30px;text-align:right;color:var(--second)">{{ w.mkPct }}</span></span>
+                        <span style="flex:0 0 96px;text-align:right;color:var(--second)">{{ w.closer }}</span>
+                        <span style="flex:0 0 40px;text-align:right;color:var(--muted)">{{ w.open }}</span>
                       </div>
-                    </sc-if>
-                    <sc-if value="{{ trMissRowsOn }}" hint-placeholder-val="{{ true }}"></sc-if>
-                    <sc-if value="{{ trMissColsOn }}" hint-placeholder-val="{{ false }}">
-                      <div style="position:relative;height:150px">
-                        <svg viewBox="0 0 300 120" preserveAspectRatio="none" style="width:100%;height:150px;display:block">
-                          <line x1="0" y1="60" x2="300" y2="60" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
-                          <sc-for list="{{ trMissCols }}" as="m" hint-placeholder-count="8"><rect x="{{ m.x }}" y="{{ m.y }}" width="{{ m.w }}" height="{{ m.h }}" rx="1" fill="{{ m.fill }}"><title>{{ m.title }}</title></rect></sc-for>
-                        </svg>
-                        <span style="position:absolute;left:4px;top:2px;font-family:var(--kw);font-size:8px;color:var(--good)">Kwotient closer ▲</span><span style="position:absolute;left:4px;bottom:2px;font-family:var(--kw);font-size:8px;color:#e2b53f">market closer ▼</span>
-                      </div>
-                    </sc-if>
-                    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-family:var(--kw);font-size:9px;color:var(--faint)"><span><span style="color:var(--good)">■</span> Kwotient closer &nbsp;<span style="color:#e2b53f">■</span> market closer · points</span><span>{{ trMissNote }}</span></div>
-                  </div>
+                    </sc-for>
+                  </div></div>
+                  <div style="font-family:var(--kw);font-size:9px;color:var(--faint)">a row is a week's calls as the week settled · PCT is wins over settled calls · CLOSER TO MARGIN counts the games where Kwotient's line sat nearer the final margin than the market's · tap a week to put it on the table</div>
                 </div>
                 <button onClick="{{ trDetailToggle }}" style="align-self:flex-start;padding:6px 11px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9px;letter-spacing:.12em;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ trDetailLabel }}</button>
                 <sc-if value="{{ trDetailOpen }}" hint-placeholder-val="{{ false }}">
@@ -6084,6 +6056,25 @@ class Component extends DCLogic {
           ],
           trCumMktPath: cumMktPath,
           trCumNote: scoped.length ? 'Kwotient ' + scRight + '-' + scWrong + ' · market favorite ' + mRight + '-' + (mGraded.length - mRight) + ' on the same games' : '',
+          // the standings: a row a week, the season above them
+          trWeeks: (() => {
+            const mkOf = c => { const pk = mktPick(c); return pk && c.winner ? (pk === c.winner) : null; };
+            const closerOf = c => c.fair != null && c.line != null && c.margin != null ? (Math.abs(c.margin + c.fair) < Math.abs(c.margin + c.line)) : null;
+            const row = (label, list, openN, on, isSeason) => {
+              const done = list.filter(c => c.right != null), r = done.filter(c => c.right).length, w = done.length - r;
+              const mg = done.filter(c => mkOf(c) != null), mr = mg.filter(c => mkOf(c)).length, mw = mg.length - mr;
+              const cl = done.filter(c => closerOf(c) != null), ck = cl.filter(c => closerOf(c)).length;
+              const pct = (x, n) => n ? Math.round(x / n * 100) : 0;
+              const bar = (x, n, col) => 'display:block;height:100%;border-radius:3px;width:' + pct(x, n) + '%;background:' + col;
+              return { label, kq: done.length ? r + '-' + w : '—', kqPct: done.length ? pct(r, done.length) + '%' : '', kqBar: bar(r, done.length, 'var(--brand)'), kqColor: done.length ? (r > w ? 'var(--good)' : r < w ? 'var(--critical)' : 'var(--reversed)') : 'var(--muted)',
+                mk: mg.length ? mr + '-' + mw : '—', mkPct: mg.length ? pct(mr, mg.length) + '%' : '', mkBar: bar(mr, mg.length, '#e2b53f'),
+                closer: cl.length ? ck + ' of ' + cl.length : '—', open: openN ? String(openN) : '',
+                rowStyle: 'display:flex;gap:8px;align-items:center;padding:' + (isSeason ? '9px 10px' : '8px 10px') + ';border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:10.5px;cursor:' + (isSeason ? 'default' : 'pointer') + ';background:' + (on ? 'var(--nested)' : isSeason ? 'var(--rail)' : 'transparent') + (isSeason ? ';border-bottom:1px solid var(--axis)' : ''),
+                pick: isSeason ? () => this.setState({ trWeek: null, trQ: 'all weeks', trLimit: 10 }) : () => this.setState({ trWeek: label, trQ: '', trLimit: 10 }) };
+            };
+            const byWeek = weeks.slice().reverse().map(w => { const list = sportCalls.filter(c => weekOf(c) === w); return row(w, list, list.filter(c => c.right == null).length, !!weekSet && weekSet.indexOf(w) >= 0, false); });
+            return [row('SEASON', sportCalls, sportCalls.filter(c => c.right == null).length, !weekSet, true)].concat(byWeek);
+          })(),
           // the running record's dressing: the axis, the dates beneath, a marker at each line's end
           trAxisTop: '+' + M, trAxisBot: '−' + M, trCumMid: scoped.length > 2 ? (S ? S.day(scoped[Math.floor(scoped.length / 2)].settled || scoped[Math.floor(scoped.length / 2)].d) : '') : '',
           ...(() => { const endK = cum.length ? cum[cum.length - 1] : 0, endM = cumM.length ? cumM[cumM.length - 1] : 0;
