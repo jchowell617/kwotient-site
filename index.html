@@ -2303,16 +2303,24 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                         </div>
                       </sc-for>
                     </div></div></div>
-                    <div data-plog="cards" style="flex-direction:column;gap:8px">
-                      <sc-for list="{{ plogCards }}" as="g" hint-placeholder-count="6">
-                        <sc-if value="{{ g.head }}" hint-placeholder-val="{{ false }}"><div style="font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);padding:6px 2px 0">{{ g.head }}</div></sc-if>
-                        <sc-if value="{{ g.card }}" hint-placeholder-val="{{ true }}"><div style="{{ g.style }}">
-                          <div style="display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap"><span style="font-family:var(--kw);font-size:11px;font-weight:700;color:var(--reversed)">{{ g.title }}</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ g.sub }}</span></div>
-                          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(66px,1fr));gap:7px 8px">
-                            <sc-for list="{{ g.stats }}" as="s" hint-placeholder-count="8"><div style="display:flex;flex-direction:column;gap:1px;min-width:0"><span style="font-family:var(--kw);font-size:7.5px;letter-spacing:.1em;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ s.k }}</span><span style="font-family:var(--kw);font-size:12.5px;font-weight:600;color:var(--lead);white-space:nowrap">{{ s.v }}</span></div></sc-for>
+                    <div data-plog="cards" style="flex-direction:row;align-items:flex-start;border:1px solid var(--grid);border-radius:10px;overflow:hidden;background:var(--surface)">
+                      <div style="flex:none;width:104px;border-right:1px solid var(--axis);background:var(--surface);position:relative;z-index:2;box-shadow:4px 0 8px -4px rgba(0,0,0,.45)">
+                        <div style="height:36px;display:flex;align-items:flex-end;padding:0 8px 6px;box-sizing:border-box;border-bottom:1px solid var(--grid);font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--collabel)">GAME</div>
+                        <sc-for list="{{ plogM }}" as="g" hint-placeholder-count="6">
+                          <div style="{{ g.rowStyle }}"><span style="font-family:var(--kw);font-size:10.5px;font-weight:700;color:var(--reversed);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.l1 }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.l2 }}</span><span style="{{ g.l3Style }}">{{ g.l3 }}</span></div>
+                        </sc-for>
+                      </div>
+                      <div style="flex:1;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none">
+                        <div style="min-width:{{ plogMW }}">
+                          <div style="height:36px;display:flex;flex-direction:column;justify-content:flex-end;border-bottom:1px solid var(--grid);box-sizing:border-box">
+                            <div style="display:flex;height:14px"><sc-for list="{{ plogMGroups }}" as="gr" hint-placeholder-count="4"><span style="{{ gr.style }}">{{ gr.label }}</span></sc-for></div>
+                            <div style="display:flex;height:18px;align-items:flex-end;padding-bottom:4px"><sc-for list="{{ plogMCols }}" as="c" hint-placeholder-count="8"><span style="{{ c.style }}">{{ c.label }}</span></sc-for></div>
                           </div>
-                        </div></sc-if>
-                      </sc-for>
+                          <sc-for list="{{ plogM }}" as="g" hint-placeholder-count="6">
+                            <div style="{{ g.cellsStyle }}"><sc-for list="{{ g.cells }}" as="v" hint-placeholder-count="8"><span style="{{ v.style }}">{{ v.v }}</span></sc-for></div>
+                          </sc-for>
+                        </div>
+                      </div>
                     </div>
                     <sc-if value="{{ plogMore }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:1px;background:var(--grid);border-radius:11px;overflow:hidden"><button onClick="{{ plogShowMore }}" style="flex:1;padding:9px;border:none;cursor:pointer;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em">{{ plogMoreLabel }}</button><button onClick="{{ plogShowAll }}" style="flex:1;padding:9px;border:none;cursor:pointer;background:var(--nested);color:var(--second);font-family:var(--kw);font-size:10.5px;letter-spacing:.1em">Show all</button></div></sc-if>
                   </sc-if>
@@ -6146,7 +6154,7 @@ class Component extends DCLogic {
         statKeys.forEach(k => { get[k] = g => at(g.r, k); });
         TABLES.plog = { rows: gamesAll, get };
         const rows = tapply('plog', games, get, rowText(get));
-        const shown = lastOnly ? rows.slice(0, 1) : rows;
+        const shown = lastOnly ? [] : rows;
         const lim = st.plogLimit || 25;
         const NFLp = sport === 'NFL';
         const PLOG_COLS = [['season', 'SEASON'], ['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
@@ -6173,11 +6181,11 @@ class Component extends DCLogic {
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
         return {
           plogNote: !pr ? '' : !gamesAll.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
-            : lastOnly && shown.length ? 'last game · ' + (S ? S.day(shown[0].d) : shown[0].d) + ' ' + (shown[0].home ? 'vs ' : 'at ') + shown[0].opp + ' · ' + statKeys.length + ' stats, every one the feed carries · the ' + label(seasonOn != null ? seasonOn : curSeason) + ' season and ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
+            : lastOnly ? 'pick a season, an opponent or a week in the search · ' + gamesAll.length + ' games across ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' on the record' + (reading != null ? ' · reading ' + label(reading) + '…' : '')
             : (seasonOn != null ? (standIn != null && seasonOn === standIn && !picked.length && !typed.length ? 'no games yet in ' + label(curSeason) + ' · ' + label(seasonOn) : label(seasonOn)) : seasonSet ? seasonSet.map(label).join(', ') : label(seasons[seasons.length - 1]) + ' to ' + label(seasons[0])) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
               + (reading != null ? ' · reading ' + label(reading) + '…' : '') + (raw.some(r => r.__season === seasonOn && at(r, 'preseason')) && !wantPre ? ' · preseason kept out, pick it under PHASE' : ''),
-          plogHasRows: games.length > 0,
-          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: lastOnly ? 'LAST GAME · 1 of ' + games.length : (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS).map(g => g.label === 'SEASON' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => String(b.label).localeCompare(String(a.label))) })
+          plogHasRows: shown.length > 0,
+          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: lastOnly ? gamesAll.length + ' games' : (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS).map(g => g.label === 'SEASON' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => String(b.label).localeCompare(String(a.label))) })
             : g.label === 'WEEK' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => Number(a.label) - Number(b.label)) }) : g) }),
           plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead).map(c => c.key === colDefs[0][0] ? Object.assign({}, c, { cellStyle: c.cellStyle + ';position:sticky;left:0;z-index:6;background:var(--surface);padding-right:4px' }) : c),
           plogMinW: (colDefs.length * 62 + 120) + 'px',
@@ -6185,19 +6193,31 @@ class Component extends DCLogic {
           plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort || lastOnly; shown.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
             out.push({ rowStyle: ROW, foot: '', cells: colDefs.map(([k, lab, flex], ci) => k === 'season' ? cell(label(g.season), flex, true, ci === 0) : k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true, ci === 0) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
             : k === 'opp' ? cell(g.opp || '—', flex) : k === 'where' ? cell(g.home ? 'home' : 'away', flex, true)
-            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(rows.length <= lim || lastOnly ? footRows(rows) : []); })(),
-          // the phone's cards: the game's date, opponent and score on top, every stat the game
-          // filled beneath, the season's totals and per-game line as cards at the end
-          plogCards: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort || lastOnly;
-            const CARD = 'border:1px solid var(--grid);border-radius:10px;background:var(--nested);padding:10px 12px;display:flex;flex-direction:column;gap:8px';
-            const statsOf = g => statKeys.filter(k => at(g.r, k) != null && at(g.r, k) !== '').map(k => ({ k: LABEL[k] || k.toUpperCase().replace(/_/g, ' '), v: fmt(at(g.r, k)) }));
-            shown.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, card: false, stats: [] }); lastM = m; } }
-              out.push({ head: '', card: true, style: CARD, title: (S ? S.day(g.d) : g.d) + ' · ' + (g.home ? 'vs ' : 'at ') + (g.opp || '—'), sub: ((g.res ? g.res + ' ' : '') + (g.score || '')) + (NFLp && g.week != null ? ' · WK ' + g.week : '') + (multi ? ' · ' + label(g.season) : ''), stats: statsOf(g) }); });
-            if (rows.length <= lim || lastOnly) { const reg = rows.filter(g => !g.pre && !g.post); const list = reg.length ? reg : rows; if (list.length) { const F2 = foot(list);
-              const keys = statKeys.filter(k => F2.tot[k] != null);
-              out.push({ head: '', card: true, style: CARD + ';border-color:var(--axis)', title: reg.length ? 'REG SEASON' : 'TOTAL', sub: F2.n + (F2.n === 1 ? ' game' : ' games'), stats: keys.map(k => ({ k: LABEL[k] || k.toUpperCase().replace(/_/g, ' '), v: f1(F2.tot[k]) })) });
-              out.push({ head: '', card: true, style: CARD + ';border-color:var(--axis)', title: 'PER GAME', sub: '', stats: keys.map(k => ({ k: LABEL[k] || k.toUpperCase().replace(/_/g, ' '), v: f1(F2.avg[k]) })) }); } }
-            return out; })(),
+            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(!lastOnly && rows.length <= lim ? footRows(rows) : []); })(),
+          // the phone's game log as the sports apps draw it: a frozen column with the date, the
+          // opponent and the result, and beside it a strip of the stats the selection filled, in
+          // the feed's groups, scrolling sideways; the season's totals and per-game line at the foot
+          ...(() => {
+            const GROUP = isClubP
+              ? (k => sport === 'NBA' ? 'TEAM' : /^first_downs/.test(k) ? 'FIRST DOWNS' : /^(third|fourth)_down/.test(k) ? 'DOWNS' : /^(total_offensive_plays|total_yards|yards_per_play|total_drives)$/.test(k) ? 'OFFENSE' : /^(net_passing_yards|passing_|yards_per_pass|sacks|sack_yards_lost)/.test(k) ? 'PASSING' : /^(rushing_|yards_per_rush)/.test(k) ? 'RUSHING' : /^red_zone/.test(k) ? 'RED ZONE' : /^penalt/.test(k) ? 'PENALTIES' : /^(turnovers|fumbles_lost|interceptions_thrown)$/.test(k) ? 'TURNOVERS' : /^defensive/.test(k) ? 'DEFENSE' : /^possession/.test(k) ? 'POSSESSION' : 'TEAM')
+              : (k => sport === 'NBA' ? 'GAME' : /^pass_|^qb_rating$|^qbr$/.test(k) ? 'PASSING' : /^rush_/.test(k) ? 'RUSHING' : /^(tgt|rec|rec_)/.test(k) ? 'RECEIVING' : /^(tkl|solo|tfl|sacks|sack_yds|qbh|int|int_yds|int_td|pd)$/.test(k) ? 'DEFENSE' : /^fum/.test(k) ? 'FUMBLES' : /^(fgm|fga|fg_pct|fg_long|xpm)$/.test(k) ? 'KICKING' : /^(punt|touchbacks)/.test(k) ? 'PUNTING' : /^(kr|pr)/.test(k) ? 'RETURNS' : k === 'pts' ? 'SCORING' : 'GAME');
+            const list = shown.slice(0, lim);
+            const mKeys = statKeys.filter(k => list.some(g => at(g.r, k) != null && at(g.r, k) !== ''));
+            const W = 54;
+            const groups = []; mKeys.forEach(k => { const gname = GROUP(k); const last = groups[groups.length - 1]; if (last && last.label === gname) last.n++; else groups.push({ label: gname, n: 1 }); });
+            const F2 = !lastOnly && rows.length && list.length ? (() => { const reg = rows.filter(g => !g.pre && !g.post); const l = reg.length ? reg : rows; return Object.assign(foot(l), { reg: reg.length > 0 }); })() : null;
+            const cellS = 'width:' + W + 'px;flex:none;text-align:right;padding-right:8px;box-sizing:border-box;overflow:hidden;white-space:nowrap';
+            return {
+              plogMW: (mKeys.length * W + 8) + 'px',
+              plogMGroups: groups.map(g => ({ label: g.label, style: 'width:' + (g.n * W) + 'px;flex:none;box-sizing:border-box;padding-left:2px;border-left:1px solid var(--grid);font-family:var(--kw);font-size:7.5px;letter-spacing:.14em;color:var(--key);white-space:nowrap;overflow:hidden' })),
+              plogMCols: mKeys.map(k => ({ label: LABEL[k] || k.toUpperCase().replace(/_/g, ' '), style: cellS + ';font-family:var(--kw);font-size:8px;letter-spacing:.06em;color:var(--collabel)' })),
+              plogM: list.map(g => ({ l1: S ? S.day(g.d).replace(/, \d{4}$/, '') : g.d, l2: (g.home ? 'vs ' : 'at ') + (g.opp || '—') + (NFLp && g.week != null ? ' · W' + g.week : ''), l3: ((g.res || '') + ' ' + (g.score || '')).trim() + (g.post ? ' · POST' : g.pre ? ' · PRE' : ''),
+                l3Style: 'font-family:var(--kw);font-size:9px;color:' + (g.res === 'W' ? 'var(--good)' : g.res === 'L' ? 'var(--critical)' : 'var(--second)'), rowStyle: 'height:46px;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:0 8px;border-bottom:1px solid var(--divider);box-sizing:border-box',
+                cells: mKeys.map(k => ({ v: fmt(at(g.r, k)), style: cellS })), cellsStyle: 'height:46px;display:flex;align-items:center;border-bottom:1px solid var(--divider);box-sizing:border-box;font-family:var(--kw);font-size:11px;color:var(--lead)' }))
+                .concat(F2 ? [{ l1: F2.reg ? 'REG SEASON' : 'TOTAL', l2: F2.n + (F2.n === 1 ? ' game' : ' games'), l3: '', l3Style: '', rowStyle: 'height:40px;display:flex;flex-direction:column;justify-content:center;gap:1px;padding:0 8px;background:var(--nested);border-top:1px solid var(--axis);box-sizing:border-box', cells: mKeys.map(k => ({ v: f1(F2.tot[k]), style: cellS + ';font-weight:700;color:var(--reversed)' })), cellsStyle: 'height:40px;display:flex;align-items:center;background:var(--nested);border-top:1px solid var(--axis);box-sizing:border-box;font-family:var(--kw);font-size:11px' },
+                  { l1: 'PER GAME', l2: '', l3: '', l3Style: '', rowStyle: 'height:34px;display:flex;flex-direction:column;justify-content:center;padding:0 8px;background:var(--nested);box-sizing:border-box', cells: mKeys.map(k => ({ v: f1(F2.avg[k]), style: cellS + ';color:var(--second)' })), cellsStyle: 'height:34px;display:flex;align-items:center;background:var(--nested);box-sizing:border-box;font-family:var(--kw);font-size:11px' }] : [])
+            };
+          })(),
           plogMore: shown.length > lim, plogMoreLabel: 'Show ' + Math.min(25, rows.length - lim) + ' more', plogShowMore: () => this.setState({ plogLimit: lim + 25 }), plogShowAll: () => this.setState({ plogLimit: 100000 })
         };
       })(),
