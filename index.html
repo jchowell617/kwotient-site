@@ -226,7 +226,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
     [data-prof=score]{position:absolute;right:18px;top:16px;padding:0!important}
     [data-prof=headline]{flex:1 1 100%!important;gap:10px 14px!important}
     [data-prof=tile]{flex:1 1 0!important;min-width:88px!important}
-    [data-prof=value]{font-size:clamp(13px,4.4vw,18px)!important;letter-spacing:-.01em}
+    [data-prof=value]{font-size:clamp(13px,4.4vw,18px)!important;letter-spacing:-.01em;min-width:0;white-space:normal!important;overflow-wrap:anywhere;line-height:1.1}
+    [data-prof=tile]{overflow:hidden}
   }
 
   /* a chevron is an eleven-pixel glyph on a desktop; on a phone it is a thumb's target */
@@ -271,6 +272,14 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
     background:radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) calc(50% - 9px) center/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) 50% center/9px 9px no-repeat,radial-gradient(circle,var(--second) 1.4px,transparent 1.9px) calc(50% + 9px) center/9px 9px no-repeat,var(--rail)}
   [data-shell=splitbar]::after{left:0;right:0;top:-10px;bottom:-10px}
 }
+/* A table wider than any screen — the game stats, sixty columns — scrolls sideways at every
+   width, unlike the narrower tables that fit a desk; its first column holds still while it does */
+[data-scroll=xwide]{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:thin}
+[data-scroll=xwide] [data-pin="1"]{position:sticky;left:0;z-index:2;background:var(--surface);box-shadow:4px 0 8px -4px rgba(0,0,0,.45)}
+[data-scroll=xwide] [data-foot="1"] [data-pin="1"]{background:var(--nested)}
+/* a column's menu would be clipped inside the scroller, so it opens as a sheet above the tab bar at every width */
+[data-scroll=xwide] [data-colmenu][style*="absolute"]{position:fixed!important;left:12px!important;right:12px!important;top:auto!important;bottom:calc(80px + env(safe-area-inset-bottom))!important;width:auto!important;max-height:46vh!important;z-index:80!important}
+@media (min-width:700px){[data-scroll=xwide] [data-colmenu][style*="absolute"]{left:50%!important;right:auto!important;width:320px!important;transform:translateX(-50%);bottom:24px!important}}
 </style>
 </helmet>
 <div data-theme="{{ theme }}" data-tab="{{ tabKey }}" data-split="{{ splitKey }}" style="height:100vh;height:100dvh;overflow:hidden;background:var(--desk);padding:0;display:flex;flex-direction:column;font-family:var(--kw);color:var(--reversed)">
@@ -2053,20 +2062,29 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">{{ profile.kind }} PROFILE</span>
                     <span style="font-size:22px;font-weight:600">{{ profile.name }}</span>
                     <span style="font-family:var(--kw);font-size:10px;color:var(--second)">{{ profile.sub }}</span>
-                    <div style="display:flex;align-items:center;gap:10px;margin-top:2px"><div style="{{ profSeasonCol.cellStyle }}">
-                    <button data-colmenu="1" onClick="{{ profSeasonCol.click }}" style="{{ profSeasonCol.labelStyle }}">{{ profSeasonCol.label }}<span style="font-size:7px">{{ profSeasonCol.arrow }}</span><span style="{{ profSeasonCol.dotStyle }}"></span></button>
-                    <sc-if value="{{ profSeasonCol.open }}" hint-placeholder-val="{{ false }}">
-                      <div data-colmenu="1" style="{{ profSeasonCol.menuStyle }}">
-                        <form onSubmit="{{ profSeasonCol.onKey }}" style="margin:0"><input value="{{ profSeasonCol.q }}" onChange="{{ profSeasonCol.onQ }}" onKeyDown="{{ profSeasonCol.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:5px" /></form>
-                        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
-                          <button onClick="{{ profSeasonCol.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
-                        </div>
-                        <sc-for list="{{ profSeasonCol.values }}" as="v" hint-placeholder-count="6">
-                          <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
-                        </sc-for>
-                      </div>
-                    </sc-if>
-                  </div>
+                <div data-colmenu="1" style="position:relative;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding-top:6px">
+                  <sc-if value="{{ profBox.hidden }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ profBox.openBox }}" style="padding:7px 14px;border-radius:100px;cursor:pointer;font-family:var(--kw);font-size:9.5px;letter-spacing:.14em;font-weight:700;background:transparent;border:1px solid var(--brand);color:var(--brand);flex:none;-webkit-tap-highlight-color:transparent">SEARCH</button></sc-if><sc-if value="{{ profBox.shown }}" hint-placeholder-val="{{ true }}"><input data-box="{{ profBox.boxKey }}" value="{{ profBox.q }}" onChange="{{ profBox.on }}" onFocus="{{ profBox.focus }}" onClick="{{ profBox.click }}" onDoubleClick="{{ profBox.dbl }}" onKeyDown="{{ profBox.onKey }}" placeholder="{{ profBox.placeholder }}" style="flex:1;min-width:160px;padding:8px 11px;border-radius:7px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:11px"></sc-if><sc-if value="{{ profBox.shown }}" hint-placeholder-val="{{ false }}"><button data-colmenu="1" onClick="{{ profBox.closeBox }}" title="Close search" style="width:28px;height:28px;flex:none;border-radius:7px;border:1px solid var(--axis);background:transparent;color:var(--second);font-size:14px;line-height:1;cursor:pointer">×</button></sc-if>
+                  <span style="font-family:var(--kw);font-size:9px;color:var(--muted);flex:none">{{ profBox.count }}</span>
+                  <sc-for list="{{ profBox.params }}" as="t" hint-placeholder-count="0"><button onClick="{{ t.remove }}" style="{{ t.style }}">{{ t.label }}<span style="margin-left:5px;color:var(--muted)">×</span></button></sc-for>
+                  <sc-if value="{{ profBox.active }}" hint-placeholder-val="{{ false }}"><button onClick="{{ profBox.clear }}" style="padding:6px 10px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">clear</button></sc-if>
+                  <sc-if value="{{ profBox.open }}" hint-placeholder-val="{{ false }}">
+                    <div data-colmenu="1" onKeyDown="{{ profBox.onKey }}" style="{{ profBox.menuStyle }}">
+      <sc-if value="{{ profBox.browse }}" hint-placeholder-val="{{ false }}"><div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:3px;padding-bottom:5px;border-bottom:1px solid var(--grid)"><button onClick="{{ profBox.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button></div></sc-if>
+                      <sc-for list="{{ profBox.groups }}" as="gp" hint-placeholder-count="3">
+                        <button onClick="{{ gp.toggle }}" style="{{ gp.style }}"><span style="font-size:8px;letter-spacing:.14em;color:var(--collabel);width:64px;flex:none;text-align:left">{{ gp.label }}</span><span style="{{ gp.valueStyle }}">{{ gp.value }}</span><span style="font-size:8px;color:var(--muted);flex:none">{{ gp.chev }}</span></button>
+                        <sc-if value="{{ gp.open }}" hint-placeholder-val="{{ false }}">
+                          <div style="display:flex;flex-direction:column;gap:1px;padding:2px 0 5px 6px;margin-left:8px;border-left:1px solid var(--grid);max-height:220px;overflow-y:auto">
+                            <sc-for list="{{ gp.items }}" as="v" hint-placeholder-count="4">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </sc-for>
+                      <sc-for list="{{ profBox.values }}" as="v" hint-placeholder-count="6">
+                        <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                      </sc-for>
+                    </div>
+                  </sc-if>
                 </div>
                   </div>
                   <div data-prof="score" style="display:flex;flex-direction:column;align-items:flex-end;gap:5px;padding:0 14px 0 0">
@@ -2254,7 +2272,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </sc-if>
                 </div>
                   <sc-if value="{{ plogHasRows }}" hint-placeholder-val="{{ false }}">
-                    <div data-scroll="x"><div style="min-width:{{ plogMinW }}">
+                    <div data-scroll="xwide"><div style="min-width:{{ plogMinW }}">
                       <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
                         <sc-for list="{{ plogCols }}" as="c" hint-placeholder-count="8">
                           <div style="{{ c.cellStyle }}">
@@ -2277,8 +2295,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                       <sc-for list="{{ plogRows }}" as="r" hint-placeholder-count="8">
                         <sc-if value="{{ r.head }}" hint-placeholder-val="{{ false }}"><div style="padding:9px 10px 4px;font-family:var(--kw);font-size:8.5px;letter-spacing:.16em;color:var(--key);border-bottom:1px solid var(--grid)">{{ r.head }}</div></sc-if>
-                        <div style="{{ r.rowStyle }}">
-                          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="12"><span style="{{ c.style }}">{{ c.v }}</span></sc-for>
+                        <div style="{{ r.rowStyle }}" data-foot="{{ r.foot }}">
+                          <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="12"><span style="{{ c.style }}" data-pin="{{ c.pin }}">{{ c.v }}</span></sc-for>
                         </div>
                       </sc-for>
                     </div></div>
@@ -6120,7 +6138,7 @@ class Component extends DCLogic {
         const PLOG_COLS = [['season', 'SEASON'], ['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
         const fixed = (multi ? [['season', 'SEASON', .8]] : []).concat([['d', 'DATE', 1.1]]).concat(NFLp ? [['week', 'WK', .5]] : []).concat([['opp', 'OPP', .6], ['where', 'WHERE', .6], ['score', 'SCORE', .9]]);
         const colDefs = fixed.concat(statKeys.map(k => [k, LABEL[k] || k.toUpperCase().replace(/_/g, ' '), .7]));
-        const cell = (v, flex, dim) => ({ v, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' + (dim ? ';color:var(--second)' : '') });
+        const cell = (v, flex, dim, pin) => ({ v, pin: pin ? '1' : '', style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap' + (dim ? ';color:var(--second)' : '') + (pin ? ';padding-right:4px' : '') });
         const seasonY = Number(this.logSeason());
         const seasons = seasonsAll; const reading = st.careerAt != null && this._career === (st.profileId + '|' + sport) ? st.careerAt : null;
         // the foot of the table, as the league sites show it: the season's totals and its per-game line
@@ -6131,11 +6149,11 @@ class Component extends DCLogic {
             const sum = vs.reduce((a, v) => a + v, 0); if (RATE.test(k)) { tot[k] = sum / vs.length; avg[k] = sum / vs.length; } else { tot[k] = sum; avg[k] = sum / n; } });
           return { n, tot, avg }; };
         const f1 = v => v == null ? '—' : (Number.isInteger(v) ? String(v) : v.toFixed(1));
-        const footCell = (v, flex, strong) => ({ v, style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (strong ? 'var(--reversed)' : 'var(--second)') + (strong ? ';font-weight:700' : '') });
-        const footRows = shown => { const reg = shown.filter(g => !g.pre && !g.post); const list = reg.length ? reg : shown; if (!list.length) return []; const F2 = foot(list); const lead = (name, sub) => fixed.map(([k, lab, flex], i) => i === 0 ? footCell(name, flex, true) : i === 1 ? footCell(sub, flex) : footCell('', flex));
+        const footCell = (v, flex, strong, pin) => ({ v, pin: pin ? '1' : '', style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (strong ? 'var(--reversed)' : 'var(--second)') + (strong ? ';font-weight:700' : '') });
+        const footRows = shown => { const reg = shown.filter(g => !g.pre && !g.post); const list = reg.length ? reg : shown; if (!list.length) return []; const F2 = foot(list); const lead = (name, sub) => fixed.map(([k, lab, flex], i) => i === 0 ? footCell(name, flex, true, true) : i === 1 ? footCell(sub, flex) : footCell('', flex));
           const fs = 'display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--axis);background:var(--nested);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)';
-          return [{ rowStyle: fs, cells: lead(reg.length ? 'REG SEASON' : 'TOTAL', F2.n + (F2.n === 1 ? ' game' : ' games')).concat(statKeys.map(k => footCell(f1(F2.tot[k]), .7, true))) },
-                  { rowStyle: fs + ';border-top:0', cells: lead('PER GAME', '').concat(statKeys.map(k => footCell(f1(F2.avg[k]), .7, false))) }]; };
+          return [{ rowStyle: fs, foot: '1', cells: lead(reg.length ? 'REG SEASON' : 'TOTAL', F2.n + (F2.n === 1 ? ' game' : ' games')).concat(statKeys.map(k => footCell(f1(F2.tot[k]), .7, true))) },
+                  { rowStyle: fs + ';border-top:0', foot: '1', cells: lead('PER GAME', '').concat(statKeys.map(k => footCell(f1(F2.avg[k]), .7, false))) }]; };
         const ROW = 'display:flex;gap:6px;padding:7px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)';
         const monthOf = d => { try { return new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(String(d) + 'T12:00:00Z')).toUpperCase(); } catch (e) { return String(d).slice(0, 7); } };
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
@@ -6147,11 +6165,11 @@ class Component extends DCLogic {
           plogHasRows: games.length > 0,
           plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: lastOnly ? 'LAST GAME · 1 of ' + games.length : (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS).map(g => g.label === 'SEASON' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => String(b.label).localeCompare(String(a.label))) })
             : g.label === 'WEEK' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => Number(a.label) - Number(b.label)) }) : g) }),
-          plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead),
+          plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead).map(c => c.key === colDefs[0][0] ? Object.assign({}, c, { cellStyle: c.cellStyle + ';position:sticky;left:0;z-index:6;background:var(--surface);padding-right:4px' }) : c),
           plogMinW: (colDefs.length * 62 + 120) + 'px',
           // the NBA's long season reads by month, as the league sites lay it out; a foot carries the totals
           plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort || lastOnly; shown.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
-            out.push({ rowStyle: ROW, cells: colDefs.map(([k, lab, flex]) => k === 'season' ? cell(label(g.season), flex, true) : k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
+            out.push({ rowStyle: ROW, foot: '', cells: colDefs.map(([k, lab, flex], ci) => k === 'season' ? cell(label(g.season), flex, true, ci === 0) : k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true, ci === 0) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
             : k === 'opp' ? cell(g.opp || '—', flex) : k === 'where' ? cell(g.home ? 'home' : 'away', flex, true)
             : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(rows.length <= lim || lastOnly ? footRows(rows) : []); })(),
           plogMore: shown.length > lim, plogMoreLabel: 'Show ' + Math.min(25, rows.length - lim) + ' more', plogShowMore: () => this.setState({ plogLimit: lim + 25 }), plogShowAll: () => this.setState({ plogLimit: 100000 })
@@ -6571,7 +6589,24 @@ paceRows: (() => {
       rosterShowLess: () => tset('roster', { limit: ROSTER_PAGE }),
       rosterCanCollapse: rosterLimit > ROSTER_PAGE,
       rosterPageNote: 'showing ' + Math.min(rosterLimit, rosterShown.length) + ' of ' + rosterShown.length,
-      profSeasonCol: seasonMenuFor('profile'),
+      // the card's season is chosen in the standard search box: SEASON in the directory, newest
+      // first, or a year typed and picked; the box reads the season in force when at rest
+      profBox: (() => {
+        const cur = this.logSeasonDefault(sport), chosen = st.logSeason || null, eff = chosen || cur;
+        const lab = y => sport === 'NBA' ? y + '-' + String(y + 1).slice(2) : String(y);
+        const years = Array.from({ length: Math.max(1, cur - 2010) }, (_, n) => cur - n);
+        // the seasons are directory items: a pick becomes a tag in the box, the tag's × or the
+        // box's clear returns the card to the season in play
+        const items = years.map(y => ({ group: 'SEASON', label: lab(y), count: y === cur ? 'current' : '' }));
+        const yearOf = v => years.find(y => lab(y) === String(v)) || null;
+        const P = { list: chosen ? [{ group: 'SEASON', value: lab(chosen), label: lab(chosen) }] : [],
+          has: (k, v) => k === 'SEASON' && String(v) === lab(eff),
+          add: (k, v) => { if (k === 'SEASON') { const y = yearOf(v); this.setLogSeason(y == null || y === cur ? null : y); } },
+          remove: () => this.setLogSeason(null), clear: () => this.setLogSeason(null) };
+        const abbr = profile ? (profile.kind === 'CLUB' ? profile.mono : ((st.profileEnt && st.profileEnt.team) || '')) : '';
+        return searchFor('profile', histMenuFor('profile', abbr, []), { groups: [{ label: 'SEASON', items }], params: P, placeholder: 'search the profile · a season',
+          count: lab(eff) + (chosen ? '' : ' · current') });
+      })(),
       rosterCols, rosterSearch: rosterSearchVals || searchFor('roster', histMenuFor('roster', g.homeAbbr), { table: 'roster', cols: ROSTER_SEARCH_COLS }),
       profSearch: searchFor('profile', histMenuFor('profile', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search games · club, week, W or L, home or away', count: profile ? profile.bars.length + ' games' : '', groups: logGroups(profHistRows) }),
       h2hSearch: searchFor('h2h', histMenuFor('h2h', profHistAbbr || g.homeAbbr, profHistAbbr ? profHistRows : null), { placeholder: 'search meetings · club, week, W or L, home or away', count: profile && profile.h2h ? profile.h2h.rows.length + ' meetings' : '', groups: logGroups(profHistRows) }),
