@@ -51,7 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_RECORD_VER = "1e4b57faee";</script>
+<script>window.KQ_BUILD = "48e4f2640b";</script>
+<script>window.KQ_RECORD_VER = "32446f41be";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -87,8 +88,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=6a6a5e69db"></script>
-<script src="./kq-seasons.js?v=0048502213"></script>
+<script src="./kq-bundle.js?v=e44cfbb28a"></script>
+<script src="./kq-seasons.js?v=4719ac748c"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -3135,7 +3136,11 @@ class Component extends DCLogic {
       this.setState({ hoverIdx: null, momHover: null, pTrendHover: null, tTrendHover: null, trendHover: null });
     };
     document.addEventListener('click', this._offChart, true);
-    this._visible = () => { if (document.visibilityState === 'visible' && this.state.kq === 'ready') { this.pollLive(); this.loadStandings(); } };
+    this._visible = () => { if (document.visibilityState === 'visible' && this.state.kq === 'ready') { this.pollLive(); this.loadStandings(); this.checkBuild(); } };
+    // a page kept open, or opened from a phone's home screen, asks every ten minutes and on each
+    // return to the foreground whether a newer build has been published, and reloads to it
+    this._buildT = setInterval(() => this.checkBuild(), 10 * 60000);
+    setTimeout(() => this.checkBuild(), 20000);
     document.addEventListener('visibilitychange', this._visible);
     // a beat a second, for the clock and the cohort countdowns
     this._clock = setInterval(() => this.setState({ clockTick: Date.now() }), 1000);
@@ -3183,7 +3188,7 @@ class Component extends DCLogic {
     this.setState(x => { const o = Object.assign({}, x.oddsHist); list.forEach(n => { o[n.key] = { state: 'loading', games: [] }; }); return { oddsHist: o }; });
     list.forEach(n => S.oddsAt(sport, n.at).then(r => this.setState(x => ({ oddsHist: Object.assign({}, x.oddsHist, { [n.key]: { state: r.ok ? 'ready' : 'failed', games: r.games || [], reason: r.reason || '' } }) }))));
   }
-  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); document.removeEventListener('focusin', this._liftField); window.removeEventListener('scroll', this._scrollDrop); document.removeEventListener('pointerdown', this._tapOut, true); document.removeEventListener('click', this._offChart, true); } catch (e) {} }
+  componentWillUnmount() { clearInterval(this.timer); clearInterval(this._clock); clearInterval(this._buildT); clearTimeout(this._kqT); clearTimeout(this._liveT); try { document.removeEventListener('mousedown', this._outside, true); document.removeEventListener('visibilitychange', this._visible); document.removeEventListener('keydown', this._esc); document.removeEventListener('keydown', this._enterBlur, true); document.removeEventListener('focusin', this._liftField); window.removeEventListener('scroll', this._scrollDrop); document.removeEventListener('pointerdown', this._tapOut, true); document.removeEventListener('click', this._offChart, true); } catch (e) {} }
 
   // ---------- the record and the live edge ----------
   connectRecord() {
@@ -3585,6 +3590,19 @@ class Component extends DCLogic {
   }
   // the page returns to the top now, on the next frame and once more after Safari has settled,
   // so nothing that scrolls on its own in between — a focused control, a layout pass — keeps it down
+  // the newest build's stamp against this page's own; a difference reloads the page, once the
+  // reader is not mid-drag or mid-type
+  checkBuild() {
+    try {
+      if (!window.KQ_BUILD || this._reloading) return;
+      fetch('./build.json?t=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(j => {
+        if (!j || !j.build || j.build === window.KQ_BUILD) return;
+        const busy = this._dragRatio != null || (document.activeElement && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName));
+        if (busy) { setTimeout(() => this.checkBuild(), 60000); return; }
+        this._reloading = true; window.location.reload();
+      }).catch(() => {});
+    } catch (e) {}
+  }
   // The bar is dragged: while it moves the two panes take their share straight on the element, so
   // the page is not redrawn on every pixel; the release files the share in the state.
   splitDrag(e) {
