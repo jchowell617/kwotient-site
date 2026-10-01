@@ -6096,6 +6096,8 @@ class Component extends DCLogic {
         const standIn = !curHas && seasonsAll.length ? seasonsAll[0] : null;
         const seasonSet = picked.length ? picked : typed.length ? typed : (!otherPicks && !q0 && seasonsAll.length ? [curHas ? curSeason : seasonsAll[0]] : null);
         const seasonOn = seasonSet && seasonSet.length === 1 ? seasonSet[0] : null;
+        // with nothing picked the table shows the last game played, alone, over the season's foot
+        const lastOnly = !picked.length && !typed.length && !otherPicks && !q0;
         const wantPre = (() => { const v = f0.phase; return Array.isArray(v) ? v.indexOf('preseason') >= 0 : v === 'preseason'; })();
         const gameOf = r => ({ r, season: r.__season, d: at(r, 'date'), week: at(r, 'week'), opp: at(r, 'opp'), home: !!at(r, 'home'),
           res: isClubP ? at(r, 'result') : (String(at(r, 'result') || '').charAt(0) || null), score: isClubP ? (at(r, 'pf') != null && at(r, 'pa') != null ? at(r, 'pf') + '-' + at(r, 'pa') : null) : (String(at(r, 'result') || '').slice(2) || null),
@@ -6112,6 +6114,7 @@ class Component extends DCLogic {
         statKeys.forEach(k => { get[k] = g => at(g.r, k); });
         TABLES.plog = { rows: gamesAll, get };
         const rows = tapply('plog', games, get, rowText(get));
+        const shown = lastOnly ? rows.slice(0, 1) : rows;
         const lim = st.plogLimit || 25;
         const NFLp = sport === 'NFL';
         const PLOG_COLS = [['season', 'SEASON'], ['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
@@ -6138,18 +6141,19 @@ class Component extends DCLogic {
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
         return {
           plogNote: !pr ? '' : !gamesAll.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
+            : lastOnly && shown.length ? 'last game · ' + (S ? S.day(shown[0].d) : shown[0].d) + ' ' + (shown[0].home ? 'vs ' : 'at ') + shown[0].opp + ' · ' + statKeys.length + ' stats, every one the feed carries · the ' + label(seasonOn != null ? seasonOn : curSeason) + ' season and ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
             : (seasonOn != null ? (standIn != null && seasonOn === standIn && !picked.length && !typed.length ? 'no games yet in ' + label(curSeason) + ' · ' + label(seasonOn) : label(seasonOn)) : seasonSet ? seasonSet.map(label).join(', ') : label(seasons[seasons.length - 1]) + ' to ' + label(seasons[0])) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
               + (reading != null ? ' · reading ' + label(reading) + '…' : '') + (raw.some(r => r.__season === seasonOn && at(r, 'preseason')) && !wantPre ? ' · preseason kept out, pick it under PHASE' : ''),
           plogHasRows: games.length > 0,
-          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS) }),
+          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: lastOnly ? 'LAST GAME · 1 of ' + games.length : (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS) }),
           plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead),
           plogMinW: (colDefs.length * 62 + 120) + 'px',
           // the NBA's long season reads by month, as the league sites lay it out; a foot carries the totals
-          plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort; rows.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
+          plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort || lastOnly; shown.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
             out.push({ rowStyle: ROW, cells: colDefs.map(([k, lab, flex]) => k === 'season' ? cell(label(g.season), flex, true) : k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
             : k === 'opp' ? cell(g.opp || '—', flex) : k === 'where' ? cell(g.home ? 'home' : 'away', flex, true)
-            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(rows.length <= lim ? footRows(rows) : []); })(),
-          plogMore: rows.length > lim, plogMoreLabel: 'Show ' + Math.min(25, rows.length - lim) + ' more', plogShowMore: () => this.setState({ plogLimit: lim + 25 }), plogShowAll: () => this.setState({ plogLimit: 100000 })
+            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(rows.length <= lim || lastOnly ? footRows(rows) : []); })(),
+          plogMore: shown.length > lim, plogMoreLabel: 'Show ' + Math.min(25, rows.length - lim) + ' more', plogShowMore: () => this.setState({ plogLimit: lim + 25 }), plogShowAll: () => this.setState({ plogLimit: 100000 })
         };
       })(),
       // ---------- a profile's timeline ----------
