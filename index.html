@@ -5981,7 +5981,10 @@ class Component extends DCLogic {
         const firstTue = firstNfl ? dayNum(firstNfl) - ((dayNum(firstNfl) - 5 + 7 * 1000) % 7) : null;   /* day 0 (1970-01-01) was a Thursday; Tuesday is 5 days on */
         const weekOf = c => c.lg === 'NFL' ? (firstTue == null ? '' : 'WEEK ' + (1 + Math.floor((dayNum(etDay(c)) - firstTue) / 7))) : etDay(c).slice(0, 7);
         const weeks = Array.from(new Set(all.map(weekOf))).filter(Boolean).sort((x, y) => x.localeCompare(y, undefined, { numeric: true }));
-        const latestWeek = weeks.length ? weeks[weeks.length - 1] : null;
+        // the week on display with nothing picked is the week in play: the one with the latest
+        // final score in it — not a week whose games are all still ahead, which has nothing to grade
+        const settledWeeks = weeks.filter(w => all.some(c => c.right != null && weekOf(c) === w));
+        const latestWeek = settledWeeks.length ? settledWeeks[settledWeeks.length - 1] : (weeks.length ? weeks[weeks.length - 1] : null);
         const G = { LEAGUE: 'trLg', WEEK: 'trWeek', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
           add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trWeek: null, trClub: null, trVerdict: null, trMonth: null }) };
