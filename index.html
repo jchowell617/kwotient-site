@@ -87,7 +87,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=5c7138ad15"></script>
+<script src="./kq-bundle.js?v=6a6a5e69db"></script>
 <script src="./kq-seasons.js?v=0048502213"></script>
 <style>
 :root{
@@ -5773,8 +5773,8 @@ class Component extends DCLogic {
       ],
       refGlossary: [
         { k: 'Kwotient Score', v: 'Kwotient\'s 0 to 100 score of a player or club: his rank inside the position cohort on the season as played, each game weighted in over the completed season until the season stands on its own. It moves after every game.' },
-        { k: 'Kwotient line', v: 'The Kwotient model\'s own fair spread for a game, from the two club cards and the score; negative favors the home side.' },
-        { k: 'Kwotient prior', v: 'The Kwotient model\'s win probability before a ball is played, from the two club cards alone.' },
+        { k: 'Kwotient line', v: 'The Kwotient model\'s own fair spread for a game: the two club cards, the home edge, each offense against the other defense, ball security, scoring form and the injury report, then the score as it stands; negative favors the home side.' },
+        { k: 'Kwotient prior', v: 'The Kwotient model\'s win probability before a ball is played, from the same parts as its line with no score yet.' },
         { k: 'Consensus', v: 'The median line across the books that post one; for the moneyline, the mean implied probability with the vig removed.' },
         { k: 'Implied probability', v: 'What a moneyline says about a side\'s chance once the book\'s margin is taken out, so the two sides sum to 100.' },
         { k: 'Edge', v: 'The gap between the Kwotient model\'s fair line and the market\'s, in points on the home spread; a point or more is worth noting, two is an alert.' },
@@ -6157,7 +6157,7 @@ class Component extends DCLogic {
         statKeys.forEach(k => { get[k] = g => at(g.r, k); });
         TABLES.plog = { rows: gamesAll, get };
         const rows = tapply('plog', games, get, rowText(get));
-        const shown = lastOnly ? [] : rows;
+        const shown = lastOnly ? rows.slice(0, 1) : rows;
         const lim = st.plogLimit || 25;
         const NFLp = sport === 'NFL';
         const PLOG_COLS = [['season', 'SEASON'], ['opp', 'OPP'], ['where', 'WHERE'], ['result', 'RESULT'], ['phase', 'PHASE']].concat(NFLp ? [['week', 'WEEK']] : []);
@@ -6184,11 +6184,11 @@ class Component extends DCLogic {
         const who = pr ? (isClubP ? pr.name : (pr.name || '')) : '';
         return {
           plogNote: !pr ? '' : !gamesAll.length ? (reading != null ? 'reading every season from the edge, ' + label(reading) + ' now…' : (F && F.reason) || 'the feed holds no game line for this profile')
-            : lastOnly ? 'pick a season, an opponent or a week in the search · ' + gamesAll.length + ' games across ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' on the record' + (reading != null ? ' · reading ' + label(reading) + '…' : '')
+            : lastOnly && shown.length ? 'last game · ' + (S ? S.day(shown[0].d) : shown[0].d) + ' ' + (shown[0].home ? 'vs ' : 'at ') + shown[0].opp + ' · the season\'s totals beneath · ' + gamesAll.length + ' games across ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search' + (reading != null ? ' · reading ' + label(reading) + '…' : '')
             : (seasonOn != null ? (standIn != null && seasonOn === standIn && !picked.length && !typed.length ? 'no games yet in ' + label(curSeason) + ' · ' + label(seasonOn) : label(seasonOn)) : seasonSet ? seasonSet.map(label).join(', ') : label(seasons[seasons.length - 1]) + ' to ' + label(seasons[0])) + ' · ' + games.length + (games.length === 1 ? ' game' : ' games') + ' · ' + statKeys.length + ' stats per game, every one the feed carries · ' + seasons.length + (seasons.length === 1 ? ' season' : ' seasons') + ' in the search'
               + (reading != null ? ' · reading ' + label(reading) + '…' : '') + (raw.some(r => r.__season === seasonOn && at(r, 'preseason')) && !wantPre ? ' · preseason kept out, pick it under PHASE' : ''),
           plogHasRows: shown.length > 0,
-          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: lastOnly ? gamesAll.length + ' games' : (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS).map(g => g.label === 'SEASON' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => String(b.label).localeCompare(String(a.label))) })
+          plogBox: searchFor('plog', histMenuFor('plog', isClubP ? (pr.mono || pr.abbr || '') : ((ent && ent.team) || ''), games), { table: 'plog', cols: PLOG_COLS, placeholder: 'search the games · a season, an opponent, home or away, won or lost, a week, a phase', count: lastOnly ? 'LAST GAME · 1 of ' + games.length : (seasonOn != null ? label(seasonOn) + ' · ' : '') + rows.length + ' of ' + games.length, groups: colGroups(gamesAll, get, PLOG_COLS).map(g => g.label === 'SEASON' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => String(b.label).localeCompare(String(a.label))) })
             : g.label === 'WEEK' ? Object.assign({}, g, { items: g.items.slice().sort((a, b) => Number(a.label) - Number(b.label)) }) : g) }),
           plogCols: colDefs.map(([k, lab, flex]) => tcol('plog', k, lab, null, 'left', flex)).map(wrapHead).map(c => c.key === colDefs[0][0] ? Object.assign({}, c, { cellStyle: c.cellStyle + ';position:sticky;left:0;z-index:6;background:var(--surface);padding-right:4px' }) : c),
           plogMinW: (colDefs.length * 62 + 120) + 'px',
@@ -6196,7 +6196,7 @@ class Component extends DCLogic {
           plogRows: (() => { const out = []; let lastM = null; const sorted = !!tstate('plog').sort || lastOnly; shown.slice(0, lim).forEach(g => { if (!sorted) { const m = (multi ? label(g.season) + ' · ' : '') + (g.pre ? 'PRESEASON' : g.post ? (sport === 'NBA' ? 'PLAYOFFS' : 'POSTSEASON') : (sport === 'NBA' ? monthOf(g.d) : 'REGULAR SEASON')); if (m !== lastM) { out.push({ head: m, rowStyle: 'display:none', cells: [] }); lastM = m; } }
             out.push({ rowStyle: ROW, foot: '', cells: colDefs.map(([k, lab, flex], ci) => k === 'season' ? cell(label(g.season), flex, true, ci === 0) : k === 'd' ? cell(S ? S.day(g.d) : g.d, flex, true, ci === 0) : k === 'week' ? cell(g.week == null ? '—' : String(g.week), flex, true)
             : k === 'opp' ? cell(g.opp || '—', flex) : k === 'where' ? cell(g.home ? 'home' : 'away', flex, true)
-            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(!lastOnly && rows.length <= lim ? footRows(rows) : []); })(),
+            : k === 'score' ? cell((g.res ? g.res + ' ' : '') + (g.score || ''), flex) : cell(fmt(at(g.r, k)), flex)) }); }); return out.concat(rows.length <= lim || lastOnly ? footRows(rows) : []); })(),
           // the phone's game log as the sports apps draw it: a frozen column with the date, the
           // opponent and the result, and beside it a strip of the stats the selection filled, in
           // the feed's groups, scrolling sideways; the season's totals and per-game line at the foot
@@ -6208,7 +6208,7 @@ class Component extends DCLogic {
             const mKeys = statKeys.filter(k => list.some(g => at(g.r, k) != null && at(g.r, k) !== ''));
             const W = 54;
             const groups = []; mKeys.forEach(k => { const gname = GROUP(k); const last = groups[groups.length - 1]; if (last && last.label === gname) last.n++; else groups.push({ label: gname, n: 1 }); });
-            const F2 = !lastOnly && rows.length && list.length ? (() => { const reg = rows.filter(g => !g.pre && !g.post); const l = reg.length ? reg : rows; return Object.assign(foot(l), { reg: reg.length > 0 }); })() : null;
+            const F2 = rows.length && list.length ? (() => { const reg = rows.filter(g => !g.pre && !g.post); const l = reg.length ? reg : rows; return Object.assign(foot(l), { reg: reg.length > 0 }); })() : null;
             const cellS = 'width:' + W + 'px;flex:none;text-align:right;padding-right:8px;box-sizing:border-box;overflow:hidden;white-space:nowrap';
             return {
               plogMW: (mKeys.length * W + 8) + 'px',
@@ -6770,9 +6770,9 @@ paceRows: (() => {
       trendLineMark: 'position:absolute;left:0;right:0;bottom:' + ((logs.length ? season / tMax : 0) * 118).toFixed(1) + 'px;height:0;border-top:1px dashed var(--brand);opacity:.6',
       trendLineLabel: 'position:absolute;left:0;width:26px;text-align:left;bottom:' + ((logs.length ? season / tMax : 0) * 118 - 5).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--brand)',
       modelEdge: (Math.abs(wp - mk)).toFixed(1) + '-pt',
-      factorsCaption: g.live && g.model ? 'the Kwotient model\'s parts for this game, in points · club cards from the record, the score from the feed' : 'the Kwotient model\'s parts fill once a game is on the slate',
+      factorsCaption: g.live && g.model ? 'the Kwotient model ' + (g.model.version || 'v1') + ' · its parts for this game, in points on the home side · the club cards, dimensions, scoring form and injury report from the record, the score from the feed' + (g.model.hurt && (g.model.hurt.home.length || g.model.hurt.away.length) ? ' · out or doubtful: ' + [].concat(g.model.hurt.home.length ? [g.homeAbbr + ' ' + g.model.hurt.home.join(', ')] : [], g.model.hurt.away.length ? [g.awayAbbr + ' ' + g.model.hurt.away.join(', ')] : []).join(' · ') : '') : 'the Kwotient model\'s parts fill once a game is on the slate',
       factorsEmpty: g.live && g.model ? '' : 'no live game to read yet',
-      factors: (g.live && g.model ? [['Club card gap', g.model.priorPoints - (g.homeK != null ? LEAGUE_EDGE[sport] : 0)], ['Home edge', g.homeK != null ? LEAGUE_EDGE[sport] : 0], ['Score margin', g.model.margin], ['Game left', g.model.f * 4 - 2]] : []).map(([k, v]) => ({
+      factors: (g.live && g.model ? (g.model.parts || [['Club card gap', g.model.priorPoints - (g.homeK != null ? LEAGUE_EDGE[sport] : 0)], ['Home edge', g.homeK != null ? LEAGUE_EDGE[sport] : 0]]).concat([['Score margin', g.model.margin], ['Game left', g.model.f * 4 - 2]]) : []).map(([k, v]) => ({
         k, v: (v > 0 ? '+' : '') + v.toFixed(1),
         valStyle: 'font-family:var(--kw);font-size:11.5px;text-align:right;color:' + (v > 0 ? ACC : RED),
         bar: 'position:absolute;top:3px;bottom:3px;border-radius:2px;background:' + (v > 0 ? ACC : RED) + ';' + (v > 0 ? 'left:50%;width:' + Math.min(48, (Math.abs(v) / 4) * 48) + '%' : 'right:50%;width:' + Math.min(48, (Math.abs(v) / 4) * 48) + '%')
