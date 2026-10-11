@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "218916c1d3";</script>
+<script>window.KQ_BUILD = "b437b16b7c";</script>
 <script>window.KQ_RECORD_VER = "790ea7704c";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -1031,6 +1031,15 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
               </div>
             </sc-if>
+            </section>
+            </sc-if>
+
+            <sc-if value="{{ marketOff }}" hint-placeholder-val="{{ false }}">
+            <section style="border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
+              <div style="display:flex;flex-direction:column;gap:5px">
+                <span style="font-size:13.5px;font-weight:600">Sportsbook Lines</span>
+                <span style="font-family:var(--kw);font-size:10.5px;color:var(--second);line-height:1.55;max-width:70ch">{{ marketWhy }}</span>
+              </div>
             </section>
             </sc-if>
 
@@ -6449,6 +6458,20 @@ class Component extends DCLogic {
       ].filter(Boolean).map(x => Object.assign(x, { b: String(x.b || '').replace(/_/g, ' ') })),
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
+      /* THE BOOKS, WHEN THERE ARE NONE. The section is drawn from the market the edge
+         returns, so with no market it used to vanish whole and a reader was left to guess
+         whether the books had gone or the game had. It now stands in its own place and
+         says which: the edge states the reason — a plan that does not carry the market, a
+         slate with nothing on it, an origin it will not answer — and that sentence is
+         printed rather than summarised. */
+      marketOff: !hasMarket && !!g.live,
+      marketWhy: (() => {
+        const o = st.odds;
+        if (!o) return 'Asking the market…';
+        if (!o.ok) return o.refused ? 'The market is served to kwotient.io only, and this page is open somewhere else.' : 'The market feed did not answer.';
+        if (!o.available) return (o.reason || 'No game on the market in this window.').replace(/^./, c => c.toUpperCase()) + '.';
+        return 'No book has posted this game.';
+      })(),
       pboxSides, pboxCaption,
       pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: 'search the box score · player, team, position', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols) }),
       pboxHasMore: pboxPerSide > pboxLimit, pboxMoreLabel: 'Show ' + Math.min(PBOX_PAGE, pboxPerSide - pboxLimit) + ' more', pboxAllLabel: 'Show all ' + pboxPerSide,
