@@ -51,8 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "5aa23f4cfd";</script>
-<script>window.KQ_RECORD_VER = "935b705222";</script>
+<script>window.KQ_BUILD = "2db27fefb4";</script>
+<script>window.KQ_RECORD_VER = "01b64ad0cc";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -88,7 +88,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=3764508722"></script>
+<script src="./kq-bundle.js?v=d39c5e706b"></script>
 <script src="./kq-seasons.js?v=acdb5a2fb4"></script>
 <style>
 :root{
@@ -1136,7 +1136,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
             </section>
             </sc-if>
 
-            <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
+            <sc-if value="{{ propsOn }}" hint-placeholder-val="{{ false }}">
             <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px 13px">
               <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:11px">
                 <div style="display:flex;flex-direction:column;gap:3px;flex:1;min-width:0">
@@ -6794,6 +6794,12 @@ paceRows: (() => {
       trendPropMark: 'position:absolute;left:0;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) : 0).toFixed(1) + 'px;height:0;border-top:1px dotted var(--good);opacity:.9',
       trendPropLabel: 'position:absolute;right:0;bottom:' + (ppLine != null ? Math.min(118, (ppLine / tMax) * 118) + 2 : 0).toFixed(1) + 'px;font-family:var(--kw);font-size:9px;font-weight:700;color:var(--good)',
       trendPropLine: ppLine != null ? 'LINE ' + ppLine : '',
+      /* PROPS STAND ON THEIR OWN FEED. The section was drawn only when the books had a
+         market, which is a different provider on a different key: when the BALLDONTLIE plan
+         lapsed the lines the props feed was still posting went with it, for no reason but
+         the gate they happened to sit behind. It is shown now whenever there are lines, or
+         whenever a game is on and the caption can say why there are none. */
+      propsOn: hasProps || !!g.live,
       hasProps,
       propsCaption: hasProps ? playerProps.length + ' player lines · ' + (S ? S.age(prS.fetched || prS.at) : '') + ' ago' : '',
       propsNote: (() => { if (!g.live) return ''; if (!prS) return 'loading…'; if (!prS.ok) return 'no lines yet'; if (!prS.available) return 'no lines posted for this game yet'; return ''; })(),
