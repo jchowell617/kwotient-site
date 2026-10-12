@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "2db27fefb4";</script>
+<script>window.KQ_BUILD = "f8d0eba82f";</script>
 <script>window.KQ_RECORD_VER = "01b64ad0cc";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -6460,17 +6460,16 @@ class Component extends DCLogic {
       marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
       /* THE BOOKS, WHEN THERE ARE NONE. The section is drawn from the market the edge
          returns, so with no market it used to vanish whole and a reader was left to guess
-         whether the books had gone or the game had. It now stands in its own place and
-         says which: the edge states the reason — a plan that does not carry the market, a
-         slate with nothing on it, an origin it will not answer — and that sentence is
-         printed rather than summarised. */
+         whether the books had gone or the game had. It stands in its own place now and says
+         that none are posted — and says only that. What a feed costs, and whether an
+         arrangement with a provider is in force, is the owner's business and never the
+         page's: a reader is told what is on the page, not what is on the invoice. */
       marketOff: !hasMarket && !!g.live,
       marketWhy: (() => {
         const o = st.odds;
         if (!o) return 'Asking the market…';
         if (!o.ok) return o.refused ? 'The market is served to kwotient.io only, and this page is open somewhere else.' : 'The market feed did not answer.';
-        if (!o.available) return (o.reason || 'No game on the market in this window.').replace(/^./, c => c.toUpperCase()) + '.';
-        return 'No book has posted this game.';
+        return 'No sportsbook lines are posted for this game right now.';
       })(),
       pboxSides, pboxCaption,
       pboxSearch: searchFor('pbox', histMenuFor('pbox', g.homeAbbr), { table: 'pbox', cols: pboxSearchCols, placeholder: 'search the box score · player, team, position', count: pboxShownAll.length + ' of ' + pboxAllRows.length, groups: colGroups(pboxAllRows, pboxGetT, pboxSearchCols) }),
