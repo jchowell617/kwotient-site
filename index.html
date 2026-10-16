@@ -51,8 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "dd95a4024c";</script>
-<script>window.KQ_RECORD_VER = "7b82923ad7";</script>
+<script>window.KQ_BUILD = "2060e639f6";</script>
+<script>window.KQ_RECORD_VER = "ddc4f7263d";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -6013,16 +6013,21 @@ class Component extends DCLogic {
         // and now, before the morning files it — the same arithmetic the filer uses
         const liveFinal = {}; (st.liveSlate || []).forEach(g => { if (g.live && g.state === 'final' && g.gameId != null) liveFinal[String(g.gameId)] = g; });
         const all = (R ? R.calls : []).map(c => {
-          if (c.right != null) return c;
+          if (c.margin != null) return c;
           const g = liveFinal[String(c.id)]; if (!g) return c;
           const margin = g.hs - g.as, winner = margin > 0 ? c.home : margin < 0 ? c.away : 'tie';
           const covered = c.line != null && c.edge ? (c.edge > 0 ? margin + c.line > 0 : margin + c.line < 0) : null;
-          return Object.assign({}, c, { as: g.as, hs: g.hs, margin, winner, right: c.side ? winner === c.side : null, covered, status: 'Final', liveGraded: true });
+          const side = c.side || (c.fair == null || c.fair === 0 ? null : (c.fair < 0 ? c.home : c.away));
+          return Object.assign({}, c, { as: g.as, hs: g.hs, margin, winner, right: side ? winner === side : null, noSide: !side, covered, status: 'Final', liveGraded: true });
         });
         const liveN = all.filter(c => c.liveGraded).length;
         const sportCalls = all.filter(c => c.lg === sport);
-        const settled = sportCalls.filter(c => c.right != null).slice().sort((a, b) => (a.settled || a.d).localeCompare(b.settled || b.d) || a.away.localeCompare(b.away));
-        const right = settled.filter(c => c.right).length, wrong = settled.length - right;
+        // SETTLED is a final on the record; GRADED is a verdict on it. A call the model took no side
+        // on — a fair line of exactly zero — settles with the final and is graded neither way; it is not
+        // an open call, though for five weeks two week-1 games were counted as exactly that.
+        const settled = sportCalls.filter(c => c.margin != null).slice().sort((a, b) => (a.settled || a.d).localeCompare(b.settled || b.d) || a.away.localeCompare(b.away));
+        const graded = settled.filter(c => c.right != null), noSide = settled.length - graded.length;
+        const right = graded.filter(c => c.right).length, wrong = graded.length - right;
         const coverable = settled.filter(c => c.covered != null), covered = coverable.filter(c => c.covered).length;
         const sideP = c => c.prior == null ? null : (c.side === c.home ? c.prior : c.side === c.away ? 100 - c.prior : Math.max(c.prior, 100 - c.prior));
         const brier = settled.length ? settled.reduce((a, c) => { const p = c.prior == null ? 50 : c.prior / 100; const y = c.winner === c.home ? 1 : 0; return a + (p - y) * (p - y); }, 0) / settled.length : null;
@@ -6037,12 +6042,12 @@ class Component extends DCLogic {
         const weeks = Array.from(new Set(all.map(weekOf))).filter(Boolean).sort((x, y) => x.localeCompare(y, undefined, { numeric: true }));
         // the week on display with nothing picked is the week in play: the one with the latest
         // final score in it — not a week whose games are all still ahead, which has nothing to grade
-        const settledWeeks = weeks.filter(w => all.some(c => c.right != null && weekOf(c) === w));
+        const settledWeeks = weeks.filter(w => all.some(c => c.margin != null && weekOf(c) === w));
         const latestWeek = settledWeeks.length ? settledWeeks[settledWeeks.length - 1] : (weeks.length ? weeks[weeks.length - 1] : null);
         const G = { LEAGUE: 'trLg', WEEK: 'trWeek', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
           add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trWeek: null, trClub: null, trVerdict: null, trMonth: null }) };
-        const verdictOf = c => c.right == null ? 'open' : c.right ? 'right' : 'wrong';
+        const verdictOf = c => c.margin == null ? 'open' : c.right == null ? 'no side' : c.right ? 'right' : 'wrong';
         // a typed week is a week, not two words: "week 2", "wk 2" or "w2" picks that week (several, with
         // commas), and whatever else was typed narrows inside it
         const trQraw = String(st.trQ || '').trim().toLowerCase();
@@ -6064,7 +6069,7 @@ class Component extends DCLogic {
         const sorted = tapply('track', shown, trGet, rowText(trGet));
         const row = c => ({ wk: weekOf(c), day: S ? S.day(c.start ? etDayOf(c.start) : c.d) : c.d, game: c.away + ' @ ' + c.home, prior: c.prior == null ? '—' : c.prior.toFixed(1) + '% ' + c.home, fair: c.fair == null ? '—' : c.home + ' ' + sgnP(c.fair), market: c.line == null ? '—' : c.home + ' ' + sgnP(c.line),
           edge: c.edge == null || !c.on ? 'no edge' : Math.abs(c.edge).toFixed(1) + ' on ' + c.on, final: c.margin == null ? (c.status || 'scheduled') : c.as + '-' + c.hs,
-          call: c.right == null ? 'OPEN' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
+          call: c.margin == null ? 'OPEN' : c.right == null ? 'NO SIDE' : c.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(c.right == null ? 'var(--second)' : c.right ? 'var(--good)' : 'var(--critical)', 34) });
         // the charts read the same weeks the table does: the latest week with nothing picked, the
         // week searched, or the whole season when all weeks are asked for
         const scoped = weekSet ? settled.filter(c => weekSet.indexOf(weekOf(c)) >= 0) : settled;
@@ -6087,7 +6092,7 @@ class Component extends DCLogic {
         const misses = scoped.filter(c => c.fair != null && c.line != null && c.margin != null).map(c => ({ label: c.away + '@' + c.home, kw: Math.abs(c.margin + c.fair), mk: Math.abs(c.margin + c.line) }));
         const missMax = Math.max(7, ...misses.map(m => Math.max(m.kw, m.mk))); const gw = misses.length ? 300 / misses.length : 300, bw = Math.max(2, Math.min(14, gw * 0.36));
         const kwCloser = misses.filter(m => m.kw < m.mk).length, avg = k => misses.length ? misses.reduce((a, m) => a + m[k], 0) / misses.length : 0;
-        const openCalls = sportCalls.filter(c => c.right == null);
+        const openCalls = sportCalls.filter(c => c.margin == null);
         const hi = st.trCumHover == null ? null : clamp(st.trCumHover, 0, Math.max(0, scoped.length - 1)); const hc = hi == null ? null : scoped[hi];
         const hx = hi == null || scoped.length < 2 ? 0 : (hi / (scoped.length - 1)) * 100;
         // the calibration bins on the side the model liked
@@ -6103,16 +6108,16 @@ class Component extends DCLogic {
             const own = KWC.filter(c => !c.unpublished), filedC = own.filter(c => c.status === 'filed' || c.status === 'settled').length, settledC = own.filter(c => c.status === 'settled'), beat = settledC.filter(c => c.beat === true).length;
             const big = c => 'font-family:var(--kw);font-size:20px;font-weight:700;color:' + c;
             return [
-              { k: 'GAME CALLS', v: String(sportCalls.length), sub: settled.length + ' settled · ' + (sportCalls.length - settled.length) + ' open', vStyle: big('var(--reversed)') },
-              { k: 'KWOTIENT RIGHT', v: settled.length ? right + '-' + wrong : '—', sub: settled.length ? pct(right, settled.length) + ' of settled calls' : 'no final score yet', vStyle: big(settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
+              { k: 'GAME CALLS', v: String(sportCalls.length), sub: settled.length + ' settled · ' + (sportCalls.length - settled.length) + ' await a final', vStyle: big('var(--reversed)') },
+              { k: 'KWOTIENT RIGHT', v: graded.length ? right + '-' + wrong : '—', sub: graded.length ? pct(right, graded.length) + ' of graded calls' + (noSide ? ' · ' + noSide + ' no side' : '') : 'no final score yet', vStyle: big(settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
               { k: 'COHORTS', v: String(own.length), sub: filedC + ' filed · ' + settledC.length + ' settled', vStyle: big('var(--reversed)') },
               { k: 'BEAT BASELINE', v: settledC.length ? beat + '-' + (settledC.length - beat) : '—', sub: settledC.length ? 'of settled cohorts' : 'first settlement pending', vStyle: big(settledC.length ? (beat * 2 >= settledC.length ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') }
             ];
           })(),
           trTiles: [
             { k: 'CALLS', v: String(sportCalls.length), sub: 'filed before kickoff', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
-            { k: 'SETTLED', v: String(settled.length), sub: sportCalls.length - settled.length + ' still open', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
-            { k: 'KWOTIENT RIGHT', v: settled.length ? right + '-' + wrong : '—', sub: settled.length ? pct(right, settled.length) + ' of settled calls' : 'no result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
+            { k: 'SETTLED', v: String(settled.length), sub: (sportCalls.length - settled.length) + ' await a final', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' },
+            { k: 'KWOTIENT RIGHT', v: graded.length ? right + '-' + wrong : '—', sub: graded.length ? pct(right, graded.length) + ' of graded calls' + (noSide ? ' · ' + noSide + ' no side' : '') : 'no result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (settled.length ? (right >= wrong ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
             { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined result yet', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:' + (coverable.length ? (covered * 2 >= coverable.length ? 'var(--good)' : 'var(--critical)') : 'var(--reversed)') },
             { k: 'BRIER', v: brier == null ? '—' : brier.toFixed(3), sub: brier == null ? 'lower is better · 0.250 is a coin' : (brier < 0.25 ? 'beating a coin' : 'behind a coin') + ' · 0.250 is a coin', vStyle: 'font-family:var(--kw);font-size:22px;font-weight:700;color:var(--reversed)' }
           ],
@@ -6134,8 +6139,8 @@ class Component extends DCLogic {
                 rowStyle: 'display:flex;gap:8px;align-items:center;padding:' + (isSeason ? '9px 10px' : '8px 10px') + ';border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:10.5px;cursor:' + (isSeason ? 'default' : 'pointer') + ';background:' + (on ? 'var(--nested)' : isSeason ? 'var(--rail)' : 'transparent') + (isSeason ? ';border-bottom:1px solid var(--axis)' : ''),
                 pick: isSeason ? () => this.setState({ trWeek: null, trQ: 'all weeks', trLimit: 10 }) : () => this.setState({ trWeek: label, trQ: '', trLimit: 10 }) };
             };
-            const byWeek = weeks.slice().reverse().map(w => { const list = sportCalls.filter(c => weekOf(c) === w); return row(w, list, list.filter(c => c.right == null).length, !!weekSet && weekSet.indexOf(w) >= 0, false); });
-            return [row('SEASON', sportCalls, sportCalls.filter(c => c.right == null).length, !weekSet, true)].concat(byWeek);
+            const byWeek = weeks.slice().reverse().map(w => { const list = sportCalls.filter(c => weekOf(c) === w); return row(w, list, list.filter(c => c.margin == null).length, !!weekSet && weekSet.indexOf(w) >= 0, false); });
+            return [row('SEASON', sportCalls, sportCalls.filter(c => c.margin == null).length, !weekSet, true)].concat(byWeek);
           })(),
           // the running record's dressing: the axis, the dates beneath, a marker at each line's end
           trAxisTop: '+' + M, trAxisBot: '−' + M, trCumMid: scoped.length > 2 ? (S ? S.day(scoped[Math.floor(scoped.length / 2)].settled || scoped[Math.floor(scoped.length / 2)].d) : '') : '',
@@ -6400,7 +6405,7 @@ class Component extends DCLogic {
               tlBox: searchFor('tlgames', histMenuFor('tlgames', g.homeAbbr), { table: 'tlgames', cols: TL_COLS, placeholder: 'search the games · an opponent, home or away, won or lost, right or wrong', count: rows.length + ' of ' + played.length, groups: colGroups(played, get, TL_COLS) }),
               tlCols: [tcol('tlgames', 'd', 'DATE', null, 'left', .9), tcol('tlgames', 'opp', 'OPP', null, 'left', .6), tcol('tlgames', 'where', 'WHERE', null, 'left', .6), tcol('tlgames', 'score', isClubP ? 'SCORE' : 'RESULT', null, 'left', .7), tcol('tlgames', 'margin', isClubP ? 'MARGIN' : unit, null, 'left', .6), tcol('tlgames', 'prior', 'KWOTIENT PRIOR', null, 'left', .6), tcol('tlgames', 'edge', 'EDGE', null, 'left', .9), tcol('tlgames', 'call', 'KWOTIENT CALL', null, 'left', .6)].map(wrapHead),
               tlRows: rows.slice(0, lim).map(x => { const k = x.d + '|' + x.opp; const open = openKey === k; const got = open ? gameOf(x) : { loading: false, game: null }; const gm = got.game; const f = gm ? (gm.first || {}) : null; return ({ day: S ? S.day(x.d) : x.d, opp: x.opp, where: x.home ? 'home' : 'away', score: isClubP ? (x.pf == null ? '—' : x.pf + '-' + x.pa) : (x.res === 'W' ? 'won' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : x.res === 'L' ? 'lost' + (x.pf != null ? ' ' + x.pf + '-' + x.pa : '') : '—'), margin: isClubP ? (x.margin == null ? '—' : (x.margin > 0 ? '+' : '') + x.margin) : String(x.v), prior: x.prior == null ? '—' : x.prior + '%', edge: x.on ? Math.abs(x.edge).toFixed(1) + ' on ' + x.on : 'no edge',
-                call: x.right == null ? 'OPEN' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34),
+                call: x.margin == null ? 'OPEN' : x.right == null ? 'NO SIDE' : x.right ? 'RIGHT' : 'WRONG', callStyle: 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;padding:3px 7px;border-radius:5px;text-align:center;color:' + (x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)') + ';border:1px solid ' + mix(x.right == null ? 'var(--second)' : x.right ? 'var(--good)' : 'var(--critical)', 34),
                 toggle: () => { if (!open) { this.loadDay(lgl, x.d); if (x.live && x.gameId != null) this.loadEdgeBox(sport, x.gameId); } this.setState({ tlOpen: open ? null : k }); }, open, loading: open && got.loading,
                 read: gm ? 'Kwotient prior ' + (f.prior == null ? '—' : f.prior + '% ' + gm.home) + ' · fair ' + gm.home + ' ' + sgnP(f.fair) + ' · market ' + (f.line == null ? '—' : gm.home + ' ' + sgnP(f.line) + (f.total != null ? ' · o/u ' + f.total : '')) + (f.edgeOn ? ' · ' + Math.abs(f.edge).toFixed(1) + ' pts on ' + f.edgeOn : ' · no edge') : (open && !got.loading ? 'the record holds no reading of this game' : ''),
                 noBox: open && !got.loading && !!gm && !gm.box,
