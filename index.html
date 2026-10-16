@@ -51,8 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "2060e639f6";</script>
-<script>window.KQ_RECORD_VER = "ddc4f7263d";</script>
+<script>window.KQ_BUILD = "2547a11265";</script>
+<script>window.KQ_RECORD_VER = "22a512b449";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -88,7 +88,7 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=c800ea487e"></script>
+<script src="./kq-bundle.js?v=4a8a9fd9fa"></script>
 <script src="./kq-seasons.js?v=b48044c50c"></script>
 <style>
 :root{
@@ -472,7 +472,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
 
                 <sc-if value="{{ hasMarket }}" hint-placeholder-val="{{ false }}">
                 <div style="display:flex;flex-direction:column;gap:5px">
-                  <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">MARKET</span>
+                  <span style="font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:var(--key)">{{ heroMarketWord }}</span>
                   <span style="font-family:var(--kw);font-size:16px;font-weight:700;white-space:nowrap">{{ heroMarket }}</span>
                   <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ heroMarketSub }}</span>
                   <span style="{{ heroEdgeStyle }}">{{ heroEdge }}</span>
@@ -755,11 +755,13 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                     <svg viewBox="0 0 300 92" preserveAspectRatio="none" style="width:100%;height:92px;display:block">
                       <path d="{{ lineBand }}" fill="{{ lineBandFill }}" fill-opacity="0.28"></path>
                       <line x1="0" y1="{{ openY }}" x2="300" y2="{{ openY }}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="2 4" vector-effect="non-scaling-stroke"></line>
+                      <line x1="{{ kickX }}" y1="0" x2="{{ kickX }}" y2="92" stroke="var(--axis)" stroke-width="1" vector-effect="non-scaling-stroke"></line>
+                      <line x1="0" y1="{{ resultY }}" x2="300" y2="{{ resultY }}" stroke="var(--reversed)" stroke-width="1" stroke-dasharray="1 3" vector-effect="non-scaling-stroke"></line>
                       <path d="{{ fairPath }}" fill="none" stroke="var(--good)" stroke-width="1.7" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"></path>
                       <path d="{{ linePath }}" fill="none" stroke="{{ mktColor }}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"></path>
                     </svg>
                     <div style="{{ openLabel }}">{{ openWord }} {{ lineOpen }}</div>
-                    <sc-if value="{{ preGame }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-family:var(--kw);font-size:9.5px;letter-spacing:.12em;color:var(--muted)"><span style="background:var(--surface);padding:3px 10px;border-radius:4px">{{ preLabel }}</span></div></sc-if>
+                    <div style="{{ kickLabel }}">{{ kickWord }}</div><div style="{{ resultLabel }}">{{ resultWord }}</div>
                     <sc-if value="{{ lineHoverOn }}" hint-placeholder-val="{{ false }}">
                       <div style="position:absolute;inset:0;pointer-events:none">
                         <div style="{{ lineHoverLine }}"></div>
@@ -776,7 +778,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </div>
                 <div style="display:flex;gap:13px;font-family:var(--kw);font-size:9px;color:var(--second);margin-top:9px;flex-wrap:wrap">
                   <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:2px;background:{{ mktColor }};display:block"></span>MARKET</span>
-                  <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:0;border-top:2px dashed var(--good);display:block"></span>KWOTIENT FAIR</span>
+                  <span style="display:flex;align-items:center;gap:5px"><span style="width:12px;height:0;border-top:2px dashed var(--good);display:block"></span>KWOTIENT LINE</span>
                   <span style="margin-left:auto;color:var(--reversed)">{{ lineEdgeNote }}</span>
                 </div>
                 <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:7px">{{ lineCaption }}</div>
@@ -1100,7 +1102,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <sc-if value="{{ p.books.open }}" hint-placeholder-val="{{ true }}">
               <sc-for list="{{ bookRows }}" as="b" hint-placeholder-count="6">
                 <div style="display:flex;justify-content:space-between;gap:10px;padding:7px 0 7px 28px;border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:11px;align-items:baseline">
-                  <span style="flex:1.2;text-transform:capitalize;color:var(--lead)">{{ b.book }}</span><span style="{{ b.teamStyle }}">{{ b.team }}</span><span style="{{ b.spreadStyle }};flex:1">{{ b.spread }}</span><span style="flex:.8;color:var(--second)">{{ b.ml }}</span><span style="flex:1.6;color:var(--second)">{{ b.total }}</span><span style="{{ b.resultStyle }}">{{ b.result }}</span><span style="flex:.5;text-align:right;color:var(--faint)">{{ b.age }}</span>
+                  <span style="{{ b.bookStyle }}">{{ b.book }}</span><span style="{{ b.teamStyle }}">{{ b.team }}</span><span style="{{ b.spreadStyle }};flex:1">{{ b.spread }}</span><span style="flex:.8;color:var(--second)">{{ b.ml }}</span><span style="flex:1.6;color:var(--second)">{{ b.total }}</span><span style="{{ b.resultStyle }}">{{ b.result }}</span><span style="flex:.5;text-align:right;color:var(--faint)">{{ b.age }}</span>
                 </div>
               </sc-for>
               <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:11px">
@@ -3780,28 +3782,71 @@ class Component extends DCLogic {
     const lineSeries = hist.length >= 2 ? hist.map(h => h[1]) : s.line;
     const hasOpen = hasMarket && !!(g.opening && g.opening.spreadHome != null);
     const openV = hasOpen ? g.opening.spreadHome : lineSeries[0];
-    const both = lineSeries.concat(s.fair).concat([openV]);
+    // KWOTIENT'S LINE BESIDE THE MARKET'S (owner, 16 Oct 2026: a widget that shows the lines
+    // change live, Kwotient's among them, and compares them after the final). Kwotient's line
+    // is the record's track of the fair line as it was filed towards the kick, the page's own
+    // reading now, and through a game the model's expected final margin at every scored point
+    // — the line Kwotient would post in play. The market's is the edge's history of the
+    // consensus, before the kick and in play. After the final the two lines a reader compares
+    // against the result are the ones from before kickoff: Kwotient's call on the record, and
+    // the closing the edge filed.
+    const recRow = (() => { const R = window.KQ_RECORD_CALLS; return R && g.live && g.gameId != null ? (R.calls || []).find(c => c.lg === sport && String(c.id) === String(g.gameId)) || null : null; })();
+    const isFinal = !!g.live && g.state === 'final';
+    const fairPre = recRow && recRow.fair != null ? recRow.fair : g.fair;
+    const kqTrack = (recRow && Array.isArray(recRow.kq) ? recRow.kq : []).filter(p => p && p[0] != null && p[1] != null && (!isFinite(kickW) || p[0] <= kickW)).map(p => ({ w: p[0], v: p[1] }));
+    const priorPts = g.model && g.model.priorPoints != null ? g.model.priorPoints : -(fairPre || 0);
+    const stepPts = g.live && !pre && S ? (g.steps || []).filter(x => x.t != null && x.hs != null && x.as != null).map(x => {
+      const f = S.remaining({ league: sport.toLowerCase(), state: x.per == null ? 'final' : 'in_progress', period: x.per, clock: x.clock });
+      return { w: x.t, v: Math.round(-((x.hs - x.as) + priorPts * f) * 10) / 10 };
+    }) : [];
+    const nowW = Date.now();
+    const mktW = hist.map(h => ({ w: h[0], v: h[1] }));
+    const kqAtKick = kqTrack.length ? kqTrack[kqTrack.length - 1].v : fairPre;
+    const kqW = kqTrack.concat(pre ? [{ w: nowW, v: g.fair }] : (isFinite(kickW) ? [{ w: kickW, v: kqAtKick }] : []).concat(stepPts)).filter(p => p.v != null);
+    const lastW = arr => arr.length ? arr[arr.length - 1].w : null;
+    const endW = isFinal ? (Math.max(lastW(mktW) || 0, lastW(stepPts) || 0, isFinite(kickW) ? kickW : 0) || nowW) : nowW;
+    const firstW = Math.min.apply(null, [mktW.length ? mktW[0].w : null, kqW.length ? kqW[0].w : null, !pre && isFinite(kickW) ? kickW : null].filter(w => w != null && isFinite(w)).concat([endW]));
+    const lineT0 = g.live && isFinite(firstW) ? firstW : null;
+    // the timeline: a game not yet started runs from the first reading to now; a game under
+    // way or over gives the approach to the kick two fifths of the width and the game itself
+    // the rest, so a week's drift and an evening's swings are both legible
+    const AX = 1000;
+    const inGame = !pre && !!g.live && isFinite(kickW);
+    const preShare = inGame ? (lineT0 != null && kickW - lineT0 > 60000 ? 0.4 : 0) : 1;
+    const span = (a, b) => Math.max(60000, b - a);
+    const uOf = w => { if (lineT0 == null) return 0;
+      if (!inGame) return (w - lineT0) / span(lineT0, endW) * AX;
+      if (w <= kickW) return preShare ? (w - lineT0) / span(lineT0, kickW) * preShare * AX : 0;
+      return (preShare + (w - kickW) / span(kickW, endW) * (1 - preShare)) * AX; };
+    const wOf = u => { if (lineT0 == null) return nowW;
+      if (!inGame) return lineT0 + u / AX * span(lineT0, endW);
+      if (preShare && u <= preShare * AX) return lineT0 + u / (preShare * AX) * span(lineT0, kickW);
+      return kickW + (u / AX - preShare) / (1 - preShare) * span(kickW, endW); };
+    const tidy = pts => pts.sort((a, b) => a.t - b.t).filter((p, i, a) => i === a.length - 1 || a[i + 1].t !== p.t);
+    const lineAxis = g.live ? AX : Math.max(1, lineSeries.length - 1);
+    // the market now: before and during the game the books' consensus, after the final the closing on file
+    const lineNowV = isFinal && g.lineFrom && g.lineFrom !== 'live' ? g.line : lineSeries[lineSeries.length - 1];
+    const linePts = !g.live ? lineSeries.map((v, i) => ({ t: i, v })) : tidy(mktW.map(p => ({ t: uOf(p.w), v: p.v })).concat(isFinal || !mktW.length ? [] : [{ t: AX, v: lineSeries[lineSeries.length - 1] }]));
+    const fairPts = !g.live ? [{ t: 0, v: s.fair[s.fair.length - 1] }, { t: lineAxis, v: s.fair[s.fair.length - 1] }] : tidy(kqW.map(p => ({ t: uOf(p.w), v: p.v })).concat(isFinal || !kqW.length ? [] : [{ t: AX, v: kqW[kqW.length - 1].v }]));
+    // Kwotient now: before the kick the model's reading, in play its expected margin, after
+    // the final the line it filed before kickoff — the call on the record
+    const fairNowV = !g.live ? s.fair[s.fair.length - 1] : isFinal ? kqAtKick : (fairPts.length ? fairPts[fairPts.length - 1].v : g.fair);
+    const resultV = isFinal ? -(g.hs - g.as) : null;
+    const closeV = isFinal ? (g.lineFrom && g.lineFrom !== 'live' ? g.line : (mktW.some(p => p.w <= kickW) ? mktW.filter(p => p.w <= kickW).pop().v : null)) : null;
+    const finalNote = isFinal && resultV != null && kqAtKick != null ? (() => {
+      const kqOff = Math.abs(kqAtKick - resultV), mOff = closeV != null ? Math.abs(closeV - resultV) : null;
+      return 'KWOTIENT ' + g.homeAbbr + ' ' + sgn(kqAtKick) + (closeV != null ? ' · CLOSE ' + sgn(closeV) : ' · NO PRE-KICK LINE ON FILE')
+        + (mOff == null ? '' : ' · ' + (kqOff < mOff ? 'KWOTIENT CLOSER BY ' + (mOff - kqOff).toFixed(1) : mOff < kqOff ? 'MARKET CLOSER BY ' + (kqOff - mOff).toFixed(1) : 'BOTH AS CLOSE'));
+    })() : null;
+    const both = linePts.map(p => p.v).concat(fairPts.map(p => p.v)).concat([openV, resultV, closeV].filter(v => v != null));
     const bLo = Math.min.apply(null, both), bHi = Math.max.apply(null, both);
     const bPad = (bHi - bLo) * 0.28 + 0.25;
     const dLo = bLo - bPad, dHi = bHi + bPad;
     const yOf = v => clamp(92 - ((v - dLo) / (dHi - dLo)) * 92, 0, 92);
-    const lineNowV = lineSeries[lineSeries.length - 1], fairNowV = s.fair[s.fair.length - 1];
-    // THE LINE OVER ITS OWN TIMELINE (owner, 11 Sep 2026): each reading of the consensus placed at
-    // the moment the edge took it, from the first reading to now, so the movement is the books'
-    // and a hover reads the line at any moment; before two readings the panel's own ticks stand
-    // In a game on the edge the timeline opens at the kickoff: the line as it stood then (the
-    // last pregame reading), and every reading since; before the kickoff there is no line.
-    const inGame = !pre && isFinite(kickW);
-    const gHist = inGame ? (() => { const before = hist.filter(h => h[0] < kickW), after = hist.filter(h => h[0] >= kickW);
-      const atKick = before.length ? before[before.length - 1][1] : (after.length ? after[0][1] : lineNowV);
-      return [[kickW, atKick]].concat(after); })() : hist;
-    const lineT0 = pre ? null : inGame ? kickW : hist.length >= 2 ? hist[0][0] : null;
-    const lineSpan = lineT0 != null ? Math.max(60000, (g.state === 'final' && gHist.length ? gHist[gHist.length - 1][0] : Date.now()) - lineT0) : 1;
-    const linePts = pre ? [] : lineT0 != null ? gHist.map(h => ({ t: h[0] - lineT0, v: h[1] })).concat(g.state === 'final' ? [] : [{ t: lineSpan, v: lineNowV }]) : lineSeries.map((v, i) => ({ t: i, v }));
-    const lineAxis = lineT0 != null ? lineSpan : Math.max(1, lineSeries.length - 1);
-    const fairPts = [{ t: 0, v: fairNowV }, { t: lineAxis, v: fairNowV }];
+    const kickU = inGame ? uOf(kickW) : null;
     const lineXOf = t => (t / lineAxis) * 300;
-    const linePathT = linePts.map((pt, i) => (i ? 'L' : 'M') + lineXOf(pt.t).toFixed(1) + ' ' + yOf(pt.v).toFixed(1)).join(' ');
+    const pathOf = pts => pts.map((pt, i) => (i ? 'L' : 'M') + lineXOf(pt.t).toFixed(1) + ' ' + yOf(pt.v).toFixed(1)).join(' ');
+    const linePathT = pathOf(linePts), fairPathT = pathOf(fairPts);
     const wallLabel = ms => { try { return new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(ms)) + ' ET'; } catch (e) { return ''; } };
     // the total: the market's number against what the game is actually producing
     const played = hasMarket && g.model && g.model.f != null ? 1 - g.model.f : 0;
@@ -4438,12 +4483,36 @@ class Component extends DCLogic {
       bookSides.push({ b, side: 'away', team: g.awayAbbr, spread: b.spreadAway, spreadOdds: b.spreadAwayOdds, ml: b.mlAway });
       bookSides.push({ b, side: 'home', team: g.homeAbbr, spread: b.spreadHome, spreadOdds: b.spreadHomeOdds, ml: b.mlHome });
     });
+    // KWOTIENT AMONG THE BOOKS (owner, 16 Oct 2026): the model's line sits in the table with
+    // the books' so the two read side by side — before the game, in play and after the final.
+    // It is the line filed before kickoff, with the moneyline its win probability implies at
+    // no vig. A started game also carries the closing consensus the edge filed, the market
+    // number a final is read against; the books' own rows are in-play prices by then.
+    const fairML = p => p == null || p <= 0 || p >= 100 ? null : (p >= 50 ? -Math.round(p / (100 - p) * 100) : Math.round((100 - p) / p * 100));
+    const kqProb = recRow && recRow.prior != null && !pre ? recRow.prior : g.wp;
+    if (fairPre != null) {
+      const kb = { book: 'kwotient', title: 'Kwotient', kq: true, updated: kqTrack.length ? new Date(kqTrack[kqTrack.length - 1].w).toISOString() : null,
+                   spreadHome: fairPre, spreadAway: -fairPre, mlHome: fairML(kqProb), mlAway: fairML(kqProb == null ? null : 100 - kqProb), total: null };
+      bookSides.push({ b: kb, side: 'away', team: g.awayAbbr, spread: kb.spreadAway, spreadOdds: null, ml: kb.mlAway });
+      bookSides.push({ b: kb, side: 'home', team: g.homeAbbr, spread: kb.spreadHome, spreadOdds: null, ml: kb.mlHome });
+    }
+    const closeOnFile = g.closing && g.closing.spreadHome != null ? g.closing : null;
+    if (closeOnFile && !pre) {
+      const cb = { book: 'closing', title: closeOnFile.from === 'opening' ? 'Opening line' : 'Closing consensus', closing: true, updated: closeOnFile.at ? new Date(closeOnFile.at).toISOString() : null,
+                   spreadHome: closeOnFile.spreadHome, spreadAway: -closeOnFile.spreadHome, mlHome: closeOnFile.mlHome, mlAway: closeOnFile.mlAway, total: closeOnFile.total };
+      bookSides.push({ b: cb, side: 'away', team: g.awayAbbr, spread: cb.spreadAway, spreadOdds: null, ml: cb.mlAway });
+      bookSides.push({ b: cb, side: 'home', team: g.homeAbbr, spread: cb.spreadHome, spreadOdds: null, ml: cb.mlHome });
+    }
+    const bookRank = r => r.b.kq ? 0 : r.b.closing ? 1 : 2;
     // A BOOK'S NUMBERS AGAINST THE SCORE (owner, 10 Sep 2026: the books widget updates after
     // each game): for the side on the row, whether its spread covered, whether its moneyline
     // won, and whether the game went over the book's total — the final's verdict once the game
     // is over, the running one while it is on
     const bookGrade = r => {
       if (!propGameOn) return null;
+      /* after the final a book's row is its last in-play price, not a line anyone could have
+         bet: only Kwotient's line and the close are read against the result */
+      if (propFinal && !r.b.kq && !r.b.closing) return null;
       const b = r.b; const m = r.side === 'home' ? g.hs - g.as : g.as - g.hs; const pts = (g.hs || 0) + (g.as || 0);
       const parts = [];
       if (r.spread != null) { const c = m + r.spread; parts.push(propFinal ? (c > 0 ? 'covered' : c < 0 ? 'lost' : 'push') : (c > 0 ? 'covering' : c < 0 ? 'not covering' : 'on the number')); }
@@ -4453,7 +4522,7 @@ class Component extends DCLogic {
     };
     const bookGet = { book: r => bookName(r.b), team: r => r.team, spread: r => r.spread, ml: r => r.ml, total: r => r.b.total, result: r => bookGrade(r), age: r => r.b.updated || '' };
     TABLES.books = { rows: bookSides, get: bookGet };
-    const bookShown = tapply('books', bookSides.slice().sort((x, y) => bookGet.book(x).localeCompare(bookGet.book(y)) || (x.side === 'away' ? -1 : 1)), bookGet, rowText(bookGet));
+    const bookShown = tapply('books', bookSides.slice().sort((x, y) => bookRank(x) - bookRank(y) || bookGet.book(x).localeCompare(bookGet.book(y)) || (x.side === 'away' ? -1 : 1)), bookGet, rowText(bookGet));
     const bookCols = [
       tcol('books', 'book', 'BOOK', tdistinct(bookSides, bookGet.book), 'left', 1.2), tcol('books', 'team', 'TEAM', tdistinct(bookSides, bookGet.team), 'left', .5),
       tcol('books', 'spread', 'SPREAD', null, 'left', 1), tcol('books', 'ml', 'MONEYLINE', null, 'left', .8),
@@ -5361,14 +5430,15 @@ class Component extends DCLogic {
     const momEndX = momX(momPts[momPts.length - 1].t);
     // A HOVER OVER TIME, for the charts drawn on a clock: the cursor reads any moment, each
     // series interpolated between the samples on either side, the label naming the moment
-    const buildT = (key, series, H, fmt, dom, axisMax, labelAt) => {
+    const buildT = (key, series, H, fmt, dom, axisMax, labelAt, livePre) => {
+      const held = pre && !livePre;
       const tMax = Math.max(1, ...series.map(sr => sr.pts.length ? sr.pts[sr.pts.length - 1].t : 0));
       const ht = st[key] == null ? null : clamp(st[key], 0, tMax);
       const at = (pts, t) => { if (!pts.length) return null; if (t <= pts[0].t) return pts[0].v; for (let i = 1; i < pts.length; i++) { if (t <= pts[i].t) { const a = pts[i - 1], b = pts[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return a.v + (b.v - a.v) * f; } } return pts[pts.length - 1].v; };
       const x = ht === null ? 0 : (ht / axisMax) * 100;
       const out = {};
-      out[key + 'On'] = !pre && ht !== null;
-      const mv = (e) => { if (pre) return; const r = e.currentTarget.getBoundingClientRect(); const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * axisMax, 0, tMax)); if (t !== st[key]) this.setState({ [key]: t }); };
+      out[key + 'On'] = !held && ht !== null;
+      const mv = (e) => { if (held) return; const r = e.currentTarget.getBoundingClientRect(); const t = Math.round(clamp(((this.ptX(e) - r.left) / Math.max(1, r.width)) * axisMax, 0, tMax)); if (t !== st[key]) this.setState({ [key]: t }); };
       out[key + 'Move'] = mv; out[key + 'Tap'] = mv;
       out[key + 'TouchStart'] = (e) => this.touchScrub(e, 'start'); out[key + 'TouchMove'] = (e) => this.touchScrub(e, 'move', mv);
       out[key + 'Off'] = () => this.setState({ [key]: null });
@@ -6455,30 +6525,39 @@ class Component extends DCLogic {
       wpSubtitle: hasMarket ? 'Kwotient per team vs market-implied, full game' : 'Kwotient per team, full game',
       mktPath: hasMarket && !pre ? mktPathOf() : '',
       heroMarket: hasMarket ? g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') : '',
-      heroMarketSub: hasMarket ? (g.marketN || 0) + ' books · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) + ' · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
-      heroEdge: hasMarket ? 'Kwotient ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase() : '',
+      heroMarketSub: hasMarket ? (g.marketN || 0) + ' books · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) + ' · ' + (isFinal && g.lineFrom && g.lineFrom !== 'live' ? 'at ' + wallLabel(Date.parse(g.marketUpdated || '')) : (S ? S.age(g.marketUpdated) : '') + ' ago') : '',
+      heroEdge: hasMarket ? (finalNote ? finalNote.toLowerCase().replace(/^kwotient/, 'Kwotient') : 'Kwotient ' + sgn(g.fair) + ' · ' + edgeText.toLowerCase()) : '',
+      heroMarketWord: isFinal ? (g.lineFrom === 'closing' ? 'CLOSING LINE' : g.lineFrom === 'opening' ? 'OPENING LINE' : 'LAST IN-PLAY LINE') : inGame ? 'MARKET · IN PLAY' : 'MARKET',
       heroEdgeStyle: 'font-family:var(--kw);font-size:10px;color:' + (edgeSide ? ACC : 'var(--second)'),
       lineNow: g.homeAbbr + ' ' + sgn(lineNowV),
       awayLineNow: g.awayAbbr + ' ' + sgn(-lineNowV),
-      linePath: pre ? '' : linePathT,
-      fairPath: pre ? '' : 'M0 ' + yOf(fairNowV).toFixed(1) + ' L300 ' + yOf(fairNowV).toFixed(1),
-      lineBand: pre || !linePts.length ? '' : linePathT + ' L' + lineXOf(linePts[linePts.length - 1].t).toFixed(1) + ' ' + yOf(fairNowV).toFixed(1) + ' L0 ' + yOf(fairNowV).toFixed(1) + ' Z',
+      linePath: linePathT,
+      fairPath: fairPathT,
+      lineBand: !linePts.length || !fairPts.length ? '' : linePathT + fairPts.slice().reverse().map(pt => ' L' + lineXOf(pt.t).toFixed(1) + ' ' + yOf(pt.v).toFixed(1)).join('') + ' Z',
+      kickX: kickU == null ? '-10' : lineXOf(kickU).toFixed(1),
+      kickLabel: 'position:absolute;top:0;line-height:11px;transform:translateX(-50%);white-space:nowrap;font-family:var(--kw);font-size:8px;letter-spacing:.12em;color:var(--muted);background:var(--surface);padding:0 3px;' + (kickU == null ? 'display:none' : 'left:' + (kickU / lineAxis * 100).toFixed(1) + '%'),
+      kickWord: sport === 'NBA' ? 'TIP' : 'KICK',
+      resultY: resultV == null ? '-10' : yOf(resultV).toFixed(1),
+      resultLabel: 'position:absolute;right:0;line-height:11px;white-space:nowrap;font-family:var(--kw);font-size:8px;letter-spacing:.12em;color:var(--reversed);background:var(--surface);padding:0 0 0 4px;' + (resultV == null ? 'display:none' : 'top:' + clamp(yOf(resultV) - 12, 0, 81).toFixed(1) + 'px'),
+      resultWord: resultV == null ? '' : 'FINAL · ' + (g.hs === g.as ? 'TIE' : (g.hs > g.as ? g.homeAbbr : g.awayAbbr) + ' BY ' + Math.abs(g.hs - g.as)),
       mktColor: MKT_COLOR,
-      ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Kwotient fair', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(lineT0 + t) : 'tick ' + Math.round(t)),
+      ...buildT('lineHover', [{ label: 'Market', pts: linePts, color: MKT_COLOR }, { label: 'Kwotient', pts: fairPts, color: 'var(--good)' }], 92, v => sgn(v), [dLo, dHi], lineAxis, t => lineT0 != null ? wallLabel(wOf(t)) + (inGame && kickU != null && t >= kickU ? ' · IN PLAY' : '') : 'tick ' + Math.round(t), true),
       lineBandFill: edgeSide ? ACC : 'var(--muted)',
-      openY: pre ? '-20' : yOf(openV).toFixed(1),
-      openLabel: (pre ? 'display:none;' : '') + 'position:absolute;left:0;top:' + openLbl.top.toFixed(1) + 'px;line-height:' + LBL + 'px;white-space:nowrap;' + (openLbl.crowded ? 'background:var(--surface);padding:0 4px 0 0;' : '') + 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
+      openY: yOf(openV).toFixed(1),
+      openLabel: 'position:absolute;left:0;top:' + openLbl.top.toFixed(1) + 'px;line-height:' + LBL + 'px;white-space:nowrap;' + (openLbl.crowded ? 'background:var(--surface);padding:0 4px 0 0;' : '') + 'font-family:var(--kw);font-size:8.5px;letter-spacing:.12em;color:var(--muted)',
       openWord: hasOpen ? 'OPEN' : 'FIRST SEEN',
       lineOpen: sgn(openV),
       lineNowVal: sgn(lineNowV), fairNowVal: sgn(fairNowV),
       mktValStyle: 'position:absolute;right:0;top:' + yMkt.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:' + MKT_COLOR + '',
       fairValStyle: 'position:absolute;right:0;top:' + yFair.toFixed(1) + 'px;transform:translateY(-50%);font-family:var(--kw);font-size:10.5px;color:' + ACC,
-      lineEdgeNote: edgeText,
+      lineEdgeNote: finalNote || edgeText,
       // the count follows the chart: readings since the kickoff in a game, none before it
-      lineCaption: (pre ? 'consensus across ' + (g.marketN || 0) + ' books'
-                   : inGame ? 'consensus across ' + (g.marketN || 0) + ' books · ' + (gHist.length - 1) + (gHist.length - 1 === 1 ? ' reading' : ' readings') + ' since kickoff'
-                   : (hist.length >= 2 ? 'consensus across ' + (g.marketN || 0) + ' books · ' + hist.length + ' readings since ' + (S ? S.age(new Date(hist[0][0]).toISOString()) : '') + ' ago' : 'market since this panel opened · ' + (g.marketN || 0) + ' books'))
-                   + (hasOpen ? ' · opening line from the books' : ' · opening line not posted yet'),
+      lineCaption: !g.live ? 'market since this panel opened · ' + (g.marketN || 0) + ' books'
+        : (hist.length ? hist.length + (hist.length === 1 ? ' reading' : ' readings') + ' of the consensus across ' + (g.marketN || 0) + ' books since ' + wallLabel(hist[0][0]) : 'market since this panel opened · ' + (g.marketN || 0) + ' books')
+          + " · Kwotient's line " + (kqTrack.length > 1 ? 'filed ' + kqTrack.length + ' times before the kick' : kqTrack.length === 1 ? 'filed once before the kick' : 'as the model reads it now')
+          + (inGame && !isFinal ? " · in play, Kwotient's line is the model's expected final margin" : '')
+          + (isFinal ? ' · the final is read against the two lines from before kickoff' : '')
+          + (hasOpen ? ' · opening line from the books' : ''),
       mtotalBig: hasMarket && g.mktTotal != null ? String(g.mktTotal) : '—',
       mtotalOpen: hasMarket ? (g.opening && g.opening.total != null ? 'opened ' + g.opening.total + ' · moved ' + sgn(g.mktTotal - g.opening.total) : 'opening total not posted yet') : '',
       mtotalPrices: hasMarket ? 'over ' + oddsFmt(overMed) + ' · under ' + oddsFmt(underMed) + ' · median across ' + (g.marketN || 0) + ' books' : '',
@@ -6497,7 +6576,7 @@ class Component extends DCLogic {
         bestMlA && { k: g.awayAbbr + ' ML', v: oddsFmt(bestMlA.mlAway), b: bestMlA.book }
       ].filter(Boolean).map(x => Object.assign(x, { b: String(x.b || '').replace(/_/g, ' ') })),
       marketHeader: hasMarket ? 'consensus ' + g.homeAbbr + ' ' + sgn(g.line) + ' · O/U ' + (g.mktTotal != null ? g.mktTotal : '—') + ' · ML ' + oddsFmt(g.mlHome) + ' / ' + oddsFmt(g.mlAway) : '',
-      marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' : '',
+      marketCaption: hasMarket ? 'median across ' + (g.marketN || 0) + ' US books · ' + (S ? S.age(g.marketUpdated) : '') + ' ago' + (isFinal ? " · after the final the books' rows are their last in-play prices; Kwotient's line and the close are read against the result" : " · Kwotient's line sits with the books") : '',
       /* THE BOOKS, WHEN THERE ARE NONE. The section is drawn from the market the edge
          returns, so with no market it used to vanish whole and a reader was left to guess
          whether the books had gone or the game had. It stands in its own place now and says
@@ -6525,9 +6604,10 @@ class Component extends DCLogic {
         const off = r.spread != null && cons != null && Math.abs(r.spread - cons) >= 1;
         return {
           book: bookName(b), team: r.team,
+          bookStyle: 'flex:1.2;text-transform:capitalize;color:' + (b.kq ? ACC : b.closing ? 'var(--reversed)' : 'var(--lead)') + (b.kq || b.closing ? ';font-weight:700' : ''),
           teamStyle: 'font-family:var(--kw);font-size:10.5px;flex:.5;color:' + (r.side === 'home' ? 'var(--brand)' : 'var(--lead)'),
-          spread: sgn(r.spread) + ' (' + oddsFmt(r.spreadOdds) + ')',
-          total: b.total != null ? 'O/U ' + b.total + ' (' + oddsFmt(b.overOdds) + ' / ' + oddsFmt(b.underOdds) + ')' : '—',
+          spread: r.spreadOdds != null ? sgn(r.spread) + ' (' + oddsFmt(r.spreadOdds) + ')' : sgn(r.spread),
+          total: b.total != null ? 'O/U ' + b.total + (b.overOdds != null || b.underOdds != null ? ' (' + oddsFmt(b.overOdds) + ' / ' + oddsFmt(b.underOdds) + ')' : '') : '—',
           result: bookGrade(r) || '—',
           resultStyle: 'flex:1.4;font-family:var(--kw);font-size:10px;letter-spacing:.04em;color:' + ((() => { const t = bookGrade(r) || ''; return /^(covered|covering)/.test(t) ? ACC : /^(lost|not covering)/.test(t) ? RED : t ? 'var(--reversed)' : 'var(--muted)'; })()),
           ml: oddsFmt(r.ml),

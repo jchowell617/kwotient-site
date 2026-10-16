@@ -717,11 +717,15 @@ window.KQ_WIRE = {"transactions":[{"date":"2026-10-15","lg":"nba","kind":"injury
      total, the market-implied home probability, and the books for the panel */
   function withMarket(g, o) {
     if (!o || !o.consensus || o.consensus.spreadHome == null) return g;
-    var c = o.consensus;
+    /* once the game is over the books' rows are the last in-play prices, not a line anyone
+       could have bet; the market a final is compared against is the closing the edge filed */
+    var cl = o.closing && o.closing.spreadHome != null ? o.closing : null;
+    var c = g.state === 'final' && cl ? cl : o.consensus;
     return Object.assign({}, g, {
       market: true, line: c.spreadHome, mktTotal: c.total, mktProb: c.homeProb != null ? c.homeProb * 100 : null,
-      mlHome: c.mlHome, mlAway: c.mlAway, books: o.books || [], marketN: c.n, marketUpdated: c.updated || null,
-      opening: o.opening || null, history: Array.isArray(o.history) ? o.history : []
+      mlHome: c.mlHome, mlAway: c.mlAway, books: o.books || [], marketN: c.n != null ? c.n : o.consensus.n, marketUpdated: c.updated || (c.at ? new Date(c.at).toISOString() : null) || null,
+      lineFrom: c === cl ? (cl.from === 'opening' ? 'opening' : 'closing') : 'live',
+      closing: cl, opening: o.opening || null, history: Array.isArray(o.history) ? o.history : []
     });
   }
   /* the season's table, by club code, from the edge's standings route */
