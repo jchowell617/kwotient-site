@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "4e4f89e42b";</script>
+<script>window.KQ_BUILD = "087fd684c9";</script>
 <script>window.KQ_RECORD_VER = "22a512b449";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -409,6 +409,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
                   <span style="font-family:var(--kw);font-size:8.5px;color:var(--second)">{{ g.clock }}</span>
                   <span style="font-family:var(--kw);font-size:8px;color:var(--muted)">{{ g.mktMini }}</span>
+                  <span style="font-family:var(--kw);font-size:8px;color:var(--good)">{{ g.kqMini }}</span>
                   <svg width="48" height="16" viewBox="0 0 48 16" preserveAspectRatio="none" style="display:block">
                     <path d="{{ g.sparkAway }}" fill="none" stroke="var(--muted)" stroke-width="1" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
                      <path d="{{ g.spark }}" fill="none" stroke="{{ g.sparkColor }}" stroke-width="1.3" stroke-linecap="round" vector-effect="non-scaling-stroke"></path>
@@ -1287,7 +1288,7 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 <section onClick="{{ g.select }}" style-hover="transform:translateY(-4px);box-shadow:0 16px 32px rgba(0,0,0,.34);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 16px;cursor:pointer;display:flex;flex-direction:column;gap:12px">
                   <div style="display:flex;justify-content:space-between;align-items:baseline">
                     <span style="{{ g.clockStyle }}"><span style="{{ g.dotStyle }}"></span>{{ g.clock }}</span>
-                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ g.lineLabel }}</span>
+                    <span style="display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;justify-content:flex-end"><span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ g.lineLabel }}</span><span style="font-family:var(--kw);font-size:9.5px;color:var(--good)">{{ g.kqLabel }}</span></span>
                   </div>
                   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
                     <div style="display:flex;flex-direction:column;gap:6px">
@@ -5767,6 +5768,10 @@ class Component extends DCLogic {
         awayProbLabel: (100 - p).toFixed(1) + '%',
         mktLabel: x.market && x.mktProb != null ? ' · mkt ' + x.mktProb.toFixed(0) + '%' : '',
         mktMini: x.market ? sgn(x.line) + (x.mktTotal != null ? ' · ' + x.mktTotal : '') : '',
+        // KWOTIENT'S LINE ON THE SLATE (owner, 16 Oct 2026): every card carries the model's line
+        // beside the market's, so the two read together before a dashboard is ever opened
+        kqLabel: x.market && x.fair != null ? 'Kwotient ' + x.homeAbbr + ' ' + sgn(x.fair) : '',
+        kqMini: x.fair != null ? 'Kwotient ' + sgn(x.fair) : '',
         spark: this.path(gv.slice(-40), 48, 16, 0, 100),
         sparkAway: this.path(gv.slice(-40).map(v => 100 - v), 48, 16, 0, 100),
         bigSpark: this.path(gv.slice(-70), 140, 54, 0, 100),
@@ -6204,8 +6209,10 @@ class Component extends DCLogic {
               const pct = (x, n) => n ? Math.round(x / n * 100) : 0;
               const bar = (x, n, col) => 'display:block;height:100%;border-radius:3px;width:' + pct(x, n) + '%;background:' + col;
               return { label, kq: done.length ? r + '-' + w : '—', kqPct: done.length ? pct(r, done.length) + '%' : '', kqBar: bar(r, done.length, 'var(--brand)'), kqColor: done.length ? (r > w ? 'var(--good)' : r < w ? 'var(--critical)' : 'var(--reversed)') : 'var(--muted)',
-                mk: mg.length ? mr + '-' + mw : '—', mkPct: mg.length ? pct(mr, mg.length) + '%' : '', mkBar: bar(mr, mg.length, '#e2b53f'),
-                closer: cl.length ? ck + ' of ' + cl.length : '—', open: openN ? String(openN) : '',
+                /* a week graded with no market line on the record (the NFL lapse of 11–16 Oct 2026 took
+                   week 5's lines with it) says so, rather than leaving the market's columns blank */
+                mk: mg.length ? mr + '-' + mw : (done.length ? 'no lines' : '—'), mkPct: mg.length ? pct(mr, mg.length) + '%' : '', mkBar: bar(mr, mg.length, '#e2b53f'),
+                closer: cl.length ? ck + ' of ' + cl.length : (done.length ? 'no lines' : '—'), open: openN ? String(openN) : '',
                 rowStyle: 'display:flex;gap:8px;align-items:center;padding:' + (isSeason ? '9px 10px' : '8px 10px') + ';border-bottom:1px solid var(--divider);font-family:var(--kw);font-size:10.5px;cursor:' + (isSeason ? 'default' : 'pointer') + ';background:' + (on ? 'var(--nested)' : isSeason ? 'var(--rail)' : 'transparent') + (isSeason ? ';border-bottom:1px solid var(--axis)' : ''),
                 pick: isSeason ? () => this.setState({ trWeek: null, trQ: 'all weeks', trLimit: 10 }) : () => this.setState({ trWeek: label, trQ: '', trLimit: 10 }) };
             };
