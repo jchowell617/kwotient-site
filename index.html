@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "2fcf31dba1";</script>
+<script>window.KQ_BUILD = "cc78f0d531";</script>
 <script>window.KQ_RECORD_VER = "027f99f457";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -3862,7 +3862,41 @@ class Component extends DCLogic {
       const n = s.hist.length; wpPts = s.hist.map((v, i) => ({ t: elapsedNow * (i / Math.max(1, n - 1)), v, m: s.mkt[i], a: 100 - v, when: null }));
     }
     const wpX = t => (t / TOTAL) * 600, wpY = v => 222 - (v / 100) * 222;
-    const wpPathOf = key => wpPts.map((pt, i) => (i ? 'L' : 'M') + wpX(pt.t).toFixed(1) + ' ' + wpY(pt[key]).toFixed(1)).join(' ');
+    // THE CURVE (owner, 16 Oct 2026): the readings are the readings — every one is a point the
+    // line passes through — but the line between them is drawn as a monotone cubic rather than
+    // straight segments, so a game reads as a curve and not a staircase. Monotone matters here:
+    // a probability sampled at 48 and then 52 must not wander to 55 on the way between them,
+    // and this interpolation (Fritsch–Carlson) never overshoots the two readings it joins. The
+    // hover reads the same curve, so the dot sits on the line it is read from.
+    const hermite = (xs, ys) => {
+      const n = xs.length;
+      if (!n) return { path: '', at: () => null };
+      if (n === 1) return { path: 'M' + xs[0].toFixed(1) + ' ' + ys[0].toFixed(1), at: () => ys[0] };
+      const d = [], m = new Array(n);
+      for (let i = 0; i < n - 1; i++) { const dx = xs[i + 1] - xs[i]; d.push(dx ? (ys[i + 1] - ys[i]) / dx : 0); }
+      m[0] = d[0]; m[n - 1] = d[n - 2];
+      for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+      for (let i = 0; i < n - 1; i++) {
+        if (!d[i]) { m[i] = 0; m[i + 1] = 0; continue; }
+        const a = m[i] / d[i], b = m[i + 1] / d[i], s2 = a * a + b * b;
+        if (s2 > 9) { const t = 3 / Math.sqrt(s2); m[i] = t * a * d[i]; m[i + 1] = t * b * d[i]; }
+      }
+      let path = 'M' + xs[0].toFixed(1) + ' ' + ys[0].toFixed(1);
+      for (let i = 0; i < n - 1; i++) {
+        const dx = (xs[i + 1] - xs[i]) / 3;
+        path += ' C' + (xs[i] + dx).toFixed(1) + ' ' + (ys[i] + m[i] * dx).toFixed(1) + ' ' + (xs[i + 1] - dx).toFixed(1) + ' ' + (ys[i + 1] - m[i + 1] * dx).toFixed(1) + ' ' + xs[i + 1].toFixed(1) + ' ' + ys[i + 1].toFixed(1);
+      }
+      const at = x => {
+        if (x <= xs[0]) return ys[0]; if (x >= xs[n - 1]) return ys[n - 1];
+        let i = 0; while (i < n - 2 && x > xs[i + 1]) i++;
+        const h = xs[i + 1] - xs[i]; if (!h) return ys[i];
+        const u = (x - xs[i]) / h, u2 = u * u, u3 = u2 * u;
+        return (2 * u3 - 3 * u2 + 1) * ys[i] + (u3 - 2 * u2 + u) * h * m[i] + (-2 * u3 + 3 * u2) * ys[i + 1] + (u3 - u2) * h * m[i + 1];
+      };
+      return { path, at };
+    };
+    const wpCurve = key => hermite(wpPts.map(pt => pt.t), wpPts.filter(pt => pt[key] != null).length === wpPts.length ? wpPts.map(pt => pt[key]) : wpPts.map(pt => pt[key] == null ? (key === 'm' ? mk : wp) : pt[key]));
+    const wpPathOf = key => { const c = wpCurve(key); return c.path.replace(/(-?\d+\.\d) (-?\d+\.\d)/g, (q, x, y) => wpX(Number(x)).toFixed(1) + ' ' + wpY(Number(y)).toFixed(1)); };
     // THE MARKET LINE BY GAME TIME (owner, 11 Sep 2026): the edge's history of the consensus
     // — a sample on its own beat, wall-clock stamped — placed on the game clock through the
     // score-as-it-went record, whose points carry both the wall clock and the game clock; the
@@ -3883,14 +3917,15 @@ class Component extends DCLogic {
       if (hasMarket && out[out.length - 1].t < elapsedNow) out.push({ t: elapsedNow, m: mk });
       return out;
     })();
-    const mktPathOf = () => mktPts ? mktPts.map((pt, i) => (i ? 'L' : 'M') + wpX(pt.t).toFixed(1) + ' ' + wpY(pt.m).toFixed(1)).join(' ') : wpPathOf('m');
-    const mktAt = t => { const P = mktPts; if (!P || !P.length) return null; if (t <= P[0].t) return P[0].m; for (let i = 1; i < P.length; i++) { if (t <= P[i].t) { const a = P[i - 1], b = P[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return a.m + (b.m - a.m) * f; } } return P[P.length - 1].m; };
+    const mktCurve = () => mktPts ? hermite(mktPts.map(pt => pt.t), mktPts.map(pt => pt.m)) : null;
+    const mktPathOf = () => { const c = mktCurve(); return c ? c.path.replace(/(-?\d+\.\d) (-?\d+\.\d)/g, (q, x, y) => wpX(Number(x)).toFixed(1) + ' ' + wpY(Number(y)).toFixed(1)) : wpPathOf('m'); };
+    const mktAt = t => { const c = mktCurve(); if (!c) return null; const v = c.at(t); return v == null ? null : v; };
     // THE HOVER READS ANY MOMENT (owner, 11 Sep 2026): the cursor sits anywhere on the chart and
     // reads the probability at that moment on the game's clock, interpolated along the curve
     // between the samples on either side — never snapped to a sample
     const hn = wpPts.length;
     const lastT = wpPts.length ? wpPts[wpPts.length - 1].t : 0;
-    const wpAt = t => { if (!wpPts.length) return { v: wp, m: mk }; if (t <= wpPts[0].t) return wpPts[0]; for (let i = 1; i < wpPts.length; i++) { if (t <= wpPts[i].t) { const a = wpPts[i - 1], b = wpPts[i]; const f = b.t === a.t ? 1 : (t - a.t) / (b.t - a.t); return { v: a.v + (b.v - a.v) * f, m: a.m != null && b.m != null ? a.m + (b.m - a.m) * f : (b.m != null ? b.m : a.m) }; } } return wpPts[wpPts.length - 1]; };
+    const wpAt = t => { if (!wpPts.length) return { v: wp, m: mk }; const cv = wpCurve('v'), cm = wpCurve('m'); const v = cv.at(t), m = cm.at(t); return { v: v == null ? wp : v, m: m == null ? mk : m }; };
     const hi = st.hoverIdx === null || st.hoverIdx === undefined ? null : clamp(st.hoverIdx, 0, lastT);
     const hv = hi === null ? wp : wpAt(hi).v;
     const hx = hi === null ? 0 : (hi / TOTAL) * 100;
