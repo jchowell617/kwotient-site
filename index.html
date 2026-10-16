@@ -51,8 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "cc78f0d531";</script>
-<script>window.KQ_RECORD_VER = "027f99f457";</script>
+<script>window.KQ_BUILD = "874039560d";</script>
+<script>window.KQ_RECORD_VER = "21675b7e5b";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -5781,7 +5781,7 @@ class Component extends DCLogic {
       latency: st.liveMeta && st.liveMeta.ms != null ? st.liveMeta.ms : 0,
       ssAge: '—',
       tickCount: (28400 + st.tick).toLocaleString(),
-      gameCount: slate.length,
+      gameCount: slateSim ? 0 : slate.length,   /* the demo slate stands in for layout, never for the count — an empty day reads 0 */
 
       setNBA: () => this.switchSport('NBA'),
       _setNBA: () => this.setState({ cohortSel: null, sport: 'NBA', activeId: SLATES.NBA[0].id, series: this.seed('NBA'), buzzKind: 'ALL', phase: 'ALL', colF: {}, dirQ: '', dirLimit: 12, openCol: null, profileId: null, propIdx: 0, hoverIdx: null, momHover: null, lineHover: null, trendHover: null, pTrendHover: null, bucketHover: null }),
