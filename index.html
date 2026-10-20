@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "1263771eec";</script>
+<script>window.KQ_BUILD = "c85a896ca6";</script>
 <script>window.KQ_RECORD_VER = "f30e030136";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -2615,7 +2615,18 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                       </div>
                     </sc-for>
                   </div></div>
-                  <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:7px"><span>{{ profile.record.note }}</span><span>{{ profile.record.count }}</span></div>
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px">
+                    <span style="font-family:var(--kw);font-size:9px;color:var(--muted)">{{ profile.record.count }}</span>
+                    <span style="flex:1"></span>
+                    <sc-if value="{{ profile.record.hasMore }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ profile.record.showMore }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--lead)">{{ profile.record.moreLabel }}</button>
+                      <button onClick="{{ profile.record.showAll }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">{{ profile.record.allLabel }}</button>
+                    </sc-if>
+                    <sc-if value="{{ profile.record.canCollapse }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ profile.record.showLess }}" style="padding:6px 12px;border-radius:7px;cursor:pointer;font-family:var(--kw);font-size:9.5px;background:transparent;border:1px solid var(--axis);color:var(--second)">Show fewer</button>
+                    </sc-if>
+                  </div>
+                  <div style="font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:7px">{{ profile.record.note }}</div>
                   </sc-if>
                 </section>
                 </sc-if>
@@ -5401,7 +5412,8 @@ class Component extends DCLogic {
               tcol('clubrec', 'final', 'FINAL', null, 'left', .9), tcol('clubrec', 'call', 'KWOTIENT CALL', tdistinct(mine, get.call), 'left', .9),
               tcol('clubrec', 'cover', 'COVER', tdistinct(mine, c => get.cover(c) || '—'), 'left', .7), tcol('clubrec', 'closer', 'CLOSER', tdistinct(mine, c => get.closer(c) || '—'), 'left', .7)];
             const cell = (v, flex, color, extra) => ({ v: v == null || v === '' ? '—' : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (color || 'var(--lead)') + (extra ? ';' + extra : '') });
-            const rows = shown.slice(0, 40).map(c => { const m = marginFor(c), v = verdict(c), cv = cover(c), cs = closer(c);
+            const PAGE = 10, limit = tstate('clubrec').limit || PAGE;
+            const rows = shown.slice(0, limit).map(c => { const m = marginFor(c), v = verdict(c), cv = cover(c), cs = closer(c);
               return { cells: [cell(S ? S.day(dayOf(c)) : dayOf(c), .9, 'var(--second)'), cell(get.game(c), .8, 'var(--reversed)', 'font-weight:600'),
                 cell(c.fair == null ? null : abbr + ' ' + sgn(flip(c, c.fair)), .9, ACC), cell(c.line == null ? null : abbr + ' ' + sgn(flip(c, c.line)), .8), cell(c.total, .55, 'var(--second)'),
                 cell(m == null ? (c.status || 'scheduled') : (m > 0 ? 'W ' : m < 0 ? 'L ' : 'T ') + scoreOf(c), .9, m == null ? 'var(--second)' : m > 0 ? ACC : m < 0 ? RED : 'var(--second)'),
@@ -5414,7 +5426,9 @@ class Component extends DCLogic {
                 { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined final yet' },
                 { k: 'CLOSER TO MARGIN', v: lined.length ? kqCloser + ' of ' + lined.length : '—', sub: lined.length ? "Kwotient's line nearer the final than the market's" : 'no lined final yet' }
               ],
-              cols, rows, count: rows.length + ' of ' + mine.length, note: 'lines from ' + abbr + "'s side · the final is " + abbr + "'s score first" };
+              cols, rows, count: 'showing ' + rows.length + ' of ' + shown.length + (shown.length !== mine.length ? ' (' + mine.length + ' on the record)' : ''), note: 'lines from ' + abbr + "'s side · the final is " + abbr + "'s score first",
+              hasMore: shown.length > limit, moreLabel: 'Show ' + Math.min(PAGE, shown.length - limit) + ' more', allLabel: 'Show all ' + shown.length,
+              showMore: () => tset('clubrec', { limit: limit + PAGE }), showAll: () => tset('clubrec', { limit: shown.length }), showLess: () => tset('clubrec', { limit: PAGE }), canCollapse: limit > PAGE };
           })(),
           // head to head: the meetings inside the history scope, from the season log the profile
           // already holds, with the closing line the edge filed for each when it has one
