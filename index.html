@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "c85a896ca6";</script>
+<script>window.KQ_BUILD = "f60aedb665";</script>
 <script>window.KQ_RECORD_VER = "f30e030136";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -2578,9 +2578,9 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                 </sc-if>
                 </section>
 
-                <sc-if value="{{ profile.isClub }}" hint-placeholder-val="{{ false }}">
+                <sc-if value="{{ profile.recordOn }}" hint-placeholder-val="{{ false }}">
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
-                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRecord.toggle }}" style="{{ p.pfRecord.btn }}">{{ p.pfRecord.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Kwotient Record</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--muted);border:1px solid var(--grid);border-radius:4px;padding:2px 5px">PROPRIETARY</span></div>
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRecord.toggle }}" style="{{ p.pfRecord.btn }}">{{ p.pfRecord.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">{{ profile.record.title }}</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--muted);border:1px solid var(--grid);border-radius:4px;padding:2px 5px">PROPRIETARY</span></div>
                     <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.record.head }}</span></div></div>
                   <sc-if value="{{ p.pfRecord.open }}" hint-placeholder-val="{{ true }}">
                   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px">
@@ -5201,6 +5201,50 @@ class Component extends DCLogic {
         : log.state === 'loading' ? 'loading…'
         : 'no ' + what + ' yet';
       if (isP) {
+        // KWOTIENT'S RECORD ON A CLUB'S GAMES: every call the model filed on one of its games — Kwotient's
+        // line and the market's from the club's side, the total, the final and the verdict — ten games a
+        // page, sortable like every built table; a club profile reads its own, a player's his club's
+        const clubRecordFor = (abbr, tk, title) => {
+            const R = window.KQ_RECORD_CALLS || null;
+            const mine = (R ? R.calls : []).filter(c => c.lg === sport && (c.away === abbr || c.home === abbr));
+            const atHome = c => c.home === abbr;
+            const flip = (c, v) => v == null ? null : Math.round((atHome(c) ? v : -v) * 10) / 10;
+            const dayOf = c => c.start ? etDayOf(c.start) : c.d;
+            const marginFor = c => c.margin == null ? null : (atHome(c) ? c.margin : -c.margin);
+            const scoreOf = c => atHome(c) ? c.hs + '-' + c.as : c.as + '-' + c.hs;
+            const verdict = c => c.margin == null ? 'open' : c.right == null ? 'no side' : c.right ? 'right' : 'wrong';
+            const cover = c => c.covered == null ? '' : c.covered ? 'covered' : 'missed';
+            const closer = c => c.fair != null && c.line != null && c.margin != null ? (Math.abs(c.margin + c.fair) < Math.abs(c.margin + c.line) ? 'Kwotient' : Math.abs(c.margin + c.fair) > Math.abs(c.margin + c.line) ? 'market' : 'even') : '';
+            const get = { d: c => dayOf(c), game: c => (atHome(c) ? 'vs ' : 'at ') + (atHome(c) ? c.away : c.home), kq: c => flip(c, c.fair), mkt: c => flip(c, c.line), ou: c => c.total,
+                          final: c => marginFor(c), call: c => verdict(c), cover: c => cover(c) || null, closer: c => closer(c) || null };
+            TABLES[tk] = { rows: mine, get };
+            const shown = tapply(tk, mine.slice().sort((a, b) => String(b.start || b.d).localeCompare(String(a.start || a.d))), get, rowText(get));
+            const settled = mine.filter(c => c.margin != null), graded = settled.filter(c => c.right != null), right = graded.filter(c => c.right).length;
+            const coverable = settled.filter(c => c.covered != null), covered = coverable.filter(c => c.covered).length;
+            const lined = settled.filter(c => closer(c)), kqCloser = lined.filter(c => closer(c) === 'Kwotient').length;
+            const cols = [tcol(tk, 'd', 'DATE', null, 'left', .9), tcol(tk, 'game', 'GAME', tdistinct(mine, get.game), 'left', .8),
+              tcol(tk, 'kq', 'KWOTIENT LINE', null, 'left', .9), tcol(tk, 'mkt', 'MARKET', null, 'left', .8), tcol(tk, 'ou', 'O/U', null, 'left', .55),
+              tcol(tk, 'final', 'FINAL', null, 'left', .9), tcol(tk, 'call', 'KWOTIENT CALL', tdistinct(mine, get.call), 'left', .9),
+              tcol(tk, 'cover', 'COVER', tdistinct(mine, c => get.cover(c) || '—'), 'left', .7), tcol(tk, 'closer', 'CLOSER', tdistinct(mine, c => get.closer(c) || '—'), 'left', .7)];
+            const cell = (v, flex, color, extra) => ({ v: v == null || v === '' ? '—' : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (color || 'var(--lead)') + (extra ? ';' + extra : '') });
+            const PAGE = 10, limit = tstate(tk).limit || PAGE;
+            const rows = shown.slice(0, limit).map(c => { const m = marginFor(c), v = verdict(c), cv = cover(c), cs = closer(c);
+              return { cells: [cell(S ? S.day(dayOf(c)) : dayOf(c), .9, 'var(--second)'), cell(get.game(c), .8, 'var(--reversed)', 'font-weight:600'),
+                cell(c.fair == null ? null : abbr + ' ' + sgn(flip(c, c.fair)), .9, ACC), cell(c.line == null ? null : abbr + ' ' + sgn(flip(c, c.line)), .8), cell(c.total, .55, 'var(--second)'),
+                cell(m == null ? (c.status || 'scheduled') : (m > 0 ? 'W ' : m < 0 ? 'L ' : 'T ') + scoreOf(c), .9, m == null ? 'var(--second)' : m > 0 ? ACC : m < 0 ? RED : 'var(--second)'),
+                cell(v.toUpperCase(), .9, v === 'right' ? ACC : v === 'wrong' ? RED : 'var(--second)'), cell(cv, .7, cv === 'covered' ? ACC : cv === 'missed' ? RED : 'var(--second)'), cell(cs, .7, cs === 'Kwotient' ? ACC : 'var(--second)')] }; });
+            const pct = (x, d) => d ? Math.round(x / d * 100) + '%' : '—';
+            return { on: !!R, n: mine.length, title,
+              head: mine.length ? mine.length + (mine.length === 1 ? ' call' : ' calls') + ' on ' + abbr + "'s games · " + settled.length + ' settled · ' + (mine.length - settled.length) + ' ahead' : 'no call on ' + abbr + "'s games yet",
+              tiles: [
+                { k: 'KWOTIENT RIGHT', v: graded.length ? right + '-' + (graded.length - right) : '—', sub: graded.length ? pct(right, graded.length) + ' of graded calls' : 'no final yet' },
+                { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined final yet' },
+                { k: 'CLOSER TO MARGIN', v: lined.length ? kqCloser + ' of ' + lined.length : '—', sub: lined.length ? "Kwotient's line nearer the final than the market's" : 'no lined final yet' }
+              ],
+              cols, rows, count: 'showing ' + rows.length + ' of ' + shown.length + (shown.length !== mine.length ? ' (' + mine.length + ' on the record)' : ''), note: 'lines from ' + abbr + "'s side · the final is " + abbr + "'s score first",
+              hasMore: shown.length > limit, moreLabel: 'Show ' + Math.min(PAGE, shown.length - limit) + ' more', allLabel: 'Show all ' + shown.length,
+              showMore: () => tset(tk, { limit: limit + PAGE }), showAll: () => tset(tk, { limit: shown.length }), showLess: () => tset(tk, { limit: PAGE }), canCollapse: limit > PAGE };
+        };
         const pl = roster.find(x => x.name === key) || roster[0];
         const pb = playerBundle(pl);
         const pFell = false;
@@ -5294,6 +5338,7 @@ class Component extends DCLogic {
           })),
           avgPath: vals.length > 1 ? this.path(roll, 100, 118, 0, mx) : '',
           isClub: false, h2h: null,
+          record: clubRecordFor(pl.team, 'plrec', 'Kwotient Record · ' + pl.team), recordOn: !!pl.team,
           // what he did inside the history scope, beside tonight's line when a book posts one
           histRows: (() => {
             if (!vals.length) return [];
@@ -5389,47 +5434,8 @@ class Component extends DCLogic {
           // KWOTIENT'S RECORD ON THIS CLUB (owner, 20 Oct 2026): every call the model filed on one of
           // its games — Kwotient's line and the market's from the club's side, the total, the final and
           // the verdict — a table on the profile, sortable and filterable like every built table
-          record: (() => {
-            const R = window.KQ_RECORD_CALLS || null, abbr = cl.abbr;
-            const mine = (R ? R.calls : []).filter(c => c.lg === sport && (c.away === abbr || c.home === abbr));
-            const atHome = c => c.home === abbr;
-            const flip = (c, v) => v == null ? null : Math.round((atHome(c) ? v : -v) * 10) / 10;
-            const dayOf = c => c.start ? etDayOf(c.start) : c.d;
-            const marginFor = c => c.margin == null ? null : (atHome(c) ? c.margin : -c.margin);
-            const scoreOf = c => atHome(c) ? c.hs + '-' + c.as : c.as + '-' + c.hs;
-            const verdict = c => c.margin == null ? 'open' : c.right == null ? 'no side' : c.right ? 'right' : 'wrong';
-            const cover = c => c.covered == null ? '' : c.covered ? 'covered' : 'missed';
-            const closer = c => c.fair != null && c.line != null && c.margin != null ? (Math.abs(c.margin + c.fair) < Math.abs(c.margin + c.line) ? 'Kwotient' : Math.abs(c.margin + c.fair) > Math.abs(c.margin + c.line) ? 'market' : 'even') : '';
-            const get = { d: c => dayOf(c), game: c => (atHome(c) ? 'vs ' : 'at ') + (atHome(c) ? c.away : c.home), kq: c => flip(c, c.fair), mkt: c => flip(c, c.line), ou: c => c.total,
-                          final: c => marginFor(c), call: c => verdict(c), cover: c => cover(c) || null, closer: c => closer(c) || null };
-            TABLES.clubrec = { rows: mine, get };
-            const shown = tapply('clubrec', mine.slice().sort((a, b) => String(b.start || b.d).localeCompare(String(a.start || a.d))), get, rowText(get));
-            const settled = mine.filter(c => c.margin != null), graded = settled.filter(c => c.right != null), right = graded.filter(c => c.right).length;
-            const coverable = settled.filter(c => c.covered != null), covered = coverable.filter(c => c.covered).length;
-            const lined = settled.filter(c => closer(c)), kqCloser = lined.filter(c => closer(c) === 'Kwotient').length;
-            const cols = [tcol('clubrec', 'd', 'DATE', null, 'left', .9), tcol('clubrec', 'game', 'GAME', tdistinct(mine, get.game), 'left', .8),
-              tcol('clubrec', 'kq', 'KWOTIENT LINE', null, 'left', .9), tcol('clubrec', 'mkt', 'MARKET', null, 'left', .8), tcol('clubrec', 'ou', 'O/U', null, 'left', .55),
-              tcol('clubrec', 'final', 'FINAL', null, 'left', .9), tcol('clubrec', 'call', 'KWOTIENT CALL', tdistinct(mine, get.call), 'left', .9),
-              tcol('clubrec', 'cover', 'COVER', tdistinct(mine, c => get.cover(c) || '—'), 'left', .7), tcol('clubrec', 'closer', 'CLOSER', tdistinct(mine, c => get.closer(c) || '—'), 'left', .7)];
-            const cell = (v, flex, color, extra) => ({ v: v == null || v === '' ? '—' : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (color || 'var(--lead)') + (extra ? ';' + extra : '') });
-            const PAGE = 10, limit = tstate('clubrec').limit || PAGE;
-            const rows = shown.slice(0, limit).map(c => { const m = marginFor(c), v = verdict(c), cv = cover(c), cs = closer(c);
-              return { cells: [cell(S ? S.day(dayOf(c)) : dayOf(c), .9, 'var(--second)'), cell(get.game(c), .8, 'var(--reversed)', 'font-weight:600'),
-                cell(c.fair == null ? null : abbr + ' ' + sgn(flip(c, c.fair)), .9, ACC), cell(c.line == null ? null : abbr + ' ' + sgn(flip(c, c.line)), .8), cell(c.total, .55, 'var(--second)'),
-                cell(m == null ? (c.status || 'scheduled') : (m > 0 ? 'W ' : m < 0 ? 'L ' : 'T ') + scoreOf(c), .9, m == null ? 'var(--second)' : m > 0 ? ACC : m < 0 ? RED : 'var(--second)'),
-                cell(v.toUpperCase(), .9, v === 'right' ? ACC : v === 'wrong' ? RED : 'var(--second)'), cell(cv, .7, cv === 'covered' ? ACC : cv === 'missed' ? RED : 'var(--second)'), cell(cs, .7, cs === 'Kwotient' ? ACC : 'var(--second)')] }; });
-            const pct = (x, d) => d ? Math.round(x / d * 100) + '%' : '—';
-            return { on: !!R, n: mine.length,
-              head: mine.length ? mine.length + (mine.length === 1 ? ' call' : ' calls') + ' on ' + abbr + "'s games · " + settled.length + ' settled · ' + (mine.length - settled.length) + ' ahead' : 'no call on ' + abbr + "'s games yet",
-              tiles: [
-                { k: 'KWOTIENT RIGHT', v: graded.length ? right + '-' + (graded.length - right) : '—', sub: graded.length ? pct(right, graded.length) + ' of graded calls' : 'no final yet' },
-                { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined final yet' },
-                { k: 'CLOSER TO MARGIN', v: lined.length ? kqCloser + ' of ' + lined.length : '—', sub: lined.length ? "Kwotient's line nearer the final than the market's" : 'no lined final yet' }
-              ],
-              cols, rows, count: 'showing ' + rows.length + ' of ' + shown.length + (shown.length !== mine.length ? ' (' + mine.length + ' on the record)' : ''), note: 'lines from ' + abbr + "'s side · the final is " + abbr + "'s score first",
-              hasMore: shown.length > limit, moreLabel: 'Show ' + Math.min(PAGE, shown.length - limit) + ' more', allLabel: 'Show all ' + shown.length,
-              showMore: () => tset('clubrec', { limit: limit + PAGE }), showAll: () => tset('clubrec', { limit: shown.length }), showLess: () => tset('clubrec', { limit: PAGE }), canCollapse: limit > PAGE };
-          })(),
+          record: clubRecordFor(cl.abbr, 'clubrec', 'Kwotient Record'),
+          recordOn: true,
           // head to head: the meetings inside the history scope, from the season log the profile
           // already holds, with the closing line the edge filed for each when it has one
           h2h: (() => {
