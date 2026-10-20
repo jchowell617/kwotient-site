@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "4c9f6ef10d";</script>
+<script>window.KQ_BUILD = "1263771eec";</script>
 <script>window.KQ_RECORD_VER = "f30e030136";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -2577,6 +2577,48 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </sc-for>
                 </sc-if>
                 </section>
+
+                <sc-if value="{{ profile.isClub }}" hint-placeholder-val="{{ false }}">
+                <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;align-items:flex-start;gap:9px"><button data-chev="1" onClick="{{ p.pfRecord.toggle }}" style="{{ p.pfRecord.btn }}">{{ p.pfRecord.chevron }}</button><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span style="font-size:13.5px;font-weight:600">Kwotient Record</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;color:var(--muted);border:1px solid var(--grid);border-radius:4px;padding:2px 5px">PROPRIETARY</span></div>
+                    <span style="font-family:var(--kw);font-size:9.5px;color:var(--second)">{{ profile.record.head }}</span></div></div>
+                  <sc-if value="{{ p.pfRecord.open }}" hint-placeholder-val="{{ true }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:12px">
+                    <sc-for list="{{ profile.record.tiles }}" as="tl" hint-placeholder-count="3">
+                      <div style="padding:10px 12px;border:1px solid var(--grid);border-radius:9px;display:flex;flex-direction:column;gap:3px"><span style="font-family:var(--kw);font-size:8.5px;letter-spacing:.14em;color:var(--collabel)">{{ tl.k }}</span><span style="font-family:var(--kw);font-size:20px;font-weight:700;color:var(--reversed)">{{ tl.v }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--second)">{{ tl.sub }}</span></div>
+                    </sc-for>
+                  </div>
+                  <div data-scroll="x" style="margin-top:12px"><div style="min-width:680px">
+                    <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--grid);position:relative;z-index:5">
+                    <sc-for list="{{ profile.record.cols }}" as="c" hint-placeholder-count="9">
+                      <div style="{{ c.cellStyle }}">
+                        <button data-colmenu="1" onClick="{{ c.click }}" style="{{ c.labelStyle }}">{{ c.label }}<span style="font-size:7px">{{ c.arrow }}</span><span style="{{ c.dotStyle }}"></span></button>
+                        <sc-if value="{{ c.open }}" hint-placeholder-val="{{ false }}">
+                          <div data-colmenu="1" style="{{ c.menuStyle }}">
+                            <form onSubmit="{{ c.onKey }}" style="margin:0"><input value="{{ c.q }}" onChange="{{ c.onQ }}" onKeyDown="{{ c.onKey }}" placeholder="type to filter · enter closes" style="width:100%;box-sizing:border-box;padding:6px 8px;border-radius:6px;border:1px solid var(--axis);background:var(--rail);color:var(--reversed);font-family:var(--kw);font-size:10.5px;margin-bottom:6px"></form>
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px;padding-bottom:5px;border-bottom:1px solid var(--grid)">
+                              <button onClick="{{ c.sortAsc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▲</button>
+                              <button onClick="{{ c.sortDesc }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer">sort ▼</button>
+                              <button onClick="{{ c.clear }}" style="padding:4px 8px;border-radius:5px;border:1px solid var(--axis);background:transparent;color:var(--lead);font-family:var(--kw);font-size:9.5px;cursor:pointer;color:var(--critical)">clear</button>
+                            </div>
+                            <sc-for list="{{ c.values }}" as="v" hint-placeholder-count="6">
+                              <button onClick="{{ v.pick }}" style="{{ v.style }}">{{ v.label }}<span style="color:var(--muted)">{{ v.count }}</span></button>
+                            </sc-for>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-for>
+                    </div>
+                    <sc-for list="{{ profile.record.rows }}" as="r" hint-placeholder-count="6">
+                      <div style="display:flex;gap:6px;padding:8px 10px;border-bottom:1px solid var(--divider);align-items:center;font-family:var(--kw);font-size:10px;color:var(--lead)">
+                        <sc-for list="{{ r.cells }}" as="x" hint-placeholder-count="9"><span style="{{ x.style }}">{{ x.v }}</span></sc-for>
+                      </div>
+                    </sc-for>
+                  </div></div>
+                  <div style="display:flex;justify-content:space-between;gap:10px;font-family:var(--kw);font-size:9px;color:var(--muted);margin-top:7px"><span>{{ profile.record.note }}</span><span>{{ profile.record.count }}</span></div>
+                  </sc-if>
+                </section>
+                </sc-if>
 
                 <section style-hover="transform:translateY(-3px);box-shadow:0 14px 30px rgba(0,0,0,.3);border-color:var(--axis)" style="transition:transform .24s cubic-bezier(.22,.7,.3,1),box-shadow .24s ease;border:1px solid var(--grid);border-radius:12px;background:var(--surface);padding:15px 17px;display:flex;flex-direction:column;gap:10px">
                   <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><button data-chev="1" onClick="{{ p.timeline.toggle }}" style="{{ p.timeline.btn }}">{{ p.timeline.chevron }}</button><span style="font-size:13.5px;font-weight:600">Timeline</span><span style="font-family:var(--kw);font-size:8px;letter-spacing:.14em;padding:3px 7px;border-radius:5px;color:var(--brand);border:1px solid var(--axis)">PROPRIETARY</span></div>
@@ -5333,6 +5375,47 @@ class Component extends DCLogic {
           })),
           avgPath: margins.length > 1 ? this.path(margins.map(v => v + mx), 100, 118, 0, mx * 2) : '',
           isClub: true,
+          // KWOTIENT'S RECORD ON THIS CLUB (owner, 20 Oct 2026): every call the model filed on one of
+          // its games — Kwotient's line and the market's from the club's side, the total, the final and
+          // the verdict — a table on the profile, sortable and filterable like every built table
+          record: (() => {
+            const R = window.KQ_RECORD_CALLS || null, abbr = cl.abbr;
+            const mine = (R ? R.calls : []).filter(c => c.lg === sport && (c.away === abbr || c.home === abbr));
+            const atHome = c => c.home === abbr;
+            const flip = (c, v) => v == null ? null : Math.round((atHome(c) ? v : -v) * 10) / 10;
+            const dayOf = c => c.start ? etDayOf(c.start) : c.d;
+            const marginFor = c => c.margin == null ? null : (atHome(c) ? c.margin : -c.margin);
+            const scoreOf = c => atHome(c) ? c.hs + '-' + c.as : c.as + '-' + c.hs;
+            const verdict = c => c.margin == null ? 'open' : c.right == null ? 'no side' : c.right ? 'right' : 'wrong';
+            const cover = c => c.covered == null ? '' : c.covered ? 'covered' : 'missed';
+            const closer = c => c.fair != null && c.line != null && c.margin != null ? (Math.abs(c.margin + c.fair) < Math.abs(c.margin + c.line) ? 'Kwotient' : Math.abs(c.margin + c.fair) > Math.abs(c.margin + c.line) ? 'market' : 'even') : '';
+            const get = { d: c => dayOf(c), game: c => (atHome(c) ? 'vs ' : 'at ') + (atHome(c) ? c.away : c.home), kq: c => flip(c, c.fair), mkt: c => flip(c, c.line), ou: c => c.total,
+                          final: c => marginFor(c), call: c => verdict(c), cover: c => cover(c) || null, closer: c => closer(c) || null };
+            TABLES.clubrec = { rows: mine, get };
+            const shown = tapply('clubrec', mine.slice().sort((a, b) => String(b.start || b.d).localeCompare(String(a.start || a.d))), get, rowText(get));
+            const settled = mine.filter(c => c.margin != null), graded = settled.filter(c => c.right != null), right = graded.filter(c => c.right).length;
+            const coverable = settled.filter(c => c.covered != null), covered = coverable.filter(c => c.covered).length;
+            const lined = settled.filter(c => closer(c)), kqCloser = lined.filter(c => closer(c) === 'Kwotient').length;
+            const cols = [tcol('clubrec', 'd', 'DATE', null, 'left', .9), tcol('clubrec', 'game', 'GAME', tdistinct(mine, get.game), 'left', .8),
+              tcol('clubrec', 'kq', 'KWOTIENT LINE', null, 'left', .9), tcol('clubrec', 'mkt', 'MARKET', null, 'left', .8), tcol('clubrec', 'ou', 'O/U', null, 'left', .55),
+              tcol('clubrec', 'final', 'FINAL', null, 'left', .9), tcol('clubrec', 'call', 'KWOTIENT CALL', tdistinct(mine, get.call), 'left', .9),
+              tcol('clubrec', 'cover', 'COVER', tdistinct(mine, c => get.cover(c) || '—'), 'left', .7), tcol('clubrec', 'closer', 'CLOSER', tdistinct(mine, c => get.closer(c) || '—'), 'left', .7)];
+            const cell = (v, flex, color, extra) => ({ v: v == null || v === '' ? '—' : String(v), style: 'flex:' + flex + ';min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:' + (color || 'var(--lead)') + (extra ? ';' + extra : '') });
+            const rows = shown.slice(0, 40).map(c => { const m = marginFor(c), v = verdict(c), cv = cover(c), cs = closer(c);
+              return { cells: [cell(S ? S.day(dayOf(c)) : dayOf(c), .9, 'var(--second)'), cell(get.game(c), .8, 'var(--reversed)', 'font-weight:600'),
+                cell(c.fair == null ? null : abbr + ' ' + sgn(flip(c, c.fair)), .9, ACC), cell(c.line == null ? null : abbr + ' ' + sgn(flip(c, c.line)), .8), cell(c.total, .55, 'var(--second)'),
+                cell(m == null ? (c.status || 'scheduled') : (m > 0 ? 'W ' : m < 0 ? 'L ' : 'T ') + scoreOf(c), .9, m == null ? 'var(--second)' : m > 0 ? ACC : m < 0 ? RED : 'var(--second)'),
+                cell(v.toUpperCase(), .9, v === 'right' ? ACC : v === 'wrong' ? RED : 'var(--second)'), cell(cv, .7, cv === 'covered' ? ACC : cv === 'missed' ? RED : 'var(--second)'), cell(cs, .7, cs === 'Kwotient' ? ACC : 'var(--second)')] }; });
+            const pct = (x, d) => d ? Math.round(x / d * 100) + '%' : '—';
+            return { on: !!R, n: mine.length,
+              head: mine.length ? mine.length + (mine.length === 1 ? ' call' : ' calls') + ' on ' + abbr + "'s games · " + settled.length + ' settled · ' + (mine.length - settled.length) + ' ahead' : 'no call on ' + abbr + "'s games yet",
+              tiles: [
+                { k: 'KWOTIENT RIGHT', v: graded.length ? right + '-' + (graded.length - right) : '—', sub: graded.length ? pct(right, graded.length) + ' of graded calls' : 'no final yet' },
+                { k: 'COVERED', v: coverable.length ? covered + '-' + (coverable.length - covered) : '—', sub: coverable.length ? pct(covered, coverable.length) + ' against the market' : 'no lined final yet' },
+                { k: 'CLOSER TO MARGIN', v: lined.length ? kqCloser + ' of ' + lined.length : '—', sub: lined.length ? "Kwotient's line nearer the final than the market's" : 'no lined final yet' }
+              ],
+              cols, rows, count: rows.length + ' of ' + mine.length, note: 'lines from ' + abbr + "'s side · the final is " + abbr + "'s score first" };
+          })(),
           // head to head: the meetings inside the history scope, from the season log the profile
           // already holds, with the closing line the edge filed for each when it has one
           h2h: (() => {
@@ -5717,7 +5800,7 @@ class Component extends DCLogic {
     // per-widget collapse; purely display, no grouping or reordering
     const shut = st.shut || {};
     const PANELS = ['hero', 'pbox', 'wp', 'mFactors', 'mom', 'line', 'mtotal', 'total', 'pstats', 'teamTrend', 'teamProps', 'playerTrend', 'playerProps', 'books', 'gameAlerts'];
-    const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfLog', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfPred', 'pfPerf', 'pfNews', 'timeline'];
+    const PROFILE_PANELS = ['pfCard', 'pfRoster', 'pfStats', 'pfLog', 'pfExplorer', 'pfTrend', 'pfH2H', 'pfRecord', 'pfPred', 'pfPerf', 'pfNews', 'timeline'];
     const DIR_PANELS = ['dirSearch', 'dirTable'];
     const BUZZ_PANELS = ['bz0', 'bz1', 'bz2', 'bz3', 'bz4', 'bz5', 'bz6', 'bz7'];
     const panel = (k) => ({
