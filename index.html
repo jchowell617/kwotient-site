@@ -51,8 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "e18e1689b5";</script>
-<script>window.KQ_RECORD_VER = "e9324e48e2";</script>
+<script>window.KQ_BUILD = "4c9f6ef10d";</script>
+<script>window.KQ_RECORD_VER = "f30e030136";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -88,8 +88,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=2ae93dee94"></script>
-<script src="./kq-seasons.js?v=79c63d0175"></script>
+<script src="./kq-bundle.js?v=da4c6297d0"></script>
+<script src="./kq-seasons.js?v=86d66c141e"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -2844,6 +2844,8 @@ const ACC = 'var(--good)';
 const BLUE = 'var(--brand)';
 const RED = 'var(--critical)';
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+/* the period as a reader says it: Q1–Q4, then OT, 2OT … (the charts keep Q5 for their own clock) */
+const qLabel = per => { const p = Number(per) || 1; return p > 4 ? (p - 4 > 1 ? (p - 4) + 'OT' : 'OT') : 'Q' + p; };
 
 
 // Full stat catalog for the explorer: [key, lo, hi, decimals, lowerIsBetter]
@@ -5510,7 +5512,7 @@ class Component extends DCLogic {
         const xs = st.series[x.id];
         const p = xs ? xs.hist[xs.hist.length - 1] : (x.wp == null ? 50 : x.wp);
         const fin = x.state === 'final', on = x.state === 'in_progress';
-        items.push({ phase: fin ? 'POST' : on ? 'LIVE' : 'PRE', kind: fin ? 'FINAL' : on ? 'KWOTIENT' : 'KWOTIENT PRIOR', t: on && x.clock ? 'Q' + x.per + ' ' + x.clock : (S ? S.age(st.liveMeta && st.liveMeta.fetched) : ''),
+        items.push({ phase: fin ? 'POST' : on ? 'LIVE' : 'PRE', kind: fin ? 'FINAL' : on ? 'KWOTIENT' : 'KWOTIENT PRIOR', t: on && x.clock ? qLabel(x.per) + ' ' + x.clock : (S ? S.age(st.liveMeta && st.liveMeta.fetched) : ''),
           game: x.homeAbbr, tone: on ? 1 : 3,
           text: say(fin ? 'FINAL' : on ? 'MODEL' : 'PRIOR', { away: x.awayAbbr, home: x.homeAbbr, as: x.as, hs: x.hs, p, poss: x.poss || '', status: x.status || 'scheduled', homeK: x.homeK, awayK: x.awayK }) });
       });
@@ -5758,7 +5760,7 @@ class Component extends DCLogic {
       })();
       return {
         awayAbbr: x.awayAbbr, homeAbbr: x.homeAbbr, awayScore: x.as, homeScore: x.hs,
-        clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? 'Q' + x.per + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
+        clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? qLabel(x.per) + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
         // the dot breathes only while the game is on; before and after it sits still and muted
         clockStyle: 'font-family:var(--kw);font-size:9.5px;display:inline-flex;align-items:center;gap:5px;transition:none;color:' + (x.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
         dotStyle: 'width:6px;height:6px;border-radius:50%;display:block;flex:none;transition:none;background:' + (x.state === 'in_progress' ? 'var(--critical);animation:pulseDot 1.6s ease-in-out infinite' : 'var(--axis)'),
@@ -6096,6 +6098,8 @@ class Component extends DCLogic {
           return Object.assign({}, c, { as: g.as, hs: g.hs, margin, winner, right: side ? winner === side : null, noSide: !side, covered, status: 'Final', liveGraded: true });
         });
         const liveN = all.filter(c => c.liveGraded).length;
+        // THE TAB IS THE LEAGUE'S (owner, 20 Oct 2026): under NBA the table, the weeks and the chip
+        // showed the NFL's calls. Everything below reads the selected league's calls alone.
         const sportCalls = all.filter(c => c.lg === sport);
         // SETTLED is a final on the record; GRADED is a verdict on it. A call the model took no side
         // on — a fair line of exactly zero — settles with the final and is graded neither way; it is not
@@ -6114,12 +6118,12 @@ class Component extends DCLogic {
         const firstNfl = all.filter(c => c.lg === 'NFL').map(etDay).sort()[0];
         const firstTue = firstNfl ? dayNum(firstNfl) - ((dayNum(firstNfl) - 5 + 7 * 1000) % 7) : null;   /* day 0 (1970-01-01) was a Thursday; Tuesday is 5 days on */
         const weekOf = c => c.lg === 'NFL' ? (firstTue == null ? '' : 'WEEK ' + (1 + Math.floor((dayNum(etDay(c)) - firstTue) / 7))) : etDay(c).slice(0, 7);
-        const weeks = Array.from(new Set(all.map(weekOf))).filter(Boolean).sort((x, y) => x.localeCompare(y, undefined, { numeric: true }));
+        const weeks = Array.from(new Set(sportCalls.map(weekOf))).filter(Boolean).sort((x, y) => x.localeCompare(y, undefined, { numeric: true }));
         // the week on display with nothing picked is the week in play: the one with the latest
         // final score in it — not a week whose games are all still ahead, which has nothing to grade
-        const settledWeeks = weeks.filter(w => all.some(c => c.margin != null && weekOf(c) === w));
+        const settledWeeks = weeks.filter(w => sportCalls.some(c => c.margin != null && weekOf(c) === w));
         const latestWeek = settledWeeks.length ? settledWeeks[settledWeeks.length - 1] : (weeks.length ? weeks[weeks.length - 1] : null);
-        const G = { LEAGUE: 'trLg', WEEK: 'trWeek', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
+        const G = { WEEK: 'trWeek', CLUB: 'trClub', VERDICT: 'trVerdict', MONTH: 'trMonth' };
         const P = { list: Object.keys(G).filter(k => st[G[k]]).map(k => ({ group: k, value: st[G[k]], label: st[G[k]] })), has: (k, v) => !!G[k] && st[G[k]] === v,
           add: (k, v) => { if (G[k]) this.setState({ [G[k]]: v, trLimit: 10 }); }, remove: k => { if (G[k]) this.setState({ [G[k]]: null }); }, clear: () => this.setState({ trLg: null, trWeek: null, trClub: null, trVerdict: null, trMonth: null }) };
         const verdictOf = c => c.margin == null ? 'open' : c.right == null ? 'no side' : c.right ? 'right' : 'wrong';
@@ -6132,11 +6136,11 @@ class Component extends DCLogic {
         const trNothingPicked = !st.trLg && !st.trWeek && !st.trClub && !st.trVerdict && !st.trMonth && !trQraw;
         const allWeeksAsked = st.trWeek === 'ALL WEEKS' || /\b(all weeks|season|all)\b/.test(trQraw);
         const weekSet = allWeeksAsked ? null : st.trWeek ? [st.trWeek] : weeksTyped.length ? weeksTyped : (trNothingPicked && latestWeek ? [latestWeek] : null);
-        const shown = all.filter(c => (!st.trLg || c.lg === st.trLg) && (!weekSet || weekSet.indexOf(weekOf(c)) >= 0) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
+        const shown = sportCalls.filter(c => (!weekSet || weekSet.indexOf(weekOf(c)) >= 0) && (!st.trClub || c.away === st.trClub || c.home === st.trClub) && (!st.trVerdict || verdictOf(c) === st.trVerdict) && (!st.trMonth || c.d.slice(0, 7) === st.trMonth)
           && (!trQ || matchQ(withClubNames(c.d + ' ' + c.lg + ' ' + c.away + ' @ ' + c.home + ' ' + c.status) + ' ' + weekOf(c) + ' ' + verdictOf(c) + ' ' + (c.on || ''), trQ)));
         const wkKey = c => { const w = weekOf(c); return c.lg === 'NFL' ? +(/(\d+)$/.exec(w) || [0, 0])[1] : +String(w).replace('-', ''); };
         shown.sort((a, b) => wkKey(b) - wkKey(a) || String(a.start || a.d).localeCompare(String(b.start || b.d)) || a.away.localeCompare(b.away));
-        const n = f => all.filter(f).length, cnt = k => k + (k === 1 ? ' call' : ' calls');
+        const n = f => sportCalls.filter(f).length, cnt = k => k + (k === 1 ? ' call' : ' calls');
         const sgnP = v => v == null ? '—' : (v > 0 ? '+' : '') + Number(v).toFixed(1);
         // the table's columns: sortable and filterable from their headers, as every built table is
         const trGet = { wk: c => weekOf(c), d: c => c.start ? etDayOf(c.start) : c.d, game: c => c.away + ' @ ' + c.home, prior: c => c.prior, fair: c => c.fair, line: c => c.line, edge: c => c.edge == null ? null : Math.abs(c.edge), final: c => c.margin, call: c => verdictOf(c) };
@@ -6259,12 +6263,11 @@ class Component extends DCLogic {
           trShowMore: () => this.setState({ trLimit: (st.trLimit || 10) + 20 }), trShowAll: () => this.setState({ trLimit: 100000 }),
           trBox: searchFor('track', histMenuFor('track', g.homeAbbr), { q: st.trQ || '', setQ: v => this.setState({ trQ: v, trLimit: 10 }), params: P,
             groups: [
-              { label: 'LEAGUE', items: ['NFL', 'NBA'].map(l => ({ label: l, count: 'LEAGUE · ' + cnt(n(c => c.lg === l)) })).filter(o => !/· 0 calls$/.test(o.count)) },
-              { label: 'WEEK', items: [{ label: 'ALL WEEKS', count: 'WEEK · ' + cnt(all.length) + ' · the season' }].concat(weeks.slice().reverse().map(w => ({ label: w, count: 'WEEK · ' + cnt(n(c => weekOf(c) === w)) + (w === latestWeek ? ' · latest' : '') }))) },
-              { label: 'CLUB', items: Array.from(new Set(all.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
+              { label: 'WEEK', items: [{ label: 'ALL WEEKS', count: 'WEEK · ' + cnt(sportCalls.length) + ' · the season' }].concat(weeks.slice().reverse().map(w => ({ label: w, count: 'WEEK · ' + cnt(n(c => weekOf(c) === w)) + (w === latestWeek ? ' · latest' : '') }))) },
+              { label: 'CLUB', items: Array.from(new Set(sportCalls.reduce((a, c) => a.concat([c.away, c.home]), []))).sort().map(c => ({ label: c, count: (CLUB_NAMES[c] ? CLUB_NAMES[c] + ' · ' : 'CLUB · ') + cnt(n(x => x.away === c || x.home === c)) })) },
               { label: 'VERDICT', items: ['right', 'wrong', 'open'].map(v => ({ label: v, count: 'VERDICT · ' + cnt(n(c => verdictOf(c) === v)) })).filter(o => !/· 0 calls$/.test(o.count)) },
-              { label: 'MONTH', items: Array.from(new Set(all.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
-            ], placeholder: 'search the calls · week 2, a club, a day, right or wrong · commas for several', count: R ? (!st.trWeek && weekSet ? weekSet.join(', ') + ' · ' : '') + sorted.length + ' of ' + all.length : '' })
+              { label: 'MONTH', items: Array.from(new Set(sportCalls.map(c => c.d.slice(0, 7)))).sort().reverse().map(m => ({ label: m, count: 'MONTH · ' + cnt(n(c => c.d.slice(0, 7) === m)) })) }
+            ], placeholder: 'search the calls · week 2, a club, a day, right or wrong · commas for several', count: R ? (!st.trWeek && weekSet ? weekSet.join(', ') + ' · ' : '') + sorted.length + ' of ' + sportCalls.length : '' })
         };
       })(),
       // ---------- a profile's game log: every game of a season, every stat the feed carries ----------
@@ -6516,10 +6519,10 @@ class Component extends DCLogic {
       // the folded hero: the state, both clubs, and the clock with the date and time
       heroShut: !!(st.shut || {}).hero,
       heroTeams: g.state === 'in_progress' || g.state === 'final' ? g.away + ' ' + (g.as == null ? 0 : g.as) + ' at ' + g.home + ' ' + (g.hs == null ? 0 : g.hs) : g.away + ' at ' + g.home,
-      heroWhen: g.state === 'in_progress' ? 'Q' + g.per + ' ' + (g.clock || '') : g.state === 'final' ? 'FINAL' : (() => { try { return g.start ? new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(g.start)).replace(/, (\d+:\d+ [AP]M)$/, ' · $1') + ' ET' : (g.status || ''); } catch (e) { return g.status || ''; } })(),
+      heroWhen: g.state === 'in_progress' ? qLabel(g.per) + ' ' + (g.clock || '') : g.state === 'final' ? 'FINAL' : (() => { try { return g.start ? new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(new Date(g.start)).replace(/, (\d+:\d+ [AP]M)$/, ' · $1') + ' ET' : (g.status || ''); } catch (e) { return g.status || ''; } })(),
       heroStateStyle: 'font-family:var(--kw);font-size:9px;letter-spacing:.16em;color:' + (!g.live || g.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
       possession: boxOn && S ? (() => { const a = S.topLine(sport, box.away), h = S.topLine(sport, box.home); return [a ? g.awayAbbr + ' ' + a.n + ' ' + a.v : null, h ? g.homeAbbr + ' ' + h.n + ' ' + h.v : null].filter(Boolean).join(' · ') + (g.poss ? ' · ' + g.poss : ''); })() : g.poss,
-      clock: g.live ? (g.state === 'final' ? 'FINAL' : g.state === 'in_progress' ? 'Q' + g.per + ' ' + (g.clock || '') : (g.status || 'scheduled')) : 'Q' + g.per + ' ' + Math.floor(g.sec / 60) + ':' + String(g.sec % 60).padStart(2, '0'),
+      clock: g.live ? (g.state === 'final' ? 'FINAL' : g.state === 'in_progress' ? qLabel(g.per) + ' ' + (g.clock || '') : (g.status || 'scheduled')) : 'Q' + g.per + ' ' + Math.floor(g.sec / 60) + ':' + String(g.sec % 60).padStart(2, '0'),
       awayProb: wp < 78 ? (100 - wp).toFixed(1) + '%' : '', homeProb: wp > 22 ? wp.toFixed(1) + '%' : '',
       awayMkt: (100 - mk).toFixed(0) + '%', homeMkt: mk.toFixed(0) + '%',
       probDelta: (wp >= prev ? '+' : '') + (wp - prev).toFixed(1) + ' pts / 5 ticks',
