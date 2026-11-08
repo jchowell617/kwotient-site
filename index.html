@@ -51,8 +51,8 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "1474ddf80f";</script>
-<script>window.KQ_RECORD_VER = "e830cd2f5f";</script>
+<script>window.KQ_BUILD = "3a91362115";</script>
+<script>window.KQ_RECORD_VER = "17d3c30a16";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
 <body>
@@ -88,8 +88,8 @@
 
 <x-dc>
 <helmet data-dc-atomics="">
-<script src="./kq-bundle.js?v=6ae092d77c"></script>
-<script src="./kq-seasons.js?v=a6f58a4041"></script>
+<script src="./kq-bundle.js?v=d2d51c4a9e"></script>
+<script src="./kq-seasons.js?v=082073048d"></script>
 <style>
 :root{
   --ink:#080a10;--desk:#03050a;--surface:#0f1219;--rail:#090c13;--nested:#171b25;--divider:#191d27;
@@ -398,11 +398,11 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
               <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
                 <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
                   <div style="display:flex;gap:8px;align-items:baseline">
-                    <span style="font-family:var(--kw);font-size:11px;font-weight:700;letter-spacing:.05em;width:30px">{{ g.awayAbbr }}</span>
+                    <span style="font-family:var(--kw);font-size:11px;font-weight:700;letter-spacing:.05em;width:30px">{{ g.awayAbbr }}</span><span style="font-family:var(--kw);font-size:8px;color:var(--muted);width:28px">{{ g.awayRec }}</span>
                     <span style="font-family:var(--kw);font-size:11px">{{ g.awayScore }}</span>
                   </div>
                   <div style="display:flex;gap:8px;align-items:baseline">
-                    <span style="font-family:var(--kw);font-size:11px;font-weight:700;letter-spacing:.05em;width:30px">{{ g.homeAbbr }}</span>
+                    <span style="font-family:var(--kw);font-size:11px;font-weight:700;letter-spacing:.05em;width:30px">{{ g.homeAbbr }}</span><span style="font-family:var(--kw);font-size:8px;color:var(--muted);width:28px">{{ g.homeRec }}</span>
                     <span style="font-family:var(--kw);font-size:11px">{{ g.homeScore }}</span>
                   </div>
                 </div>
@@ -1292,8 +1292,8 @@ section:has([data-colmenu][style*="absolute"]),div:has(> [data-colmenu][style*="
                   </div>
                   <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px">
                     <div style="display:flex;flex-direction:column;gap:6px">
-                      <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:15px;font-weight:600;min-width:46px">{{ g.awayAbbr }}</span><span style="font-family:var(--kw);font-size:19px;font-weight:700">{{ g.awayScore }}</span></div>
-                      <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:15px;font-weight:600;min-width:46px">{{ g.homeAbbr }}</span><span style="font-family:var(--kw);font-size:19px;font-weight:700">{{ g.homeScore }}</span></div>
+                      <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:15px;font-weight:600;min-width:46px">{{ g.awayAbbr }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--muted);min-width:30px">{{ g.awayRec }}</span><span style="font-family:var(--kw);font-size:19px;font-weight:700">{{ g.awayScore }}</span></div>
+                      <div style="display:flex;gap:10px;align-items:baseline"><span style="font-size:15px;font-weight:600;min-width:46px">{{ g.homeAbbr }}</span><span style="font-family:var(--kw);font-size:9px;color:var(--muted);min-width:30px">{{ g.homeRec }}</span><span style="font-family:var(--kw);font-size:19px;font-weight:700">{{ g.homeScore }}</span></div>
                     </div>
                     <svg viewBox="0 0 140 54" preserveAspectRatio="none" style="width:146px;height:54px;display:block">
                       <line x1="0" y1="27" x2="140" y2="27" stroke="var(--grid)" stroke-width="1" stroke-dasharray="2 3" vector-effect="non-scaling-stroke"></line>
@@ -5849,6 +5849,8 @@ class Component extends DCLogic {
       return { txt: (pos ? '+' : '') + v.toFixed(1) + (unit || ''), style: 'font-family:var(--kw);font-size:10px;padding:3px 7px;border-radius:5px;background:' + (pos ? 'rgba(46,207,133,0.16)' : 'rgba(255,91,106,0.16)') + ';color:' + (pos ? ACC : RED) };
     };
 
+    const standNow = (st.standings || {})[sport] || null;
+    const wlOf = abbr => { const r = standNow && standNow.by ? standNow.by[abbr] : null; return r && r.record ? r.record : ''; };
     const gameCards = slateSim ? [] : slate.map(x => {
       const xs = st.series[x.id];
       const p = xs.hist[xs.hist.length - 1];
@@ -5863,6 +5865,8 @@ class Component extends DCLogic {
       })();
       return {
         awayAbbr: x.awayAbbr, homeAbbr: x.homeAbbr, awayScore: x.as, homeScore: x.hs,
+        // WIN-LOSS ON THE CARD (owner, 8 Nov 2026): each club's record from the season's standings
+        awayRec: wlOf(x.awayAbbr), homeRec: wlOf(x.homeAbbr),
         clock: x.live ? (x.state === 'final' ? 'FINAL' : x.state === 'in_progress' ? qLabel(x.per) + ' ' + (x.clock || '') : (x.status || 'scheduled')) : 'Q' + x.per + ' ' + Math.floor(x.sec / 60) + ':' + String(x.sec % 60).padStart(2, '0'),
         // the dot breathes only while the game is on; before and after it sits still and muted
         clockStyle: 'font-family:var(--kw);font-size:9.5px;display:inline-flex;align-items:center;gap:5px;transition:none;color:' + (x.state === 'in_progress' ? 'var(--critical)' : 'var(--second)'),
