@@ -51,7 +51,7 @@
 @media (max-width:520px){.in-mark{width:84px;height:84px}.in-rule{margin:34px auto}}
 @media (prefers-reduced-motion:reduce){#intro{display:none}}
 </style>
-<script>window.KQ_BUILD = "3a91362115";</script>
+<script>window.KQ_BUILD = "ae0564963a";</script>
 <script>window.KQ_RECORD_VER = "17d3c30a16";</script>
 <script src="./support.js?v=2e38395c4a"></script>
 </head>
@@ -4547,8 +4547,10 @@ class Component extends DCLogic {
     const fairML = p => p == null || p <= 0 || p >= 100 ? null : (p >= 50 ? -Math.round(p / (100 - p) * 100) : Math.round((100 - p) / p * 100));
     const kqProb = recRow && recRow.prior != null && !pre ? recRow.prior : g.wp;
     if (fairPre != null) {
+      /* the line at the kick — the number the hero and the chart read — not the first filing */
+      const kqRow = kqAtKick != null ? kqAtKick : fairPre;
       const kb = { book: 'kwotient', title: 'Kwotient', kq: true, updated: kqTrack.length ? new Date(kqTrack[kqTrack.length - 1].w).toISOString() : null,
-                   spreadHome: fairPre, spreadAway: -fairPre, mlHome: fairML(kqProb), mlAway: fairML(kqProb == null ? null : 100 - kqProb), total: null };
+                   spreadHome: kqRow, spreadAway: -kqRow, mlHome: fairML(kqProb), mlAway: fairML(kqProb == null ? null : 100 - kqProb), total: null };
       bookSides.push({ b: kb, side: 'away', team: g.awayAbbr, spread: kb.spreadAway, spreadOdds: null, ml: kb.mlAway });
       bookSides.push({ b: kb, side: 'home', team: g.homeAbbr, spread: kb.spreadHome, spreadOdds: null, ml: kb.mlHome });
     }
@@ -5850,6 +5852,15 @@ class Component extends DCLogic {
     };
 
     const standNow = (st.standings || {})[sport] || null;
+    // a started game's Kwotient line on the card is the one filed before the kick — the record's last
+    // pre-kickoff reading, else its first — so the card, the hero and the books table say one number
+    const kqPreOf = x => {
+      if (!x.live || x.state === 'scheduled' || x.gameId == null) return x.fair;
+      const R = window.KQ_RECORD_CALLS; const rec = R ? (R.calls || []).find(c => c.lg === sport && String(c.id) === String(x.gameId)) : null;
+      if (!rec) return x.fair;
+      const kick = Date.parse(x.start || ''); const pts = (rec.kq || []).filter(p => p && p[1] != null && (!isFinite(kick) || p[0] <= kick));
+      return pts.length ? pts[pts.length - 1][1] : (rec.fair != null ? rec.fair : x.fair);
+    };
     const wlOf = abbr => { const r = standNow && standNow.by ? standNow.by[abbr] : null; return r && r.record ? r.record : ''; };
     const gameCards = slateSim ? [] : slate.map(x => {
       const xs = st.series[x.id];
@@ -5879,8 +5890,8 @@ class Component extends DCLogic {
         mktMini: x.market ? sgn(x.line) + (x.mktTotal != null ? ' · ' + x.mktTotal : '') : '',
         // KWOTIENT'S LINE ON THE SLATE (owner, 16 Oct 2026): every card carries the model's line
         // beside the market's, so the two read together before a dashboard is ever opened
-        kqLabel: x.market && x.fair != null ? 'Kwotient ' + x.homeAbbr + ' ' + sgn(x.fair) : '',
-        kqMini: x.fair != null ? 'Kwotient ' + sgn(x.fair) : '',
+        kqLabel: x.market && kqPreOf(x) != null ? 'Kwotient ' + x.homeAbbr + ' ' + sgn(kqPreOf(x)) : '',
+        kqMini: kqPreOf(x) != null ? 'Kwotient ' + sgn(kqPreOf(x)) : '',
         spark: this.path(gv.slice(-40), 48, 16, 0, 100),
         sparkAway: this.path(gv.slice(-40).map(v => 100 - v), 48, 16, 0, 100),
         bigSpark: this.path(gv.slice(-70), 140, 54, 0, 100),
